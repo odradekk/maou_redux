@@ -23,7 +23,6 @@
  */
 
 const era = require('#/era-electron');
-const { on } = require('#/system/event/registry');
 const { begin, STATE } = require('#/system/flow/game-state');
 const { first_setting } = require('#/page/page-first-setting');
 const { game } = require('#/facade/game');
@@ -39,11 +38,9 @@ const { char_make_inport } = require('#/system/chara/char-make'); // 转发层�
 const { init_portcflag } = require('#/system/chara/chara-portcflag');
 const { geo_test, db_set } = require('#/system/dungeon/labo'); // 2D 模式分支（#181 H12）
 const { set_vil } = require('#/system/dungeon/labo-map');
-const { EVENT } = require('#/data/event-name-const');
 
-// 普通档：源 EVENTFIRST 的其他定义随各自所属票接入。处理器在
-// system/flow/startup.js 的装配表里注册（era.* 只在函数体内调用，
-// #6 的两条硬规则之二）。
+// 普通档：源 EVENTFIRST 的其他定义随各自所属票接入。只有一个处理者，
+// 主循环进入 FIRST 时直接调用本函数（#853），不经过事件总线。
 async function handle_first() {
   // 自建（#136 返工，非源 EVENTFIRST 的行）：存读档指针的初值
   // -1（flag:10018-10028，已登记 yml/Flag.yml 保留区）。登记后引擎
@@ -362,17 +359,8 @@ async function handle_first() {
   // 丽塔启动！为 SAVEDATA 默认 0，唯一定值点开局设置已按默认跳过 →
   // 不可达，正文随开局设置票。
 
-  // SHOP 转场 —— 初始化完成，转入据点主菜单。事件链内转场目标由 emit
-  // 暂存，链跑完交给主循环。
+  // SHOP 转场 —— 初始化完成，转入据点主菜单。返回值交给主循环提交跳转。
   return begin(STATE.SHOP);
 }
 
-/**
- * 本模块的事件处理器：由 system/flow/startup.js 的装配表按顺序调用 register()
- * 注册（模块装载本身不注册，装配顺序见该文件）。
- */
-function register() {
-  on(EVENT.FIRST, handle_first);
-}
-
-module.exports = { register };
+module.exports = { handle_first };

@@ -142,7 +142,7 @@ test('端到端：读档分支（旧的奴隶）进真身读档界面，返回�
   assert(fixture.text_lines().includes('Ver0.0.0'));
 });
 
-test('链内后写的转场目标胜出后进入真实 SHOP 渲染（#22 检查用例随 #23 改制）', async () => {
+test('FIRST 钩子返回 SHOP 后进入真实 SHOP 渲染（#22 检查用例随 #23 改制）', async () => {
   const fixture = create_era_fixture();
   preset_gamebase(fixture);
   // 严格夹具：角色 0 要有预设才加得进（#35 镜像的引擎检查）；#565 起随机
@@ -150,13 +150,10 @@ test('链内后写的转场目标胜出后进入真实 SHOP 渲染（#22 检查�
   preset_chara_0(fixture);
   preset_chara_1(fixture);
   fixture.set_inputs(1, 1, 2, 0, 0, 100, 2);
-  const { on, TIER } = fixture.load_module('system/event/registry');
-  const { begin, STATE } = fixture.load_module('system/flow/game-state');
-  // 真身出口本就返回 SHOP；再追加一个 LATER 档处理器重复发起同一转场，
-  // 验证链内后写胜出（#6 语义）后主循环进入 SHOP。#22 时代此处断言「进入
-  // 即报错的检查」；SHOP 接入（#23）后检查退役，改为断言真实渲染恰一次
-  // ——重复进入或未进入都会在计数上暴露。
-  on('EVENTFIRST', async () => begin(STATE.SHOP), TIER.LATER);
+  // 开局钩子的出口本就返回 SHOP（只有一个处理者，#853 起直接调用，链内
+  // 后写胜出的语义随链一起消失——那是 event-registry 的用例）。#22 时代
+  // 此处断言「进入即报错的检查」；SHOP 接入（#23）后检查退役，改为断言
+  // 真实渲染恰一次——重复进入或未进入都会在计数上暴露。
   const main = fixture.load_module('main');
 
   fixture.override_math_random(() => 0);

@@ -50,11 +50,7 @@ function seed_train_world(fixture) {
 
   register_handlers(fixture, 'event/event-train');
   register_handlers(fixture, 'event/event-end');
-  register_handlers(fixture, 'event/event-com');
   register_handlers(fixture, 'event/event-comend');
-  register_handlers(fixture, 'system/train/source-check');
-  register_handlers(fixture, 'page/page-train');
-  register_handlers(fixture, 'page/page-usercom');
   fixture.load_module('system/train/com-caress');
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.target = 17;
@@ -69,18 +65,17 @@ test('端到端：调教每轮换屏——菜单屏行数有界、画面只留�
 
   const menu_rows = [];
   const date_line_counts = [];
-  const { on, TIER } = fixture.load_module('system/event/registry');
-  // 链尾探针：主绘制处理器跑完后读数——「这一轮菜单画完时屏幕长什么样」
-  on(
-    'SHOW_USERCOM',
-    async () => {
-      menu_rows.push(fixture.era.getLineCount());
-      date_line_counts.push(
-        fixture.text_lines().filter((t) => t === DATE_LINE).length,
-      );
-    },
-    TIER.LATER,
-  );
+  // 链尾读数改成包装：指令菜单只有一个调用者（回合循环直接调用，#853），
+  // 把模块导出的函数换成「真身跑完再读一行」，装载回合循环时绑定的就是包装
+  const page_usercom = fixture.load_module('page/page-usercom');
+  const real_show_usercom = page_usercom.handle_show_usercom;
+  page_usercom.handle_show_usercom = async (usable = []) => {
+    await real_show_usercom(usable);
+    menu_rows.push(fixture.era.getLineCount());
+    date_line_counts.push(
+      fixture.text_lines().filter((t) => t === DATE_LINE).length,
+    );
+  };
 
   // 输入序列（一轮一枚 menu input，等键不占队列）：
   //   0   爱抚（正常指令轮，两次）

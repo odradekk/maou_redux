@@ -103,6 +103,7 @@ test('端到端：新档从标题走到 ENDING_1（三信号 + 实测天数）',
   const run_title_page = fixture.load_module('page/page-title');
   const { run_shop } = fixture.load_module('page/page-shop');
   const { emit } = fixture.load_module('system/event/registry');
+  const { handle_first } = fixture.load_module('event/event-first');
   const era_flag = fixture.load_module('era-utils/era-flag');
 
   // 本局关闭勇者来袭（#171 / #168 结论 4 的隔离开关）：ENTER_ENEMY 自 #171
@@ -124,7 +125,7 @@ test('端到端：新档从标题走到 ENDING_1（三信号 + 实测天数）',
     // 「普通」[0]（#181 加的一问，本条走 3D 路径）、搬运选「抱起」[1]；
     // 村娘分支自己的出口 BEGIN SHOP（链上暂存，emit 返回）——
     fixture.set_inputs(1, 2, 1, 0, 1);
-    const first_exit = await emit('EVENTFIRST');
+    const first_exit = await handle_first();
     assert.equal(first_exit, 'SHOP', '初始化的出口必是 BEGIN SHOP');
 
     // —— 主循环（main-loop 的 SHOP → TURNEND → SHOP 边，逐步驱动）：

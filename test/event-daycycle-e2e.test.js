@@ -53,6 +53,7 @@ test('端到端：据点一日循环——主菜单选休息 → 日期推进 �
   const run_title_page = fixture.load_module('page/page-title');
   const { run_shop } = fixture.load_module('page/page-shop');
   const { emit } = fixture.load_module('system/event/registry');
+  const { handle_first } = fixture.load_module('event/event-first');
   const era_flag = fixture.load_module('era-utils/era-flag');
 
   // 本用例不涉及勇者来袭，关掉与 event-ending-e2e 同样的理由：避免无关
@@ -67,7 +68,7 @@ test('端到端：据点一日循环——主菜单选休息 → 日期推进 �
   // 狂王性别选「扶她」[2]、初期奴隶选「村娘」[1]、地下城模式选「普通」[0]、
   // 搬运选「抱起」[1]；村娘分支出口 BEGIN SHOP ——
   fixture.set_inputs(1, 2, 1, 0, 1);
-  const first_exit = await emit('EVENTFIRST');
+  const first_exit = await handle_first();
   assert.equal(first_exit, 'SHOP', '初始化的出口必是 BEGIN SHOP');
 
   const tax_before = fixture.store.get('flag:9') || 0;

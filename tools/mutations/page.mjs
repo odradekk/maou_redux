@@ -61,7 +61,7 @@ export default [
   {
     desc: 'M3 999 出口：USERCOM 不再发起 AFTERTRAIN 转场',
     file: 'ere/page/page-usercom.js',
-    find: '  if (result === TRAIN_END_KEY) {\n    // 调教结束 → BEGIN AFTERTRAIN 转场：返回目标状态（事件链暂存，\n    // 回合循环提交），其后不再执行\n    return begin(STATE.AFTERTRAIN);\n  }',
+    find: '  if (result === TRAIN_END_KEY) {\n    // 调教结束 → BEGIN AFTERTRAIN 转场：返回目标状态（回合循环提交），其后不再执行\n    return begin(STATE.AFTERTRAIN);\n  }',
     replace: `  if (result === TRAIN_END_KEY) {
     // 变异：不发起转场
     return;
@@ -604,12 +604,12 @@ export default [
     must_mention: '读档后的进入路径不得执行 EVENTSHOP 链',
   },
   {
-    desc: 'M256 读档钩子链被拆（load_game 成功分支不再 emit EVENTLOAD——钩子存在但从不被调用）',
+    desc: 'M256 读档钩子被拆（load_game 成功分支不再调读档钩子——钩子存在但从不被调用）',
     file: 'ere/page/page-save-load.js',
-    find: `        const next = (await emit(EVENT.LOAD)) ?? STATE.SHOP_AFTER_LOAD;`,
-    replace: `        const next = STATE.SHOP_AFTER_LOAD; // 变异：钩子链被拆`,
+    find: `        const next = (await handle_load()) ?? STATE.SHOP_AFTER_LOAD;`,
+    replace: `        const next = STATE.SHOP_AFTER_LOAD; // 变异：读档钩子从不被调用`,
     tests: ['page-save-load'],
-    must_mention: '读档成功必须 emit EVENTLOAD 链一次',
+    must_mention: '读档成功必须调读档钩子一次',
   },
   {
     desc: 'M257 SHOP_AFTER_LOAD 的状态映射指回 run_shop 原样（主循环进入也跑 EVENTSHOP）',

@@ -22,14 +22,11 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
-const { register_handlers } = require('./helpers/event-registration');
 
 function load_page(fixture) {
-  const page = fixture.load_module('page/page-save-load');
-  // EVENTLOAD 的处理器在启动装配表里注册（#851）；本文件只装载读档页，
-  // 用例自己把这条链接上
-  register_handlers(fixture, 'event/event-load');
-  return page;
+  // 读档成功后由 load_game 直接调用读档钩子（只有一个处理者，#853）：
+  // 本文件只装载读档页，钩子随 load_game 的 require 一起进来
+  return fixture.load_module('page/page-save-load');
 }
 
 /** 终态按钮条目（lines；type=button → {text, accelerator, rendered, color}） */
@@ -922,22 +919,24 @@ test('旧存档备注：存档动作不改动 global:saves 的存储形态（只
 
 // —— #137：LOADDATA 的转场语义与读档钩子 ——
 
-test('读档成功后钩子被调用：EVENTLOAD 链真的跑了（不是只证明钩子存在）', async () => {
+test('读档成功后钩子被调用：读档钩子真的跑了（不是只证明钩子存在）', async () => {
   const fixture = create_era_fixture();
   seed_save(fixture, 3, '三号档');
-  // 探针挂在链上：load_game 的成功分支必须 emit（page-save-load require
-  // event-load 完成装配，链非空）
-  const { on } = fixture.load_module('system/event/registry');
+  // 读档钩子只有一个调用者（load_game 直接调用，#853）：把模块导出的函数换成
+  // 探针，装载读档页时它绑定的就是探针，探针再交回真身
+  const event_load = fixture.load_module('event/event-load');
+  const real_load = event_load.handle_load;
   let probe_calls = 0;
-  on('EVENTLOAD', () => {
+  event_load.handle_load = async () => {
     probe_calls += 1;
-  });
+    return real_load();
+  };
   const { load_game } = load_page(fixture);
   fixture.era.loadData = async () => true;
   fixture.set_inputs(3);
 
   assert.equal(await load_game(), 'SHOP_AFTER_LOAD');
-  assert.equal(probe_calls, 1, '读档成功必须 emit EVENTLOAD 链一次');
+  assert.equal(probe_calls, 1, '读档成功必须调读档钩子一次');
   // 钩子的历史补丁等价物也跑了（魔王标识写入——角色 0 虽不在场，钩子
   // 对 getAddedCharacters 循环，空列表零写入；探针即「被调用」的凭证）
 });

@@ -78,6 +78,7 @@ test('端到端：自动处刑——设置页 [3] 开启 → 主菜单 [103] 批
   const run_title_page = fixture.load_module('page/page-title');
   const { run_shop } = fixture.load_module('page/page-shop');
   const { emit } = fixture.load_module('system/event/registry');
+  const { handle_first } = fixture.load_module('event/event-first');
 
   // 本链不涉及勇者来袭的生成线（温妮是补齐的世界状态），关掉与
   // event-daycycle-e2e 同样的理由：避免无关随机消费打乱输入序列
@@ -90,7 +91,7 @@ test('端到端：自动处刑——设置页 [3] 开启 → 主菜单 [103] 批
     fixture.set_inputs(1);
     await expect_state(run_title_page(), 'FIRST', '标题画面新游戏');
     fixture.set_inputs(1, 2, 1, 1, 1);
-    const first_exit = await emit('EVENTFIRST');
+    const first_exit = await handle_first();
     assert.equal(first_exit, 'SHOP', '初始化的出口必是 BEGIN SHOP');
 
     // —— 世界补齐：温妮以侵攻中勇者的身份到场（见文件头）——

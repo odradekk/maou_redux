@@ -68,14 +68,15 @@ async function run_caress(seed, post) {
     seed(fixture);
   }
   fixture.load_module('system/train/com-caress');
-  register_handlers(fixture, 'system/train/source-check');
+  const { handle_source_check } = fixture.load_module(
+    'system/train/source-check',
+  );
   const { com_family } = fixture.load_module('system/train/com-family');
-  const { emit } = fixture.load_module('system/event/registry');
   await com_family.call(0);
   if (post) {
     post(fixture);
   }
-  await emit('SOURCE_CHECK');
+  await handle_source_check();
   // 回合循环第 13 步：结算（delta→palam、source 清零）。游戏侧不再当场写
   // palam（#874），这里补上引擎那一步，palam 断言读到的回合末值与关掉现场
   // 结算之前同义。SOURCE 同时被引擎清零，而本文件的换算断言看的是结算前的
@@ -807,10 +808,7 @@ test('端到端：输入 0 → 爱抚全链输出 → 回合继续 → 999 退�
   // 未声明值误判为「双方均非男性」触发 SOURCE_LESBIAN_SEX_CHECK。
   fixture.store.set('talent:0:122', 1);
   register_handlers(fixture, 'event/event-train');
-  register_handlers(fixture, 'event/event-com');
   register_handlers(fixture, 'event/event-comend');
-  register_handlers(fixture, 'page/page-usercom');
-  register_handlers(fixture, 'system/train/source-check');
   fixture.load_module('system/train/com-caress');
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.target = 31;
@@ -820,7 +818,11 @@ test('端到端：输入 0 → 爱抚全链输出 → 回合继续 → 999 退�
   const { run_train } = fixture.load_module('system/train/train-loop');
   assert.equal(await run_train(), 'AFTERTRAIN');
 
-  const texts = fixture.text_lines();
+  // 回合循环每轮换屏：999 退出那一轮的换屏把第一轮的输出清出当前屏，取证看
+  // 行史（发生过什么都留在里面）
+  const texts = fixture.lines_history
+    .filter((line) => line.type === 'text')
+    .map((line) => line.text);
   // 指令行 → 描写 → 反应（c = 5+3 = 8 < 100 → 第一档文本）→ 结算块全在。
   // （断言一律位置无关）
   assert(texts.includes('爱抚'));
@@ -1063,7 +1065,7 @@ test('INCEST_SEX_CHECK：父母 ×2、同胞 ×1.5，逐次向下取整', async 
 // —— SOURCE_LESBIAN_SEX_CHECK／SOURCE_GAY_SEX_CHECK（同性经验四段/单段级联） ——
 //
 // 断言只挑 SOURCE:3/4/5/7/8/13/14/17 中的 3/4/5/7/8/13/14：这几项在
-// source_sex_check() 之后，直到 emit('SOURCE_CHECK') 收尾前都没有其他函数
+// source_sex_check() 之后，直到 handle_source_check() 收尾前都没有其他函数
 // 覆写（已用调试脚本核实）；SOURCE:0/1/2/17 会被同一趟派发里稍后执行的
 // player_skill_check/master_skill_check 等函数继续乘算，用它们断言会把
 // 后续函数的行为也计入，而非 LESBIAN/GAY 两函数本身的产出。
@@ -2665,10 +2667,11 @@ async function run_ejaculation_settlement({
   era_flag.selectcom = selectcom;
   era_flag.prevcom = -1;
   fixture.store.set('callname:31:-2', '温妮');
-  register_handlers(fixture, 'system/train/source-check');
+  const { handle_source_check } = fixture.load_module(
+    'system/train/source-check',
+  );
   if (seed) seed(fixture, era_flag);
-  const { emit } = fixture.load_module('system/event/registry');
-  await emit('SOURCE_CHECK');
+  await handle_source_check();
   return fixture;
 }
 
@@ -2919,9 +2922,10 @@ async function run_auto_check(seed, { settle = true } = {}) {
   if (seed) {
     seed(fixture, era_flag);
   }
-  register_handlers(fixture, 'system/train/source-check');
-  const { emit } = fixture.load_module('system/event/registry');
-  await emit('SOURCE_CHECK_AUTO');
+  const { handle_source_check_auto } = fixture.load_module(
+    'system/train/source-check',
+  );
+  await handle_source_check_auto();
   // 迷宫路径的结算对应物（dungeon-battle.js 的 source_check_auto 在 emit
   // 之后补的正是这一步）：delta→palam、source 清零都归引擎，#874
   fixture.round_source = snapshot_source(fixture);
@@ -3166,8 +3170,10 @@ test('down_map 在每次 SOURCE_CHECK_AUTO 开头清空，不跨回合残留 DOW
     1000,
     '首次调用：EX_CHECK_UP 触发 DOWN:0=9000，结算为 10000-9000',
   );
-  const { emit } = fixture.load_module('system/event/registry');
-  await emit('SOURCE_CHECK_AUTO');
+  const { handle_source_check_auto } = fixture.load_module(
+    'system/train/source-check',
+  );
+  await handle_source_check_auto();
   // 第二次调用之后同样走结算：残留的 DOWN 只有在 delta 加进 palam 之后才看得见
   //（#874 起本模块不再当场写 palam）
   fixture.era.nextTurnInTrain();

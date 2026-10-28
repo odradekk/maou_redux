@@ -43,7 +43,6 @@ test('引擎初始化：ASSIPLAY/PREVCOM/NEXTCOM 置位，beginTrain 全角色�
   const fixture = create_era_fixture();
   const era_flag = seed_world(fixture);
   register_handlers(fixture, 'event/event-train'); // EVENTTRAIN 处理器真身（写 TFLAG）
-  register_handlers(fixture, 'page/page-usercom'); // 注册 999 → AFTERTRAIN
   fixture.set_inputs(999);
   const { run_train } = fixture.load_module('system/train/train-loop');
 
@@ -66,7 +65,6 @@ test('引擎初始化：ASSIPLAY/PREVCOM/NEXTCOM 置位，beginTrain 全角色�
 test('BEGIN TRAIN 清空 TSTR:90（整族清空的 ere 手动镜像，#212）', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
-  register_handlers(fixture, 'page/page-usercom'); // 注册 999 → AFTERTRAIN
   fixture.set_inputs(999);
   // 上一局残留的前回指令名（tstr 是持久普通表，见 yml/TStr.yml）
   fixture.store.set('tstr:90', '振动杖');
@@ -94,27 +92,28 @@ test('回合循环的回调顺序：逐条钉死（探针固定）', async () =>
   const { com_able_family, com_family } = fixture.load_module(
     'system/train/com-family',
   );
-  register_handlers(fixture, 'page/page-usercom');
   const probe = [];
 
-  // 探针：SHOW_STATUS 落一笔标记（供 COM_ABLE 探针证明自己在其后）
-  on('SHOW_STATUS', async () => {
+  // 状态画面与指令菜单各只有一个调用者（回合循环直接调用，#853）：把模块导出
+  // 的钩子换成探针，装载回合循环时它绑定的就是探针
+  const page_train = fixture.load_module('page/page-train');
+  page_train.handle_show_status = async () => {
     probe.push('show_status');
-  });
+  };
+  const page_usercom = fixture.load_module('page/page-usercom');
+  const real_show_usercom = page_usercom.handle_show_usercom;
+  page_usercom.handle_show_usercom = async (usable = []) => {
+    probe.push('show_usercom');
+    return real_show_usercom(usable);
+  };
   // COM_ABLE 探针：指令 0 显式可执行，并记录执行时刻的标记面
   com_able_family.register(0, async () => {
     probe.push(`com_able_0(after=${probe.includes('show_status')})`);
     return 1;
   });
-  on('SHOW_USERCOM', async () => {
-    probe.push('show_usercom');
-  });
   // 指令 0 的实现（记录 NOWEX 已清零——顺序 10 先于 11 的证据）
   com_family.register(0, async () => {
     probe.push(`com_0(nowex=${fixture.era.get('nowex:31:0')})`);
-  });
-  on('EVENTCOM', async () => {
-    probe.push('eventcom');
   });
   on('EVENTCOMEND', async () => {
     probe.push('eventcomend');
@@ -130,14 +129,13 @@ test('回合循环的回调顺序：逐条钉死（探针固定）', async () =>
   assert.deepEqual(probe, [
     'show_status',
     'com_able_0(after=true)', // COM_ABLE 扫描在 SHOW_STATUS 之后
-    'show_usercom', // …且在 SHOW_USERCOM 之前
-    'eventcom', // 输入 0：SELECTCOM → NOWEX 清零 → EVENTCOM
-    'com_0(nowex=0)', // COM 实现看到已清零（顺序 10 → 11 → 12）
+    'show_usercom', // …且在指令菜单之前
+    'com_0(nowex=0)', // 输入 0：SELECTCOM → NOWEX 清零 → 指令处理器
     'eventcomend', // 指令执行完 → 结算 → EVENTCOMEND
     'show_status', // 回合循环回到第一步
     'com_able_0(after=true)',
     'show_usercom',
-    // 输入 999：非指令 → USERCOM（page-usercom 的 999 → BEGIN AFTERTRAIN）
+    // 输入 999：非指令 → 指令菜单页的 999 → AFTERTRAIN
   ]);
   // SELECTCOM 与 PREVCOM 的来源（写记录为准——包装层的 || 0 默认值会把
   //「没写」伪装成 0，变异测试抓过的误报通过写法）：
@@ -159,7 +157,6 @@ test('回合循环的回调顺序：逐条钉死（探针固定）', async () =>
 test('COM_ABLE 未定义即视为可执行：零实现下可直选空间 101 个编号全可用', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
-  register_handlers(fixture, 'page/page-usercom');
   const { scan_usable_commands } = fixture.load_module(
     'system/train/train-loop',
   );
@@ -177,7 +174,6 @@ test('#213 输入映射：玩家输入是 L_IDX，SELECTCOM 取 L_I（39→40 / 
   const fixture = create_era_fixture();
   seed_world(fixture);
   const { com_family } = fixture.load_module('system/train/com-family');
-  register_handlers(fixture, 'page/page-usercom');
   const probe = [];
   // 指令 40（打屁股）的探针实现：证明经映射分发到位
   com_family.register(40, async () => {
@@ -229,7 +225,6 @@ test('升格回合：COM8 跳到 COM84 后 PREVCOM 保留回填的 SELECTCOM', a
 test('#213 输入映射：89 跑出穿脱衣服的路由，未实现 → 重新要求输入', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
-  register_handlers(fixture, 'page/page-usercom');
 
   // 89 = 穿脱衣服的 L_IDX（Train.csv 110）。指令 110 未实现 → 引擎「重新要求输入」：
   // SELECTCOM 已置、无输出、PREVCOM 不推进、下一输入（999）正常退出
@@ -258,12 +253,17 @@ test('#213 输入映射：89 跑出穿脱衣服的路由，未实现 → 重新�
 test('#213 输入映射：映射外的编号原样落 USERCOM（999 出口照常）', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
-  const { on } = fixture.load_module('system/event/registry');
-  register_handlers(fixture, 'page/page-usercom');
+  // 指令菜单页只有一个调用者（回合循环直接调用，#853）：把模块导出的分发
+  // 函数换成探针，装载回合循环时它绑定的就是探针，探针再交回真身
+  const page_usercom = fixture.load_module('page/page-usercom');
+  const real_usercom = page_usercom.handle_usercom;
   const probe = [];
-  on('USERCOM', async (result) => probe.push(`usercom(${result})`));
+  page_usercom.handle_usercom = async (result) => {
+    probe.push(`usercom(${result})`);
+    return real_usercom(result);
+  };
 
-  // 999 不是任何指令的紧凑序号 → USERCOM 收到原始输入 999 → AFTERTRAIN
+  // 999 不是任何指令的紧凑序号 → 分发函数收到原始输入 999 → AFTERTRAIN
   fixture.set_inputs(999);
   const { run_train } = fixture.load_module('system/train/train-loop');
   assert.equal(await run_train(), 'AFTERTRAIN');
@@ -277,13 +277,15 @@ test('#213 输入映射：映射外的编号原样落 USERCOM（999 出口照常
 test('COM_ABLE 返回 0 的指令不渲染按钮：引擎侧即不可送达（#130）', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
-  const { on } = fixture.load_module('system/event/registry');
   const { com_able_family } = fixture.load_module('system/train/com-family');
-  register_handlers(fixture, 'page/page-usercom');
   com_able_family.register(5, async () => 0); // 指令 5 显式禁用
+  const page_usercom = fixture.load_module('page/page-usercom');
+  const real_usercom = page_usercom.handle_usercom;
   const probe = [];
-  on('EVENTCOM', async () => probe.push('eventcom'));
-  on('USERCOM', async (result) => probe.push(`usercom(${result})`));
+  page_usercom.handle_usercom = async (result) => {
+    probe.push(`usercom(${result})`);
+    return real_usercom(result);
+  };
 
   // 原用例喂 5 验证「输入走 USERCOM 而非指令路径」。可执行表驱动按钮
   // 渲染：COM_ABLE = 0 的 5 不印按钮，引擎的 input() 只送达已打印按钮的
@@ -314,7 +316,6 @@ test('COM_ABLE 返回 0 的指令不渲染按钮：引擎侧即不可送达（#1
   const { com_able_family: family_locked } = locked.load_module(
     'system/train/com-family',
   );
-  register_handlers(locked, 'page/page-usercom');
   family_locked.register(5, async () => 0);
   locked.set_inputs(5);
   const { run_train: run_locked } = locked.load_module(
@@ -324,14 +325,14 @@ test('COM_ABLE 返回 0 的指令不渲染按钮：引擎侧即不可送达（#1
   assert(!locked.inputs_consumed.some((e) => e.value === 5), '5 未被送达');
 });
 
-test('指令处理器未实现：EVENTCOM 后重新要求输入（不结算、不进 EVENTCOMEND）', async () => {
+test('指令处理器未实现：指令前清理之后重新要求输入（不结算、不进 EVENTCOMEND）', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
   const { on } = fixture.load_module('system/event/registry');
-  register_handlers(fixture, 'page/page-usercom');
   const probe = [];
-  on('SHOW_STATUS', async () => probe.push('show_status'));
-  on('EVENTCOM', async () => probe.push('eventcom'));
+  // 状态画面只有一个调用者（回合循环直接调用，#853）：换掉模块导出的钩子
+  const page_train = fixture.load_module('page/page-train');
+  page_train.handle_show_status = async () => probe.push('show_status');
   on('EVENTCOMEND', async () => probe.push('eventcomend'));
 
   fixture.set_inputs(0, 999); // 0 可执行（COM_ABLE 默认）但指令 0 未实现
@@ -340,9 +341,7 @@ test('指令处理器未实现：EVENTCOM 后重新要求输入（不结算、�
 
   assert.deepEqual(probe, [
     'show_status',
-    'eventcom', // EVENTCOM 先行（本移植的解读，#45 对实机核对——见
-    // train-loop.js 文件头第 12 步说明）
-    'show_status', // COM 缺失 → 丢弃输入回到循环头；无 eventcomend
+    'show_status', // 指令缺失 → 丢弃输入回到循环头；无 eventcomend
   ]);
   assert.equal(
     fixture.calls.filter((c) => c.api === 'nextTurnInTrain').length,
@@ -364,7 +363,6 @@ test('999 → USERCOM → AFTERTRAIN：run_aftertrain 跑 EVENTEND 并收尾 end
   fixture.store.set('tflag:860', 1);
   register_handlers(fixture, 'event/event-train');
   register_handlers(fixture, 'event/event-end');
-  register_handlers(fixture, 'page/page-usercom');
   // 直接驱动两段状态处理器（主循环接驳在端到端用例证）；第二枚 999 是
   // JUEL_CHECK 交互循环的退出键（#47）
   fixture.set_inputs(999, 999);
@@ -392,8 +390,9 @@ test('端到端：主菜单输入 100 → 选目标 → 调教画面 → 999 →
   preset_gamebase(fixture);
   preset_chara_0(fixture);
   preset_chara_1(fixture); // rand ≡ 0 时随机路径掷勇者位 1（#565 起真身）
-  // 初期奴隶由 #50 实现；本用例按工单事实 #12 在测试里播种：EVENTFIRST 链
-  // 的 LATER 档追加处理器（#6 语义：BEGIN 后链继续），等价「开局就有奴隶 31」
+  // 初期奴隶由 #50 实现；本用例按工单事实 #12 在测试里播种：开局钩子
+  // （只有一个调用者，#853 起直接调用）外面包一层，真身跑完再补上奴隶 31，
+  // 等价「开局就有奴隶 31」
   fixture.seed_chara(31, { id: 31, name: '温妮', callname: '温妮' });
   // 体力预设（真实游戏由 Chara31.yml 的 基礎 行实现；EVENTEND 的死亡判定
   // 读它——无预设时体力 0 会触发死亡删除分支，那不是本用例的目标路径）
@@ -401,15 +400,22 @@ test('端到端：主菜单输入 100 → 选目标 → 调教画面 → 999 →
   // 行动完了预置（#172 起 PARTY_UNITE 真身：回合结算的队伍编成会把它
   // 复位为 0——该断言盯数据效果）
   fixture.store.set('cflag:31:530', 1);
-  const { on, TIER } = fixture.load_module('system/event/registry');
-  on('EVENTFIRST', async () => fixture.era.addCharacter(31), TIER.LATER);
+  // 开局钩子在装载主启动图之前换成「真身 + 补角色」的包装：主循环在装载时
+  // 取的就是这个包装（钩子只有一个调用者、直接调用，#853，没有链可挂 LATER）
+  const event_first = fixture.load_module('event/event-first');
+  const real_first = event_first.handle_first;
+  event_first.handle_first = async () => {
+    const next = await real_first();
+    fixture.era.addCharacter(31);
+    return next;
+  };
 
   // FIRST_SETTING 五问（#463）夹在标题与开场叙事之间：魔王性别选 1=女性
   // （跳过肉棒尺寸一问）、狂王性别选 2=扶她、初期奴隶选 0=随机、地下城
   // 模式选 0=普通（#181）。#565 起随机路径走 RAND_CHARA_MAKE 真身：形象
   // 确认 [100] 進む + 收下 [2]（rand ≡ 0 掷勇者位 1，preset_chara_1 已种），
-  // 随机奴隶顺路入列——选目标输入 31 不受影响，温妮仍由 LATER 档处理器
-  // 播种。末尾四枚：菜单 100、选人 31、999 = 调教菜单退出、999 =
+  // 随机奴隶顺路入列——选目标输入 31 不受影响，温妮由上面的包装播种。
+  // 末尾四枚：菜单 100、选人 31、999 = 调教菜单退出、999 =
   // JUEL_CHECK 交互循环退出（#47）
   fixture.set_inputs(1, 1, 2, 0, 0, 100, 2, 100, 31, 999, 999);
   const main = fixture.load_module('main');
