@@ -528,35 +528,57 @@ function show_chara_debt_list(no_page) {
   return order;
 }
 
+/**
+ * 名册轮与个人页的固定键。排序表头四键（1200-1500）兼作排序选择；
+ * 名册页脚是上一页 [997]/返回 [999]/下一页 [998]，个人页页脚是
+ * 前页 [101]/返回 [100]/后页 [102] 与前后一人 [500]/[600]。
+ * 动作键 0-18 由各动作模块自己打印（改名、调教、结婚、装备…），
+ * 本页只分派，编号带跨模块共用，统一登记另票。
+ */
+const SORT_BY_ID_KEY = 1200;
+const SORT_BY_STATE_KEY = 1300;
+const SORT_BY_MONEY_KEY = 1400;
+const SORT_BY_DEBT_KEY = 1500;
+const BULK_PROSTITUTION_KEY = 1600;
+const NUMBER_SWAP_KEY = 1700;
+const LIST_PREV_KEY = 997;
+const LIST_BACK_KEY = 999;
+const LIST_NEXT_KEY = 998;
+const DETAIL_PREV_KEY = 101;
+const DETAIL_BACK_KEY = 100;
+const DETAIL_NEXT_KEY = 102;
+const PREV_PERSON_KEY = 500;
+const NEXT_PERSON_KEY = 600;
+
 function print_sort_header_row() {
   era.printMultiColumns([
     {
       type: 'button',
-      accelerator: 1200,
+      accelerator: SORT_BY_ID_KEY,
       content: '编号',
       config: { align: 'left', width: 6 },
     },
     {
       type: 'button',
-      accelerator: 1300,
+      accelerator: SORT_BY_STATE_KEY,
       content: '状态',
       config: { align: 'left', width: 6 },
     },
     {
       type: 'button',
-      accelerator: 1400,
+      accelerator: SORT_BY_MONEY_KEY,
       content: '所持金',
       config: { align: 'left', width: 6 },
     },
     {
       type: 'button',
-      accelerator: 1500,
+      accelerator: SORT_BY_DEBT_KEY,
       content: '借金',
       config: { align: 'left', width: 6 },
     },
   ]);
-  era.printButton('一并积极性调整', 1600);
-  era.printButton('换号', 1700);
+  era.printButton('一并积极性调整', BULK_PROSTITUTION_KEY);
+  era.printButton('换号', NUMBER_SWAP_KEY);
 }
 
 // —— chara_info ——
@@ -568,7 +590,7 @@ function print_sort_header_row() {
  */
 async function chara_info() {
   let no_page = 0;
-  let sort_select = 1200;
+  let sort_select = SORT_BY_ID_KEY;
   let sort_act = 0;
 
   for (;;) {
@@ -582,14 +604,14 @@ async function chara_info() {
     era.drawLine();
 
     let order;
-    if (sort_select === 1300) {
+    if (sort_select === SORT_BY_STATE_KEY) {
       order = show_chara_act_list(no_page, sort_act % 2);
-    } else if (sort_select === 1400) {
+    } else if (sort_select === SORT_BY_MONEY_KEY) {
       order = show_chara_money_list(no_page);
-    } else if (sort_select === 1500) {
+    } else if (sort_select === SORT_BY_DEBT_KEY) {
       order = show_chara_debt_list(no_page);
     } else {
-      sort_select = 1200;
+      sort_select = SORT_BY_ID_KEY;
       order = show_chara_info_list(no_page);
     }
 
@@ -597,16 +619,16 @@ async function chara_info() {
     era.drawLine();
     print_button_grid(
       [
-        [997, '上一页'],
-        [999, '返回'],
-        [998, '下一页'],
+        [LIST_PREV_KEY, '上一页'],
+        [LIST_BACK_KEY, '返回'],
+        [LIST_NEXT_KEY, '下一页'],
       ],
       3,
     );
 
     const result = await era.input();
 
-    if (result === 1600) {
+    if (result === BULK_PROSTITUTION_KEY) {
       // uniform_bitch_level（#545 真身：page-uniform-bitch-level.js）。
       // 被调函数结束后回到名册循环：页码与排序选择在本函数里是局部
       // 变量，靠「同一轮循环 continue 重绘」在子流程返回后不归零（从名册
@@ -614,7 +636,7 @@ async function chara_info() {
       await uniform_bitch_level();
       continue;
     }
-    if (result === 1700) {
+    if (result === NUMBER_SWAP_KEY) {
       // chara_number_swap（#545 真身：page-chara-number-swap.js）。唯一出口
       // [1999] 结束换号 → 回到名册循环（同上：同一轮 continue 沿用现值）；
       // 「返回 0」出口在确认屏只打印 [4000]/[4001] 的输入白名单下不可达
@@ -623,26 +645,26 @@ async function chara_info() {
       continue;
     }
     if (
-      result === 1200 ||
-      result === 1300 ||
-      result === 1400 ||
-      result === 1500
+      result === SORT_BY_ID_KEY ||
+      result === SORT_BY_STATE_KEY ||
+      result === SORT_BY_MONEY_KEY ||
+      result === SORT_BY_DEBT_KEY
     ) {
       if (sort_select !== result) {
         sort_select = result;
-      } else if (result === 1300) {
+      } else if (result === SORT_BY_STATE_KEY) {
         sort_act += 1;
       }
       continue;
     }
-    if (result === 999) {
+    if (result === LIST_BACK_KEY) {
       return 0;
     }
-    if (result === 997) {
+    if (result === LIST_PREV_KEY) {
       if (no_page > 0) no_page -= 1;
       continue;
     }
-    if (result === 998) {
+    if (result === LIST_NEXT_KEY) {
       if ((no_page + 1) * NUM_PAGE <= total) no_page += 1;
       continue;
     }
@@ -652,7 +674,7 @@ async function chara_info() {
       // sort_select === 1200 走包装入口（透传内层返回值，见该函数注释）；
       // 其余视图直调内层：两路的返回值都直达回合结束判断
       const sub_result =
-        sort_select === 1200
+        sort_select === SORT_BY_ID_KEY
           ? await chara_info_individual_wrapped(result)
           : await chara_info_individual(result, order);
       if (sub_result === 1) {
@@ -760,38 +782,39 @@ async function chara_info_individual(arg, chara_sort) {
     era.drawLine();
     // 页脚五键同行（引擎 24 列网格，每格 4 列）；后两枚各带条件
     const footer = [
-      [101, '前页'],
-      [100, '返回'],
-      [102, '后页'],
+      [DETAIL_PREV_KEY, '前页'],
+      [DETAIL_BACK_KEY, '返回'],
+      [DETAIL_NEXT_KEY, '后页'],
     ];
-    if (current > 0) footer.push([500, '前一人']);
+    if (current > 0) footer.push([PREV_PERSON_KEY, '前一人']);
     // 显示条件按「角色总数含魔王（chara_sort.length+1）」换算成不含魔王的
     // `l_indx >= chara_sort.length - 1`；这里不额外要求 `l_indx >= 0`——
     // 魔王行（l_indx=-1）同样受这条条件支配，且 -1 通常小于
     // chara_sort.length-1，所以魔王行也会画出「后一人」（对应 case 600
     // 分发端 `current===0` 分支跳到 chara_sort[0] 的既有逻辑）。
     // 此前一版误加了 `l_indx>=0` 前缀、把魔王行的按钮吞掉，#391 复核修正。
-    if (l_indx < chara_sort.length - 1) footer.push([600, '后一人']);
+    if (l_indx < chara_sort.length - 1)
+      footer.push([NEXT_PERSON_KEY, '后一人']);
     print_button_grid(footer, 5);
 
     const result = await era.input();
 
     switch (result) {
-      case 100:
+      case DETAIL_BACK_KEY:
         return 0;
-      case 101:
+      case DETAIL_PREV_KEY:
         if (sub_page > 0) sub_page -= 1;
         continue;
-      case 102:
+      case DETAIL_NEXT_KEY:
         if (sub_page < 3) sub_page += 1;
         continue;
-      case 500:
+      case PREV_PERSON_KEY:
         // 前一人（另一支分发条件以魔王号为合取项、恒假不可达，
         // 只实现可达分支，见文件头）
         if (l_indx > 0) current = chara_sort[l_indx - 1];
         else if (l_indx === 0) current = 0;
         continue;
-      case 600:
+      case NEXT_PERSON_KEY:
         // 后一人（首支分发条件同上恒假，只实现可达分支）
         if (current === 0) {
           if (chara_sort.length > 0) current = chara_sort[0];

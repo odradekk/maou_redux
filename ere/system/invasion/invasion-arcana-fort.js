@@ -42,6 +42,11 @@
 'use strict';
 
 const era = require('#/era-electron');
+
+/** 堡垒攻略的选人屏页脚：上一页 [1000] / 返回 [999] / 下一页 [1001]（0-4 是堡垒） */
+const FORT_PREV_KEY = 1000;
+const FORT_BACK_KEY = 999;
+const FORT_NEXT_KEY = 1001;
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { chara } = require('#/facade/chara');
@@ -292,29 +297,29 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
     era.drawLine();
     print_button_grid(
       [
-        [1000, '- 上一页'],
-        [999, '- 返 回'], // PRINTLC（写两个空格也会被引擎折叠成一个，故只写一个）
-        [1001, '- 下一页'],
+        [FORT_PREV_KEY, '- 上一页'],
+        [FORT_BACK_KEY, '- 返 回'], // PRINTLC（写两个空格也会被引擎折叠成一个，故只写一个）
+        [FORT_NEXT_KEY, '- 下一页'],
       ],
       3,
     );
 
     const result = await era.input();
-    if (result === 1000) {
+    if (result === FORT_PREV_KEY) {
       // 上一页；页首不进，停留在本分支
       if (no_page > 0) {
         no_page -= 1;
       }
       continue;
     }
-    if (result === 1001) {
+    if (result === FORT_NEXT_KEY) {
       // 下一页；页尾不进，停留在本分支
       if (no_page < max_page) {
         no_page += 1;
       }
       continue;
     }
-    if (result === 999) {
+    if (result === FORT_BACK_KEY) {
       return 0; // 返  回
     }
     if (result < 0 || result >= candidates.length) {

@@ -22,6 +22,16 @@ const era = require('#/era-electron');
 const { chara } = require('#/facade/chara');
 
 /**
+ * 本屏的四个范围键：全侵攻中 [2000]、全迎击中 [2001]、两者 [2002]、
+ * 取消 [2003]。等级键 0-5 是位置编号（正文为空，引擎按 showAcc 拼），
+ * 不设常量。
+ */
+const SCOPE_INVASION_KEY = 2000;
+const SCOPE_INTERCEPT_KEY = 2001;
+const SCOPE_BOTH_KEY = 2002;
+const SCOPE_CANCEL_KEY = 2003;
+
+/**
  * uniform_bitch_level：按范围把全部在册角色的卖春积极性
  * （CFLAG:120，chara(cid).patch.卖春积极性）统一设置成同一等级。
  *
@@ -34,25 +44,25 @@ async function uniform_bitch_level() {
   era.printMultiColumns([
     {
       type: 'button',
-      accelerator: 2000,
+      accelerator: SCOPE_INVASION_KEY,
       content: '[ 全侵攻中的勇者 ]',
       config: { align: 'left', width: 6 },
     },
     {
       type: 'button',
-      accelerator: 2001,
+      accelerator: SCOPE_INTERCEPT_KEY,
       content: '[ 全迎击中的奴隶 ]',
       config: { align: 'left', width: 6 },
     },
     {
       type: 'button',
-      accelerator: 2002,
+      accelerator: SCOPE_BOTH_KEY,
       content: '[ 所有侵攻与迎击者 ]',
       config: { align: 'left', width: 6 },
     },
     {
       type: 'button',
-      accelerator: 2003,
+      accelerator: SCOPE_CANCEL_KEY,
       content: '[ 取消设置 ]', // （「取消設置」按 #60 归一为简体）
       config: { align: 'left', width: 6 },
     },
@@ -60,14 +70,14 @@ async function uniform_bitch_level() {
   era.println();
   const target = await era.input();
 
-  // 三支范围分支；2003 与其余输入落到空分支，
+  // 三支范围分支；[2003] 取消与白名单外的其余输入落到空分支，
   // 不动作直接返回（重进名册由调用方处理）
   let scope;
-  if (target === 2000) {
+  if (target === SCOPE_INVASION_KEY) {
     scope = { states: [2], message: '侵攻中的勇者（不含以后出现的新勇者）' };
-  } else if (target === 2001) {
+  } else if (target === SCOPE_INTERCEPT_KEY) {
     scope = { states: [3], message: '全迎击中的奴隶（不含以后追加的新奴隶）' };
-  } else if (target === 2002) {
+  } else if (target === SCOPE_BOTH_KEY) {
     scope = {
       states: [2, 3],
       message: '所有侵攻与迎击者（不含以后新入迷宫的对象）',

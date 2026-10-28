@@ -11,6 +11,9 @@
 'use strict';
 
 const era = require('#/era-electron');
+
+/** 恋人派遣屏的取消键 */
+const LOVERS_CANCEL_KEY = 999;
 const { chara } = require('#/facade/chara');
 const { chara_callname } = require('#/utils/callname-utils');
 const { default_rand } = require('#/utils/numeric');
@@ -65,15 +68,15 @@ async function enter_lover(cid) {
     const name = LOVER_NAMES.get(lover);
     if (name) era.printButton(name, lover);
   }
-  era.printButton('取消', 999);
+  era.printButton('取消', LOVERS_CANCEL_KEY);
   era.drawLine();
 
   // 受理集＝按钮集（0、999 与表里 1-99 的项）加表里的 200（恋人，界面上
   // 没有它的按钮）：整集写进 rule，越界值由引擎在输入框里拒收
   // （见 utils/input-rule.js）。
-  const accepted = `(?:0|999|${[...LOVER_NAMES.keys()].join('|')})`;
+  const accepted = `(?:0|${LOVERS_CANCEL_KEY}|${[...LOVER_NAMES.keys()].join('|')})`;
   const selected = await era.input({ rule: accepted });
-  if (selected === 999) return 0;
+  if (selected === LOVERS_CANCEL_KEY) return 0;
 
   const previous = era.get(`cflag:${cid}:606`) || 0; // CFLAG:606 = 恋人类型
   era.set(`cflag:${cid}:606`, selected);

@@ -69,6 +69,12 @@
 'use strict';
 
 const era = require('#/era-electron');
+
+/**
+ * 穿脱衣服两屏的「算了」键 [100]。1-19 是穿脱/撕破的动作号，
+ * 由各动作自己登记，不设常量。
+ */
+const CLOTH_CANCEL_KEY = 100;
 const era_flag = require('#/era-utils/era-flag');
 const { com_able_family, com_family } = require('#/system/train/com-family');
 const { wearing_cloth_all } = require('#/system/train/cloth');
@@ -588,7 +594,7 @@ async function com110() {
     if (worn(target) !== 0) {
       era.printButton('- 移动到[撕破衣服]', 9);
     }
-    era.printButton('- 算了', 100);
+    era.printButton('- 算了', CLOTH_CANCEL_KEY);
 
     const result = await era.input(); // 选择结果用于下面的穿脱分支
 
@@ -740,7 +746,7 @@ async function com110() {
       if (ripped === 1) {
         return 0;
       }
-    } else if (result === 100) {
+    } else if (result === CLOTH_CANCEL_KEY) {
       // 算了
       return 0;
     }
@@ -806,7 +812,7 @@ async function com111() {
       era.printButton('- 撕碎内裤', 14);
     }
     era.printButton('- 返回[穿脱衣服]', 19);
-    era.printButton('- 算了', 100);
+    era.printButton('- 算了', CLOTH_CANCEL_KEY);
 
     const result = await era.input();
 
@@ -883,7 +889,7 @@ async function com111() {
     } else if (result === 19) {
       // 返回[穿脱衣服]
       return 0;
-    } else if (result === 100) {
+    } else if (result === CLOTH_CANCEL_KEY) {
       // 算了
       return 1;
     } else {
