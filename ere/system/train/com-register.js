@@ -44,6 +44,14 @@ const {
 } = require('#/system/train/com-family');
 const { execute_command_round } = require('#/system/train/train-loop');
 const { print_button_grid } = require('#/utils/button-grid');
+
+/**
+ * 调教菜单登录屏的三键：重置 [998]、重复 [999]、取消/保存并返回 [1000]。
+ * 取消与保存共用 1000——两分支的正文不同，编号相同。
+ */
+const REGISTER_RESET_KEY = 998;
+const REGISTER_REPEAT_KEY = 999;
+const REGISTER_DONE_KEY = 1000;
 const { train_command_name } = require('#/data/train-command-const');
 
 /** 菜单保存槽的 flag 区段（FLAG:551～560） */
@@ -160,15 +168,15 @@ async function comseq_register() {
     era.println(); // （这一条是真空行——上面的方格已由自己的 PRINTL 收尾）
     // 出口按钮（条件与文案逐字；按钮正文不带 [编号] 前缀）
     if (game_train.指令菜单长度 > 0) {
-      era.printButton('重置菜单', 998);
+      era.printButton('重置菜单', REGISTER_RESET_KEY);
     }
     if (local0 > 0) {
-      era.printButton('重复指令', 999);
+      era.printButton('重复指令', REGISTER_REPEAT_KEY);
     }
     if (local0 === 0) {
-      era.printButton('取消并返回', 1000); // 两分支文案相同
+      era.printButton('取消并返回', REGISTER_DONE_KEY); // 两分支文案相同
     } else {
-      era.printButton('保存并返回', 1000);
+      era.printButton('保存并返回', REGISTER_DONE_KEY);
     }
     // 的 PRINTL 只结束那串 PRINTC 出口键所在的行（PRINTC 系不
     // 换行，见 CONTEXT.md「输出 API 的排版与对齐」）；按钮自成一行，故这里
@@ -183,7 +191,7 @@ async function comseq_register() {
     const result = await era.input(); // INPUT
 
     // 出口：首步取消 → RETURN 0；越界（保存并返回 1000 等）→ 完成段
-    if (result === 1000 && local0 === 0) {
+    if (result === REGISTER_DONE_KEY && local0 === 0) {
       return 0;
     }
     if (result < 0 || result > 999) {
@@ -191,7 +199,7 @@ async function comseq_register() {
     }
 
     // 重置菜单：TFLAG:204 清零、长度与 551-560 槽全清（550 亦清）
-    if (result === 998 && game_train.指令菜单长度 > 0) {
+    if (result === REGISTER_RESET_KEY && game_train.指令菜单长度 > 0) {
       game_train.当前选择的调教指令编号 = 0;
       local0 = 0;
       for (let slot = 550; slot <= 560; slot += 1) {
@@ -201,7 +209,7 @@ async function comseq_register() {
     }
 
     // 重复指令：把已登记的 period 条循环复制至满 10 条后直入完成段
-    if (result === 999 && local0 > 0) {
+    if (result === REGISTER_REPEAT_KEY && local0 > 0) {
       const period = local0; // LOCAL:1 已登记条数的快照
       while (local0 <= 9) {
         // LOCAL:3 = 551 + (LOCAL:0 % LOCAL:1)——以 period 为周期取模板槽

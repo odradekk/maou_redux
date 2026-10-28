@@ -205,6 +205,12 @@ const CHAR_GIFT_TABLE = {
 };
 
 /** 性格档位表（[0]..[7] → TALENT 编号） */
+/**
+ * 贡品少女的性格/发色设定屏的「决定」键 [100]。同屏的 0/1 是两行
+ * 入口、0-10 是性格与发色的取值，都是位置编号，不设常量。
+ */
+const GIFT_DECIDE_KEY = 100;
+
 const CHAR_GIFT_PERSONAL = [160, 161, 162, 163, 164, 166, 172, 173];
 
 /**
@@ -310,7 +316,7 @@ async function char_gift(arg, rand = default_rand) {
     era.printButton(`性格 ：  ${era.get(`talentname:${personal}`) ?? ''}`, 0);
     era.printButton(`发色 ：  ${get_look_info(a, '头发颜色')}`, 1);
     era.drawLine(); // 菜单块（PRINTL 三行 + DRAWLINE + 决定行）
-    era.printButton('决定', 100);
+    era.printButton('决定', GIFT_DECIDE_KEY);
     const result = await era.input(); // 菜单的 INPUT
 
     if (result === 0) {
@@ -359,7 +365,7 @@ async function char_gift(arg, rand = default_rand) {
       continue; // GOTO INPUT_LOOP_2
     }
 
-    if (result !== 100) {
+    if (result !== GIFT_DECIDE_KEY) {
       continue; // ELSE / GOTO INPUT_LOOP_2
     }
 

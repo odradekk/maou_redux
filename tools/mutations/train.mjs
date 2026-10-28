@@ -626,17 +626,17 @@ export default [
   {
     desc: 'M764 子菜单按钮检查删（交代助手/对换调教恒显示）',
     file: 'ere/page/page-usercom.js',
-    find: "  if (guards.can_handover) {\n    submenu.push([102, '交代助手']); // （ASSI > 0 && ASSI:1 > 0）\n  }",
-    replace: `  submenu.push([102, '交代助手']); // 变异：无检查`,
+    find: "  if (guards.can_handover) {\n    submenu.push([HANDOVER_KEY, '交代助手']); // （ASSI > 0 && ASSI:1 > 0）\n  }",
+    replace: `  submenu.push([HANDOVER_KEY, '交代助手']); // 变异：无检查`,
     tests: ['page-usercom'],
     must_mention: '默认态 9 个按钮',
   },
   {
     desc: 'M765 FLAG:550 检查删（991/992 无菜单也显示）',
     file: 'ere/page/page-usercom.js',
-    find: "  if (game_train.指令菜单长度 > 0) {\n    footer.push([991, '调教菜单表示']);\n    footer.push([992, '调教菜单实行']);\n  }",
-    replace: `  footer.push([991, '调教菜单表示']); // 变异：无检查
-  footer.push([992, '调教菜单实行']);`,
+    find: "  if (game_train.指令菜单长度 > 0) {\n    footer.push([MENU_SHOW_KEY, '调教菜单表示']);\n    footer.push([MENU_RUN_KEY, '调教菜单实行']);\n  }",
+    replace: `  footer.push([MENU_SHOW_KEY, '调教菜单表示']); // 变异：无检查
+  footer.push([MENU_RUN_KEY, '调教菜单实行']);`,
     tests: ['page-usercom'],
     must_mention: '默认态 9 个按钮',
   },
@@ -697,10 +697,10 @@ export default [
   {
     desc: 'M770 102/112 的 ASSIPLAY 更新删（换视角后助手参与态不刷新）',
     file: 'ere/page/page-usercom.js',
-    find: '    // ASSIPLAY = PLAYER != MASTER ? 1 : 0\n    era_flag.assiplay = era_flag.player !== MASTER ? 1 : 0;\n    return;\n  }\n  if (result === 112 && guards.can_swap) {',
+    find: '    // ASSIPLAY = PLAYER != MASTER ? 1 : 0\n    era_flag.assiplay = era_flag.player !== MASTER ? 1 : 0;\n    return;\n  }\n  if (result === SWAP_TRAIN_KEY && guards.can_swap) {',
     replace: `    return;
   }
-  if (result === 112 && guards.can_swap) {`,
+  if (result === SWAP_TRAIN_KEY && guards.can_swap) {`,
     tests: ['page-usercom'],
     must_mention: 'PLAYER != MASTER → ASSIPLAY = 1',
   },
@@ -1850,7 +1850,7 @@ export default [
     // 随按钮化删除），等价检查换成「结束键退回纯文本」。
     desc: 'M14243 com111 的 [100] 结束键退回纯文本（玩家点不了）',
     file: 'ere/system/train/com-cloth.js',
-    find: "    era.printButton('- 返回[穿脱衣服]', 19);\n    era.printButton('- 算了', 100);",
+    find: "    era.printButton('- 返回[穿脱衣服]', 19);\n    era.printButton('- 算了', CLOTH_CANCEL_KEY);",
     replace:
       "    era.printButton('- 返回[穿脱衣服]', 19);\n    era.print(' [100]- 算了'); // 变异：结束键退回纯文本",
     tests: ['com-cloth'],
@@ -10137,9 +10137,9 @@ export default [
   {
     desc: 'M12281 ablup0 的 [100] 停止键丢掉「- 」',
     file: 'ere/system/train/ablup.js',
-    find: "    era.printButton(spec.stop ?? '- 停止', 100);",
+    find: "    era.printButton(spec.stop ?? '- 停止', ABLUP_STOP_KEY);",
     replace:
-      "    era.printButton(spec.stop ?? '停止', 100); // 变异：丢掉「- 」",
+      "    era.printButton(spec.stop ?? '停止', ABLUP_STOP_KEY); // 变异：丢掉「- 」",
     tests: ['ablup'],
     must_mention: '「- 」是正文的一部分',
   },
@@ -11223,7 +11223,7 @@ export default [
   {
     desc: 'M13873 run_ablup：收尾键的快捷键改错（100 → 101）',
     file: 'ere/system/train/ablup.js',
-    find: "    era.printButton(spec.stop ?? '- 停止', 100);",
+    find: "    era.printButton(spec.stop ?? '- 停止', ABLUP_STOP_KEY);",
     replace: "    era.printButton(spec.stop ?? '- 停止', 101);",
     tests: ['ablup'],
     must_mention: 'ablup0：点数不足时按钮 0 会重新提示"未满足条件"并可重试',

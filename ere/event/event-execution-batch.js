@@ -71,6 +71,16 @@
 'use strict';
 
 const era = require('#/era-electron');
+
+/**
+ * 批量处刑的固定键：停止 [100]（处刑介面）、选择处刑方式 [121]、
+ * 名单页脚上一页 [2000] / 结束 [1999] / 下一页 [2001]。
+ */
+const BATCH_STOP_KEY = 100;
+const BATCH_METHOD_KEY = 121;
+const BATCH_PREV_KEY = 2000;
+const BATCH_END_KEY = 1999;
+const BATCH_NEXT_KEY = 2001;
 const { exucution_koujo } = require('#/kojo/kojo-system');
 const {
   video_maturo,
@@ -514,7 +524,7 @@ async function method_screen(rand_n) {
       era.printButton(label, index);
     });
     era.println(); // PRINTL
-    era.printButton('停止', 100);
+    era.printButton('停止', BATCH_STOP_KEY);
     era.printButton(
       `水晶球记录：${(era_exflag.mod_switch_bits & 4) !== 0 ? '开' : '关'}`,
       101,
@@ -534,7 +544,7 @@ async function method_screen(rand_n) {
       }
       return DONE; // 处刑中 = 0；GOTO 处刑介面
     }
-    if (choice === 100) return DONE; // CASE 100 → GOTO 处刑介面
+    if (choice === BATCH_STOP_KEY) return DONE; // CASE 100 → GOTO 处刑介面
     if (choice === 101) {
       era_exflag.mod_switch_bits ^= 4; // INVERTBIT EX_FLAG:9000,2
       continue; // GOTO 处刑介面2
@@ -598,7 +608,7 @@ async function batch_execution(rand_n = default_rand) {
       // 行合并），故显示 [121] 时按钮后只补一个空行；不显示时
       // 两个 PRINTL 都落成空行，随后是三个页导航按钮
       if (executable) {
-        era.printButton('选择处刑方式', 121); // 有可处刑目标时才显示
+        era.printButton('选择处刑方式', BATCH_METHOD_KEY); // 有可处刑目标时才显示
         era.println(); // PRINTL
       } else {
         era.println(); // PRINTL
@@ -606,25 +616,25 @@ async function batch_execution(rand_n = default_rand) {
       }
       print_button_grid(
         [
-          [2000, '上一页'],
-          [1999, '结束处刑'], // 原文「結束处刑」
-          [2001, '下一页'],
+          [BATCH_PREV_KEY, '上一页'],
+          [BATCH_END_KEY, '结束处刑'], // 原文「結束处刑」
+          [BATCH_NEXT_KEY, '下一页'],
         ],
         3,
       );
 
       const result = await era.input(); // INPUT
-      if (result === 2000) {
+      if (result === BATCH_PREV_KEY) {
         // 上一页：页首不再退
         if (no_page > 0) no_page -= 1;
         continue screen;
       }
-      if (result === 2001) {
+      if (result === BATCH_NEXT_KEY) {
         // 下一页：(NO_PAGE+1)*NUM_PAGE <= CHARANUM 才进
         if ((no_page + 1) * NUM_PAGE <= charanum) no_page += 1;
         continue screen;
       }
-      if (result === 1999) return 0; // BEGIN SHOP
+      if (result === BATCH_END_KEY) return 0; // BEGIN SHOP
       if (result === 121) {
         const outcome = await method_screen(rand_n);
         if (outcome === RESTART) continue restart;

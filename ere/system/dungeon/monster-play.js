@@ -6,6 +6,10 @@
 'use strict';
 
 const era = require('#/era-electron');
+
+/** 怪物玩弄入口屏的野狗键 [900] 与返回键 [999] */
+const MONSTER_PLAY_DOG_KEY = 900;
+const MONSTER_PLAY_BACK_KEY = 999;
 const { begin, STATE } = require('#/system/flow/game-state');
 const { monster_data } = require('#/system/dungeon/monster-data');
 const {
@@ -384,9 +388,9 @@ async function monster_play(rand = default_rand) {
   era.drawLine();
   monsterplay_list();
   if (item_count(22) >= 1) {
-    era.printButton('野狗', 900);
+    era.printButton('野狗', MONSTER_PLAY_DOG_KEY);
   }
-  era.printButton('返回', 999);
+  era.printButton('返回', MONSTER_PLAY_BACK_KEY);
 
   // 列表（print_button_grid）与 [900] 野狗、[999] 返回构成整轮的按钮集，
   // 也就是受理集：白名单先一步拦下未列出的编号。

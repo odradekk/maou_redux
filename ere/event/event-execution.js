@@ -17,6 +17,10 @@
 'use strict';
 
 const era = require('#/era-electron');
+
+/** 处刑介面两键：停止 [100]、水晶球记录 [101] */
+const EXECUTION_STOP_KEY = 100;
+const EXECUTION_VIDEO_KEY = 101;
 const { exucution_koujo } = require('#/kojo/kojo-system');
 const {
   video_maturo,
@@ -130,8 +134,8 @@ function print_methods(cid) {
     }
   });
   era.println(); // 空行：处置菜单与 [100]/[101] 按钮隔开
-  era.printButton('停止', 100);
-  era.printButton('水晶球记录', 101, {
+  era.printButton('停止', EXECUTION_STOP_KEY);
+  era.printButton('水晶球记录', EXECUTION_VIDEO_KEY, {
     color: era_exflag.mod_switch_bits & 4 ? '#ffffff' : '#646464',
   });
 }
@@ -331,7 +335,7 @@ async function execution(rand_n = default_rand) {
     era.drawLine();
     // #710：候选人轮与 [100] 返回整轮按钮化（候选人行见 print_candidates）。
     // 按钮集就是受理集（候选人下标 + 100），白名单先一步拦下其余值。
-    era.printButton('返回', 100);
+    era.printButton('返回', EXECUTION_STOP_KEY);
     const selected = await era.input();
     if (selected === 100) return 0;
     const cid = candidates[selected];
@@ -343,12 +347,17 @@ async function execution(rand_n = default_rand) {
         // 处置菜单的编号（0-7、100、101）全在按钮上，白名单即本轮的按钮集，
         // 不再关掉校验（#572）。
         result = await era.input();
-      } while (result < 0 || (result >= 8 && result !== 100 && result !== 101));
-      if (result === 101) {
+      } while (
+        result < 0 ||
+        (result >= 8 &&
+          result !== EXECUTION_STOP_KEY &&
+          result !== EXECUTION_VIDEO_KEY)
+      );
+      if (result === EXECUTION_VIDEO_KEY) {
         era_exflag.mod_switch_bits ^= 4;
         continue;
       }
-      if (result === 100) {
+      if (result === EXECUTION_STOP_KEY) {
         era_flag.target = game.event.上次调教对象;
         return 0;
       }

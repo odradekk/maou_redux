@@ -17,6 +17,10 @@
 'use strict';
 
 const era = require('#/era-electron');
+
+/** 卖春市场入口的三键：放弃 [999]、水晶球记录 [1000]（0-2 是三个市场） */
+const SELL_MARKET_GIVEUP_KEY = 999;
+const SELL_MARKET_VIDEO_KEY = 1000;
 const { estimate_chara } = require('#/system/stronghold/sale');
 const { video_maturo } = require('#/system/stronghold/sell-video');
 const { sell_maturo_k1 } = require('#/system/stronghold/sell-maturo-k1');
@@ -53,8 +57,8 @@ function print_market_menu() {
   era.printButton('魔界的黑市', 0);
   era.printButton('魔界的异族交易市场', 1);
   era.printButton('魔界的宠物市场', 2);
-  era.printButton('找什么市场？随手卖掉吧！！', 999);
-  era.printButton('水晶球记录', 1000, {
+  era.printButton('找什么市场？随手卖掉吧！！', SELL_MARKET_GIVEUP_KEY);
+  era.printButton('水晶球记录', SELL_MARKET_VIDEO_KEY, {
     color: era_exflag.mod_switch_bits & 4 ? '#ffffff' : '#646464',
   });
 }
@@ -68,8 +72,8 @@ async function choose_market(cid, price, rand) {
     if (result < 0 || (result >= 3 && result !== 999 && result !== 1000)) {
       continue;
     }
-    if (result === 999) return true;
-    if (result === 1000) {
+    if (result === SELL_MARKET_GIVEUP_KEY) return true;
+    if (result === SELL_MARKET_VIDEO_KEY) {
       era_exflag.mod_switch_bits ^= 4;
       redraw = true;
       continue;

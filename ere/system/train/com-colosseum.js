@@ -53,6 +53,9 @@
  */
 
 const era = require('#/era-electron');
+
+/** 斗技场各屏的「暂时放过」键（三处同号） */
+const COLOSSEUM_PASS_KEY = 999;
 const era_flag = require('#/era-utils/era-flag');
 const { chara } = require('#/facade/chara');
 const { settle_ejaculation_gauge } = require('#/system/train/calc-ejaculation');
@@ -324,7 +327,7 @@ async function com201(rand = default_rand) {
     if (penetrator) {
       era.printButton('- 肛门', 3); // [3]
     }
-    era.printButton('暂时放过', 999); // [999]
+    era.printButton('暂时放过', COLOSSEUM_PASS_KEY); // [999]
     const result = await era.input();
 
     if (result === 0 && penetrator) {
@@ -358,7 +361,7 @@ async function com201(rand = default_rand) {
       era.print('＜助手・背后位肛交＞');
       const com_result = await call_insult_com(27);
       era.add('tflag:402', lose(target, 0) * 5 + rand(com_result));
-    } else if (result === 999) {
+    } else if (result === COLOSSEUM_PASS_KEY) {
       // 暂时放过
       era.print(
         `${chara_callname(MASTER)}叫${chara_callname(era_flag.assi)}退下了……`,
@@ -510,7 +513,7 @@ async function monster_insult_menu(cfg, rand) {
       era.printButton('- 私处', 2); // [2]
     }
     era.printButton('- 肛门', 3); // [3]（无条件）
-    era.printButton('暂时放过', 999); // [999]
+    era.printButton('暂时放过', COLOSSEUM_PASS_KEY); // [999]
     const result = await era.input();
 
     if (result === 0) {
@@ -548,7 +551,7 @@ async function monster_insult_menu(cfg, rand) {
       era.print(`＜${cfg.label}${MONSTER_SEP}背后位肛交＞`);
       const com_result = await call_insult_com(27);
       era.add('tflag:402', cfg.income(lose(target, 0)) + rand(com_result));
-    } else if (result === 999) {
+    } else if (result === COLOSSEUM_PASS_KEY) {
       // 暂时放过：整条指令作废（monster_com 按 RETIRE 返回 0，
       // 与 COM201 的放过出口一致）
       era.print(`${chara_callname(MASTER)}${cfg.retire}`);
@@ -845,7 +848,7 @@ async function com207() {
       era.printButton('- 私处', 1); // （男人不显示）
     }
     era.printButton('- 肛门', 2);
-    era.printButton('暂时放过', 999);
+    era.printButton('暂时放过', COLOSSEUM_PASS_KEY);
     const result = await era.input();
 
     if (result === 0) {
@@ -871,7 +874,7 @@ async function com207() {
       await era.waitAnyKey();
       return await call_insult_com(51);
     }
-    if (result === 999) {
+    if (result === COLOSSEUM_PASS_KEY) {
       // 暂时放过：返回 1
       return 1;
     }

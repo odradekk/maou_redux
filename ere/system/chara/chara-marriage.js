@@ -84,6 +84,17 @@
  */
 
 const era = require('#/era-electron');
+
+/**
+ * 结婚菜单的固定键：不可选项的占位编号 666、分手 [903]、
+ * 从奴隶中选 [904]、离婚 [998]、返回 [999]。
+ * （SPOUSE_* 是配偶种类，另有常量。）
+ */
+const MARRIAGE_DISABLED_KEY = 666;
+const MARRIAGE_BREAK_KEY = 903;
+const MARRIAGE_SLAVE_KEY = 904;
+const MARRIAGE_DIVORCE_KEY = 998;
+const MARRIAGE_BACK_KEY = 999;
 const { search_family } = require('#/system/chara/chara-family');
 const { chara_id_output } = require('#/system/chara/chara-stats');
 const { enter_lover, LOVER_NAMES } = require('#/system/dungeon/dungeon-lovers');
@@ -220,7 +231,7 @@ function print_choice(content, accelerator) {
  * @param {string} content 按钮正文
  */
 function print_disabled(content) {
-  era.printButton(content, 666, {
+  era.printButton(content, MARRIAGE_DISABLED_KEY, {
     color: COLOR_DISABLED,
     disabled: true,
   });
@@ -1102,7 +1113,7 @@ async function marriage(arg, rand = default_rand) {
     const result = await era.input();
     groom_num = result;
 
-    if (result === 999) return 0;
+    if (result === MARRIAGE_BACK_KEY) return 0;
     if (result === SPOUSE_YOU) {
       // 你と結婚
       if (arg === 0) {
@@ -1115,19 +1126,19 @@ async function marriage(arg, rand = default_rand) {
         await enter_lover(arg);
         continue;
       }
-    } else if (result === 903) {
+    } else if (result === MARRIAGE_BREAK_KEY) {
       // 恋人別れる
       chara(arg).dungeon.恋人 = 0; // CFLAG:606 = 0（dungeon 域）
       era.print('与恋人分手了。');
       continue;
-    } else if (result === 904) {
+    } else if (result === MARRIAGE_SLAVE_KEY) {
       // 从奴隶中
       const picked = await slave_sub_menu(arg, no_page);
       no_page = picked.no_page;
       if (picked.partner === null) continue;
       partner = picked.partner;
       groom_type = 1000;
-    } else if (result === 998) {
+    } else if (result === MARRIAGE_DIVORCE_KEY) {
       // 離婚
       divorce(arg);
       return 0;

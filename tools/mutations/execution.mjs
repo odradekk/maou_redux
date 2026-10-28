@@ -781,7 +781,7 @@ export default [
   {
     desc: 'M11353 [121] 按钮无条件渲染',
     file: 'ere/event/event-execution-batch.js',
-    find: "      if (executable) {\n        era.printButton('选择处刑方式', 121); // 有可处刑目标时才显示",
+    find: "      if (executable) {\n        era.printButton('选择处刑方式', BATCH_METHOD_KEY); // 有可处刑目标时才显示",
     replace:
       "      if (true) {\n        era.printButton('选择处刑方式', 121); // SIF 可处刑",
     tests: ['event-execution-batch'],
@@ -1104,7 +1104,7 @@ export default [
   {
     desc: 'M11390 批量处刑：页导航按钮文案写错',
     file: 'ere/event/event-execution-batch.js',
-    find: "          [1999, '结束处刑'], // 原文「結束处刑」",
+    find: "          [BATCH_END_KEY, '结束处刑'], // 原文「結束处刑」",
     replace: "          [1999, '终止处刑'], // 原文「結束处刑」",
     tests: ['event-execution-batch'],
     must_mention: '[1999] 的按钮文案',
@@ -1156,9 +1156,9 @@ export default [
   {
     desc: 'M11398 名单屏：[121] 显示时多画一个空行（PRINTLC 不换行，按钮后只该有一个）',
     file: 'ere/event/event-execution-batch.js',
-    find: "        era.printButton('选择处刑方式', 121); // 有可处刑目标时才显示\n        era.println(); // PRINTL\n      } else {",
+    find: "        era.printButton('选择处刑方式', BATCH_METHOD_KEY); // 有可处刑目标时才显示\n        era.println(); // PRINTL\n      } else {",
     replace:
-      "        era.printButton('选择处刑方式', 121); // 有可处刑目标时才显示\n        era.println(); // PRINTL\n        era.println(); // 变异：多一个空行\n      } else {",
+      "        era.printButton('选择处刑方式', BATCH_METHOD_KEY); // 有可处刑目标时才显示\n        era.println(); // PRINTL\n        era.println(); // 变异：多一个空行\n      } else {",
     tests: ['event-execution-batch'],
     must_mention: '[121] 之后只有一个空行，再下一条是 [2000] 上一页',
   },
@@ -1320,7 +1320,7 @@ export default [
     // 与「候选人行退回纯文本」两侧。
     desc: 'M14251 候选人轮的 [100] 返回退回纯文本（回到只按钮化行的半套写法）',
     file: 'ere/event/event-execution.js',
-    find: "    era.printButton('返回', 100);\n    const selected = await era.input();",
+    find: "    era.printButton('返回', EXECUTION_STOP_KEY);\n    const selected = await era.input();",
     replace:
       "    era.print('[100] 返回'); // 变异：返回退回纯文本\n    const selected = await era.input();",
     tests: ['event-execution'],
@@ -1386,7 +1386,7 @@ export default [
   {
     desc: 'M11985 批量处刑的选择处刑方式退回预设 ID 段内的 [150]',
     file: 'ere/event/event-execution-batch.js',
-    find: "era.printButton('选择处刑方式', 121); // 有可处刑目标时才显示",
+    find: "era.printButton('选择处刑方式', BATCH_METHOD_KEY); // 有可处刑目标时才显示",
     replace: "era.printButton('选择处刑方式', 150); // 有可处刑目标时才显示",
     tests: ['child-id-collision'],
     must_mention: '同一轮里与角色行同屏的固定编号不得等于预设 ID',

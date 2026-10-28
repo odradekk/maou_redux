@@ -42,6 +42,9 @@
  */
 
 const era = require('#/era-electron');
+
+/** 实验室调试屏的返回键（1-8 是各调试项） */
+const LABO_DEBUG_BACK_KEY = 100;
 const { default_rand, idiv_trunc } = require('#/utils/numeric');
 
 // —— DA/DB/DC：VariableSize.csv 的三张 100×100 全局二维数组 ——
@@ -335,9 +338,9 @@ async function labo(rand) {
     era.printButton('GEO清除', 6); // [006]
     era.printButton('图片测试', 7); // [007]
     era.printButton('头像测试', 8); // [008]
-    era.printButton('返回', 100); // [100]
+    era.printButton('返回', LABO_DEBUG_BACK_KEY); // [100]
     const result = await era.input(); // INPUT
-    if (result === 100) {
+    if (result === LABO_DEBUG_BACK_KEY) {
       return 0; // RETURN 0
     }
     if (result === 1) {

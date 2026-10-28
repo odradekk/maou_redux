@@ -480,8 +480,9 @@ export default [
   {
     desc: 'M11436 统一卖春积极性：侵攻档按钮快捷键 2000 撞到 2001（2000 进不了白名单）',
     file: 'ere/page/page-uniform-bitch-level.js',
-    find: "      accelerator: 2000,\n      content: '[ 全侵攻中的勇者 ]',",
-    replace: "      accelerator: 2001,\n      content: '[ 全侵攻中的勇者 ]',",
+    find: "      accelerator: SCOPE_INVASION_KEY,\n      content: '[ 全侵攻中的勇者 ]',",
+    replace:
+      "      accelerator: SCOPE_INTERCEPT_KEY,\n      content: '[ 全侵攻中的勇者 ]',",
     tests: ['page-chara-info'],
     must_mention: '输入不合法',
   },
@@ -727,8 +728,8 @@ export default [
   {
     desc: 'M11465 排序表头：[1200] 编号视图的快捷键写成 1201（白名单拒收，按编号切不回去）',
     file: 'ere/page/page-chara-info.js',
-    find: "      accelerator: 1200,\n      content: '编号',",
-    replace: "      accelerator: 1201,\n      content: '编号',",
+    find: "      accelerator: SORT_BY_ID_KEY,\n      content: '编号',",
+    replace: "      accelerator: SORT_BY_ID_KEY + 1,\n      content: '编号',",
     tests: ['page-chara-info'],
     must_mention: 'era.input() 只接受本轮已打印按钮的快捷键',
   },
