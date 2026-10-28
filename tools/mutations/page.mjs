@@ -472,7 +472,7 @@ export default [
   {
     desc: 'M226 存档界面翻页步长改坏（+20 → +19）',
     file: 'ere/page/page-save-load.js',
-    find: '    } else if (result === 102 && pos + PAGE_LEN < 99) {\n      pos += PAGE_LEN;\n    } else if (result === 200) {',
+    find: '    } else if (result === PAGE_NEXT_KEY && pos + PAGE_LEN < 99) {\n      pos += PAGE_LEN;\n    } else if (result === NAME_STORY_KEY) {',
     replace:
       '    } else if (result === 102 && pos + PAGE_LEN < 99) {\n      pos += PAGE_LEN - 1; // 变异：步长改坏\n    } else if (result === 200) {',
     tests: ['page-save-load'],
@@ -665,10 +665,10 @@ export default [
   {
     desc: 'M562 INFO2 怪物迎击 toggle 的位换算改坏（FLAG:5 位 4 → 位 3）',
     file: 'ere/page/page-dungeon-info2.js',
-    find: `    if (result === 100) {
+    find: `    if (result === INTERCEPT_TOGGLE_KEY) {
       flag_set(5, flag_get(5) ^ 16);
     }`,
-    replace: `    if (result === 100) {
+    replace: `    if (result === INTERCEPT_TOGGLE_KEY) {
       flag_set(5, flag_get(5) ^ 8); // 变异：位 3
     }`,
     tests: ['page-dungeon-info'],
@@ -1065,10 +1065,10 @@ export default [
   {
     desc: 'M17615 使用支取消也扣钱（选人时按 [999] 也算买下）',
     file: 'ere/page/page-item-shop.js',
-    find: `    if (result === 999) {
+    find: `    if (result === TARGET_CANCEL_KEY) {
       return 0; // 取消：还没付款，道具也没动
     }`,
-    replace: `    if (result === 999) {
+    replace: `    if (result === TARGET_CANCEL_KEY) {
       era_flag.money -= item_price(bought); // 变异：取消也扣钱
       return 0; // 取消：还没付款，道具也没动
     }`,
@@ -3557,7 +3557,7 @@ export default [
   {
     desc: 'M11550 CONFIG_AGE_SETTING [9] 详细设定的渲染门用错位（13 → 12，#547）',
     file: 'ere/page/page-config-age.js',
-    find: "    // [9] 只在位 13 开时打印（隐藏分支的 ere 不可达性见文件头）\n    if (getbit(v, 13)) {\n      era.printButton('详细设定', 9);\n    }",
+    find: "    // [9] 只在位 13 开时打印（隐藏分支的 ere 不可达性见文件头）\n    if (getbit(v, 13)) {\n      era.printButton('详细设定', AGE_DETAIL_KEY);\n    }",
     replace: `    // 变异：渲染门用位 12
     if (getbit(v, 12)) {
       era.printButton('详细设定', 9);
@@ -3629,8 +3629,8 @@ export default [
   {
     desc: 'M11557 CONFIG_AGE_SETTING [9] 分支不播种默认表（表未设时进编辑器全是空档，#547）',
     file: 'ere/page/page-config-age.js',
-    find: '    } else if (result === 9) {\n      // 表未设时先播种默认，再进详细设定\n      if (race_table_unset()) {\n        seed_race_defaults();\n      }\n      await race_config(rand);',
-    replace: `    } else if (result === 9) {
+    find: '    } else if (result === AGE_DETAIL_KEY) {\n      // 表未设时先播种默认，再进详细设定\n      if (race_table_unset()) {\n        seed_race_defaults();\n      }\n      await race_config(rand);',
+    replace: `    } else if (result === AGE_DETAIL_KEY) {
       // 变异：不播种默认表
       await race_config(rand);`,
     tests: ['page-config-age'],
@@ -3640,8 +3640,8 @@ export default [
   {
     desc: 'M11558 RACE_CONFIG [98] 确认分支不写默认表（回默认按钮失效，#547）',
     file: 'ere/page/page-config-age.js',
-    find: "    } else if (result === 98) {\n      // 回默认（确认后直接 RETURN）\n      if (await confirm_reset('全种族的年龄均返回默认值。')) {\n        seed_race_defaults();\n        return 0;\n      }",
-    replace: `    } else if (result === 98) {
+    find: "    } else if (result === AGE_DEFAULT_KEY) {\n      // 回默认（确认后直接 RETURN）\n      if (await confirm_reset('全种族的年龄均返回默认值。')) {\n        seed_race_defaults();\n        return 0;\n      }",
+    replace: `    } else if (result === AGE_DEFAULT_KEY) {
       // 变异：确认后不写默认
       if (await confirm_reset('全种族的年龄均返回默认值。')) {
         return 0;
@@ -3652,10 +3652,10 @@ export default [
   {
     desc: 'M11559 RACE_CONFIG [99] 的打包挪进确认之后（打包先于确认：取消也写回编辑态，#547）',
     file: 'ere/page/page-config-age.js',
-    find: "    } else if (result === 99 || result === 100) {\n      // 打包写回（[99]/[100] 共用，先于 [99] 的确认 INPUT）\n      game.chara.种族年龄设定_0 = cla\n        .slice(0, 6)\n        .map((c, i) => c * 100 + deg[i] * 10 + num[i]);\n      game.chara.种族年龄设定_1 = [6, 7].map(\n        (i) => cla[i] * 100 + deg[i] * 10 + num[i],\n      );\n      if (result === 99) {\n        if (await confirm_reset('全种族的年龄按现在的设定重新计算。')) {",
-    replace: `    } else if (result === 99 || result === 100) {
+    find: "    } else if (result === AGE_RESEED_KEY || result === AGE_BACK_KEY) {\n      // 打包写回（[99]/[100] 共用，先于 [99] 的确认 INPUT）\n      game.chara.种族年龄设定_0 = cla\n        .slice(0, 6)\n        .map((c, i) => c * 100 + deg[i] * 10 + num[i]);\n      game.chara.种族年龄设定_1 = [6, 7].map(\n        (i) => cla[i] * 100 + deg[i] * 10 + num[i],\n      );\n      if (result === AGE_RESEED_KEY) {\n        if (await confirm_reset('全种族的年龄按现在的设定重新计算。')) {",
+    replace: `    } else if (result === AGE_RESEED_KEY || result === AGE_BACK_KEY) {
       // 变异：打包挪进确认之后
-      if (result === 99) {
+      if (result === AGE_RESEED_KEY) {
         if (await confirm_reset('全种族的年龄按现在的设定重新计算。')) {
           game.chara.种族年龄设定_0 = cla
             .slice(0, 6)
@@ -3685,8 +3685,8 @@ export default [
   {
     desc: 'M11561 RACE_CONFIG [999] 决定的保存分档判错（<= 1 → < 1，小数倍档保存成随机三元组，#547）',
     file: 'ere/page/page-config-age.js',
-    find: '        } else if (sub === 999) {\n          // 决定：SET_VAR 写回工作数组，回顶层（不落 FLAG）\n          if (sv[0] <= 1) {',
-    replace: `        } else if (sub === 999) {
+    find: '        } else if (sub === AGE_EDIT_DECIDE) {\n          // 决定：SET_VAR 写回工作数组，回顶层（不落 FLAG）\n          if (sv[0] <= 1) {',
+    replace: `        } else if (sub === AGE_EDIT_DECIDE) {
           // 变异：分档判错
           if (sv[0] < 1) {`,
     tests: ['page-config-age'],
@@ -4002,9 +4002,9 @@ export default [
   {
     desc: 'M11860 陷阱商店页脚补回空行（按「PRINTLC 自带换行」翻译的旧写法）',
     file: 'ere/page/page-shop-trap.js',
-    find: "  era.printButton('- 返回', 999);\n  era.setAlign('left');",
+    find: "  era.printButton('- 返回', LEAVE_SHOP_KEY);\n  era.setAlign('left');",
     replace:
-      "  era.printButton('- 返回', 999);\n  era.setAlign('left');\n  era.print(''); // 变异：页脚之后多补空行",
+      "  era.printButton('- 返回', LEAVE_SHOP_KEY);\n  era.setAlign('left');\n  era.print(''); // 变异：页脚之后多补空行",
     tests: ['shop-trap'],
     must_mention: '陷阱商店页脚按钮之后不应有空行',
   },
@@ -4278,8 +4278,8 @@ export default [
   {
     desc: 'M12298 迎击列表页脚的 [999] 返回丢掉「- 」',
     file: 'ere/page/page-intercept.js',
-    find: "        [999, '- 返 回'],",
-    replace: "        [999, '返 回'], // 变异：丢掉「- 」",
+    find: "        [LIST_BACK_KEY, '- 返 回'],",
+    replace: "        [LIST_BACK_KEY, '返 回'], // 变异：丢掉「- 」",
     tests: ['page-intercept'],
     must_mention: '页脚三键正文',
   },
@@ -5621,9 +5621,9 @@ export default [
   {
     desc: 'M16452 设置页页脚三键退回各占一行（不再同行排布）',
     file: 'ere/page/page-config.js',
-    find: "        [101, '下一页'],\n      ],\n      3,\n    );",
+    find: "        [CONFIG_NEXT_PAGE_KEY, '下一页'],\n      ],\n      3,\n    );",
     replace:
-      "        [101, '下一页'],\n      ],\n      1, // 变异：每行一格\n    );",
+      "        [CONFIG_NEXT_PAGE_KEY, '下一页'],\n      ],\n      1, // 变异：每行一格\n    );",
     tests: ['layout-engine'],
     must_mention: '三枚页脚键共享同一个 Row',
   },

@@ -2797,7 +2797,7 @@ export default [
   {
     desc: 'M14240 部下总览的 [999] 返回退回纯文本（只按钮化怪物行）',
     file: 'ere/page/page-dungeon-info2.js',
-    find: "  era.printButton('返回', 999);\n  // INPUT\n  return era.input();",
+    find: "  era.printButton('返回', INFO_BACK_KEY);\n  // INPUT\n  return era.input();",
     replace:
       "  era.print('[999] 返回'); // 变异：只按钮化怪物行\n  // INPUT\n  return era.input();",
     tests: ['page-dungeon-info'],

@@ -82,6 +82,30 @@ const RACE_NAMES = [
 const RACE_DEFAULT_0 = [11, 115, 431, 325, 15, 232];
 const RACE_DEFAULT_1 = [1, 1];
 
+/**
+ * 年龄设定主菜单的固定键：返回 [100]、详细设定 [9]（只在「使用不同种族的
+ * 年龄设定」打开时印）、使用默认 [98]、重新设定 [99]。0-3 是四个开关行，
+ * 编号即行序，不设常量。
+ */
+const AGE_BACK_KEY = 100;
+const AGE_DETAIL_KEY = 9;
+const AGE_DEFAULT_KEY = 98;
+const AGE_RESEED_KEY = 99;
+
+/**
+ * 种族年龄编辑屏的固定键：四种换算方式 [101]-[104]、随机档下限三钮
+ * [110]-[112]、决定 [999]、返回 [100]（与主菜单同号：两屏不同屏）。
+ * 100 以下的编号是数字网格（倍数/年龄）的取值，由循环算出来，不是固定键。
+ */
+const AGE_MODE_HUMAN = 101;
+const AGE_MODE_INT_MULTIPLE = 102;
+const AGE_MODE_DECIMAL_MULTIPLE = 103;
+const AGE_MODE_RANDOM = 104;
+const AGE_LOWER_ZERO = 110;
+const AGE_LOWER_HALF = 111;
+const AGE_LOWER_HUMAN = 112;
+const AGE_EDIT_DECIDE = 999;
+
 /** `IF FLAG:26 == 0` 的未设哨兵：数组承载下未设 = getter 缺值按 0 */
 function race_table_unset() {
   return game.chara.种族年龄设定_0 === 0;
@@ -212,7 +236,7 @@ async function config_age_setting(rand = default_rand) {
     );
     // [9] 只在位 13 开时打印（隐藏分支的 ere 不可达性见文件头）
     if (getbit(v, 13)) {
-      era.printButton('详细设定', 9);
+      era.printButton('详细设定', AGE_DETAIL_KEY);
     }
     era.printButton(
       '显示换算成人类的年龄　　　' + (getbit(v, 14) ? 'ON' : 'OFF'),
@@ -225,12 +249,12 @@ async function config_age_setting(rand = default_rand) {
     era.drawLine();
     era.printButton('返回', 100);
     const result = await era.input();
-    if (result === 100) {
+    if (result === AGE_BACK_KEY) {
       break;
     }
     if (result >= 0 && result <= 3) {
       game.dungeon.游戏设定 = invertbit(v, 12 + result);
-    } else if (result === 9) {
+    } else if (result === AGE_DETAIL_KEY) {
       // 表未设时先播种默认，再进详细设定
       if (race_table_unset()) {
         seed_race_defaults();
@@ -322,8 +346,8 @@ async function race_config(rand = default_rand) {
       );
     }
     era.println();
-    era.printButton('使用默认设定', 98);
-    era.printButton('重新设定种族年龄', 99);
+    era.printButton('使用默认设定', AGE_DEFAULT_KEY);
+    era.printButton('重新设定种族年龄', AGE_RESEED_KEY);
     era.drawLine();
     era.printButton('返回', 100);
 
@@ -364,10 +388,10 @@ async function race_config(rand = default_rand) {
         era.println(); // 的空行（重画首拍）
         era.print(`■ 种族 [${RACE_NAMES[result]}] 的年龄设定：${edit_desc}`);
         era.print('　 换算人类 17 岁左右 ' + edit_age);
-        era.printButton('和人类一样', 101);
-        era.printButton('换算成人类年龄的整数倍', 102);
-        era.printButton('换算成人类年龄的小数倍', 103);
-        era.printButton('在一定范围内随机', 104);
+        era.printButton('和人类一样', AGE_MODE_HUMAN);
+        era.printButton('换算成人类年龄的整数倍', AGE_MODE_INT_MULTIPLE);
+        era.printButton('换算成人类年龄的小数倍', AGE_MODE_DECIMAL_MULTIPLE);
+        era.printButton('在一定范围内随机', AGE_MODE_RANDOM);
         era.println();
 
         // 数字网格（当前 DIS_FLAG 的一组）
@@ -396,9 +420,9 @@ async function race_config(rand = default_rand) {
           // 随机档：下限三钮 + 上限 21..50 中 %10 ∈ 1-5
           // 各是一条 PRINTL 收行的标签行，正文不带尾换行（#615）
           era.print('　　■ 下限');
-          era.printButton('0 岁', 110);
-          era.printButton('上限的1 / 2', 111);
-          era.printButton('换算成人类年龄', 112);
+          era.printButton('0 岁', AGE_LOWER_ZERO);
+          era.printButton('上限的1 / 2', AGE_LOWER_HALF);
+          era.printButton('换算成人类年龄', AGE_LOWER_HUMAN);
           era.println(); // 段中间那条 PRINTL：真空行（下限三钮与上限标签之间）
           era.print('　　■ 上限');
           for (let l = 0; l < 30; l += 1) {
@@ -412,7 +436,7 @@ async function race_config(rand = default_rand) {
         }
 
         era.println();
-        era.printButton('决定', 999);
+        era.printButton('决定', AGE_EDIT_DECIDE);
         era.drawLine();
         era.printButton('返回', 100);
 
@@ -437,9 +461,9 @@ async function race_config(rand = default_rand) {
             sv[4] = int(sub / 10);
             sv[5] = sub % 10;
           }
-        } else if (sub === 100) {
+        } else if (sub === AGE_BACK_KEY) {
           continue top; // 不保存 SET_VAR 回顶层
-        } else if (sub === 101) {
+        } else if (sub === AGE_MODE_HUMAN) {
           // 和人类一样：只设 DIS_FLAG 与 SET_VAR:0-3——sv[4]/sv[5]
           // 保留现值，随机档种族 [101]→[104]→[110] 才能靠 SET_VAR:4 > 0 切回
           dis_flag = -1;
@@ -447,13 +471,17 @@ async function race_config(rand = default_rand) {
           sv[1] = 0;
           sv[2] = 1;
           sv[3] = -1;
-        } else if (sub === 102) {
+        } else if (sub === AGE_MODE_INT_MULTIPLE) {
           dis_flag = 0;
-        } else if (sub === 103) {
+        } else if (sub === AGE_MODE_DECIMAL_MULTIPLE) {
           dis_flag = 1;
-        } else if (sub === 104) {
+        } else if (sub === AGE_MODE_RANDOM) {
           dis_flag = 10;
-        } else if (sub === 110 || sub === 111 || sub === 112) {
+        } else if (
+          sub === AGE_LOWER_ZERO ||
+          sub === AGE_LOWER_HALF ||
+          sub === AGE_LOWER_HUMAN
+        ) {
           // 下限三档；已选过上限（SET_VAR:4 > 0）才切算法档
           sv[3] = sub - 108;
           if (sv[4] > 0) {
@@ -461,7 +489,7 @@ async function race_config(rand = default_rand) {
             sv[1] = -1;
             sv[2] = -1;
           }
-        } else if (sub === 999) {
+        } else if (sub === AGE_EDIT_DECIDE) {
           // 决定：SET_VAR 写回工作数组，回顶层（不落 FLAG）
           if (sv[0] <= 1) {
             cla[result] = sv[0];
@@ -476,13 +504,13 @@ async function race_config(rand = default_rand) {
         }
         continue edit;
       }
-    } else if (result === 98) {
+    } else if (result === AGE_DEFAULT_KEY) {
       // 回默认（确认后直接 RETURN）
       if (await confirm_reset('全种族的年龄均返回默认值。')) {
         seed_race_defaults();
         return 0;
       }
-    } else if (result === 99 || result === 100) {
+    } else if (result === AGE_RESEED_KEY || result === AGE_BACK_KEY) {
       // 打包写回（[99]/[100] 共用，先于 [99] 的确认 INPUT）
       game.chara.种族年龄设定_0 = cla
         .slice(0, 6)
@@ -490,7 +518,7 @@ async function race_config(rand = default_rand) {
       game.chara.种族年龄设定_1 = [6, 7].map(
         (i) => cla[i] * 100 + deg[i] * 10 + num[i],
       );
-      if (result === 99) {
+      if (result === AGE_RESEED_KEY) {
         if (await confirm_reset('全种族的年龄按现在的设定重新计算。')) {
           // 按新表重算全体（魔王除外）的种族年龄（CFLAG:452）
           for (const cid of era.getAllCharacters()) {
