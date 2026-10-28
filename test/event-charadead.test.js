@@ -37,13 +37,23 @@ function text_lines(fixture) {
 /**
  * 死亡检查的世界底座：魔王 0 + 调教目标（默认 31 温妮）在场、调教表开着
  * （TFLAG:13 的写需要 beginTrain 开表）。target 为 0 时是魔王自虐的形式。
+ *
+ * template 给后代的双号写法（预设模板与角色号不同）：夹具的 seed_chara 默认
+ * 把预设模板种成角色号，那样「按角色号登记」与「按预设号登记」在整张表上
+ * 逐字相同，苏生登记的变异体等价于原文。要分开这两种写法，必须显式播种一个
+ * 落在苏生范围（1..100）内、又与角色号不同的模板号。
  */
-function seed_world({ target = 31, target_name = '温妮' } = {}) {
+function seed_world({ target = 31, target_name = '温妮', template } = {}) {
   const fixture = create_era_fixture();
   preset_chara_0(fixture);
   fixture.era.addCharacter(0);
   if (target !== 0) {
-    join_slave_chara(fixture, target, target_name);
+    join_slave_chara(
+      fixture,
+      target,
+      target_name,
+      template === undefined ? {} : { portcflag: { 预设模板: template } },
+    );
   }
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.target = target;
@@ -255,19 +265,29 @@ test('奴隶死亡：RETURN 1、事件码 999、死亡旗、杀害数', async ()
 });
 
 test('死亡苏生标记：仅编号 1–100 的预设角色可苏生，后代不登记模板或未声明旗标', async () => {
-  for (const [target, death_flag] of [
+  // 第三列 = 播种给该角色的预设模板号。后代（角色号 > 100）必须显式给一个
+  // 落在苏生范围 1..100 内、又与角色号不同的模板号：只有这种输入才能区分
+  // 「按角色号登记」与「按预设号登记」——夹具默认把预设模板种成角色号，
+  // 那两种写法对整张表逐字相同，缺陷因此看不出来。777 一行保留默认种子
+  // （预设模板 = 角色号），守住「范围外的角色号连自己的槽都不写」。
+  for (const [target, death_flag, template] of [
     [1, 'flag:1000'],
+    [50, 'flag:1049', 30],
     [100, 'flag:1099'],
-    [101, null],
-    [201, null],
-    [211, null],
+    [101, null, 3],
+    [201, null, 1],
+    [211, null, 100],
     [777, null],
-    [100000, null],
-    [101500, null],
-    [120000, null],
-    [121099, null],
+    [100000, null, 3],
+    [101500, null, 42],
+    [120000, null, 1],
+    [121099, null, 99],
   ]) {
-    const { fixture } = seed_world({ target, target_name: '调教对象' });
+    const { fixture } = seed_world({
+      target,
+      target_name: '调教对象',
+      template,
+    });
     fixture.store.set(`base:${target}:0`, 0);
 
     assert.equal(await run_check(fixture), 1, `角色 ${target} 仍按死亡处理`);
@@ -279,6 +299,15 @@ test('死亡苏生标记：仅编号 1–100 的预设角色可苏生，后代�
       death_flag ? [death_flag] : [],
       `角色 ${target} 的苏生登记范围`,
     );
+    if (template !== undefined) {
+      // 模板槽：苏生会按预设重建角色，后代本人恢复不了，所以模板号在这里
+      // 没有意义。这一条独立读 store，不经 var_writes 的写入记录。
+      assert.equal(
+        fixture.store.get(`flag:${template + 999}`),
+        undefined,
+        `角色 ${target} 不得登记模板 ${template} 的苏生槽`,
+      );
+    }
     assert.equal(fixture.store.get('flag:31'), 1, '死亡仍计入杀害数');
     assert.ok(fixture.text_lines().includes('调教对象死掉了……'));
   }
