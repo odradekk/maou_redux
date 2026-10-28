@@ -106,6 +106,10 @@ function check_status_one(cid, mode) {
 /**
  * check_status：队伍伤势判定。
  *
+ * 从队长记忆（CFLAG:533）解析三人（自己是队长读自己的 531/532；自己是
+ * 同伴则读队长的，且若自己占了同伴A 位则视角换成队长），对侵攻 / 迎击中
+ * （CFLAG:1 == 2 || 3）的三人各走判定链，产出 8 槽 STATUS 数组。
+ *
  * @param {number} arg0 队长（ARG:0）
  * @param {number} [mode] MODE（缺省 0；非 0 静默）
  * @returns {Promise<number[]>} RETURN STATUS,STATUS:1..STATUS:7（8 值）：
