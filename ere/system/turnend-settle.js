@@ -25,13 +25,12 @@
  *   - equip_check/weapon_restore 自 #174（H5）起为真身（ere/system/equip/）：
  *     装备倍率按佩戴效果实际取值，戒指两事件（陷落/洗脑）随 RESULT > 0 可达。
  *     kyoten_event 自这张工单起接入：四个领域的衰减块在衰减完成后按领域号
- *     调用。演出本体在侵略域的 page-invasion.js，system 调 page 的演出与
- *     文本函数是既成做法（本域另有十余处 require page 域，反向的
- *     page → system 同样存在）——分层约束的是文件角色与检索位置，不约束
- *     调用方向，故此处不搬家（判断依据见 issue #795 评论）。ARG:0 == 1
- *     人间界分支是真身；2/3/4 三分支自地区续接起可达（三个领域各有侵攻度
- *     写入点），行为是空转——不推进状态字、不输出。invasion_check（#118）
- *     不在本档的调用之列——结局判定由侵略结算尾部触发（page-invasion.js）。
+ *     调用。本函数自 #887 起与出兵主流程一起归侵略域
+ *     （system/invasion/invasion-kyoten.js），回合结算不再反向引用画面。
+ *     ARG:0 == 1 人间界分支是真身；2/3/4 三分支自地区续接起可达（三个领域
+ *     各有侵攻度写入点），行为是空转——不推进状态字、不输出。invasion_check
+ *     （#118）不在本档的调用之列——结局判定由侵略结算尾部触发
+ *     （system/invasion/invasion-check.js）。
  *     EVENT_NEWDAY 自 #115 起为真身（ere/event/event-nextday.js，含每日一次
  *     的 run_endcheck 调用点）。
  */
@@ -39,7 +38,7 @@
 const era = require('#/era-electron');
 const { on } = require('#/system/event/registry');
 const { begin, is_state, STATE } = require('#/system/flow/game-state');
-const { kyoten_event } = require('#/page/page-invasion');
+const { kyoten_event } = require('#/system/invasion/invasion-kyoten');
 const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
 const { chara_callname } = require('#/utils/callname-utils');
@@ -566,8 +565,8 @@ async function settle_in_train_window(target_pool) {
   era.println(); // PRINTL
   // 侵攻度自然衰减：未征服（FLAG:82/87/89/91 == 0）且有余量时每日 RAND:100；
   // 已征服低概率反抗、保底 100。直接决定通关天数（#112 验收的天数估算依据），
-  // 衰减后各领域按领域号调 kyoten_event（本体在侵略域的 page-invasion.js；
-  // 这条 system → page 的调用方向经复核维持，理由见文件头）
+  // 衰减后各领域按领域号调 kyoten_event（本体在侵略域的同目录
+  // invasion-kyoten.js，不再反向引用画面）
   await decay_invasion_degree(1, {
     conquered: era.get('flag:82') || 0, // 人间界征服完了
     degree: () => era.get('flag:81') || 0, // 人间界侵攻度

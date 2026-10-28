@@ -10,7 +10,7 @@
  *     判定非 0 时整段不渲染——空体判定与提前返回合写为一条，行为不变。
  *
  *   - **「文本行 ＋ 字符条」两行并成一行原生进度格**：固定 50 格的字符条
- *     没有对应通道——era 的 `printProgress` 按网格列宽排版（page-invasion.js 的
+ *     没有对应通道——era 的 `printProgress` 按网格列宽排版（system/invasion/invasion-progress.js 的
  *     `print_progress_line`、components/chara-bars.js 同款先例）。标签与
  *     数值原样进格：`好感度：{n}/1000` 的两段拆成 inContent/outContent。
  *
