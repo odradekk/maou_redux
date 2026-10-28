@@ -240,6 +240,11 @@ test('ABILITY_UP：等级门（< 20 两个菜单键 disabled、≥ 20 放行）'
     const fixture = four_chara({ 'cflag:0:9': 20 });
     const { added } = await run(fixture, [997, 999]);
     const draws = split_draws(added);
+    assert.equal(
+      draws.length,
+      2,
+      '20 级：切档后应重绘（判断条件 < 20 未命中）',
+    );
     assert.deepEqual(accs(draws[1]), [998, 997, 3, 1000, 999, 1001]);
   }
 });

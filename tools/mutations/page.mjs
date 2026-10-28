@@ -1616,7 +1616,7 @@ export default [
     find: `        if (result >= MENU_LEVEL_MIN && result < BACK_KEY && cflag(0, 9) < 20) {`,
     replace: `        if (result >= MENU_LEVEL_MIN && result < BACK_KEY && cflag(0, 9) < 21) {`,
     tests: ['page-ability-up'],
-    must_mention: '等级门整表驱动',
+    must_mention: '20 级：切档后应重绘（判断条件 < 20 未命中）',
   },
   {
     desc: 'M8407 ABILITY_UP 返回键编号（999 → 998）',
