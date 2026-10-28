@@ -35,7 +35,7 @@ const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { battle_column } = require('#/system/dungeon/battle-state');
-const { select_yes_no } = require('#/page/page-life-list');
+const { select_yes_no } = require('#/utils/input-yes-no');
 const { default_rand } = require('#/utils/numeric');
 const { MONSTER_DATABASE } = require('#/data/monster-database');
 

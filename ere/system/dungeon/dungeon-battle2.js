@@ -26,6 +26,9 @@ const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { chara } = require('#/facade/chara');
+const { karma } = require('#/system/chara/chara-stats');
+const ravish_mod = require('#/kojo/kojo-dungeon-ravish');
+const autotrain_mod = require('#/system/train/autotrain');
 const { equip_check, equip_powerup } = require('#/system/equip/equip-check');
 const {
   equip_database,
@@ -64,7 +67,7 @@ function clitoris_word(cid) {
  * @returns {Promise<void>} 无 RESULT 消费
  */
 async function pc_ryou(arg0, arg1, rand) {
-  const mod = require('#/kojo/kojo-dungeon-ravish');
+  const mod = ravish_mod;
   await mod.pc_ryou(arg0, arg1, rand);
 }
 
@@ -326,7 +329,7 @@ async function duel_attack(arg0, arg1, arg2, arg3, rand, move_ctx = {}) {
   // 真身 ere/system/train/autotrain.js，#500）
   if ((era.get(`talent:${arg0}:193`) || 0) !== 0) {
     await battle.before_autotrain();
-    const { com13_auto } = require('#/system/train/autotrain');
+    const com13_auto = autotrain_mod.com13_auto;
     com13_auto();
     await battle.source_check_auto();
   }
@@ -815,7 +818,6 @@ async function spy_battle(arg0, arg1, rand) {
   chara(arg1).dungeon.气力 -= mdmg;
 
   // CALL karma, ARG:1, KDMG
-  const { karma } = require('#/system/dungeon/dungeon');
   karma(arg1, kdmg);
 
   if ((settings & 32) !== 0) {

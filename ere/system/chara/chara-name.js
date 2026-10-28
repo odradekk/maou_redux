@@ -47,6 +47,7 @@
 
 const era = require('#/era-electron');
 const { relation_rename_rebuild } = require('#/system/chara/chara-family');
+const { nid_get_type } = require('#/system/chara/chara-name-type');
 
 const {
   get_fixed_chara_name,
@@ -271,33 +272,6 @@ function cn_rebuild() {
     }
     era.set(`callname:${cid}:-2`, era.get(`callname:${cid}:-1`) ?? '');
   }
-}
-
-/**
- * nid_get_type：返回固定名编号对应名字的类型，0 = 和名，1 = 洋名，
- * 2 = 组合名。
- *
- * 名字编号表：和名 [200,650)、男性和名 [3000,4059)、中式名 [4500,5289)、
- * 洋名 [0,585) 与男性洋名 [2000,2453)。判型时先取 ≥3000 的和名两支，再落
- * 洋名/和名的低段——[3000,∞) 的和名判定必须先于 `>= 2000` 的洋名分支，否则
- * 男性和名与中式名会被洋名分支吞掉。
- * @param {number} nid 固定名编号
- * @returns {0|1|2} 类型
- */
-function nid_get_type(nid) {
-  if (nid > 1_000_000_000) {
-    return 2; // 组合名
-  }
-  if (nid >= 3000) {
-    return 0; // 男性和名 [3000,4059) 与中式名 [4500,5289)
-  }
-  if (nid < 200 || nid >= 2000) {
-    return 1; // 洋名（含男性洋名 [2000,2453)）
-  }
-  if (nid < 1000) {
-    return 0; // 和名 [200,650)
-  }
-  return 1;
 }
 
 /** 单段名不宜独存的段值：单段名拼到这些段时追加一段通用两音段。 */

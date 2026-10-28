@@ -34,7 +34,7 @@ const era_exflag = require('#/era-utils/era-exflag');
 const era_modsave = require('#/era-utils/era-modsave');
 const { EXPLV } = require('#/era-utils/exp-level');
 const { get_look_info } = require('#/system/chara/look-info');
-const { change_screen } = require('#/page/components/screen-change');
+const { change_screen } = require('#/utils/screen-change');
 const { chara_callname, chara_nickname } = require('#/utils/callname-utils');
 
 const MAX_SALE_PRICE = 25_000_000;

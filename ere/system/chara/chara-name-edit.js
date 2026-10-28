@@ -37,7 +37,7 @@
 const era = require('#/era-electron');
 const { chara_name_reset } = require('#/system/chara/chara-name');
 const { random_self_call } = require('#/system/chara/chara-self-call');
-const { confirm_output_since } = require('#/page/components/screen-change');
+const { confirm_output_since } = require('#/utils/screen-change');
 const { input_text } = require('#/utils/input-text');
 
 /** 判定返回值：可改名（魔王：改名会波及全体角色的称呼，故单独一档） */

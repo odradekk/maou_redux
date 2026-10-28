@@ -145,7 +145,7 @@ const { MASTER } = require('#/utils/master');
 const { print_button_grid } = require('#/utils/button-grid');
 const { default_rand } = require('#/utils/numeric');
 const { life_list } = require('#/page/page-life-list');
-const { change_screen } = require('#/page/components/screen-change');
+const { change_screen } = require('#/utils/screen-change');
 
 /** 选人列表的每页行数（45 处 `#DIM NUM_PAGE = 23`） */
 const NUM_PAGE = 23;

@@ -22,7 +22,7 @@
 
 const era = require('#/era-electron');
 const { on } = require('#/system/event/registry');
-const { change_screen } = require('#/page/components/screen-change');
+const { change_screen } = require('#/utils/screen-change');
 const {
   life_bar,
   print_base_bar,

@@ -25,15 +25,14 @@ const {
 const { campaign_equip_select_family } = require('#/system/equip/equip-select');
 const { campaign_room_extra_family } = require('#/system/dungeon/dungeon-room');
 const { campaign_trap_family } = require('#/system/dungeon/dungeon-trap');
+// 五个战役族的真身都在 dungeon-campaign.js，注册与派发取的是同一批实例。
 const {
   campaign_monster_list_family,
-} = require('#/system/dungeon/dungeon-battle');
-const {
   campaign_room_family,
   campaign_quest_family,
   campaign_story_family,
   campaign_ending_family,
-} = require('#/system/dungeon/dungeon');
+} = require('#/system/dungeon/dungeon-campaign');
 const { chara_callname } = require('#/utils/callname-utils');
 const { default_rand } = require('#/utils/numeric');
 

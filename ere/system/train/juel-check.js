@@ -71,12 +71,12 @@ const {
   HANDLER_QUIET,
 } = require('#/system/train/ablup');
 const { check_specialskil } = require('#/system/train/get-specialtalent'); // #565 起接入
-const { show_info_exp } = require('#/page/page-info-exp');
+const { show_info_exp } = require('#/system/train/info-exp-screen');
 const {
   ABLUP_END_KEY,
   show_ablup_select,
   show_juel,
-} = require('#/page/page-ablup');
+} = require('#/system/train/ablup-screen');
 const era_flag = require('#/era-utils/era-flag');
 const { juel_settled } = require('#/era-utils/train-settle');
 const { NBSP, pad_left } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化

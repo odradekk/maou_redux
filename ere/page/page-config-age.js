@@ -46,7 +46,7 @@ const {
   unpack_race_config,
 } = require('#/system/chara/chara-body');
 const { game } = require('#/facade/game');
-const { change_screen } = require('#/page/components/screen-change');
+const { change_screen } = require('#/utils/screen-change');
 const { chara } = require('#/facade/chara');
 const { pad_display, pad_left } = require('#/utils/display-width');
 const { default_rand } = require('#/utils/numeric');

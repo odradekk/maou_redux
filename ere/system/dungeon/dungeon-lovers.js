@@ -18,7 +18,7 @@ const { nakadashi_check } = require('#/system/pregnancy');
 const { karma, chara_id_output } = require('#/system/chara/chara-stats');
 const { search_family } = require('#/system/chara/chara-family');
 const { get_look_info } = require('#/system/chara/look-info');
-const { select_yes_no } = require('#/page/page-life-list');
+const { select_yes_no } = require('#/utils/input-yes-no');
 
 const name_of = (cid) => chara_callname(cid);
 

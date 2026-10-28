@@ -70,7 +70,7 @@ const {
 } = require('#/utils/clothtype-utils');
 const { get_clothtype_main2 } = require('#/system/cloth-lookup');
 const { print_row } = require('#/page/page-life-list');
-const { change_screen } = require('#/page/components/screen-change');
+const { change_screen } = require('#/utils/screen-change');
 const { wearing_cloth_able } = require('#/system/train/cloth');
 const { print_button_grid } = require('#/utils/button-grid');
 

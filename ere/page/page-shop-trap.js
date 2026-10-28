@@ -33,7 +33,7 @@ const era = require('#/era-electron');
 const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
 const { print_shopitem } = require('#/page/page-item-shop');
-const { change_screen } = require('#/page/components/screen-change');
+const { change_screen } = require('#/utils/screen-change');
 const { pad_display } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 
 /** SETCOLORBYNAME LightSalmon 的 ere 等价物 */

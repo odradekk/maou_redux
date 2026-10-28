@@ -2,7 +2,7 @@
  * @file 侵略结局判定：四组领域（人间界/精灵/龙/天界）的侵攻度满 10000 且
  * 未征服时接对应结局演出，演出之外加威望。
  *
- * 演出本体在 page/page-ending.js。选「退出」时把回标题的转场目标原样上抛，
+ * 演出本体在 system/ending/ending-screen.js。选「退出」时把回标题的转场目标原样上抛，
  * 由出兵流程一路带到主循环；选「继续」时落回结算尾照常收尾。
  */
 
@@ -15,14 +15,14 @@ const {
   ending_3,
   ending_4,
   ending_5,
-} = require('#/page/page-ending');
+} = require('#/system/ending/ending-screen');
 
 /**
  * @invasion_check：结局判定（#118 本体）。
  *
  * 四组 ELSEIF（顺序照旧，命中一组即止）：各领域侵攻度满 10000 且未征服
  * → 对应结局演出 + EX_FLAG:99 += 10 + PRINTL 声望+10。演出本体全部在
- * ere/page/page-ending.js（`ending_1` / `ending_3` / `ending_4` /
+ * ere/system/ending/ending-screen.js（`ending_1` / `ending_3` / `ending_4` /
  * `ending_5`，都是真身）。
  *
  * 四组的可达性随 #505 变化：人间界组是阶段 1 的贯通终点；精灵/龙/天界

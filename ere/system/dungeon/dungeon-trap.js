@@ -56,14 +56,14 @@ const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { chara } = require('#/facade/chara');
+const { karma } = require('#/system/chara/chara-stats');
+// 四个 _AUTO 变体的真身在 train 域；测试在本文件的模块对象上替换导出，
+// 故经模块对象取用（读属性发生在调用期）。
+const autotrain_mod = require('#/system/train/autotrain');
 const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
 // 迎击分断（SHOOT 的 PARTY_DEL）经模块对象引用——测试可替换导出断言
 // 被调（battle_mod 同款；解构绑定会让替换失效）
 const party_mod = require('#/system/dungeon/dungeon-party');
-// 自动调教前置复用 #175 的域内存根（经模块对象引用——测试可替换导出断言
-// 被调，dungeon-battle2.js 先例）；四个 _AUTO 变体直接 require
-// event-autotrain.js 的真身（#500，dungeon-town.js:775 先例）
-const battle = require('#/system/dungeon/dungeon-battle');
 const summon_mod = require('#/system/dungeon/monster-summon');
 const { default_rand } = require('#/utils/numeric');
 
@@ -914,10 +914,10 @@ async function self_saimin_trap(a, rand_n) {
         `${cbit(a, 503, 512) ? '发情了的' : ''}${name}被催眠了，将装备一件一件地脱了下来，一心一意地开始自慰。\t`,
       );
     }
-    await battle.before_autotrain();
-    const { com3_auto } = require('#/system/train/autotrain'); // CALL com3_auto
+    await autotrain_mod.before_autotrain();
+    const com3_auto = autotrain_mod.com3_auto; // CALL com3_auto
     com3_auto();
-    await battle.source_check_auto();
+    await autotrain_mod.source_check_auto();
     if (show) {
       era.print(
         `${name}连怪物跑到面前的声音都听不到了。（攻击力和防御力降为0！）`,
@@ -932,10 +932,10 @@ async function self_saimin_trap(a, rand_n) {
         `${cbit(a, 503, 512) ? '发情了的' : ''}${name}被催眠了，将护甲解开，一心一意地开始自慰了。\t`,
       );
     }
-    await battle.before_autotrain();
-    const { com3_auto } = require('#/system/train/autotrain'); // CALL com3_auto
+    await autotrain_mod.before_autotrain();
+    const com3_auto = autotrain_mod.com3_auto; // CALL com3_auto
     com3_auto();
-    await battle.source_check_auto();
+    await autotrain_mod.source_check_auto();
     if (show) {
       era.print(
         `${name}连怪物跑到面前的声音都听不到了。（攻击力和防御力下降一半！）`,
@@ -1269,10 +1269,10 @@ async function slime_room_trap(a, rand_n) {
   }
 
   // ローション自動調教
-  await battle.before_autotrain();
-  const { com50_auto } = require('#/system/train/autotrain'); // CALL com50_auto
+  await autotrain_mod.before_autotrain();
+  const com50_auto = autotrain_mod.com50_auto; // CALL com50_auto
   com50_auto();
-  await battle.source_check_auto();
+  await autotrain_mod.source_check_auto();
 
   // ヌルヌル付与（位 3）
   era.set(`cflag:${a}:503`, (era.get(`cflag:${a}:503`) || 0) | 8);
@@ -1723,10 +1723,10 @@ async function a_worm_trap(a, rand_n) {
     // 三连第三站的结算读）
     era_flag.target = a; // TARGET = A
     // アナルワーム自動調教（CALL com13_auto——真身）
-    await battle.before_autotrain();
-    const { com13_auto } = require('#/system/train/autotrain');
+    await autotrain_mod.before_autotrain();
+    const com13_auto = autotrain_mod.com13_auto;
     com13_auto();
-    await battle.source_check_auto();
+    await autotrain_mod.source_check_auto();
   }
 
   era.set(`exp:${a}:1`, (era.get(`exp:${a}:1`) || 0) + 1);
@@ -1806,10 +1806,10 @@ async function love_bug_trap(a, rand_n) {
   // 三连第三站的结算读）
   era_flag.target = a; // TARGET = A
   // 愛撫自動調教（CALL com0_auto——真身）
-  await battle.before_autotrain();
-  const { com0_auto } = require('#/system/train/autotrain');
+  await autotrain_mod.before_autotrain();
+  const com0_auto = autotrain_mod.com0_auto;
   com0_auto();
-  await battle.source_check_auto();
+  await autotrain_mod.source_check_auto();
 
   // 胆怯
   if ((era.get(`talent:${a}:10`) || 0) === 1) {
@@ -1885,9 +1885,8 @@ async function dark_juel_trap(a, rand_n) {
     era.print(`屈服点数+${Math.floor(dice / 10)}`);
   }
 
-  // そしてカルマが下がる（KARMA 域内存根——dungeon.js，延迟
-  // require 避开循环初始化，#175 先例）
-  require('#/system/dungeon/dungeon').karma(a, -1);
+  // そしてカルマが下がる
+  karma(a, -1);
 
   return 0;
 }

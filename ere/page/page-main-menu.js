@@ -10,7 +10,7 @@
  *
  * #73 起排版助手集中到 page/components/menu-button.js（两条 UI 结论的
  * 唯一权威落点）。#723 起主菜单每轮「换屏 + 绘制」（ADR-0009，换屏入口
- * page/components/screen-change.js）；随 #724 删除画面组件，本文件只保留
+ * utils/screen-change.js）；随 #724 删除画面组件，本文件只保留
  * 绘制函数，清屏与重画节奏由调用方（page-shop.js 的商店轮）掌握。
  *
  * #866 起主菜单的绘制与分发共用本文件的菜单项表 MAIN_MENU_ITEMS：可用性

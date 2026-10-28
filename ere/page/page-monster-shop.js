@@ -44,9 +44,14 @@ const { char_make, name_reset } = require('#/system/chara/char-make');
 const { add_chara_ex } = require('#/system/chara/chara-ex');
 const { party_char_del } = require('#/system/dungeon/dungeon-party');
 const { chara } = require('#/facade/chara');
+const { monster_data } = require('#/system/dungeon/monster-data');
+const {
+  BATTLE_COLUMN,
+  battle_column,
+} = require('#/system/dungeon/battle-state');
 const { show_chara_info } = require('#/page/page-chara-info-show');
 const { clear_shop } = require('#/page/page-item-shop');
-const { change_screen } = require('#/page/components/screen-change');
+const { change_screen } = require('#/utils/screen-change');
 const { print_button_grid } = require('#/utils/button-grid');
 const { chara_callname } = require('#/utils/callname-utils');
 const { pad_display, pad_left } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
@@ -580,14 +585,6 @@ function sacrifice_rows(offering) {
  * @returns {{level: number, race2: number}}
  */
 function read_monster(id, rand) {
-  // 延迟 require：monster-data 顶层取 page-life-list（→ page-select-target
-  // → monster-play → monster-data）的环，加载期取会拿到半成品
-  // （page-life-list.js:290-298 的同款处置）
-  const { monster_data } = require('#/system/dungeon/monster-data');
-  const {
-    BATTLE_COLUMN,
-    battle_column,
-  } = require('#/system/dungeon/battle-state');
   monster_data(id, 5, -1, -1, -1, rand);
   return {
     level: battle_column(BATTLE_COLUMN.RAVISH).level,

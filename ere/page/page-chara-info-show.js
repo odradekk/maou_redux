@@ -51,9 +51,9 @@ const { template_no_of } = require('#/system/chara/chara-pregnancy');
 const { look_info } = require('#/system/chara/look');
 const { get_look_info } = require('#/system/chara/look-info');
 const { party_char_del } = require('#/system/dungeon/dungeon-party');
-const { show_info_exp } = require('#/page/page-info-exp');
-const { show_juel } = require('#/page/page-ablup');
-const { change_screen } = require('#/page/components/screen-change');
+const { show_info_exp } = require('#/system/train/info-exp-screen');
+const { show_juel } = require('#/system/train/ablup-screen');
+const { change_screen } = require('#/utils/screen-change');
 const {
   show_block,
   show_info_title,
@@ -62,7 +62,7 @@ const {
   show_info_abl,
   show_info_mark,
 } = require('#/page/components/chara-info-abl-mark');
-const { show_data } = require('#/page/components/chara-data');
+const { show_data } = require('#/system/chara/chara-data-screen');
 const { show_talent } = require('#/page/components/chara-talents');
 const {
   show_appearance,

@@ -39,7 +39,9 @@ const { family_print_info } = require('#/system/chara/chara-family');
 const { get_look_info } = require('#/system/chara/look-info');
 const { chara_callname } = require('#/utils/callname-utils');
 const { default_rand } = require('#/utils/numeric');
+const kojo_system = require('#/kojo/kojo-system');
 const { heart, self_call } = require('#/kojo/kojo-text');
+const { LOVER_NAMES } = require('#/system/dungeon/dungeon-lovers');
 const { chara } = require('#/facade/chara');
 
 /** 素质下标（yml/Talent.yml；与 ere/system/chara/look-info.js 的同名常量各写一份，两边都只服务本文件） */
@@ -1088,11 +1090,14 @@ function kojo_view() {
  * gobi_koujo（语尾口上）：返回语尾文字，由调用方拼进当前行——不换行、
  * 接在前后文字之间（#570）。真身在 kojo-system，未实现的性格返回空串。
  *
+ * 经模块对象调用：语尾的调用序是 look_info 的可观察契约，测试在模块对象上
+ * 替换导出，所以读属性必须发生在调用期。
+ *
  * @param {number} arg0 情绪档位
  * @returns {Promise<string>} 语尾文字（空串 = 落空）
  */
 async function gobi_koujo(arg0) {
-  return require('#/kojo/kojo-system').gobi_koujo(arg0);
+  return kojo_system.gobi_koujo(arg0);
 }
 
 /** 角色预设的「名前」（callname -1 槽，chara-name.js 先例） */
@@ -1877,7 +1882,7 @@ async function look_info_love(cid) {
   const s = new Spans();
   s.add('　');
   let shown = 0; // LOVE_NUM
-  const lover_names = require('#/system/dungeon/dungeon-lovers').LOVER_NAMES;
+  const lover_names = LOVER_NAMES;
   for (let rank = 0; rank < LOVE_SORT_MAX; rank += 1) {
     const id = sort[rank]; // LOVE_ID = LOVE_SORT:LOVE_COUNT
     if (main[id] <= LOVE_SHOW_MIN) continue;

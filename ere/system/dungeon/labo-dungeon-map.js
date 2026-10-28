@@ -40,7 +40,7 @@ const { equip_select } = require('#/system/equip/equip-select');
 const { use_ex_item } = require('#/system/dungeon/dungeon');
 const { da_get, db_set, geo_test } = require('#/system/dungeon/labo');
 const { unit_check, mon_check, set_vil } = require('#/system/dungeon/labo-map');
-const { ending_2 } = require('#/page/page-ending');
+const { ending_2 } = require('#/system/ending/ending-screen');
 const dungeon_bitch_mod = require('#/kojo/kojo-dungeon-bitch'); // （真身 #184；模块对象引用，测试可替换）
 const { default_rand } = require('#/utils/numeric');
 

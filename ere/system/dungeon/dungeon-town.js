@@ -43,6 +43,12 @@ const lovers_mod = require('#/system/dungeon/dungeon-lovers');
 // L13（#344）真身：sell_ex_item / add_ex_item。
 const ex_item_mod = require('#/system/dungeon/ex-item');
 const { chara } = require('#/facade/chara');
+const autotrain_mod = require('#/system/train/autotrain');
+// 自动调教前置与结算经模块对象引用——测试可替换导出断言被调。
+const {
+  before_autotrain,
+  source_check_auto,
+} = require('#/system/dungeon/dungeon-battle');
 // H15（#184）真身：heroine_bitch（城镇侧卖春入口；log_try_bitch 的
 // 'TOWN' 档随 H16 #185 齐备）。经模块对象引用，测试可替换导出。
 const bitch_mod = require('#/kojo/kojo-dungeon-bitch');
@@ -722,32 +728,21 @@ async function town_pt_party(pm0, pm1, pm2, rand_n) {
           line += '扶她';
         }
         era.print(name_of(t) + line + '妓女买了春……'); // PRINTL 收行
-        const {
-          before_autotrain,
-          source_check_auto,
-        } = require('#/system/dungeon/dungeon-battle');
         await before_autotrain();
         // 貝合わせ自動調教（扶她或非男）
         if (futanari || !man) {
-          const { com63_auto } = require('#/system/train/autotrain');
-          com63_auto();
+          autotrain_mod.com63_auto();
         }
         // 愛撫自動調教（扶她或男——扶她两连）
         if (futanari || man) {
-          const { com0_auto } = require('#/system/train/autotrain'); // CALL com0_auto
-          com0_auto();
+          autotrain_mod.com0_auto(); // CALL com0_auto
         }
         await source_check_auto();
       } else if (era.get(`talent:${t}:143`) || 0) {
         // ショタコンの場合少年風俗へ
         era.print(name_of(t) + '到以和少年做嘿嘿嘿的事为卖点的店里玩乐去了……');
-        const {
-          before_autotrain,
-          source_check_auto,
-        } = require('#/system/dungeon/dungeon-battle');
         await before_autotrain();
-        const { com0_auto } = require('#/system/train/autotrain'); // CALL com0_auto
-        com0_auto();
+        autotrain_mod.com0_auto(); // CALL com0_auto
         await source_check_auto();
       }
       // ELSEIF TALENT:122 && ABL:23 > 1——**恒不达**（蕴含

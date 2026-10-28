@@ -7,11 +7,33 @@ const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const { chara_callname } = require('#/utils/callname-utils');
 const { clothtype_text } = require('#/utils/clothtype-utils');
+const { EVENT } = require('#/data/event-name-const');
 const { juel_check_main } = require('#/system/train/juel-check');
 const { auto_ablup } = require('#/system/train/ablup');
+const { emit } = require('#/system/event/registry');
 const { karma } = require('#/system/chara/chara-stats');
 const { chara } = require('#/facade/chara');
+const { game } = require('#/facade/game');
 /** 本文件预留的调用名（空：#467 起 AUTO_ABLUP 已接真身） */
+
+/**
+ * source_check_auto：自动调教的结算入口。
+ *
+ * 只发事件，不重复实现调度逻辑；真身见 ere/system/train/source-check.js 的
+ * on(EVENT.SOURCE_CHECK_AUTO, …)。迷宫路径也走这里，所以和 before_autotrain
+ * 一起留在本文件，调用方不必再经迷宫战斗模块转发。
+ *
+ * 结算后补一次 `era.nextTurnInTrain()`：这是调教回合循环里 SOURCE_CHECK 之后
+ * 那一步（UPCHECK 的 ere 等价物）在迷宫路径上的对应物。本移植把 NOWEX→EX 的
+ * 合并交给引擎的 nextTurnInTrain（source-check.js 文件头的职责划分），而迷宫
+ * 路径不经过回合循环，不补这一步的话 EX:0-4（绝顶次数，JUEL_CHECK_MAIN 的珠
+ * 加成读它）在 endTrain 删表时丢掉。
+ * @returns {Promise<void>} 无 RESULT 消费
+ */
+async function source_check_auto() {
+  await emit(EVENT.SOURCE_CHECK_AUTO);
+  era.nextTurnInTrain();
+}
 
 /**
  * LOSEBASE → `deltabase:${cid}:${i}` 的负向累加（全项目同款写法，见
@@ -93,7 +115,6 @@ function format_autotrain() {
     chara(target).train.欲情 = 3000;
   }
 
-  const { game } = require('#/facade/game');
   game.train.死斗场收入 = 0;
   return 0;
 }
@@ -670,4 +691,5 @@ module.exports = {
   com63_auto,
   format_autotrain,
   rand_autotrain,
+  source_check_auto,
 };

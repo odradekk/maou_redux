@@ -81,7 +81,6 @@
 
 const era = require('#/era-electron');
 const { get_look_info } = require('#/system/chara/look-info'); // #389 起的全量真身
-const { print_button_grid } = require('#/utils/button-grid');
 const { chara_callname } = require('#/utils/callname-utils');
 const {
   NBSP,
@@ -508,31 +507,6 @@ function max_page_salave(num_page) {
   return Math.trunc(local / num_page);
 }
 
-/**
- * select_yes_no（issue #333 起在本文件）：完全的「是的/不要」
- * 二选一，只接受 0/1，其余输入重问（输入循环重问）。
- *
- * #710：两枚选项排成一行按钮（原是一行纯文本，玩家点不了）。按钮化后本轮
- * 白名单即 0/1，越界输入由引擎当场拒收，重问分支因此结构性不可达（结构保留）。
- * 调用点（monster-data / chara-temptation / dungeon-lovers）调用前都只打印
- * 文本或已消费掉上一轮按钮，没有未消费的按钮同屏。
- *
- * @returns {Promise<number>} 0 或 1
- */
-async function select_yes_no() {
-  for (;;) {
-    print_button_grid(
-      [
-        [0, '是的'],
-        [1, '不要'],
-      ],
-      2,
-    );
-    const result = await era.input();
-    if (result === 0 || result === 1) return result;
-  }
-}
-
 module.exports = {
   life_list,
   life_list_item,
@@ -542,5 +516,4 @@ module.exports = {
   max_page_enemy,
   max_page_salave,
   print_row,
-  select_yes_no,
 };

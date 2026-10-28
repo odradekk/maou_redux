@@ -25,6 +25,7 @@
  */
 
 const era = require('#/era-electron');
+const { piercing_state } = require('#/system/train/piercing-state');
 const { sell_maturo_k0 } = require('#/system/stronghold/sell-maturo-k0');
 const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
@@ -1012,7 +1013,6 @@ async function kojo_message_com_6(rand) {
     view,
     kojo,
   } = bind_ctx(rand);
-  const { piercing_state } = require('#/system/train/com-hardcore');
   let P = piercing_state.p;
 
   if (era_flag.assi > 0 && era_flag.assiplay) {

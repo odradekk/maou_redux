@@ -37,7 +37,7 @@
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const game_train = require('#/facade/game-train');
-const { change_screen } = require('#/page/components/screen-change');
+const { change_screen } = require('#/utils/screen-change');
 const {
   com_able_family,
   DECLARED_TRAIN_IDS,

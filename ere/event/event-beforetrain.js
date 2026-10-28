@@ -5,6 +5,7 @@
 
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
+const { chara } = require('#/facade/chara');
 const { chara_callname } = require('#/utils/callname-utils');
 const { clothtype_text } = require('#/utils/clothtype-utils');
 const { wearing_cloth_all } = require('#/system/train/cloth');
@@ -167,7 +168,6 @@ async function pritrain_message() {
   const master_name = chara_name(0);
 
   // 調教経験を加算
-  const { chara } = require('#/facade/chara');
   chara(target).stronghold.调教回数 += 1;
   const train_count = era.get(`cflag:${target}:10`) || 1;
   // 避免角色錯亂的暫存紀錄

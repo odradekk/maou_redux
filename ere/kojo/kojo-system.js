@@ -55,6 +55,7 @@
  */
 
 const era = require('#/era-electron');
+const { game } = require('#/facade/game');
 const { get_kojo } = require('#/kojo/kojo-factory');
 const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
@@ -516,7 +517,6 @@ async function self_kojo(rand, q, outside_train = false) {
     flag_guard: true,
     when_disabled: () => {
       if (!outside_train) {
-        const { game } = require('#/facade/game');
         game.train.怪物射精或购入金 = 0;
       }
     },
