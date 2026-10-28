@@ -1219,7 +1219,7 @@ export default [
   {
     desc: 'M8223 char_gift 决定键：RESULT == 100 误写成 99（决定键失效，重问）',
     file: 'ere/system/ending/ending-screen.js',
-    find: '    if (result !== 100) {\n      continue; // ELSE / GOTO INPUT_LOOP_2',
+    find: '    if (result !== GIFT_DECIDE_KEY) {\n      continue; // ELSE / GOTO INPUT_LOOP_2',
     replace:
       '    if (result !== 99) {\n      continue; // ELSE / GOTO INPUT_LOOP_2',
     tests: ['page-ending'],

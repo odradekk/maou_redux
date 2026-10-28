@@ -32,6 +32,9 @@
 'use strict';
 
 const era = require('#/era-electron');
+
+/** 怪物设定屏的返回键 [999] */
+const MONSTER_SETUP_BACK_KEY = 999;
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { battle_column } = require('#/system/dungeon/battle-state');
@@ -272,13 +275,13 @@ async function monster_setup(id, rand = default_rand) {
     }
 
     era.drawLine();
-    era.printButton('返回', 999);
+    era.printButton('返回', MONSTER_SETUP_BACK_KEY);
     // 受理集就是本轮打印出来的按钮（改造项 + 兵种 + 返回），写进 rule 后
     // 未列出的编号由引擎在输入框里拒收。
     const selection = await era.input({
       rule: `(?:${[...choices, 999].join('|')})`,
     });
-    if (selection === 999) return 0;
+    if (selection === MONSTER_SETUP_BACK_KEY) return 0;
 
     era.print('改造需要１０００资金');
     if (era_flag.money < 1000) {

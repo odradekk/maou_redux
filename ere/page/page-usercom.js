@@ -171,6 +171,21 @@ const FILTER_COLORS = {
   108: '#FF6347', // ＳＭ系 255,99,71（Tomato）
 };
 /** 过滤按钮表：[按钮号, 文案, FLAG:25 位掩码] */
+/**
+ * 调教画面子菜单与尾部的固定键。过滤按钮 [104]-[108] 不另设常量：
+ * FILTER_BUTTONS 表就是它们的唯一来源，绘制与分派都遍历这张表。
+ */
+const ABILITY_VIEW_KEY = 100;
+const STAIN_VIEW_KEY = 101;
+const HANDOVER_KEY = 102;
+const CONDOM_KEY = 103;
+const SWAP_TRAIN_KEY = 112;
+const MENU_REGISTER_KEY = 990;
+const MENU_SHOW_KEY = 991;
+const MENU_RUN_KEY = 992;
+const TRAIN_END_KEY = 999;
+
+/** 过滤按钮表：[按钮号, 文案, FLAG:25 位掩码] */
 const FILTER_BUTTONS = [
   [104, '爱抚系过滤', 1],
   [105, '器具系过滤', 2],
@@ -215,17 +230,17 @@ async function handle_show_usercom(usable = []) {
   // 之后硬收行——分三段网格逐段复刻原行分组，#717 恢复三列；过滤钮的
   // 现色/灰色经单格 config 带进网格）——
   const submenu = [
-    [100, '能力表示'],
-    [101, '污秽表示'],
+    [ABILITY_VIEW_KEY, '能力表示'],
+    [STAIN_VIEW_KEY, '污秽表示'],
   ];
   const guards = handover_guard_ok();
   if (guards.can_handover) {
-    submenu.push([102, '交代助手']); // （ASSI > 0 && ASSI:1 > 0）
+    submenu.push([HANDOVER_KEY, '交代助手']); // （ASSI > 0 && ASSI:1 > 0）
   }
   if (guards.can_swap) {
-    submenu.push([112, '对换调教']); // （(TARGET==MASTER||CFLAG:0>=2) && ASSI:1>0）
+    submenu.push([SWAP_TRAIN_KEY, '对换调教']); // （(TARGET==MASTER||CFLAG:0>=2) && ASSI:1>0）
   }
-  submenu.push([103, '避孕套设定']);
+  submenu.push([CONDOM_KEY, '避孕套设定']);
   print_button_grid(submenu, 3);
   // 过滤组（[104]-[108]）+ [990]：原版 [990] 紧随 [108] 不换行、满 3 才收
   //（默认态渲染成 [107][108][990] 同行）
@@ -243,17 +258,17 @@ async function handle_show_usercom(usable = []) {
           : undefined,
     ]);
   }
-  filters.push([990, '调教菜单登录']); // （ENDIF 后无条件，缩进无语义）
+  filters.push([MENU_REGISTER_KEY, '调教菜单登录']); // （ENDIF 后无条件，缩进无语义）
   print_button_grid(filters, 3);
   // 尾部（[991]/[992] 有登录菜单才有 + [999] 调教结束）：[990] 的硬收行
   // 之后自成一段；网格行之间与页脚之后都不补空行（语义与勘误见
   // CONTEXT.md「输出 API 的排版与对齐」）
   const footer = [];
   if (game_train.指令菜单长度 > 0) {
-    footer.push([991, '调教菜单表示']);
-    footer.push([992, '调教菜单实行']);
+    footer.push([MENU_SHOW_KEY, '调教菜单表示']);
+    footer.push([MENU_RUN_KEY, '调教菜单实行']);
   }
-  footer.push([999, '调教结束']); // （正文不带 [999] 前缀，引擎自动拼）
+  footer.push([TRAIN_END_KEY, '调教结束']); // （正文不带 [999] 前缀，引擎自动拼）
   print_button_grid(footer, 3);
   // prevcom > -1 → p_c（置 TSTR:90）→ ＜上次的调教指令：…＞
   // （名字来自 TSTR:90：静态名 → 定制名 → 全角空格的三级回落，见 p_c）
@@ -266,17 +281,17 @@ async function handle_show_usercom(usable = []) {
 async function handle_usercom(result) {
   // REDRAW 1 —— 不移植；RETURN 1/0 均无效果（见文件头）
   const guards = handover_guard_ok();
-  if (result === 100) {
+  if (result === ABILITY_VIEW_KEY) {
     // 能力表示（#390 真身：ARG:1 缺省 -1，即调教时的信息）
     await show_chara_info(era_flag.target);
     return;
   }
-  if (result === 101) {
+  if (result === STAIN_VIEW_KEY) {
     // 污秽表示（#390 真身）
     await stain_info();
     return;
   }
-  if (result === 102 && guards.can_handover) {
+  if (result === HANDOVER_KEY && guards.can_handover) {
     // 交代助手：视角/助手按 TARGET 归属三态切换
     const target = era_flag.target;
     const target_record = era.get('flag:10012') || 0; // TARGET:1
@@ -299,7 +314,7 @@ async function handle_usercom(result) {
     era_flag.assiplay = era_flag.player !== MASTER ? 1 : 0;
     return;
   }
-  if (result === 112 && guards.can_swap) {
+  if (result === SWAP_TRAIN_KEY && guards.can_swap) {
     // 对换调教：TARGET ↔ PLAYER 对调，换入视角是记录者时助手归位
     const target = era_flag.target;
     const target_record = era.get('flag:10012') || 0;
@@ -312,7 +327,7 @@ async function handle_usercom(result) {
     era_flag.assiplay = era_flag.player !== MASTER ? 1 : 0;
     return;
   }
-  if (result === 103) {
+  if (result === CONDOM_KEY) {
     // 避孕套设定（#216 J6 真身，system/train/com-condom.js）
     await condom_settings();
     return;
@@ -329,12 +344,12 @@ async function handle_usercom(result) {
       return;
     }
   }
-  if (result === 990) {
+  if (result === MENU_REGISTER_KEY) {
     // 调教菜单登录（com-register.js 的登记循环）
     await comseq_register();
     return;
   }
-  if (result === 991 && game_train.指令菜单长度 > 0) {
+  if (result === MENU_SHOW_KEY && game_train.指令菜单长度 > 0) {
     // 调教菜单表示（DRAWLINE + 显示 + DRAWLINE + WAIT）
     era.drawLine();
     await comseq_show();
@@ -342,14 +357,13 @@ async function handle_usercom(result) {
     await era.waitAnyKey();
     return;
   }
-  if (result === 992 && game_train.指令菜单长度 > 0) {
+  if (result === MENU_RUN_KEY && game_train.指令菜单长度 > 0) {
     // 调教菜单实行（无 RETURN 1，落尾 RETURN 0——重绘回合画面）
     await comseq_train();
     return;
   }
-  if (result === 999) {
-    // 调教结束 → BEGIN AFTERTRAIN 转场：返回目标状态（回合循环提交），
-    // 其后不再执行
+  if (result === TRAIN_END_KEY) {
+    // 调教结束 → BEGIN AFTERTRAIN 转场：返回目标状态（回合循环提交），其后不再执行
     return begin(STATE.AFTERTRAIN);
   }
   // 其余输入落到链尾、重绘回合画面（不提示——与主菜单对无效输入的处置

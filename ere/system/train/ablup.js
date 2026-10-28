@@ -66,6 +66,9 @@ const {
 const { chara_callname } = require('#/utils/callname-utils');
 const { NBSP } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 const { MASTER } = require('#/utils/master');
+
+/** 能力值提高页的「停止」键（各能力项子屏共用） */
+const ABLUP_STOP_KEY = 100;
 const { percent_trunc, times } = require('#/utils/numeric');
 
 /**
@@ -488,10 +491,10 @@ async function run_ablup(spec, cid, mode) {
 
     spec.rows?.(state, ctx);
     for (const opt of spec.options) render_option(opt, state, ctx);
-    era.printButton(spec.stop ?? '- 停止', 100);
+    era.printButton(spec.stop ?? '- 停止', ABLUP_STOP_KEY);
 
     const result = await era.input();
-    if (result === 100) {
+    if (result === ABLUP_STOP_KEY) {
       // 放弃返回：最后一次动作是输入、其后无打印，返回哨兵让分发方
       // 不再等键（否则回显会让等键真等一次，玩家多按键）
       return HANDLER_QUIET;

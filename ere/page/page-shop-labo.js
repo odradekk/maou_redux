@@ -143,6 +143,19 @@ const { COUNT_RULE } = require('#/utils/input-rule');
 const { input_text } = require('#/utils/input-text');
 const { MASTER } = require('#/utils/master');
 const { print_button_grid } = require('#/utils/button-grid');
+
+/**
+ * 实验室族各屏的固定键。选人骨架的页脚是上一页 [1000] / 取消 [999] /
+ * 下一页 [1001]；改造菜单是前一页 [997] / 返回 [999] / 后一页 [998]。
+ * 各服务的按钮编号（0-25、30-33、50-67、70-74）是服务身份、由各自的
+ * 实现登记，不在这批常量化范围内。
+ */
+const PICK_PREV_KEY = 1000;
+const PICK_CANCEL_KEY = 999;
+const PICK_NEXT_KEY = 1001;
+const LABO_PREV_PAGE_KEY = 997;
+const LABO_BACK_KEY = 999;
+const LABO_NEXT_PAGE_KEY = 998;
 const { default_rand } = require('#/utils/numeric');
 const { life_list } = require('#/page/page-life-list');
 const { change_screen } = require('#/utils/screen-change');
@@ -199,9 +212,9 @@ function draw_pick(intro, no_page, mode, cancel) {
   // 同行排布（引擎 24 列网格）；不补空行。
   print_button_grid(
     [
-      [1000, '- 上一页'],
-      [999, `- ${cancel}`],
-      [1001, '- 下一页'],
+      [PICK_PREV_KEY, '- 上一页'],
+      [PICK_CANCEL_KEY, `- ${cancel}`],
+      [PICK_NEXT_KEY, '- 下一页'],
     ],
     3,
   );
@@ -229,17 +242,17 @@ async function pick_slave(cfg) {
     draw_pick(cfg.intro, no_page, cfg.mode ?? 1, cfg.cancel ?? '返  回');
     const result = await era.input(); // INPUT
 
-    if (result === 999) {
+    if (result === PICK_CANCEL_KEY) {
       return { cancelled: true }; // 等 RETURN 0
     }
-    if (result === 1000) {
+    if (result === PICK_PREV_KEY) {
       // 上一页：NO_PAGE > 0 才退（CLEARLINE 不镜像）
       if (no_page > 0) {
         no_page -= 1;
       }
       continue;
     }
-    if (result === 1001) {
+    if (result === PICK_NEXT_KEY) {
       // 下一页：(NO_PAGE+1)*NUM_PAGE <= CHARANUM 才进
       if ((no_page + 1) * NUM_PAGE <= charanum()) {
         no_page += 1;
@@ -457,9 +470,9 @@ async function modify_futanari() {
     for (const [index, label] of FUTANARI_SHAPES.entries()) {
       era.printButton(`- ${label}`, index);
     }
-    era.printButton('- 停止', 999);
+    era.printButton('- 停止', LABO_BACK_KEY);
     const shape = await era.input(); // INPUT
-    if (shape === 999) {
+    if (shape === LABO_BACK_KEY) {
       return 0;
     }
     if (shape < 0 || shape > 4) {
@@ -633,12 +646,12 @@ async function tatoo_set_off() {
       Number(index),
     );
   }
-  era.printButton('- 停止', 999);
+  era.printButton('- 停止', LABO_BACK_KEY);
 
   let select = 0;
   for (;;) {
     const result = await era.input(); // INPUT
-    if (result === 999) {
+    if (result === LABO_BACK_KEY) {
       return 0;
     }
     if (TATOO_NAME[result]) {
@@ -706,9 +719,9 @@ async function modify_hair_color() {
       for (const [index, name] of colors.entries()) {
         era.printButton(name, index);
       }
-      era.printButton('- 算了，居然没有光头……', 999);
+      era.printButton('- 算了，居然没有光头……', LABO_BACK_KEY);
       const result = await era.input();
-      if (result === 999) {
+      if (result === LABO_BACK_KEY) {
         continue restart; // RESTART（回函数头重选角色）
       }
       if (result < 0 || result > 6) {
@@ -764,9 +777,9 @@ async function modify_skin_color() {
       for (const [index, name] of SKIN_NAMES.entries()) {
         era.printButton(name, index);
       }
-      era.printButton('- 取消', 999);
+      era.printButton('- 取消', LABO_BACK_KEY);
       const result = await era.input();
-      if (result === 999) {
+      if (result === LABO_BACK_KEY) {
         continue restart; // RESTART（回函数头重选角色）
       }
       if (result < 0 || result > 2) {
@@ -839,13 +852,13 @@ async function block_feeling() {
       era.print(''); // PRINTL
       era.printButton('选择角色', 9); // [9] 选择角色
       era.drawLine(); // DRAWLINE
-      era.printButton('- 取消', 999);
+      era.printButton('- 取消', LABO_BACK_KEY);
 
       const pid = await era.input(); // INPUT
       if (pid === 9) {
         continue char_top; // GOTO CHAR_TOP（回选人）
       }
-      if (pid === 999) {
+      if (pid === LABO_BACK_KEY) {
         return 0;
       }
       if (pid < 0 || pid > 3) {
@@ -1044,9 +1057,9 @@ async function resulection() {
       // 和亡者对不上，而且有一半编号没有声明（#740）。正文带「- 」（#612）
       era.printButton(`- ${csv_name(preset)}`, preset + 99);
     }
-    era.printButton('- 取消', 999);
+    era.printButton('- 取消', LABO_BACK_KEY);
     const result = await era.input();
-    if (result === 999) {
+    if (result === LABO_BACK_KEY) {
       return 0;
     }
     if (result < 100 || result > 199) {
@@ -1129,12 +1142,12 @@ async function evilapp() {
   era.printButton('- 恶魔的翅膀', 2);
   era.printButton('- 恶魔的尾巴', 3);
   era.printButton('- 恶魔的眼睛', 4);
-  era.printButton('- 返  回', 999); // PRINTLC
+  era.printButton('- 返  回', LABO_BACK_KEY); // PRINTLC
   // 的 PRINTL 只结束 [999] 那一行（PRINTLC 不换行，见 CONTEXT.md
   // 「输出 API 的排版与对齐」）；ere 的 printButton 自成一行（＝ PRINTLC +
   // 收尾的 PRINTL），不再补空行。
   const result = await era.input();
-  if (result === 999) {
+  if (result === LABO_BACK_KEY) {
     return 0;
   }
   if (result === 1) {
@@ -1210,13 +1223,13 @@ async function demon_rebirth(rand = default_rand) {
       era.printButton(option.label, option.acc);
     }
     era.drawLine(); // DRAWLINE
-    era.printButton('返回', 999); // `[999] 返回`
+    era.printButton('返回', LABO_BACK_KEY); // `[999] 返回`
 
     // 类型选择
     let type_id = 0;
     for (;;) {
       const result = await era.input(); // INPUT 999
-      if (result === 999) {
+      if (result === LABO_BACK_KEY) {
         continue restart; // RESTART（回函数头重选角色）
       }
       const row = Math.trunc(result / 10); // L_T = RESULT / 10
@@ -1532,9 +1545,9 @@ async function penis_remodel() {
     for (const [index, label] of FUTANARI_SHAPES.entries()) {
       era.printButton(`- ${label}`, index);
     }
-    era.printButton('- 我再想想', 999);
+    era.printButton('- 我再想想', LABO_BACK_KEY);
     const shape = await era.input(); // INPUT
-    if (shape === 999) {
+    if (shape === LABO_BACK_KEY) {
       return 0;
     }
     if (shape < 0 || shape > 4) {
@@ -1675,9 +1688,9 @@ async function secret_labo(rand = default_rand) {
     // 现在列宽由网格决定，不补空行。
     print_button_grid(
       [
-        [997, '- 前一页'],
-        [999, '- 返回'],
-        [998, '- 后一页'],
+        [LABO_PREV_PAGE_KEY, '- 前一页'],
+        [LABO_BACK_KEY, '- 返回'],
+        [LABO_NEXT_PAGE_KEY, '- 后一页'],
       ],
       3,
     );
@@ -1809,12 +1822,12 @@ async function secret_labo(rand = default_rand) {
       await st_up_labo(5000, ST_UP_MENU[result]);
     } else if (result === 74) {
       await magicresist();
-    } else if (result === 999) {
+    } else if (result === LABO_BACK_KEY) {
       return 0;
-    } else if (result === 997) {
+    } else if (result === LABO_PREV_PAGE_KEY) {
       p += 3; // 前一页
       p %= 4;
-    } else if (result === 998) {
+    } else if (result === LABO_NEXT_PAGE_KEY) {
       p += 1; // 后一页
       p %= 4;
     } else {

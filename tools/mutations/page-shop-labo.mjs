@@ -597,22 +597,22 @@ export default [
   make(
     11866,
     '选人画面页脚补回空行（按「PRINTLC 自带换行」翻译的旧写法）',
-    "      [1001, '- 下一页'],\n    ],\n    3,\n  );\n}",
-    "      [1001, '- 下一页'],\n    ],\n    3,\n  );\n  era.print(''); // 变异：页脚之后多补空行\n}",
+    "      [PICK_NEXT_KEY, '- 下一页'],\n    ],\n    3,\n  );\n}",
+    "      [PICK_NEXT_KEY, '- 下一页'],\n    ],\n    3,\n  );\n  era.print(''); // 变异：页脚之后多补空行\n}",
     '实验室选人画面页脚按钮之后不应有空行',
   ),
   make(
     11867,
     'EVILAPP 页脚补回空行（同上，PRINTL 只收 [999] 那一行）',
-    "  era.printButton('- 返  回', 999); // PRINTLC",
-    "  era.printButton('- 返  回', 999); // PRINTLC\n  era.print(''); // 变异：页脚之后多补空行",
+    "  era.printButton('- 返  回', LABO_BACK_KEY); // PRINTLC",
+    "  era.printButton('- 返  回', LABO_BACK_KEY); // PRINTLC\n  era.print(''); // 变异：页脚之后多补空行",
     '恶魔体征改造页脚按钮之后不应有空行',
   ),
   make(
     11868,
     '秘密实验室页脚补回空行（同上，PRINTL 只收 [998] 那一行）',
-    "        [998, '- 后一页'],\n      ],\n      3,\n    );",
-    "        [998, '- 后一页'],\n      ],\n      3,\n    );\n    era.print(''); // 变异：页脚之后多补空行",
+    "        [LABO_NEXT_PAGE_KEY, '- 后一页'],\n      ],\n      3,\n    );",
+    "        [LABO_NEXT_PAGE_KEY, '- 后一页'],\n      ],\n      3,\n    );\n    era.print(''); // 变异：页脚之后多补空行",
     '秘密实验室页脚按钮之后不应有空行',
   ),
   // 反方向的一条：这里的 PRINTL 是独立真空行（上一行是整行 PRINTL），删掉即错

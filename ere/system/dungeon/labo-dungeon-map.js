@@ -31,6 +31,9 @@
  */
 
 const era = require('#/era-electron');
+
+/** 地城 2D 设定屏的返回键（0/1 是普通/2D 两个取值） */
+const MAP_BACK_KEY = 100;
 const { is_state } = require('#/system/flow/game-state');
 const era_flag = require('#/era-utils/era-flag');
 const { chara } = require('#/facade/chara');
@@ -358,7 +361,7 @@ async function config_labo_map_setting(rand) {
   for (;;) {
     era.printButton('普通', 0);
     era.printButton('２Ｄ', 1);
-    era.printButton('返回', 100);
+    era.printButton('返回', MAP_BACK_KEY);
     const result = await era.input();
     if (result === 0 || result === 1) {
       // CASE 0 TO 1
@@ -368,7 +371,7 @@ async function config_labo_map_setting(rand) {
       }
       return 0;
     }
-    if (result === 100) {
+    if (result === MAP_BACK_KEY) {
       return 0;
     }
     // CLEARLINE 1（无效输入清行）无 API——重问循环（文件头）

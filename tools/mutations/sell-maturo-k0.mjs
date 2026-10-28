@@ -25,14 +25,14 @@ export default [
   make(
     7601,
     '随手卖掉编号改错',
-    'result === 999) return true',
+    'result === SELL_MARKET_GIVEUP_KEY) return true',
     'result === 998) return true',
     '市场菜单重输',
   ),
   make(
     7602,
     '录像开关编号改错',
-    'result === 1000) {',
+    'result === SELL_MARKET_VIDEO_KEY) {',
     'result === 1001) {',
     '市场菜单重输',
   ),

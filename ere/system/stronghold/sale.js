@@ -24,6 +24,9 @@
  */
 
 const era = require('#/era-electron');
+
+/** 出售选人屏的返回键 [999] */
+const SALE_BACK_KEY = 999;
 const { remove_character } = require('#/system/chara-removal');
 const { remember_sale_price } = require('#/event/event-aftertrain');
 const { self_kojo } = require('#/kojo/kojo-system');
@@ -581,13 +584,13 @@ async function chara_sale({
       era.printButton(`${chara_callname(cid)} ${price_text}${favorite}`, cid);
     }
     era.drawLine({ content: '‥' });
-    era.printButton('- 返回', 999);
+    era.printButton('- 返回', SALE_BACK_KEY);
     // 名单就是受理集：每名候选都是按钮（快捷键＝角色号），白名单先一步
     // 拦下不在名单里的编号——出售资格由 sale_candidate 一处判定。
     const selected = await era.input();
-    if (selected === 999) {
+    if (selected === SALE_BACK_KEY) {
       era_flag.target = game.event.上次调教对象;
-      return 999;
+      return SALE_BACK_KEY;
     }
     if (value('cflag', selected, 700)) {
       era.print(`${chara_callname(selected)}在你的收藏列表里，不能卖掉。`);

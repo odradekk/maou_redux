@@ -1201,9 +1201,9 @@ export default [
   {
     desc: 'M6682 enter_lover 的受理集漏掉表里的 200（隐藏的恋人类型被 rule 拒收）',
     file: 'ere/system/dungeon/dungeon-lovers.js',
-    find: "  const accepted = `(?:0|999|${[...LOVER_NAMES.keys()].join('|')})`;",
+    find: "  const accepted = `(?:0|${LOVERS_CANCEL_KEY}|${[...LOVER_NAMES.keys()].join('|')})`;",
     replace:
-      "  const accepted = '(?:0|999|1|2|3|4|21|22|23|24|41|42|43|44|61|62|63|64|81|82|83|84)'; // 变异：漏掉 200",
+      "  const accepted = '(?:0|${LOVERS_CANCEL_KEY}|1|2|3|4|21|22|23|24|41|42|43|44|61|62|63|64|81|82|83|84)'; // 变异：漏掉 200",
     tests: ['dungeon-lovers'],
     must_mention: '自由输入保留隐藏的角色恋人编号 200',
   },
