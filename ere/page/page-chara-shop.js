@@ -42,11 +42,11 @@
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
+const { char_make, name_reset } = require('#/system/chara/char-make');
+const { add_chara_ex, DECLARED_CHARA_IDS } = require('#/system/chara/chara-ex');
+const { char_init } = require('#/system/chara/chara-init');
+const { party_char_del } = require('#/system/dungeon/dungeon-party');
 const { chara } = require('#/facade/chara');
-const { char_make, name_reset } = require('#/chara/char-make');
-const { add_chara_ex, DECLARED_CHARA_IDS } = require('#/chara/chara-ex');
-const { char_init } = require('#/chara/chara-init');
-const { party_char_del } = require('#/dungeon/dungeon-party');
 const { show_chara_info } = require('#/page/page-chara-info-show');
 const { clear_shop } = require('#/page/page-item-shop');
 const {

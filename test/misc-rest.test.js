@@ -83,7 +83,7 @@ function setup_spy_tattoo(tattoos) {
   fixture.set_inputs(1);
   return {
     fixture,
-    battle: fixture.load_module('dungeon/dungeon-battle2'),
+    battle: fixture.load_module('system/dungeon/dungeon-battle2'),
   };
 }
 
@@ -150,7 +150,7 @@ async function run_sensation_offer({
 
 test('chara_ex：扩展口上编号取最后命中项并保留静态局部，名称只初始化一次', () => {
   const fixture = create_era_fixture();
-  const ex = fixture.load_module('chara/chara-ex');
+  const ex = fixture.load_module('system/chara/chara-ex');
 
   fixture.store.set('ex_talent:16:101', 1);
   assert.equal(ex.get_ex_kojo_num(16), 1001, '扫描包含下界 101');
@@ -170,7 +170,9 @@ test('chara_ex：扩展口上编号取最后命中项并保留静态局部，名
 
 test('add_chara_ex：16 被检查拦截，17 从精确下界进入分发', async () => {
   const fixture = create_era_fixture();
-  const { add_chara_ex, chara_ex } = fixture.load_module('chara/chara-ex');
+  const { add_chara_ex, chara_ex } = fixture.load_module(
+    'system/chara/chara-ex',
+  );
   const called = [];
   chara_ex.register(16, (cid) => called.push(cid));
   chara_ex.register(17, (cid) => called.push(cid));
@@ -183,7 +185,7 @@ test('add_chara_ex：16 被检查拦截，17 从精确下界进入分发', async
 
 test('chara_ex：名称表与八个写槽逐项对应', async () => {
   const fixture = create_era_fixture();
-  const ex = fixture.load_module('chara/chara-ex');
+  const ex = fixture.load_module('system/chara/chara-ex');
   assert.equal(ex.ex_talentname_init(), true);
   assert.deepEqual(
     [
@@ -232,7 +234,7 @@ test('chara_ex：名称表与八个写槽逐项对应', async () => {
 test('TATOO：只收集 10..19 的非空刺青，并排除狂王纹章', () => {
   const fixture = create_era_fixture();
   const { get_tatoo, tatoo_locate_name } = fixture.load_module(
-    'dungeon/dungeon-battle2',
+    'system/dungeon/dungeon-battle2',
   );
   fixture.store.set('cstr:17:10', '脸纹');
   fixture.store.set('cstr:17:11', '狂王的纹章');

@@ -1,0 +1,334 @@
+/**
+ * @file 灵魂转移：把魔王的灵魂转移进出击中的角色体内，与之互换身份和部分
+ * 能力；日程推进里的灵魂错位判定。
+ *
+ * 调用方：ere/page/page-chara-info.js 的身份互换入口（case 17）；
+ * ere/event/event-nextday.js 每角色每日调用 soul_dislocation（这张工单
+ * 接入真身）。
+ *
+ * swap_chara() 覆盖范围：`ere/` 没有通用的「角色全部变量」枚举 API（不像
+ * 引擎能反射出全部已注册表），因此只交换本项目目前实际使用的角色数值表
+ * （cflag/talent/ex_talent/base/maxbase/abl/exp/mark/stain/tequip/source/
+ * palam/juel/gotjuel，按各表声明的元素上限）与两个字符串表（cstr/tstr）。
+ * 不覆盖 portcflag/c_relation/c_relation_sub——后两者是按 [角色][角色] 二维
+ * 矩阵寻址的关系表，交换语义需要同时改写矩阵里所有指向这两个角色的行，
+ * 不是按 cid 整表互换。范围表不含 callname：姓名（callname:cid:-1）与
+ * 称呼（callname:cid:-2）两槽由调用方显式处理（transferapp 的称呼互换）。
+ *
+ * **换号不走数据互换（#545 返工）**：ere 的角色 ID 即身份，搬数据互换会把
+ * 身份与人拆开（读点如 kojo-k1-confident.js 的 `(no:assi || assi) === 17`
+ * 会落到另一个人身上）。换号只交换自建的排序编号——见
+ * ere/page/page-chara-number-swap.js 文件头与该字段的实现
+ * ere/system/chara/chara-portcflag.js。先前那版在此实现的 swap_chara_numbers()
+ * 随之删除。
+ *
+ * 二次互换互相抵消：transfer_soul 先 swap_chara(0, cid) 整表互换
+ * cflag/talent/base/maxbase/abl/ex_talent 等，随后 transferapp(cid) 又对
+ * 同一批字段（CFLAG:9/11-14 等级攻防、婚姻用的 CFLAG:601/609、personalock
+ * 覆盖的大段 TALENT/ABL 区间）逐个再换一次——同一对字段被换了两次，净效果
+ * 是这些字段维持原值，只有不在 swap_chara() 覆盖范围内的字段（称呼
+ * callname:-2、灵魂错位 debuff 的最终赋值）才真正变化。「等级/攻防/婚姻
+ * 状态随身体留下、只有称呼与错位素质跟灵魂走」是既定可观测语义。
+ */
+
+const era = require('#/era-electron');
+const { char_size_generate } = require('#/system/chara/chara-body');
+const { ex_talentname } = require('#/system/chara/chara-ex');
+const { chara } = require('#/facade/chara');
+const {
+  search_family,
+  relation_swap_rebuild,
+} = require('#/system/chara/chara-family');
+const { default_rand } = require('#/utils/numeric');
+
+function name_of(cid) {
+  return era.get(`callname:${cid}:-1`) ?? '';
+}
+
+// 称呼（callname:cid:-2）：确认对话仅这一处用它，其余
+// 全用姓名（callname:cid:-1，见 name_of）
+function nickname_of(cid) {
+  return era.get(`callname:${cid}:-2`) ?? '';
+}
+
+/** 数值型角色表：[表名, 声明的元素数]。ex_talent 无声明（本项目扩展表），
+ * 取 ere 侧实测最大下标 901 的宽松上界。 */
+const NUMERIC_CHARA_TABLES = [
+  ['cflag', 1000],
+  ['talent', 10000],
+  ['ex_talent', 1000],
+  ['base', 100],
+  ['maxbase', 100],
+  ['abl', 110],
+  ['exp', 100],
+  ['mark', 100],
+  ['stain', 100],
+  ['tequip', 100],
+  ['source', 1000],
+  ['palam', 100],
+  ['juel', 200],
+  ['gotjuel', 200],
+];
+const STRING_CHARA_TABLES = ['cstr', 'tstr'];
+
+/** 交换单个下标；两侧皆未声明时跳过（不凭空造出键，#13 的静默写入陷阱）。 */
+function swap_var(table, a, b, index, empty = 0) {
+  const key_a =
+    index === undefined ? `${table}:${a}` : `${table}:${a}:${index}`;
+  const key_b =
+    index === undefined ? `${table}:${b}` : `${table}:${b}:${index}`;
+  const val_a = era.get(key_a);
+  const val_b = era.get(key_b);
+  if (val_a === undefined && val_b === undefined) return;
+  era.set(key_a, val_b === undefined ? empty : val_b);
+  era.set(key_b, val_a === undefined ? empty : val_a);
+}
+
+/**
+ * swap_chara：交换两个角色在范围表内的全部数据（覆盖范围见文件头）。
+ * @param {number} a 角色 ID
+ * @param {number} b 角色 ID
+ */
+function swap_chara(a, b) {
+  for (const [table, size] of NUMERIC_CHARA_TABLES) {
+    for (let i = 0; i < size; i += 1) swap_var(table, a, b, i);
+  }
+  for (const table of STRING_CHARA_TABLES) {
+    for (let i = 0; i < 100; i += 1) swap_var(table, a, b, i, '');
+  }
+}
+
+/**
+ * personalock：互换一大批个人特质与能力（跟随身份走的"人格"部分，与
+ * swap_chara 覆盖的"身体"部分互补）。
+ *
+ * talent 区间为左闭右开（结束下标不含本身）：见各行注释；50-58 跳过 55。
+ * @param {number} cid 角色 ID
+ */
+function personalock(cid) {
+  const talent_ranges = [
+    [10, 19],
+    [20, 29],
+    [30, 38],
+    [60, 65],
+    [69, 73],
+    [79, 84],
+    [87, 89],
+    [91, 94],
+    [131, 132],
+    [136, 137],
+    [140, 143],
+    [150, 152],
+    [155, 156],
+    [160, 179],
+    [200, 212],
+    [221, 223],
+    [240, 244],
+    [250, 253],
+    [281, 283],
+    [291, 293],
+    [470, 486],
+  ];
+  for (const [from, to] of talent_ranges) {
+    for (let tc = from; tc < to; tc += 1) swap_var('talent', 0, cid, tc);
+  }
+  for (let tc = 50; tc < 58; tc += 1) {
+    if (tc === 55) continue;
+    swap_var('talent', 0, cid, tc);
+  }
+  for (const tc of [117, 118, 123, 127, 134, 182, 258]) {
+    swap_var('talent', 0, cid, tc);
+  }
+  // 调合知识 55 / 癖 313 / 魔界知识 325 / 淫魔知识 327 / 魔虫知识 328
+  // （yml/Talent.yml 名→id 查表；调合知识恰好落在 [50,58) 已随上面的循环
+  // 一并交换，此处不重复）
+  for (const tc of [313, 325, 327, 328]) {
+    swap_var('talent', 0, cid, tc);
+  }
+  for (let tc = 101; tc < 201; tc += 1) swap_var('ex_talent', 0, cid, tc);
+  for (let tc = 10; tc < 18; tc += 1) swap_var('abl', 0, cid, tc);
+  for (let tc = 20; tc < 23; tc += 1) swap_var('abl', 0, cid, tc);
+  for (let tc = 100; tc < 103; tc += 1) swap_var('abl', 0, cid, tc);
+}
+
+/**
+ * transferapp：身份互换收尾——等级/攻防/体力气力/勇者履历/好感与调教
+ * 次数/personalock 大量特质/关系表重建/姓名。
+ * @param {number} cid 角色 ID
+ */
+function transferapp(cid) {
+  for (const idx of [9, 11, 12, 13, 14]) swap_var('cflag', 0, cid, idx);
+  for (const idx of [0, 1]) swap_var('base', 0, cid, idx);
+  for (const idx of [0, 1]) swap_var('maxbase', 0, cid, idx);
+  for (const idx of [315, 316]) swap_var('talent', 0, cid, idx); // 成为勇者的经历
+  for (const idx of [10, 2]) swap_var('cflag', 0, cid, idx); // 好感度/调教次数
+  for (const idx of [85, 86, 76]) swap_var('talent', 0, cid, idx); // 爱慕/盲从/淫乱
+
+  chara(0).invasion.状态 = 0;
+  chara(cid).invasion.状态 = 0;
+
+  // 姓名交换只落最终可观察效果：互换称呼（:-2），再各自把姓名（:-1）
+  // 改写成新的称呼——两槽的语义见 utils/callname-utils.js 文件头
+  // 两侧称呼槽都由 addCharacter 初始化（无称呼预设时回落姓名），不存在
+  // undefined 侧，swap_var 的数值缺省值不会写入。
+  swap_var('callname', 0, cid, -2);
+  era.set('callname:0:-1', era.get('callname:0:-2') ?? '');
+  era.set(`callname:${cid}:-1`, era.get(`callname:${cid}:-2`) ?? '');
+
+  relation_swap_rebuild(0, cid);
+  personalock(cid);
+}
+
+/**
+ * bodycheck_maou：魔王身体数据缺省时的默认值生成（种族/肉体年龄、三围、
+ * 外貌五官素质）。只读写角色 0，因此不取参数。
+ */
+function bodycheck_maou() {
+  if (
+    (era.get('cflag:0:452') || 0) === 0 &&
+    (era.get('cflag:0:314') || 0) > 0
+  ) {
+    era.set('cflag:0:452', 666);
+  }
+  if (
+    (era.get('cflag:0:452') || 0) === 0 &&
+    (era.get('cflag:0:314') || 0) === 0
+  ) {
+    era.set('cflag:0:452', 21);
+  }
+  if ((era.get('cflag:0:451') || 0) === 0) {
+    era.set('cflag:0:451', 21);
+  }
+  if (
+    !(era.get('cflag:0:453') || 0) ||
+    !(era.get('cflag:0:454') || 0) ||
+    !(era.get('cflag:0:455') || 0) ||
+    !(era.get('cflag:0:456') || 0) ||
+    !(era.get('cflag:0:457') || 0)
+  ) {
+    const [, , height, weight, bust, waist, hip] = char_size_generate(0);
+    era.set('cflag:0:453', height);
+    era.set('cflag:0:454', weight);
+    era.set('cflag:0:455', bust);
+    era.set('cflag:0:456', waist);
+    era.set('cflag:0:457', hip);
+  }
+  if (
+    !(era.get('talent:0:300') || 0) ||
+    !(era.get('talent:0:301') || 0) ||
+    !(era.get('talent:0:302') || 0) ||
+    !(era.get('talent:0:303') || 0) ||
+    !(era.get('talent:0:304') || 0)
+  ) {
+    era.set('talent:0:300', 5);
+    era.set('talent:0:301', 1);
+    era.set('talent:0:302', 300);
+    era.set('talent:0:303', 1);
+    era.set('talent:0:304', 1);
+  }
+  if (
+    !(era.get('talent:0:305') || 0) ||
+    !(era.get('talent:0:306') || 0) ||
+    !(era.get('talent:0:307') || 0)
+  ) {
+    era.set('talent:0:305', 3);
+    era.set('talent:0:306', 3);
+    era.set('talent:0:307', 4);
+  }
+  if (
+    !(era.get('talent:0:308') || 0) ||
+    !(era.get('talent:0:309') || 0) ||
+    !(era.get('talent:0:310') || 0)
+  ) {
+    era.set('talent:0:308', 150);
+    era.set('talent:0:309', 3);
+    era.set('talent:0:310', 100);
+  }
+}
+
+/**
+ * transfer_soul：灵魂转移主流程。
+ *
+ * @param {number} cid 转移对象
+ * @param {number} [mode=0] 0 = 先问一次确认，非 0 = 跳过确认直接执行
+ *   （event-nextday.js 的调用传 1）
+ * @param {(n: number) => number} [rand] 随机源
+ * @returns {Promise<number>} 玩家拒绝时返回 cid；成功转移后返回 0，调用方
+ *   （page-chara-info.js）据此把画面焦点转回角色 0
+ */
+async function transfer_soul(cid, mode = 0, rand = default_rand) {
+  if (!mode) {
+    era.print(`要将${nickname_of(0)}的灵魂转移到${name_of(cid)}上么？`);
+    era.printButton('是', 0);
+    era.printButton('否', 1);
+    const result = await era.input();
+    if (result !== 0) {
+      return cid; // 玩家拒绝
+    }
+  }
+
+  bodycheck_maou();
+
+  const marriage = era.get(`cflag:${cid}:601`) || 0;
+  if ((marriage >= 900 && marriage <= 902) || marriage === 0) {
+    swap_var('cflag', 0, cid, 601);
+    swap_var('cflag', 0, cid, 609);
+  } else {
+    era.set('cflag:0:621', marriage);
+    const partner = search_family(cid, 'MARRIAGE');
+    // partner<0（查无婚姻对象）时跳过，否则执行
+    if (partner >= 0) {
+      era.set(`cflag:${partner}:621`, era.get(`cflag:${partner}:601`) || 0);
+      era.set(`cflag:${partner}:601`, 901);
+      era.set(`cflag:${partner}:609`, era.get(`cflag:${partner}:6`) || 0);
+    }
+  }
+
+  swap_chara(0, cid);
+  transferapp(cid);
+
+  // 灵魂错位素质叠加（有 debuff）：本次转移让转移对象背上 1-5 级，
+  // 若魔王身上已带着旧的错位素质则继承并 +1 级、魔王自己清零
+  let debuff = rand(5) + 1;
+  if (era.get('ex_talent:0:0')) {
+    debuff = (era.get('ex_talent:0:0') || 0) + 1;
+  }
+  era.set(`ex_talent:${cid}:0`, debuff);
+  era.set('ex_talent:0:0', 0);
+  era.print(`${name_of(cid)}陷入了【${ex_talentname(0)}】`);
+  // 转移播报在回名册前经按键确认（名册循环换屏会清掉本屏，ADR-0009）
+  await era.waitAnyKey();
+
+  return 0;
+}
+
+/**
+ * soul_dislocation：灵魂错位自然恢复判定（每角色每日调用一次）。
+ *
+ * EX_TALENT:0（灵魂错位等级，transfer_soul 施加）每日有 1/(min(等级,3)+1)
+ * 概率降 1 级，降到 0 时播报康复。ere 侧显式传参，对每个角色各判一次。
+ *
+ * @param {number} cid 角色 ID
+ * @param {(n: number) => number} [rand] 随机源
+ */
+function soul_dislocation(cid, rand = default_rand) {
+  const level = era.get(`ex_talent:${cid}:0`) || 0;
+  const cap = level > 3 ? 3 : level; // 等级超过 3 按 3 计
+  if (level && !rand(cap + 1)) {
+    let next = level - 1;
+    if (next < 0) next = 0;
+    era.set(`ex_talent:${cid}:0`, next);
+    if (next === 0) {
+      era.print(`${name_of(cid)}从【${ex_talentname(0)}】中恢复了`);
+    }
+  }
+}
+
+module.exports = {
+  swap_chara,
+  personalock,
+  transferapp,
+  bodycheck_maou,
+  transfer_soul,
+  soul_dislocation,
+};

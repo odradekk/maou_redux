@@ -1,6 +1,6 @@
 /**
- * ere/chara/chara-make.js 的 chara_make + 14 个 cm_* 段与转发层
- * ere/chara/char-make.js 的行为测试（issue #170，阶段 3 H1）。
+ * ere/system/chara/chara-make.js 的 chara_make + 14 个 cm_* 段与转发层
+ * ere/system/chara/char-make.js 的行为测试（issue #170，阶段 3 H1）。
  *
  * 缝 = test/helpers/era-fixture.js（全项目唯一测试注入点）。随机源经
  * chara_make / 各 cm_* 的 rand 参数注入（chara-init.js 先例）：
@@ -17,11 +17,11 @@ const { test } = require('node:test');
 const { create_era_fixture } = require('./helpers/era-fixture');
 
 function load(fixture) {
-  return fixture.load_module('chara/chara-make');
+  return fixture.load_module('system/chara/chara-make');
 }
 
 function load_forward(fixture) {
-  return fixture.load_module('chara/char-make');
+  return fixture.load_module('system/chara/char-make');
 }
 
 /**
@@ -215,7 +215,7 @@ test('flag:5 位 12 开：char_body_generate_wapped 真身落盘', async () => {
   fixture.store.set('flag:5', 4096); // flag:5 位 12
   const { chara_make } = load(fixture);
   await chara_make(1, 0, 0, never);
-  // #385 起为真身（ere/chara/chara-body.js）：cflag:451-457 是条件。
+  // #385 起为真身（ere/system/chara/chara-body.js）：cflag:451-457 是条件。
   // 年龄先钳制在 [12,35]，身高/体重为正数。
   // 随机源钉死（never）→ 四个落点都是确定值，钉精确值而不是区间。
   // #389 勘误：#385 当时写的 [12,35] 只是那一条随机序的巧合——char_age_generate
@@ -616,7 +616,7 @@ test('cm_look：look_set 真身落盘 + 白虎 5%', async () => {
   const fixture = create_era_fixture();
   const { cm_look } = load(fixture);
   await cm_look(3, 0, never);
-  // #389 起 cm_look 接的是 look_set 真身（ere/chara/look.js）：外貌素质
+  // #389 起 cm_look 接的是 look_set 真身（ere/system/chara/look.js）：外貌素质
   // 由它掷出
   assert.equal(fixture.store.get('talent:3:300'), 11, '发色 = 11 粉髪');
   assert.equal(fixture.store.get('talent:3:313'), 2, '癖 = 2 往后看');
@@ -838,11 +838,11 @@ test('cm_cloth 眼镜素质配眼镜饰品', async () => {
   assert.equal(fixture.store.get('cflag:3:42'), 83, '眼镜饰品');
 });
 
-// —— 转发层 ere/chara/char-make.js（验收第 2 条：不折叠）——
+// —— 转发层 ere/system/chara/char-make.js（验收第 2 条：不折叠）——
 
 test('转发层 char_make：参数与返回值原样转发到 chara_make（不折叠）', async () => {
   const fixture = create_era_fixture();
-  const real = fixture.load_module('chara/chara-make');
+  const real = fixture.load_module('system/chara/chara-make');
   const seen = [];
   const original = real.chara_make;
   real.chara_make = async (cid, arg0, arg1, rand) => {
@@ -865,7 +865,7 @@ test('转发层 char_make：参数与返回值原样转发到 chara_make（不�
 
 test('转发层缺省参数：arg0/arg1 缺省 0（char_make 的形参默认）', async () => {
   const fixture = create_era_fixture();
-  const real = fixture.load_module('chara/chara-make');
+  const real = fixture.load_module('system/chara/chara-make');
   const seen = [];
   const original = real.chara_make;
   real.chara_make = async (cid, arg0, arg1) => {
@@ -894,7 +894,7 @@ test('转发层 char_make_inport：rand(arg0) != 0 即返回 0', async () => {
   const fixture = create_era_fixture();
   const forward = load_forward(fixture);
   assert.equal(await forward.char_make_inport(5, never), 0, '掷不中：非异国');
-  // 掷中即进转发目标——#394 起真身（ere/chara/chara-make-inport.js），
+  // 掷中即进转发目标——#394 起真身（ere/system/chara/chara-make-inport.js），
   // 行为面在 test/chara-make-inport.test.js。
 });
 

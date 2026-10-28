@@ -1,6 +1,6 @@
 /**
- * ere/chara/chara-make-inport.js（chara_make_inport）与转发层判定式
- * （ere/chara/char-make.js）的行为测试（issue #394，N10）。
+ * ere/system/chara/chara-make-inport.js（chara_make_inport）与转发层判定式
+ * （ere/system/chara/char-make.js）的行为测试（issue #394，N10）。
  *
  * 缝 = test/helpers/era-fixture.js（全项目唯一测试注入点）。随机源经 rand
  * 参数注入（chara-init.js 先例）：
@@ -19,11 +19,11 @@ const { test } = require('node:test');
 const { create_era_fixture } = require('./helpers/era-fixture');
 
 function load(fixture) {
-  return fixture.load_module('chara/chara-make-inport');
+  return fixture.load_module('system/chara/chara-make-inport');
 }
 
 function load_forward(fixture) {
-  return fixture.load_module('chara/char-make');
+  return fixture.load_module('system/chara/char-make');
 }
 
 /** RAND:N == 1（恒不中 == 0 判定；对 truthy 判定恒真） */
@@ -464,7 +464,7 @@ test('目标预设不存在时不写进不存在的桶（有意偏离既有行�
   );
 });
 
-// —— 转发层判定式（ere/chara/char-make.js） ——
+// —— 转发层判定式（ere/system/chara/char-make.js） ——
 
 test('转发层 char_make_inport：rand(arg0) != 0 即返回 0', async () => {
   const fixture = create_era_fixture();

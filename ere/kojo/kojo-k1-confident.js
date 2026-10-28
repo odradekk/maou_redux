@@ -47,10 +47,10 @@ const {
 const { heart, self_call, self_call_first } = require('#/kojo/kojo-text');
 const { gobi_text } = require('#/data/gobi-koujo-const');
 const { EVENT } = require('#/data/event-name-const');
-const { get_look_info } = require('#/chara/look-info');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { piercing_state } = require('#/system/train/piercing-state');
+const { get_look_info } = require('#/system/chara/look-info');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
 
 const MASTER = 0;

@@ -857,7 +857,7 @@ test('调教窗口（#816）：结算中某一步返回转场目标也照样关�
       begin(STATE.TURNEND);
     // 窗口之后的尾段（队伍结成，无条件）站在关窗之后：日循环里的读者看不到
     // 调教域表，这个序就是那条边界的证人
-    f.load_module('dungeon/dungeon-party').party_join = async () => {
+    f.load_module('system/dungeon/dungeon-party').party_join = async () => {
       trained_when_tail_runs = f.era.getCharactersInTrain();
     };
   });
@@ -880,7 +880,7 @@ test('调教窗口（#816）：早段加入的角色在肉便器段之前就补�
   let trained_at_benki;
   const { fixture, emit } = setup_turnend((f) => {
     // 迷宫段会带人进来（这里是它的等价物）：队伍编成站在迷宫循环之前
-    f.load_module('dungeon/dungeon-party').party_unite = () => {
+    f.load_module('system/dungeon/dungeon-party').party_unite = () => {
       f.era.addCharacter(NEW);
     };
     const benki = f.load_module('system/train/benki');
@@ -1731,7 +1731,7 @@ test('EVENTTURNEND：迷宫攻略在结局回标题时，结算照常关掉调�
   // 结算中段的调教窗口（beginTrain → endTrain）包住 run_dungeon：深处回
   // 标题时不能把窗口留在打开状态（#816 的 finally 覆盖这条出口）
   const { fixture, emit } = setup_turnend((f) => {
-    f.load_module('dungeon/dungeon').run_dungeon = async () => 'TITLE';
+    f.load_module('system/dungeon/dungeon').run_dungeon = async () => 'TITLE';
   });
   fixture.seed_chara(31, { id: 31, name: '奴隶31', callname: '角色31' });
   fixture.era.addCharacter(31);

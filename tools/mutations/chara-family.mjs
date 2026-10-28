@@ -1,5 +1,5 @@
 // issue #349：家族关系设置全目录（M6982-M7025）。
-const code = 'ere/chara/chara-family.js';
+const code = 'ere/system/chara/chara-family.js';
 const make = (id, desc, find, replace, file = code, must_mention = '家族') => ({
   desc: `M${id} ${desc}`,
   file,
@@ -19,7 +19,7 @@ export default [
       'CHARA_MAKE 漏接家族登记',
       '    family_register(cid, rand_n);',
       '    void cid;',
-      'ere/chara/chara-make.js',
+      'ere/system/chara/chara-make.js',
       'family_register 调用真身',
     ),
     tests: ['chara-make'],

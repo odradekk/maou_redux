@@ -47,11 +47,11 @@ const era = require('#/era-electron');
 const { begin, is_state, STATE } = require('#/system/flow/game-state');
 const { on, TIER } = require('#/system/event/registry');
 const maounet_mod = require('#/system/cross-save-sharing');
-const { ex_talentname_init } = require('#/chara/chara-ex');
-const { normalize_idle_status } = require('#/chara/chara-init');
-const { backfill_chara_templates } = require('#/chara/chara-pregnancy');
-const { chara_name_init } = require('#/chara/chara-name-list');
 const era_flag = require('#/era-utils/era-flag');
+const { ex_talentname_init } = require('#/system/chara/chara-ex');
+const { normalize_idle_status } = require('#/system/chara/chara-init');
+const { backfill_chara_templates } = require('#/system/chara/chara-pregnancy');
+const { chara_name_init } = require('#/system/chara/chara-name-list');
 const { EVENT } = require('#/data/event-name-const');
 
 /**

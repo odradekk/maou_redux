@@ -40,10 +40,10 @@
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
+const { char_make, name_reset } = require('#/system/chara/char-make');
+const { add_chara_ex } = require('#/system/chara/chara-ex');
+const { party_char_del } = require('#/system/dungeon/dungeon-party');
 const { chara } = require('#/facade/chara');
-const { char_make, name_reset } = require('#/chara/char-make');
-const { add_chara_ex } = require('#/chara/chara-ex');
-const { party_char_del } = require('#/dungeon/dungeon-party');
 const { show_chara_info } = require('#/page/page-chara-info-show');
 const { clear_shop } = require('#/page/page-item-shop');
 const { change_screen } = require('#/page/components/screen-change');
@@ -577,8 +577,11 @@ function read_monster(id, rand) {
   // 延迟 require：monster-data 顶层取 page-life-list（→ page-select-target
   // → monster-play → monster-data）的环，加载期取会拿到半成品
   // （page-life-list.js:290-298 的同款处置）
-  const { monster_data } = require('#/dungeon/monster-data');
-  const { BATTLE_COLUMN, battle_column } = require('#/dungeon/battle-state');
+  const { monster_data } = require('#/system/dungeon/monster-data');
+  const {
+    BATTLE_COLUMN,
+    battle_column,
+  } = require('#/system/dungeon/battle-state');
   monster_data(id, 5, -1, -1, -1, rand);
   return {
     level: battle_column(BATTLE_COLUMN.RAVISH).level,

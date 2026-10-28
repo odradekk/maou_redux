@@ -25,7 +25,7 @@ function setup_world() {
 }
 
 function load(fixture) {
-  return fixture.load_module('dungeon/dungeon-lovers');
+  return fixture.load_module('system/dungeon/dungeon-lovers');
 }
 
 function text_lines(fixture) {
@@ -416,7 +416,7 @@ test('dungeon_town 的日常段调用恋人真身，不再输出存根', async (
   const lovers = load(fixture);
   const called = [];
   lovers.dungeon_town_lover = async (cid) => called.push(cid);
-  const town = fixture.load_module('dungeon/dungeon-town');
+  const town = fixture.load_module('system/dungeon/dungeon-town');
   await town.town_pt_dayevent(1, 2, 0);
   assert.deepEqual(called, [1, 2]);
 });

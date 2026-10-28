@@ -43,7 +43,7 @@ function set_talents(fixture, cid, talents) {
 }
 
 function load(fixture) {
-  return fixture.load_module('chara/chara-self-call');
+  return fixture.load_module('system/chara/chara-self-call');
 }
 
 // ---- calc_selfcall_factor ----

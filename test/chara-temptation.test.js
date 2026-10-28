@@ -1,5 +1,5 @@
 /**
- * @file ere/chara/chara-temptation.js 的行为测试（issue #393，N9）。
+ * @file ere/system/chara/chara-temptation.js 的行为测试（issue #393，N9）。
  *
  * 缝 = test/helpers/era-fixture.js。带随机源形参的函数一律喂确定性序列
  * （`seq`），断言同时看「掷出的值」与「掷骰的上界」（`seq_probe` 记上界）。
@@ -18,7 +18,7 @@ function add_chara(fixture, cid, name = `角色${cid}`) {
 }
 
 function load(fixture) {
-  return fixture.load_module('chara/chara-temptation');
+  return fixture.load_module('system/chara/chara-temptation');
 }
 
 function texts(fixture) {

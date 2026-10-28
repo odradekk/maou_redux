@@ -372,14 +372,17 @@ const cflag = {
   ),
   504: named_tail('要求奖赏', 'CFLAG:504 = 要求したご褒美'),
   602: named_tail('结婚爱情', 'CFLAG:602 = 結婚愛情'),
-  606: named_tail('恋人', 'CFLAG:606 = 恋人（ere/dungeon/dungeon-lovers.js）'),
+  606: named_tail(
+    '恋人',
+    'CFLAG:606 = 恋人（ere/system/dungeon/dungeon-lovers.js）',
+  ),
   607: named_tail(
     '恋人爱情',
-    'CFLAG:607 = 恋人愛情（ere/dungeon/dungeon-lovers.js）',
+    'CFLAG:607 = 恋人愛情（ere/system/dungeon/dungeon-lovers.js）',
   ),
   608: named_tail(
     '恋人名字',
-    'CFLAG:608 = 恋人の名前（ere/dungeon/dungeon-lovers.js）',
+    'CFLAG:608 = 恋人の名前（ere/system/dungeon/dungeon-lovers.js）',
   ),
   610: named_tail('恋人ID', 'CFLAG:610 = 恋人のID（キャラのときのみ）'),
   // #245（J35 K14 貴公子）：口上读性転換済（male→female 改造完成标志，
@@ -415,14 +418,14 @@ const cflag = {
     '命名检查',
     'CFLAG:420 = 命名チェック(フラグON時はユーザー設定ネーム)',
   ),
-  // #398（N14 实验室）：身体生成的体重与胸围（ere/chara/chara-body.js
+  // #398（N14 实验室）：身体生成的体重与胸围（ere/system/chara/chara-body.js
   //   同款，这张工单的 modify_bustup 等三处按 char_size_generate 的返回值
   //   回写）——属主 chara（ownership/cflag-ownership.yml "450-459"，
   //   与 451/452 同段）
   453: named_tail('身高', 'CFLAG:453 = 身長'),
   454: named_tail('体重', 'CFLAG:454 = 体重'),
   455: named_tail('胸围', 'CFLAG:455 = B'),
-  // #470（Q13 侵略残余）补齐同段三围尾：ere/invasion/invasion-arcana-fort.js
+  // #470（Q13 侵略残余）补齐同段三围尾：ere/system/invasion/invasion-arcana-fort.js
   //   胜利分支把 char_size_generate 的 RESULT:0-6 回写 CFLAG:451-457
   //   （GETBIT(FLAG:5,12)||GETBIT(FLAG:5,15) 检查内），453/456/457 与
   //   454/455 同缺访问器
@@ -748,7 +751,7 @@ const stain = {
 // 调教结算写入（source-check 累加）、回合末由调教结算消费清零（ere 侧
 // palam_up_check 当场结算 + 引擎 nextTurnInTrain 保底处理）。
 // portcflag 同机制适用，但暂不声明属主：三个字段的写点都在 chara 域——
-// 数据版本由 ere/chara/chara-portcflag.js 的 init_portcflag 在角色加入点写，
+// 数据版本由 ere/system/chara/chara-portcflag.js 的 init_portcflag 在角色加入点写，
 // 排序编号由名册页的换号写，预设模板由引擎按角色预设抄写（#884）——门面
 // 只是搬家、起不到统一写点的作用；读侧（除名、生育、名册）不受属主约束。
 // 出现跨域写时随字段语义在此声明（ADR-0001 的「宁宽勿新」意味着 portcflag

@@ -55,12 +55,12 @@
  */
 
 const era = require('#/era-electron');
-const { get_ex_kojo_num } = require('#/chara/chara-ex');
 const { get_kojo } = require('#/kojo/kojo-factory');
 const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
+const { get_ex_kojo_num } = require('#/system/chara/chara-ex');
 const { EVENT } = require('#/data/event-name-const');
 
 // EVENTSHOP #PRI：口上总开关默认开。SIF FLAG:7 == 0 只补 0——

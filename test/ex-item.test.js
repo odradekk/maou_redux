@@ -1,7 +1,7 @@
 /**
  * EX 道具十八个函数的行为测试（issue #344，阶段 5a L13）。
  *
- * 缝 = ere/dungeon/ex-item.js 的公开出口与 test/helpers/era-fixture.js。
+ * 缝 = ere/system/dungeon/ex-item.js 的公开出口与 test/helpers/era-fixture.js。
  * 全局 A / RESULT 改为显式 cid / 返回值；RAND 经函数参数注入。
  */
 
@@ -11,7 +11,7 @@ const { test } = require('node:test');
 const { create_era_fixture } = require('./helpers/era-fixture');
 
 function load(fixture) {
-  return fixture.load_module('dungeon/ex-item');
+  return fixture.load_module('system/dungeon/ex-item');
 }
 
 function seq_rand(values, fallback = 1) {
@@ -329,8 +329,8 @@ test('add_ex_item：现有武器不弱、职业不适用或五个槽全满时不
 
 test('三处旧模块不再登记五个 EX 道具存根', () => {
   const fixture = setup();
-  const dungeon = fixture.load_module('dungeon/dungeon');
-  const town = fixture.load_module('dungeon/dungeon-town');
+  const dungeon = fixture.load_module('system/dungeon/dungeon');
+  const town = fixture.load_module('system/dungeon/dungeon-town');
   const ex_item = load(fixture);
   assert.equal(
     dungeon.add_ex_item,
@@ -349,7 +349,7 @@ test('房间与城镇调用点复用 sell_ex_item 真身，冰室用真身打印
   const room_fixture = setup();
   room_fixture.store.set('cflag:1:560', 1400);
   room_fixture.store.set('flag:5', 32);
-  const room = room_fixture.load_module('dungeon/dungeon-room');
+  const room = room_fixture.load_module('system/dungeon/dungeon-room');
   // 首槽未鉴定品必卖但仍消费一掷；余四槽不中；购买武器掷中后因无职业失败。
   await room.dungeon_shop_itemsell(1, seq_rand([1, 1, 1, 1, 1, 0, 0]));
   assert.equal(room_fixture.store.get('cflag:1:560'), 0);
@@ -371,7 +371,7 @@ test('房间与城镇调用点复用 sell_ex_item 真身，冰室用真身打印
   const town_fixture = setup();
   town_fixture.store.set('cflag:1:580', 10000);
   town_fixture.store.set('cflag:1:560', 1400);
-  const town = town_fixture.load_module('dungeon/dungeon-town');
+  const town = town_fixture.load_module('system/dungeon/dungeon-town');
   await town.town_pt_funding(1, 0, 0, () => 1);
   assert.equal(town_fixture.store.get('cflag:1:560'), 0);
   assert.equal(

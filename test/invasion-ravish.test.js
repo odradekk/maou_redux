@@ -1,5 +1,5 @@
 /**
- * ere/invasion/invasion-ravish.js 的行为测试（issue #470，Q13
+ * ere/system/invasion/invasion-ravish.js 的行为测试（issue #470，Q13
  * 侵略残余·3）。
  *
  *   1. 分发层：三列各抽一个怪物（X = (RAND:9+1)*10+100+RAND:5）、
@@ -34,7 +34,7 @@ function knob(overrides = {}) {
 
 /** 旁白函数的一次调用：预置输入后取该次新增的文本行 */
 async function run_plain(fixture, name, area, point, rand) {
-  const mod = fixture.load_module('invasion/invasion-ravish');
+  const mod = fixture.load_module('system/invasion/invasion-ravish');
   await mod[name](area, point, rand);
   return fixture.text_lines();
 }
@@ -45,7 +45,7 @@ test('分发：三列各抽一怪、写 E: 列、按凌辱类型调旁白、列�
   const fixture = create_era_fixture();
   fixture.store.set('item:110', 1); // 兽人（110-199 段的第一个），持有 1 只
   fixture.store.set('itemname:110', '兽人');
-  const mod = fixture.load_module('invasion/invasion-ravish');
+  const mod = fixture.load_module('system/invasion/invasion-ravish');
   const r = await mod.invasion_ryouzyoku(1, 0, knob({ 9: 0, 5: 0 }));
   assert.equal(r, 0, '恒 return 0');
 
@@ -76,7 +76,7 @@ test('分发：全灭回退到骷髅 190（凌辱类型 0）时不打印开场�
   // 不持有 110 → MONSTER_DATA 的「全滅」早退把它换成 190 骷髅（凌辱类型 0），
   // 本用例覆盖的就是这条回退路径；就地清零检查在 ere 侧不可达（依据见
   // invasion-ravish.js 文件头），没有用例守着它。
-  const mod = fixture.load_module('invasion/invasion-ravish');
+  const mod = fixture.load_module('system/invasion/invasion-ravish');
   const r = await mod.invasion_ryouzyoku(1, 0, knob({ 9: 0, 5: 0 }));
   assert.equal(r, 0);
   assert.equal(
@@ -104,14 +104,14 @@ test('分发：侵攻点 ÷5000 归一——门槛按归一后的档位开合', 
   // 10000 / 5000 = 2 > 1 → 兽人第一分支
   const yes = make();
   await yes
-    .load_module('invasion/invasion-ravish')
+    .load_module('system/invasion/invasion-ravish')
     .invasion_ryouzyoku(1, 10000, knob({ 9: 0, 5: 0 }));
   assert(yes.text_lines().includes(arm_line), '10000 → 2 档，跨过 > 1');
 
   // 4999 / 5000 = 0（整数除算）→ 档位不到，第一分支不走
   const no = make();
   await no
-    .load_module('invasion/invasion-ravish')
+    .load_module('system/invasion/invasion-ravish')
     .invasion_ryouzyoku(1, 4999, knob({ 9: 0, 5: 0 }));
   assert(!no.text_lines().includes(arm_line), '4999 → 0 档');
   assert(no.text_lines().includes('「新人，就在里面！」'), '落 ELSE 分支');

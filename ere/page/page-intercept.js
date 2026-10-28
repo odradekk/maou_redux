@@ -40,9 +40,9 @@
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
-const { add_ex_item } = require('#/dungeon/ex-item');
 const { chara } = require('#/facade/chara');
 const { gohoubi_request } = require('#/system/stronghold/gohoubi-request');
+const { add_ex_item } = require('#/system/dungeon/ex-item');
 const { life_list_item } = require('#/page/page-life-list');
 const { change_screen } = require('#/page/components/screen-change');
 const { chara_callname } = require('#/utils/callname-utils');

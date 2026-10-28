@@ -14,7 +14,7 @@ const always = () => 0;
 
 test('KARMA / FAITH：魂缚不变动，否则按各自上下限钳制', () => {
   const fixture = create_era_fixture();
-  const { karma, faith } = fixture.load_module('chara/chara-stats');
+  const { karma, faith } = fixture.load_module('system/chara/chara-stats');
 
   fixture.store.set('cflag:3:151', 195);
   fixture.store.set('cflag:3:152', 95);
@@ -45,7 +45,7 @@ test('CHARA_LV_CHECK：负战斗经验触发降级、四项能力下降与可选
   fixture.store.set('cflag:4:13', 22); // CFLAG:13 基础攻击
   fixture.store.set('cflag:4:14', 23); // CFLAG:14 基础防御
   fixture.store.set('flag:5', 32); // FLAG:5 位 5：显示等级变化
-  const { chara_lv_check } = fixture.load_module('chara/chara-stats');
+  const { chara_lv_check } = fixture.load_module('system/chara/chara-stats');
 
   assert.equal(await chara_lv_check(4), 0);
   assert.equal(fixture.store.get('cflag:4:9'), 2);
@@ -65,7 +65,7 @@ test('CHARA_LV_CHECK：非负战斗经验不改状态', async () => {
   const fixture = create_era_fixture();
   fixture.store.set('exp:4:80', 0);
   fixture.store.set('cflag:4:9', 3);
-  const { chara_lv_check } = fixture.load_module('chara/chara-stats');
+  const { chara_lv_check } = fixture.load_module('system/chara/chara-stats');
   await chara_lv_check(4);
   assert.equal(fixture.store.get('cflag:4:9'), 3);
   assert.equal(fixture.lines_history.length, 0);
@@ -77,19 +77,19 @@ test('CHARA_ID_OUTPUT：组合经历、首个性格与家族构成编号', () =>
   fixture.store.set('talent:7:163', 1); // 性格区间首个命中
   fixture.store.set('talent:7:168', 1); // 后续命中不得覆盖
   fixture.store.set('talent:7:320', 2); // 家族构成
-  const { chara_id_output } = fixture.load_module('chara/chara-stats');
+  const { chara_id_output } = fixture.load_module('system/chara/chara-stats');
   assert.equal(chara_id_output(7), 202040);
 });
 
 test('CHARA_ID_OUTPUT：无性格命中时沿用 FOR 终值 179', () => {
   const fixture = create_era_fixture();
-  const { chara_id_output } = fixture.load_module('chara/chara-stats');
+  const { chara_id_output } = fixture.load_module('system/chara/chara-stats');
   assert.equal(chara_id_output(7), 18000);
 });
 
 test('CHAR_SIZE_GENERATE：固定随机源生成三围，并写入胸围分量', () => {
   const fixture = create_era_fixture();
-  const { char_size_generate } = fixture.load_module('chara/chara-body');
+  const { char_size_generate } = fixture.load_module('system/chara/chara-body');
   assert.deepEqual(
     char_size_generate(6, 18, 0, always),
     [18, 18, 1551, 455, 780, 574, 822],
@@ -104,7 +104,7 @@ test('CHAR_SIZE_GENERATE：胸围变化模式复用原身高体重，不写战�
   fixture.store.set('cflag:6:454', 500); // 体重
   fixture.store.set('cflag:6:458', 500); // 原胸围差
   fixture.store.set('cflag:6:459', 1000); // 原下胸围
-  const { char_size_generate } = fixture.load_module('chara/chara-body');
+  const { char_size_generate } = fixture.load_module('system/chara/chara-body');
   assert.deepEqual(
     char_size_generate(6, 18, 1, always),
     [18, 18, 1600, 437, 801, 0, 0],
@@ -125,7 +125,7 @@ test('CHAR_SIZE_GENERATE：胸围变化模式复用原身高体重，不写战�
 
 test('CHAR_INHERIT 转发层：JUMP 到 CHARA_MAKE_INHERIT 真身', () => {
   const fixture = create_era_fixture();
-  const { char_inherit } = fixture.load_module('chara/char-make');
+  const { char_inherit } = fixture.load_module('system/chara/char-make');
   assert.equal(char_inherit(8, -1), undefined);
 });
 

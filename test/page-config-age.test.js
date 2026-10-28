@@ -165,7 +165,7 @@ test('CONFIG_AGE_SETTING 退出块：位 12 开时为 CFLAG:451==0 的角色生�
   control.era.addCharacter(21);
   control.store.set('talent:21:165', 1);
   const expected = control
-    .load_module('chara/chara-body')
+    .load_module('system/chara/chara-body')
     .char_size_generate(21, 15, 0, always);
   assert.equal(expected[0], 15, '村娘Ａ 年龄 = RAND:5 + 11');
   for (let offset = 0; offset < 7; offset += 1) {

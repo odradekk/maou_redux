@@ -27,7 +27,7 @@
  */
 
 const era = require('#/era-electron');
-const { ex_talentname } = require('#/chara/chara-ex');
+const { ex_talentname } = require('#/system/chara/chara-ex');
 
 /** FLAG:5 位 8 = 素质分类显示（设置页标签） */
 const BIT_TALENT_GROUP = 8;

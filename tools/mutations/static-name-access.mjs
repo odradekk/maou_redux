@@ -4,7 +4,7 @@ export const COUNT = 9;
 export default [
   {
     desc: 'M14580 素质页跳过声明检查，直接读取未声明素质名',
-    file: 'ere/chara/chara-custom2.js',
+    file: 'ere/system/chara/chara-custom2.js',
     find: "  if (!era.get('talentkeys').includes(arg)) {",
     replace: '  if (false) {',
     tests: ['chara-custom2'],
@@ -36,7 +36,7 @@ export default [
   },
   {
     desc: 'M14584 怪物玩弄列表跳过声明检查，读取未声明魔物名',
-    file: 'ere/dungeon/monster-play.js',
+    file: 'ere/system/dungeon/monster-play.js',
     find: "    if (item_count(id) >= 1 && era.get('itemkeys').includes(id)) {",
     replace: '    if (item_count(id) >= 1) {',
     tests: ['monster-play'],
@@ -44,7 +44,7 @@ export default [
   },
   {
     desc: 'M14585 现种族跳过声明检查，读取未声明种族名',
-    file: 'ere/chara/look-info.js',
+    file: 'ere/system/chara/look-info.js',
     find: "      return inrange(v, 100, 220) && era.get('itemkeys').includes(v)",
     replace: '      return inrange(v, 100, 220)',
     tests: ['look'],

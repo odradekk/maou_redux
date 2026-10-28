@@ -1,5 +1,5 @@
 /**
- * @file ere/chara/chara-name-list.js 与 yml/NameList.yml 的行为测试
+ * @file ere/system/chara/chara-name-list.js 与 yml/NameList.yml 的行为测试
  * （issue #388：chara_name_init 落表；#435：文件名被引擎误判为逐角色数据）。
  *
  * 三层验证：
@@ -42,7 +42,9 @@ test('get_fixed_chara_name：已注册 id 查表返回名字', () => {
   const fixture = create_era_fixture();
   fixture.store.set('namelistkeys', [0, 17, 3610]);
   fixture.store.set('namelistname:17', '雅儿贝德');
-  const { get_fixed_chara_name } = fixture.load_module('chara/chara-name-list');
+  const { get_fixed_chara_name } = fixture.load_module(
+    'system/chara/chara-name-list',
+  );
 
   assert.equal(
     get_fixed_chara_name(17),
@@ -57,7 +59,9 @@ test('get_fixed_chara_name：未注册 id（含合并丢弃的缺口）直接返
   // 证明函数走的是 valid_ids 防护判断、不是「地址查到了就用」。
   fixture.store.set('namelistkeys', [0, 17]);
   fixture.store.set('namelistname:3030', '陈旧残留');
-  const { get_fixed_chara_name } = fixture.load_module('chara/chara-name-list');
+  const { get_fixed_chara_name } = fixture.load_module(
+    'system/chara/chara-name-list',
+  );
 
   assert.equal(
     get_fixed_chara_name(3030),
@@ -78,7 +82,9 @@ test('get_fixed_chara_name：已注册 id 的名字由夹具按 yml 现算（#82
   // 这条此前守的是「keys 里有、名字地址没播种 → `?? ''` 缺省」；两侧同源之后
   // 该缺口在引擎与夹具里都不可能出现（未声明的序号直接抛 TypeError，#739），
   // 于是改守「名字确实来自同一张 yml 名字表」。
-  const { get_fixed_chara_name } = fixture.load_module('chara/chara-name-list');
+  const { get_fixed_chara_name } = fixture.load_module(
+    'system/chara/chara-name-list',
+  );
 
   assert.equal(get_fixed_chara_name(42), '塔巴莎');
 });
@@ -88,7 +94,9 @@ test('get_fixed_chara_name：valid_ids 缓存只建一次（重复查表不重�
   fixture.store.set('namelistkeys', [1, 2]);
   fixture.store.set('namelistname:1', '甲');
   fixture.store.set('namelistname:2', '乙');
-  const { get_fixed_chara_name } = fixture.load_module('chara/chara-name-list');
+  const { get_fixed_chara_name } = fixture.load_module(
+    'system/chara/chara-name-list',
+  );
 
   get_fixed_chara_name(1);
   get_fixed_chara_name(2);
@@ -101,7 +109,9 @@ test('get_fixed_chara_name：valid_ids 缓存只建一次（重复查表不重�
 test('chara_name_init：调用点可观测（预热 valid_ids 缓存），不抛错', () => {
   const fixture = create_era_fixture();
   fixture.store.set('namelistkeys', [7]);
-  const { chara_name_init } = fixture.load_module('chara/chara-name-list');
+  const { chara_name_init } = fixture.load_module(
+    'system/chara/chara-name-list',
+  );
 
   assert.doesNotThrow(() => chara_name_init());
   assert(
@@ -224,7 +234,7 @@ engine_test(
       return value;
     };
     const { chara_name_init, get_fixed_chara_name } = fixture.load_module(
-      'chara/chara-name-list',
+      'system/chara/chara-name-list',
     );
 
     chara_name_init();

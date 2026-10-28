@@ -1,4 +1,4 @@
-// 变异条目表切片：#393（N9）转职（ere/chara/chara-job-change.js）。
+// 变异条目表切片：#393（N9）转职（ere/system/chara/chara-job-change.js）。
 // 字段与运行方式见 tools/mutation-check.mjs 头注释；desc 里的 M 编号不人工
 // 分配、只作引用编号，但全表必须唯一（#295）。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
@@ -7,7 +7,7 @@ export const COUNT = 31; // #393 返工二 +4；返工三 +3（M9065-M9067 常�
 export default [
   {
     desc: 'M8821 SHOW_BUTTON_JOB_CHANGE 删掉侵攻中早退（勇者也能看到转职按钮）',
-    file: 'ere/chara/chara-job-change.js',
+    file: 'ere/system/chara/chara-job-change.js',
     find: '  if (able === JOB_CHANGE_HERO) return 0; // 侵攻中の勇者ならボタン自体を表示しない',
     replace: '  if (false) return 0; // 侵攻中の勇者ならボタン自体を表示しない',
     tests: ['chara-job-change'],
@@ -15,7 +15,7 @@ export default [
   },
   {
     desc: 'M8822 CHECK_ABLE_TO_JOB_CHANGE 的等级门 50 抬到 49（不够级也能转职）',
-    file: 'ere/chara/chara-job-change.js',
+    file: 'ere/system/chara/chara-job-change.js',
     find: '< 50) return JOB_CHANGE_LOW_LEVEL',
     replace: '< 49) return JOB_CHANGE_LOW_LEVEL',
     tests: ['chara-job-change'],
@@ -23,7 +23,7 @@ export default [
   },
   {
     desc: 'M8823 CHECK_ABLE_TO_JOB_CHANGE 放行苗床以外的占用态（状态 8 也能转职）',
-    file: 'ere/chara/chara-job-change.js',
+    file: 'ere/system/chara/chara-job-change.js',
     find: '  if (state !== 0 && state !== 7) return JOB_CHANGE_BLOCKED;',
     replace: '  if (state !== 0) return JOB_CHANGE_BLOCKED;',
     tests: ['chara-job-change'],
@@ -31,7 +31,7 @@ export default [
   },
   {
     desc: 'M8824 CHECK_ABLE_TO_JOB_CHANGE 把侵攻中的状态码由 2 改成 3（迎击中也走恋人线）',
-    file: 'ere/chara/chara-job-change.js',
+    file: 'ere/system/chara/chara-job-change.js',
     find: '=== 2) return JOB_CHANGE_HERO;',
     replace: '=== 3) return JOB_CHANGE_HERO;',
     tests: ['chara-job-change'],
@@ -39,7 +39,7 @@ export default [
   },
   {
     desc: 'M8825 转职菜单的勋章门抬到「严格大于」（10 枚也不出上位职）',
-    file: 'ere/chara/chara-job-change.js',
+    file: 'ere/system/chara/chara-job-change.js',
     find: '  if (medals >= MEDAL_REQUIRED) {',
     replace: '  if (medals > MEDAL_REQUIRED) {',
     tests: ['chara-job-change'],
@@ -47,7 +47,7 @@ export default [
   },
   {
     desc: 'M8826 转职菜单的「魔物使」编号 12 改成 13（选中后落到越界重问）',
-    file: 'ere/chara/chara-job-change.js',
+    file: 'ere/system/chara/chara-job-change.js',
     find: "  [12, '魔物使'],",
     replace: "  [13, '魔物使'],",
     tests: ['chara-job-change'],
@@ -55,7 +55,7 @@ export default [
   },
   {
     desc: 'M8827 转职写入的职业素质下标整体偏移 1（十三格全部认错）',
-    file: 'ere/chara/chara-job-change.js',
+    file: 'ere/system/chara/chara-job-change.js',
     find: '    const local = result + JOB_TALENT_BASE; // LOCAL = RESULT+200',
     replace:
       '    const local = result + JOB_TALENT_BASE + 1; // LOCAL = RESULT+200',
@@ -64,7 +64,7 @@ export default [
   },
   {
     desc: 'M8828 转职后的等级归 1 改成归 2',
-    file: 'ere/chara/chara-job-change.js',
+    file: 'ere/system/chara/chara-job-change.js',
     find: '    chara(arg).chara.等级 = 1; // CFLAG:9 = 1',
     replace: '    chara(arg).chara.等级 = 2; // CFLAG:9 = 1',
     tests: ['chara-job-change'],
@@ -72,7 +72,7 @@ export default [
   },
   {
     desc: 'M8829 骑士（205）的战斗技能素质由 249 改成 248（铁壁错成肌肉型）',
-    file: 'ere/chara/chara-job-change.js',
+    file: 'ere/system/chara/chara-job-change.js',
     find: '  [205, 249],',
     replace: '  [205, 248],',
     tests: ['chara-job-change'],
@@ -80,7 +80,7 @@ export default [
   },
   {
     desc: 'M8830 神官（202）的基础防御由 20 改成 21',
-    file: 'ere/chara/chara-job-change.js',
+    file: 'ere/system/chara/chara-job-change.js',
     find: '  [202, [15, 20, 15, 20]], // 神官',
     replace: '  [202, [15, 20, 15, 21]], // 神官',
     tests: ['chara-job-change'],
@@ -88,7 +88,7 @@ export default [
   },
   {
     desc: 'M8831 上位职的上限加成 500 砍成 1',
-    file: 'ere/chara/chara-job-change.js',
+    file: 'ere/system/chara/chara-job-change.js',
     find: '      max_base += JOB_ELITE_BONUS; // 魔界将军 / 魔导神官',
     replace: '      max_base += 1; // 魔界将军 / 魔导神官',
     tests: ['chara-job-change'],
@@ -96,7 +96,7 @@ export default [
   },
   {
     desc: 'M8832 转职后的上限基数 2000 改成 1999',
-    file: 'ere/chara/chara-job-change.js',
+    file: 'ere/system/chara/chara-job-change.js',
     find: 'const JOB_MAX_BASE = 2000;',
     replace: 'const JOB_MAX_BASE = 1999;',
     tests: ['chara-job-change'],
@@ -104,7 +104,7 @@ export default [
   },
   {
     desc: 'M8833 弃教一问砍掉「已弃教过」的检查（问过一次还会再问）',
-    file: 'ere/chara/chara-job-change.js',
+    file: 'ere/system/chara/chara-job-change.js',
     find: '      talent(arg, 282) === 0\n    ) {',
     replace: '      true\n    ) {',
     tests: ['chara-job-change'],
@@ -112,7 +112,7 @@ export default [
   },
   {
     desc: 'M8834 治癒素质下标由 117 改成 116',
-    file: 'ere/chara/chara-job-change.js',
+    file: 'ere/system/chara/chara-job-change.js',
     find: 'const T_HEAL = 117;',
     replace: 'const T_HEAL = 116;',
     tests: ['chara-job-change'],
@@ -120,7 +120,7 @@ export default [
   },
   {
     desc: 'M8835 契约魔兽的编号偏移 1（存进 CFLAG:570 的是下一只）',
-    file: 'ere/chara/chara-job-change.js',
+    file: 'ere/system/chara/chara-job-change.js',
     find: '      chara(arg).system.从属怪物 = monster; // CFLAG:570（system 域）',
     replace:
       '      chara(arg).system.从属怪物 = monster + 1; // CFLAG:570（system 域）',
@@ -129,7 +129,7 @@ export default [
   },
   {
     desc: 'M8836 战斗常识的模数 3 改成 4（三档循环变四档）',
-    file: 'ere/chara/chara-job-change.js',
+    file: 'ere/system/chara/chara-job-change.js',
     find: 'const COMMON_SENSE_BATTLE_MOD = 3;',
     replace: 'const COMMON_SENSE_BATTLE_MOD = 4;',
     tests: ['chara-job-change'],
@@ -137,7 +137,7 @@ export default [
   },
   {
     desc: 'M8837 日常常识的模数 6 改成 5',
-    file: 'ere/chara/chara-job-change.js',
+    file: 'ere/system/chara/chara-job-change.js',
     find: 'const COMMON_SENSE_DAILY_MOD = 6;',
     replace: 'const COMMON_SENSE_DAILY_MOD = 5;',
     tests: ['chara-job-change'],
@@ -145,7 +145,7 @@ export default [
   },
   {
     desc: 'M8838 兽奸过滤位由 5 改成 4（没养狗时跳过的是「公众便器」）',
-    file: 'ere/chara/chara-job-change.js',
+    file: 'ere/system/chara/chara-job-change.js',
     find: 'const COMMON_SENSE_DAILY_BEAST = 5;',
     replace: 'const COMMON_SENSE_DAILY_BEAST = 4;',
     tests: ['chara-job-change'],
@@ -153,7 +153,7 @@ export default [
   },
   {
     desc: 'M8839 常识菜单两项的正文互换（[0] 写成生活的常识）',
-    file: 'ere/chara/chara-job-change.js',
+    file: 'ere/system/chara/chara-job-change.js',
     find: "        content: '变更战斗的常识',",
     replace: "        content: '变更生活的常识',",
     tests: ['chara-job-change'],
@@ -161,7 +161,7 @@ export default [
   },
   {
     desc: 'M8840 神官/巫女的高信仰值 20 改成 21',
-    file: 'ere/chara/chara-job-change.js',
+    file: 'ere/system/chara/chara-job-change.js',
     find: '      era.set(`cflag:${arg}:152`, HIGH_FAITH); // 高い信仰値を持つ',
     replace:
       '      era.set(`cflag:${arg}:152`, HIGH_FAITH + 1); // 高い信仰値を持つ',
@@ -171,7 +171,7 @@ export default [
   // —— #393 返工：阈值与素质编号的边界值（全在 print_job_menu / 转职写入 上） ——
   {
     desc: 'M9026 转职等级门由 < 50 改成 < 51（50 级不再够格）',
-    file: 'ere/chara/chara-job-change.js',
+    file: 'ere/system/chara/chara-job-change.js',
     find: '  if ((era.get(`cflag:${arg}:9`) || 0) < 50) return JOB_CHANGE_LOW_LEVEL;',
     replace:
       '  if ((era.get(`cflag:${arg}:9`) || 0) < 51) return JOB_CHANGE_LOW_LEVEL;',
@@ -180,7 +180,7 @@ export default [
   },
   {
     desc: 'M9027 上位职的勋章门槛由 10 改成 11（十枚勋章不再出现两项上位职）',
-    file: 'ere/chara/chara-job-change.js',
+    file: 'ere/system/chara/chara-job-change.js',
     find: 'const MEDAL_REQUIRED = 10;',
     replace: 'const MEDAL_REQUIRED = 11;',
     tests: ['chara-job-change'],
@@ -188,7 +188,7 @@ export default [
   },
   {
     desc: 'M9028 职业素质基址由 200 改成 201（十三格整体错位）',
-    file: 'ere/chara/chara-job-change.js',
+    file: 'ere/system/chara/chara-job-change.js',
     find: 'const JOB_TALENT_BASE = 200;',
     replace: 'const JOB_TALENT_BASE = 201;',
     tests: ['chara-job-change'],
@@ -196,7 +196,7 @@ export default [
   },
   {
     desc: 'M9065 战斗常识的档数由 3 改成 4',
-    file: 'ere/chara/chara-job-change.js',
+    file: 'ere/system/chara/chara-job-change.js',
     find: 'const COMMON_SENSE_BATTLE_MOD = 3;',
     replace: 'const COMMON_SENSE_BATTLE_MOD = 4;',
     tests: ['chara-job-change'],
@@ -204,7 +204,7 @@ export default [
   },
   {
     desc: 'M9066 日常常识的兽奸档由 5 改成 6',
-    file: 'ere/chara/chara-job-change.js',
+    file: 'ere/system/chara/chara-job-change.js',
     find: 'const COMMON_SENSE_DAILY_BEAST = 5;',
     replace: 'const COMMON_SENSE_DAILY_BEAST = 6;',
     tests: ['chara-job-change'],
@@ -212,7 +212,7 @@ export default [
   },
   {
     desc: 'M9067 奉侍素质由 204 改成 205',
-    file: 'ere/chara/chara-job-change.js',
+    file: 'ere/system/chara/chara-job-change.js',
     find: 'const JOB_BENKI_TALENT = 204;',
     replace: 'const JOB_BENKI_TALENT = 205;',
     tests: ['chara-job-change'],
@@ -220,7 +220,7 @@ export default [
   },
   {
     desc: 'M9042 职业素质格数由 13 改成 12（最后一格 212 不再清）',
-    file: 'ere/chara/chara-job-change.js',
+    file: 'ere/system/chara/chara-job-change.js',
     find: 'const JOB_TALENT_COUNT = 13;',
     replace: 'const JOB_TALENT_COUNT = 12;',
     tests: ['chara-job-change'],
@@ -228,7 +228,7 @@ export default [
   },
   {
     desc: 'M9046 菜单每行格数由 3 改成 2（最后一行散开）',
-    file: 'ere/chara/chara-job-change.js',
+    file: 'ere/system/chara/chara-job-change.js',
     find: 'const JOB_MENU_COLUMNS = 3;',
     replace: 'const JOB_MENU_COLUMNS = 2;',
     tests: ['chara-job-change'],
@@ -236,7 +236,7 @@ export default [
   },
   {
     desc: 'M9048 上位职的上限加成由 500 改成 501',
-    file: 'ere/chara/chara-job-change.js',
+    file: 'ere/system/chara/chara-job-change.js',
     find: 'const JOB_ELITE_BONUS = 500;',
     replace: 'const JOB_ELITE_BONUS = 501;',
     tests: ['chara-job-change'],
@@ -244,7 +244,7 @@ export default [
   },
   {
     desc: 'M9050 野狗物品号由 22 改成 23（常识改变的兽奸档条件跟着错）',
-    file: 'ere/chara/chara-job-change.js',
+    file: 'ere/system/chara/chara-job-change.js',
     find: 'const DOG_ITEM = 22;',
     replace: 'const DOG_ITEM = 23;',
     tests: ['chara-job-change'],
@@ -252,7 +252,7 @@ export default [
   },
   {
     desc: 'M9029 体力/气力上限基数由 2000 改成 2001',
-    file: 'ere/chara/chara-job-change.js',
+    file: 'ere/system/chara/chara-job-change.js',
     find: 'const JOB_MAX_BASE = 2000;',
     replace: 'const JOB_MAX_BASE = 2001;',
     tests: ['chara-job-change'],

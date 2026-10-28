@@ -1,5 +1,5 @@
 /**
- * ere/dungeon/dungeon-trap.js dungeon_trap + 26 个陷阱段 + 诈骗陷阱 +
+ * ere/system/dungeon/dungeon-trap.js dungeon_trap + 26 个陷阱段 + 诈骗陷阱 +
  * slave_trap_set + trap_price 的行为测试（issue #176，阶段 3 H7）。
  *
  * 缝 = test/helpers/era-fixture.js（全项目唯一测试注入点）。随机源经
@@ -43,7 +43,7 @@ function counting(calls) {
 }
 
 function load(fixture) {
-  return fixture.load_module('dungeon/dungeon-trap');
+  return fixture.load_module('system/dungeon/dungeon-trap');
 }
 
 /**
@@ -508,12 +508,12 @@ test('blackout_trap：攻减半，DICE==1 档再扣气力与毒箭', async () =>
 test('shoot_trap：按楼层三档下坠、队伍分断、落下位置起', async () => {
   const fixture = setup_world();
   const { shoot_trap } = load(fixture);
-  const { party_del } = fixture.load_module('dungeon/dungeon-party');
+  const { party_del } = fixture.load_module('system/dungeon/dungeon-party');
   let del_called = 0;
   const orig = party_del;
   // 模块对象上替换以观测分断（对比测试同款手法）
   Object.defineProperty(
-    fixture.load_module('dungeon/dungeon-party'),
+    fixture.load_module('system/dungeon/dungeon-party'),
     'party_del',
     {
       value: async (...args) => {
@@ -904,7 +904,7 @@ test('主循环：teleport_trap 的 D:20 写回经 ctx（run_dungeon 集成）',
   // 真身后同样会写出 1（teleport_magic 与陷阱 teleport_trap 是同一个值），两条
   // 路合流后本用例分不出陷阱收线在不在——阶段 5a 的 T4 全量变异 M551 实证。
   fixture.store.set('flag:5', 16);
-  const { run_dungeon } = fixture.load_module('dungeon/dungeon');
+  const { run_dungeon } = fixture.load_module('system/dungeon/dungeon');
   // 恒 1 掷点：WALK = 1+6×1 = 7；装备判定 0 < 1 → 调 dungeon_trap；
   // 回避判定 20 < 1 假 → TELEPORT：Z = 1 < 20 → ctx.d20 = 1。
   // 收线删掉时 walk20 停在 7（= WALK 累加值），故本断言两态可分。

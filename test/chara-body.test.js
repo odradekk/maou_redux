@@ -1,5 +1,5 @@
 /**
- * ere/chara/chara-body.js 的行为测试（issue #385：身体与年龄生成）。
+ * ere/system/chara/chara-body.js 的行为测试（issue #385：身体与年龄生成）。
  *
  * 缝 = test/helpers/era-fixture.js（全项目唯一测试注入点），经模块公开导出
  * 直驱。随机源一律显式注入确定序列（#344：漏给会落到真随机，用例只在部分
@@ -59,7 +59,7 @@ function seed_race_table(
 test('race_age_generate：默认表下 12 个种族编号 → 槽位与档位（rand 恒 0）', () => {
   const fixture = create_era_fixture();
   seed_race_table(fixture);
-  const { race_age_generate } = fixture.load_module('chara/chara-body');
+  const { race_age_generate } = fixture.load_module('system/chara/chara-body');
 
   // [种族编号, 名称, 期望的种族年龄]；人类换算年龄固定 17
   const cases = [
@@ -86,7 +86,7 @@ test('race_age_generate：默认表下 12 个种族编号 → 槽位与档位（
 test('race_age_generate：堕落种族三编号（7/8/9）一律原样返回人类年龄', () => {
   const fixture = create_era_fixture();
   seed_race_table(fixture);
-  const { race_age_generate } = fixture.load_module('chara/chara-body');
+  const { race_age_generate } = fixture.load_module('system/chara/chara-body');
   // 堕落种族的分支体内只有一条无条件的原样返回——两处种族码改写
   // （race_id = 0/5）是死代码，暗精灵/堕天使同样直接返回（见 race_id_of 头注）。
   // 用 42 而不是 17：精灵槽（×10）与天使槽（偏斜）在 17 上都可能碰巧给出
@@ -103,7 +103,7 @@ test('race_age_generate：堕落种族三编号（7/8/9）一律原样返回人�
 test('race_age_generate：整数倍档的乘法因子与随机上界（RAND: NUM×10^DEG）', () => {
   const fixture = create_era_fixture();
   seed_race_table(fixture);
-  const { race_age_generate } = fixture.load_module('chara/chara-body');
+  const { race_age_generate } = fixture.load_module('system/chara/chara-body');
 
   // 精灵槽 011：NUM=1、DEG=1 → 17 × 1 × 10 + RAND:10
   const bounds = [];
@@ -119,7 +119,7 @@ test('race_age_generate：整数倍档的乘法因子与随机上界（RAND: NUM
 test('race_age_generate：小数倍档按整数除法截断（人狼 115）', () => {
   const fixture = create_era_fixture();
   seed_race_table(fixture);
-  const { race_age_generate } = fixture.load_module('chara/chara-body');
+  const { race_age_generate } = fixture.load_module('system/chara/chara-body');
   // 入参年龄 × (DEG × 10 + NUM) / 10 = 年龄 × 15 / 10
   assert.equal(race_age_generate(17, 2, always), 25);
   assert.equal(race_age_generate(19, 2, always), 28, '285 / 10 截断为 28');
@@ -129,7 +129,7 @@ test('race_age_generate：小数倍档按整数除法截断（人狼 115）', ()
 test('race_age_generate：偏斜随机档（槽 232）的五个数量级分支', () => {
   const fixture = create_era_fixture();
   seed_race_table(fixture);
-  const { race_age_generate } = fixture.load_module('chara/chara-body');
+  const { race_age_generate } = fixture.load_module('system/chara/chara-body');
 
   // 槽 5 = 232：NUM=2、DEG=3 → 上限 2000（4 位数）
   // 候选量级 = 10^RAND:(4+1) × 10；结果 = MIN(上限, 候选量级)
@@ -151,7 +151,7 @@ test('race_age_generate：偏斜随机档（槽 232）的五个数量级分支',
 test('race_age_generate：上限/2 ～ 上限档（无头骑士 325）', () => {
   const fixture = create_era_fixture();
   seed_race_table(fixture);
-  const { race_age_generate } = fixture.load_module('chara/chara-body');
+  const { race_age_generate } = fixture.load_module('system/chara/chara-body');
   // 槽 3 = 325：NUM=5、DEG=2 → 上限 500、半档 250 → RAND:250 + 250
   const bounds = [];
   assert.equal(race_age_generate(17, 4, seq_probe([], bounds)), 499);
@@ -161,7 +161,7 @@ test('race_age_generate：上限/2 ～ 上限档（无头骑士 325）', () => {
 test('race_age_generate：年龄～上限档（吸血鬼 431）的提前退出与连乘钳位', () => {
   const fixture = create_era_fixture();
   seed_race_table(fixture);
-  const { race_age_generate } = fixture.load_module('chara/chara-body');
+  const { race_age_generate } = fixture.load_module('system/chara/chara-body');
 
   // 槽 2 = 431：上限 1000（4 位数）→ 连乘至多 5 圈，RAND:5 < 2 即提前退出
   const break_first = [];
@@ -207,7 +207,7 @@ test('race_age_generate：档位 5 及以上不设值 → 0', () => {
   const fixture = create_era_fixture();
   // 把槽 1 改成 515（CLA=5）：五支全不命中，种族年龄保持初值 0
   seed_race_table(fixture, [11, 515, 431, 325, 15, 232]);
-  const { race_age_generate } = fixture.load_module('chara/chara-body');
+  const { race_age_generate } = fixture.load_module('system/chara/chara-body');
   assert.equal(race_age_generate(17, 2, always), 0);
 });
 
@@ -215,7 +215,7 @@ test('race_age_generate：档位 5 及以上不设值 → 0', () => {
 
 function seed_race(fixture, cid, race_no) {
   fixture.store.set(`talent:${cid}:314`, race_no); // TALENT:314 种族
-  return fixture.load_module('chara/chara-body').human_age_generate;
+  return fixture.load_module('system/chara/chara-body').human_age_generate;
 }
 
 test('human_age_generate：整数倍档按倍数割回（精灵 /10、龙族 /50）', () => {
@@ -309,7 +309,7 @@ function age_fixture() {
 }
 
 function load_age(fixture) {
-  return fixture.load_module('chara/chara-body').char_age_generate;
+  return fixture.load_module('system/chara/chara-body').char_age_generate;
 }
 
 test('char_age_generate：素质与经历逐个分支的推算（取点固定在中值）', () => {
@@ -452,7 +452,7 @@ test('char_age_generate：家族年龄约束按关系码分档（兄姊取小、
     add_chara(fixture, 21, '对象');
     add_chara(fixture, 31, '成员');
     fixture.store.set('cflag:31:451', member_age); // 成员的年龄
-    const family = fixture.load_module('chara/chara-family');
+    const family = fixture.load_module('system/chara/chara-family');
     family.rf_set_both(21, 31, relation); // 关系码分档，成员号恒为 31
     assert.equal(
       char_age_generate(21, seq([7]))[0],
@@ -469,7 +469,7 @@ test('char_age_generate：EX_TALENT:2（后代）固定 10 岁并覆盖家族约
   add_chara(fixture, 21, '对象');
   add_chara(fixture, 3, '弟');
   fixture.store.set('cflag:3:451', 30); // 弟档会把年龄抬到 30
-  fixture.load_module('chara/chara-family').rf_set_both(21, 3, 1);
+  fixture.load_module('system/chara/chara-family').rf_set_both(21, 3, 1);
   assert.equal(char_age_generate(21, seq([7]))[0], 10);
 });
 
@@ -521,7 +521,8 @@ function body_fixture(flag5) {
 }
 
 function load_body(fixture) {
-  return fixture.load_module('chara/chara-body').char_body_generate_wapped;
+  return fixture.load_module('system/chara/chara-body')
+    .char_body_generate_wapped;
 }
 
 /** CFLAG:451-457 的当前值（未写过的返回 undefined） */
@@ -599,7 +600,7 @@ test('char_body_generate_wapped：CFLAG:451-457 依序接住身体数据七元�
   seed_race_table(control);
   control.store.set('talent:21:314', 0);
   const expected = control
-    .load_module('chara/chara-body')
+    .load_module('system/chara/chara-body')
     .char_size_generate(21, 0, 0, always);
   assert.deepEqual(body_cflags(fixture, 21), expected);
   assert.equal(expected.length, 7);
@@ -629,7 +630,7 @@ test('char_body_generate_wapped：默认支走年龄生成（CFLAG:451 = 生成�
 test('char_size_generate：12 岁女性身高 P97 取修正值（同一行随年龄不回落）', () => {
   const fixture = create_era_fixture();
   fixture.store.set('talent:21:99', 1); // 魁梧：身高中值直接取 P97 行
-  const body = fixture.load_module('chara/chara-body');
+  const body = fixture.load_module('system/chara/chara-body');
 
   // RAND:34 = 17 → 百分点段 50-59；RAND:10 = 0 → 百分点 50 恰取中值（P97 行）
   const size = body.char_size_generate(21, 12, 0, seq([17, 0]));
@@ -682,7 +683,7 @@ function cup_fixture() {
   fixture.store.set('cflag:5:453', HEIGHT10); // CFLAG:453 身高(×10)
   return {
     fixture,
-    cup_size: fixture.load_module('chara/chara-body').cup_size,
+    cup_size: fixture.load_module('system/chara/chara-body').cup_size,
   };
 }
 
@@ -761,8 +762,9 @@ test('char_bust_regenerate_wapped：FLAG:5 位 15 关闭时整体不动', () => 
   fixture.store.set('flag:5', 1 << 12); // 只开位 12（显示年龄），位 15 关
   fixture.store.set('cflag:21:451', 22);
   fixture.store.set('cflag:21:453', 160);
-  const { char_bust_regenerate_wapped } =
-    fixture.load_module('chara/chara-body');
+  const { char_bust_regenerate_wapped } = fixture.load_module(
+    'system/chara/chara-body',
+  );
 
   char_bust_regenerate_wapped(21, always);
 
@@ -779,8 +781,9 @@ test('char_bust_regenerate_wapped：缺年龄或身高时转发全身重生成�
   fixture.store.set('flag:5', 1 << 15);
   fixture.store.set('talent:21:314', 0);
   // CFLAG:451/453 都未设 → 走缺年龄或缺身高的转发分支
-  const { char_bust_regenerate_wapped } =
-    fixture.load_module('chara/chara-body');
+  const { char_bust_regenerate_wapped } = fixture.load_module(
+    'system/chara/chara-body',
+  );
   char_bust_regenerate_wapped(21, seq([7]));
 
   // 对照组：同一种子下直接调 char_size_generate（同 char_body_generate_wapped
@@ -789,7 +792,7 @@ test('char_bust_regenerate_wapped：缺年龄或身高时转发全身重生成�
   seed_race_table(control);
   control.store.set('talent:21:314', 0);
   const expected = control
-    .load_module('chara/chara-body')
+    .load_module('system/chara/chara-body')
     .char_size_generate(21, 0, 0, seq([7]));
 
   assert.deepEqual(
@@ -810,15 +813,16 @@ test('char_bust_regenerate_wapped：只缺身高（年龄仍在）也转发全�
   fixture.store.set('flag:5', 1 << 15);
   fixture.store.set('talent:21:314', 0);
   fixture.store.set('cflag:21:451', 22); // 年龄仍在，只缺身高（CFLAG:453 未设）
-  const { char_bust_regenerate_wapped } =
-    fixture.load_module('chara/chara-body');
+  const { char_bust_regenerate_wapped } = fixture.load_module(
+    'system/chara/chara-body',
+  );
   char_bust_regenerate_wapped(21, seq([7]));
 
   const control = create_era_fixture();
   seed_race_table(control);
   control.store.set('talent:21:314', 0);
   const expected = control
-    .load_module('chara/chara-body')
+    .load_module('system/chara/chara-body')
     .char_size_generate(21, 0, 0, seq([7]));
 
   assert.deepEqual(
@@ -836,8 +840,9 @@ test('char_bust_regenerate_wapped：年龄与身高都在时只重算胸围，�
   fixture.store.set('cflag:21:453', 160); // 身高
   fixture.store.set('cflag:21:458', 999); // 哨兵：胸围差不该被这条路径动
   fixture.store.set('cflag:21:459', 888); // 哨兵：下胸围同上
-  const { char_bust_regenerate_wapped } =
-    fixture.load_module('chara/chara-body');
+  const { char_bust_regenerate_wapped } = fixture.load_module(
+    'system/chara/chara-body',
+  );
 
   char_bust_regenerate_wapped(21, seq([7]));
 
@@ -845,7 +850,7 @@ test('char_bust_regenerate_wapped：年龄与身高都在时只重算胸围，�
   const control = create_era_fixture();
   seed_race_table(control);
   const [expected_bust] = control
-    .load_module('chara/chara-body')
+    .load_module('system/chara/chara-body')
     .char_bust_generate(21, 22, 16000, seq([7]));
 
   assert.equal(

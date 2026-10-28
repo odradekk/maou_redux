@@ -50,7 +50,7 @@ test('战役 1 全链：campaign_menu 招募/派遣 → run_dungeon 真实推进
 
   fixture.load_module('page/page-campaign-1'); // 触发战役 1 的 register()
   const { campaign_menu } = fixture.load_module('page/page-campaign');
-  const { run_dungeon } = fixture.load_module('dungeon/dungeon');
+  const { run_dungeon } = fixture.load_module('system/dungeon/dungeon');
 
   // —— 第一段：CAMPAIGN_MENU 里选战役、招募（两轮菜单 + [999] 退出）——
   // 第一轮 [0] 选战役 → select_campaign 选 [1] → campaign_set_1 跑完；

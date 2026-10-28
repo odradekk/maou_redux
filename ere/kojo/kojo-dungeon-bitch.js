@@ -36,9 +36,9 @@
  */
 
 const era = require('#/era-electron');
-const { karma } = require('#/chara/chara-stats');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
+const { karma } = require('#/system/chara/chara-stats');
 const { print_button_grid } = require('#/utils/button-grid');
 const { chara_callname } = require('#/utils/callname-utils');
 const { chara } = require('#/facade/chara');

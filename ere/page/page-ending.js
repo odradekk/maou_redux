@@ -39,13 +39,13 @@ const era = require('#/era-electron');
 const { begin, STATE } = require('#/system/flow/game-state');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
-const { race_age_generate } = require('#/chara/chara-body');
-const { add_chara_ex } = require('#/chara/chara-ex');
-const { char_init } = require('#/chara/chara-init');
+const { race_age_generate } = require('#/system/chara/chara-body');
+const { add_chara_ex } = require('#/system/chara/chara-ex');
+const { char_init } = require('#/system/chara/chara-init');
+const { char_make, name_reset } = require('#/system/chara/char-make');
+const { get_look_info } = require('#/system/chara/look-info');
+const { party_char_del } = require('#/system/dungeon/dungeon-party');
 const { chara } = require('#/facade/chara');
-const { char_make, name_reset } = require('#/chara/char-make');
-const { get_look_info } = require('#/chara/look-info');
-const { party_char_del } = require('#/dungeon/dungeon-party');
 const { show_chara_info } = require('#/page/page-chara-info-show'); // #390 起真身
 const { default_rand } = require('#/utils/numeric');
 
@@ -126,8 +126,8 @@ async function ending_1() {
  * 空行（行尾两个半角空格，逐字保留）→ GAMEOVER 分隔行 → INPUT（仪式性
  * 确认，结果不被消费——下一步就回标题）→ 回标题。**无条件结束，无 RETURN 0。**
  *
- * 调用点在 ere/dungeon/dungeon.js（FLOOR >= 9 且 TALENT:122 == 0
- * 的真勇者踏破第 9 层）与 ere/dungeon/labo-dungeon-map.js（2D 地图走到中心）。
+ * 调用点在 ere/system/dungeon/dungeon.js（FLOOR >= 9 且 TALENT:122 == 0
+ * 的真勇者踏破第 9 层）与 ere/system/dungeon/labo-dungeon-map.js（2D 地图走到中心）。
  * 尾跳转语义：调用方不再执行后续，转场目标沿调用链上抛（#852 起是返回值，
  * 不再靠 era.quit() 的异常炸穿）。
  *
@@ -369,13 +369,13 @@ async function char_gift(arg, rand = default_rand) {
     a = made;
     chara(a).invasion.状态 = 0;
     // 種族年齢再設定（FLAG:5 位 12/13 时；由 #385 落在
-    // ere/chara/chara-body.js）
+    // ere/system/chara/chara-body.js）
     const settings = era.get('flag:5') || 0;
     if (((settings >> 12) & 1) !== 0 || ((settings >> 13) & 1) !== 0) {
       // 種族年齢再設定：race_age_generate(CFLAG:A:451, TALENT:A:314)
       // → CFLAG:A:452 = RESULT。落进 CFLAG:452 的是**函数返回值**（种族年龄），
       // 不是入参 CFLAG:451（人类换算年龄）；随机源按仓库约定透传（#385 的真身
-      // 在 ere/chara/chara-body.js）
+      // 在 ere/system/chara/chara-body.js）
       chara(a).chara.种族年龄 = race_age_generate(
         era.get(`cflag:${a}:451`) || 0,
         era.get(`talent:${a}:314`) || 0,

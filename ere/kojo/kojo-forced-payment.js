@@ -33,14 +33,14 @@
  *   - CFLAG:ARG:582（欠金，负数）→ chara(arg).patch.借款（patch 域门面，
  *     dungeon-trap.js 的诈骗陷阱同款）；
  *   - EXP:70 拍摄经验属 train 域（ere/facade/chara-train.js 的访问器），
- *     跨域写与 ere/dungeon/dungeon-lovers.js 同款；EXP:50 异常经验、
+ *     跨域写与 ere/system/dungeon/dungeon-lovers.js 同款；EXP:50 异常经验、
  *     EXP:0/1/5/20/22/74 走 dungeon 域访问器；
- *   - KARMA → ere/chara/chara-stats.js 的 karma；EXPNAME / PALAMNAME →
+ *   - KARMA → ere/system/chara/chara-stats.js 的 karma；EXPNAME / PALAMNAME →
  *     ere/kojo/kojo-dungeon-bitch-log.js 的两个查表口。
  */
 
 const era = require('#/era-electron');
-const { karma } = require('#/chara/chara-stats');
+const { karma } = require('#/system/chara/chara-stats');
 const { expname, palamname } = require('#/kojo/kojo-dungeon-bitch-log');
 const { chara } = require('#/facade/chara');
 const { chara_callname } = require('#/utils/callname-utils');

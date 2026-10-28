@@ -1,5 +1,5 @@
 /**
- * ere/dungeon/dungeon-party.js party_unite / party_join / search_free /
+ * ere/system/dungeon/dungeon-party.js party_unite / party_join / search_free /
  * party_del / party_char_del 的行为测试（issue #172，阶段 3 H3）。
  *
  * 缝 = test/helpers/era-fixture.js。队伍数据全在 CFLAG 530-533：
@@ -18,7 +18,7 @@ const { test } = require('node:test');
 const { create_era_fixture } = require('./helpers/era-fixture');
 
 function load(fixture) {
-  return fixture.load_module('dungeon/dungeon-party');
+  return fixture.load_module('system/dungeon/dungeon-party');
 }
 
 function text_lines(fixture) {

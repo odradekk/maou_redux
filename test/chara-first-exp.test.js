@@ -1,5 +1,5 @@
 /**
- * ere/chara/chara-first-exp.js chara_first_exp 的行为测试（issue #394，N10）。
+ * ere/system/chara/chara-first-exp.js chara_first_exp 的行为测试（issue #394，N10）。
  *
  * 缝 = test/helpers/era-fixture.js（全项目唯一测试注入点）+ 函数的 `rand`
  * 形参（`RAND:N` 型随机源，缺省均匀随机）。
@@ -27,7 +27,7 @@ const { test } = require('node:test');
 const { create_era_fixture } = require('./helpers/era-fixture');
 
 function load(fixture) {
-  return fixture.load_module('chara/chara-first-exp').chara_first_exp;
+  return fixture.load_module('system/chara/chara-first-exp').chara_first_exp;
 }
 
 /** RAND:N == 1（恒不中 == 0 判定） */
@@ -1098,7 +1098,7 @@ test('cm_ns_exp 已接入真身且产物写回', async () => {
   fixture.store.set('cflag:1:15', 103);
   fixture.store.set('cstr:1:4', '青梅竹马');
   fixture.store.set('cstr:1:3', '野狗');
-  const { cm_ns_exp } = fixture.load_module('chara/chara-make');
+  const { cm_ns_exp } = fixture.load_module('system/chara/chara-make');
 
   await cm_ns_exp(1, never);
 

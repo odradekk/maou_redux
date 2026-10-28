@@ -26,7 +26,6 @@
 const era = require('#/era-electron');
 const { remove_character } = require('#/system/chara-removal');
 const { remember_sale_price } = require('#/event/event-aftertrain');
-const { get_look_info } = require('#/chara/look-info');
 const { self_kojo } = require('#/kojo/kojo-system');
 const { game } = require('#/facade/game');
 const { chara } = require('#/facade/chara');
@@ -34,6 +33,7 @@ const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const era_modsave = require('#/era-utils/era-modsave');
 const { EXPLV } = require('#/era-utils/exp-level');
+const { get_look_info } = require('#/system/chara/look-info');
 const { change_screen } = require('#/page/components/screen-change');
 const { chara_callname, chara_nickname } = require('#/utils/callname-utils');
 

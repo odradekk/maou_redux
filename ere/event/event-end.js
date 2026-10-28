@@ -16,7 +16,6 @@
  */
 
 const era = require('#/era-electron');
-const { karma } = require('#/chara/chara-stats');
 const { on, TIER } = require('#/system/event/registry');
 const { begin, is_state, STATE } = require('#/system/flow/game-state');
 const { event_maou_tenshin } = require('#/event/event-nextday');
@@ -33,6 +32,7 @@ const { sell_fightmoney, sell_milk } = require('#/system/stronghold/sale');
 const { charadead_check, self_check } = require('#/event/event-aftertrain');
 // 死亡删除分支的机械清理与延迟除名（收尾协调器）
 const { defer_train_death } = require('#/system/train/train-end');
+const { karma } = require('#/system/chara/chara-stats');
 const { EVENT } = require('#/data/event-name-const');
 
 async function handle_end_later() {

@@ -41,13 +41,13 @@ const { run_event_nextmonth } = require('#/event/event-nextmonth');
 // enter_enemy 导出，解构会把函数固化进本闭包、替换不可达——两个写法的
 // 游戏行为完全等价，差别只在导出表的属性查找发生在调用时
 const enter_enemy_mod = require('#/event/enter-enemy');
-const { name_reset } = require('#/chara/char-make');
-const { party_char_del } = require('#/dungeon/dungeon-party');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const era_modsave = require('#/era-utils/era-modsave');
+const { name_reset } = require('#/system/chara/char-make');
+const { party_char_del } = require('#/system/dungeon/dungeon-party');
 const { chara_callname } = require('#/utils/callname-utils');
 const { default_rand } = require('#/utils/numeric');
 const { EVENT } = require('#/data/event-name-const');

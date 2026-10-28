@@ -40,14 +40,11 @@
  *     拒收），不补用例（page-ability-up.js 文件头同款登记）。
  */
 const era = require('#/era-electron');
-const { karma, faith } = require('#/chara/chara-stats');
-const pregnancy_mod = require('#/chara/chara-pregnancy');
 const {
   soul_dislocation,
   swap_chara,
   transfer_soul,
-} = require('#/chara/chara-soul-transfer');
-const summon_mod = require('#/dungeon/monster-summon');
+} = require('#/system/chara/chara-soul-transfer');
 const { is_state } = require('#/system/flow/game-state');
 const { run_endcheck } = require('#/system/ending/endcheck');
 const { auto_save } = require('#/page/page-save-load');
@@ -78,10 +75,13 @@ const { aftertrain_cloth, soiling_cloth_no1 } = require('#/system/train/cloth');
 const { curse_equip_ring } = require('#/system/equip/equip-curse');
 const { event_video_day } = require('#/system/stronghold/sell-video');
 const { ntr_video } = require('#/system/ntr');
+const { karma, faith } = require('#/system/chara/chara-stats');
+const pregnancy_mod = require('#/system/chara/chara-pregnancy');
+const summon_mod = require('#/system/dungeon/monster-summon');
 // H8（#177）起 DUNGEON_ROOM_DAY 真身：设施日结算（商店街税入 + 牧场）。
 // 随机源不注入（缺省 Math.random）——日结算的税额掷与迷宫推进的随机源
 // 同属一个全局随机序列，ere 侧各自缺省即等价
-const room_day_mod = require('#/dungeon/dungeon-room');
+const room_day_mod = require('#/system/dungeon/dungeon-room');
 const { default_rand, times } = require('#/utils/numeric');
 
 /** 素质名（%TALENTNAME:n%）的读数源：引擎素质名表 */

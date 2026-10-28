@@ -3237,7 +3237,7 @@ export default [
   // —— #814：读档与苏生共用的待机档归一 ——
   {
     desc: 'M15860 待机档归一变成空操作（0.1.0 存档里的状态 1 与苏生出来的角色都留在四个操作页之外，#814）',
-    file: 'ere/chara/chara-init.js',
+    file: 'ere/system/chara/chara-init.js',
     find: `  if (chara(cid).invasion.状态 === 1) {
     chara(cid).invasion.状态 = 0;
   }`,
@@ -3941,7 +3941,7 @@ export default [
     file: 'ere/event/event-aftertrain.js',
     find: '  if (target >= 1 && target <= 100) {\n    era.set(`flag:${target + 999}`, -2);\n  }',
     replace:
-      "  const death_id = require('#/chara/chara-pregnancy').template_no_of(target);\n  if (death_id >= 1 && death_id <= 100) {\n    era.set(`flag:${death_id + 999}`, -2);\n  }",
+      "  const death_id = require('#/system/chara/chara-pregnancy').template_no_of(target);\n  if (death_id >= 1 && death_id <= 100) {\n    era.set(`flag:${death_id + 999}`, -2);\n  }",
     tests: ['event-charadead'],
     must_mention: '角色 100000 的苏生登记范围',
   },
@@ -4337,11 +4337,11 @@ export default [
     return settled;
   }
 
-  // 队伍结成——#172 起真身（ere/dungeon/；内含 PARTY_UNITE 复调）
+  // 队伍结成——#172 起真身（ere/system/dungeon/；内含 PARTY_UNITE 复调）
   await party_join();
 
   // 2D 模式（FLAG:502 == 1）的地图重绘（#181 起真身，
-  // ere/dungeon/labo-map.js 的 geo_output_2）
+  // ere/system/dungeon/labo-map.js 的 geo_output_2）
   if ((era.get('flag:502') || 0) === 1) {
     await geo_output_2();
   }
@@ -4365,11 +4365,11 @@ export default [
     return settled;
   }
 
-  // 队伍结成——#172 起真身（ere/dungeon/；内含 PARTY_UNITE 复调）
+  // 队伍结成——#172 起真身（ere/system/dungeon/；内含 PARTY_UNITE 复调）
   await party_join();
 
   // 2D 模式（FLAG:502 == 1）的地图重绘（#181 起真身，
-  // ere/dungeon/labo-map.js 的 geo_output_2）
+  // ere/system/dungeon/labo-map.js 的 geo_output_2）
   if ((era.get('flag:502') || 0) === 1) {
     await geo_output_2();
   }

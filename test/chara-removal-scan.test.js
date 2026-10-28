@@ -58,11 +58,11 @@ const WHITELIST = new Map([
     '结局的贡品退场三连（队伍→删除→称呼重建）：无登记无指针清理，待裁定',
   ],
   [
-    'chara/chara-make.js',
+    'system/chara/chara-make.js',
     '初期奴隶「换一个」的撤销：加入流程的回退，删的是刚加入的角色，不是除名',
   ],
   [
-    'invasion/invasion-arcana-fort.js',
+    'system/invasion/invasion-arcana-fort.js',
     '狂王线战败的临时骑士移除：召唤物清理，不是除名',
   ],
   [

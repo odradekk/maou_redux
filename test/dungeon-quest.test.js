@@ -1,5 +1,5 @@
 /**
- * ere/dungeon/dungeon-quest.js 全量 17 函数的行为测试（issue #178，H9）。
+ * ere/system/dungeon/dungeon-quest.js 全量 17 函数的行为测试（issue #178，H9）。
  *
  * 缝 = test/helpers/era-fixture.js。PRINTW 的等键是 waitAnyKey（不消耗
  * 预置输入）；随机经函数级 rand 参数注入定值序。
@@ -22,7 +22,7 @@ const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
 
-function load(fixture, name = 'dungeon/dungeon-quest') {
+function load(fixture, name = 'system/dungeon/dungeon-quest') {
   return fixture.load_module(name);
 }
 

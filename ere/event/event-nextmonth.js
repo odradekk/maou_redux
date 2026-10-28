@@ -16,7 +16,7 @@
  *   - 12 月支的年龄增长循环跳过 0 号位（魔王不涨年龄；event-first.js 给
  *     魔王的 CFLAG:0:451 = 21 因此恒定）。ere 侧按 #114 先例以
  *     cid === 0 等价跳过。
- *   - human_age_generate（ere/chara/chara-body.js，自 #385 起为真身；种族
+ *   - human_age_generate（ere/system/chara/chara-body.js，自 #385 起为真身；种族
  *     年龄→人类年龄的换算，读 TALENT:314 种族与 FLAG:26/27 开局配置）——
  *     CFLAG:451 从此落真实换算值，不再恒 0。
  *   - 循环开头清返回值的习语不落；ere 侧函数直接调用，没有跨函数返回值
@@ -24,9 +24,9 @@
  */
 
 const era = require('#/era-electron');
-const { human_age_generate } = require('#/chara/chara-body'); // #385 起真身
 const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
+const { human_age_generate } = require('#/system/chara/chara-body'); // #385 起真身
 
 /**
  * 月替处理：各月末日则换月（被 EVENTTURNEND 的 #PRI 档在
