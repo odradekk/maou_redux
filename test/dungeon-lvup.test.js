@@ -1,5 +1,5 @@
 /**
- * ere/dungeon/dungeon-lvup.js lvup + st_up 的行为测试（issue #179，H10）。
+ * ere/system/dungeon/dungeon-lvup.js lvup + st_up 的行为测试（issue #179，H10）。
  *
  * 缝 = test/helpers/era-fixture.js（全项目唯一测试注入点）。随机源经
  * st_up / lvup 的 rand 参数注入（dungeon-trap.test.js 的 seq/counting 先例）。
@@ -29,7 +29,7 @@ function seq(...values) {
 }
 
 function load(fixture) {
-  return fixture.load_module('dungeon/dungeon-lvup');
+  return fixture.load_module('system/dungeon/dungeon-lvup');
 }
 
 /** 最小世界：一个角色（等级/经验/素质由各用例自设） */

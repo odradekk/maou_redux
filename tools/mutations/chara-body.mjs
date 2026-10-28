@@ -1,9 +1,9 @@
 // issue #385：CHARA_BODY 身体与年龄生成（M8036-M8085）。
 //
-// 目标文件常住 ere/chara/chara-body.js（新增的四个函数与取点步骤）；最后两条
+// 目标文件常住 ere/system/chara/chara-body.js（新增的四个函数与取点步骤）；最后两条
 // 打接入点（event-first / event-nextmonth）。tests 一律是这张工单的
 // test/chara-body.test.js（接入两条除外）。
-const code = 'ere/chara/chara-body.js';
+const code = 'ere/system/chara/chara-body.js';
 // extra 可给 file / tests / test_name 三项覆盖：接入条目打别的目标文件与别的
 // 测试文件；test_name 是「must_mention 是运行期拼出来的断言消息」时的快路
 // 口（见 tools/mutation-check.mjs 头注的 #242 段）——不写它，`--ids` 内环会

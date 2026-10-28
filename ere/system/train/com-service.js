@@ -11,8 +11,6 @@ const { PALAMLV } = require('#/era-utils/palam-level');
 const { EXPLV } = require('#/era-utils/exp-level');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
-const { monster_name } = require('#/dungeon/monster-data');
-const { BATTLE_COLUMN, battle_column } = require('#/dungeon/battle-state');
 const { chara_callname } = require('#/utils/callname-utils');
 const { idiv_trunc, times_exact } = require('#/utils/numeric');
 const { com_order } = require('#/system/train/com-order');
@@ -33,6 +31,11 @@ const {
   com_ejac_player_analsex,
 } = require('#/system/train/com-analsex');
 const { confirm_condom } = require('#/system/train/com-condom');
+const { monster_name } = require('#/system/dungeon/monster-data');
+const {
+  BATTLE_COLUMN,
+  battle_column,
+} = require('#/system/dungeon/battle-state');
 const {
   com_after_vagina_sex,
   com_ejac_player_milk,

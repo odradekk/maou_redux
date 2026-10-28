@@ -33,10 +33,13 @@ const {
   confirm_condom2,
 } = require('#/system/train/com-condom');
 const { com_order } = require('#/system/train/com-order');
+const { monster_name } = require('#/system/dungeon/monster-data');
+const {
+  BATTLE_COLUMN,
+  battle_column,
+} = require('#/system/dungeon/battle-state');
 const { chara_callname } = require('#/utils/callname-utils');
 const { times } = require('#/utils/numeric');
-const { monster_name } = require('#/dungeon/monster-data');
-const { BATTLE_COLUMN, battle_column } = require('#/dungeon/battle-state');
 // —— 读取与写入：未声明序号均按项目约定缺省为 0 ——
 const get = (name) => era.get(name) || 0;
 const set = (name, value) => era.set(name, value);

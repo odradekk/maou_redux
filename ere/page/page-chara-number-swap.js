@@ -18,7 +18,7 @@
  *
  *   - 每个角色多一个**排序编号**（PORTCFLAG:角色:排序编号——移植自建的
  *     扩展表字段，ADR-0001；缺省 0＝未设，读取侧回落角色 ID，见
- *     ere/chara/chara-portcflag.js）。它只是排列键：
+ *     ere/system/chara/chara-portcflag.js）。它只是排列键：
  *   - 名册「编号」视图与换号页的候选列表都按它升序排（page-chara-info.js
  *     的 number_view_order、本文件的 swap_candidates）；
  *   - 确认后只调 swap_sort_numbers(first, second)——
@@ -78,7 +78,7 @@ const era_exflag = require('#/era-utils/era-exflag');
 const {
   sort_by_number,
   swap_sort_numbers,
-} = require('#/chara/chara-portcflag');
+} = require('#/system/chara/chara-portcflag');
 const { get_job_name } = require('#/page/page-select-target');
 const { change_screen } = require('#/page/components/screen-change');
 const { chara } = require('#/facade/chara');

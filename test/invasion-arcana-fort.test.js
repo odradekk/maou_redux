@@ -1,5 +1,5 @@
 /**
- * ere/invasion/invasion-arcana-fort.js 的行为测试（issue #470，Q13
+ * ere/system/invasion/invasion-arcana-fort.js 的行为测试（issue #470，Q13
  * 侵略残余·3）。
  *
  * 缝 = test/helpers/era-fixture.js。随机源按上界注入（knob，同
@@ -142,7 +142,7 @@ function add_pregnant_bess(fixture) {
 test('初回无候选：俘虏情报叙述后劝退，RETURN 0', async () => {
   const fixture = setup_fort_world();
   fixture.store.set('talent:1:85', 0); // 撤掉爱标记 → 无候选
-  const mod = fixture.load_module('invasion/invasion-arcana-fort');
+  const mod = fixture.load_module('system/invasion/invasion-arcana-fort');
   const r = await mod.arcana_fort(knob());
   assert.equal(r, 0, '无候选 → RETURN 0');
   const texts = fixture.text_lines();
@@ -161,7 +161,7 @@ test('初回无候选：俘虏情报叙述后劝退，RETURN 0', async () => {
 test('FLAG:92 == 15：四门全破的总结叙述后 RETURN 0', async () => {
   const fixture = setup_fort_world();
   fixture.store.set('flag:92', 15);
-  const mod = fixture.load_module('invasion/invasion-arcana-fort');
+  const mod = fixture.load_module('system/invasion/invasion-arcana-fort');
   const r = await mod.arcana_fort(knob());
   assert.equal(r, 0);
   const texts = fixture.text_lines();
@@ -192,7 +192,7 @@ test('捕获进度的三种叙述：剩一位拼名、两位、一位点名', as
     const fixture = stage_zero_world();
     fixture.reset_inputs(4);
     fixture.store.set('flag:92', stage);
-    const mod = fixture.load_module('invasion/invasion-arcana-fort');
+    const mod = fixture.load_module('system/invasion/invasion-arcana-fort');
     const r = await mod.arcana_fort(knob());
     assert.equal(r, 0, `stage=${stage} 撤退 → 0`);
     const texts = fixture.text_lines();
@@ -208,7 +208,7 @@ test('门选择：已攻占的门渲染为 [*] 文本占位，[0] 被引擎拒�
   // 重问检查因此是引擎死路径（page-invasion.test.js 同款结论）。
   const fixture = stage_zero_world();
   fixture.store.set('flag:92', 1); // 东已破
-  const mod = fixture.load_module('invasion/invasion-arcana-fort');
+  const mod = fixture.load_module('system/invasion/invasion-arcana-fort');
   fixture.reset_inputs(0, 4);
   await assert.rejects(
     () => mod.arcana_fort(knob()),
@@ -237,7 +237,7 @@ test('门选择：已攻占的门渲染为 [*] 文本占位，[0] 被引擎拒�
 test('#612 门菜单：四门与撤退的按钮正文照写「- 」分隔符', async () => {
   const fixture = stage_zero_world(); // 四门全在
   fixture.reset_inputs(4); // 撤退
-  const mod = fixture.load_module('invasion/invasion-arcana-fort');
+  const mod = fixture.load_module('system/invasion/invasion-arcana-fort');
   assert.equal(await mod.arcana_fort(knob()), 0);
   assert.deepEqual(
     fixture.lines
@@ -259,7 +259,7 @@ test('勇者列表为空（stage≠0 且无候选）：*没有可以攻击的勇
   fixture.reset_inputs(0);
   fixture.store.set('flag:92', 4); // 西已破（跳过初回叙述）
   fixture.store.set('talent:1:85', 0); // 无候选
-  const mod = fixture.load_module('invasion/invasion-arcana-fort');
+  const mod = fixture.load_module('system/invasion/invasion-arcana-fort');
   const r = await mod.arcana_fort(knob());
   assert.equal(r, 0);
   assert(fixture.text_lines().includes('*没有可以攻击的勇士*'));
@@ -268,7 +268,7 @@ test('勇者列表为空（stage≠0 且无候选）：*没有可以攻击的勇
 test('[999] 返回：候选列表退出不打仗，RETURN 0', async () => {
   const fixture = stage_zero_world();
   fixture.reset_inputs(0, 999); // 东门 → 列表 → 返回
-  const mod = fixture.load_module('invasion/invasion-arcana-fort');
+  const mod = fixture.load_module('system/invasion/invasion-arcana-fort');
   const r = await mod.arcana_fort(knob());
   assert.equal(r, 0);
   assert(fixture.text_lines().includes('派遣谁去攻击呢？'));
@@ -299,7 +299,7 @@ test('胜利：四门表驱动——武器编码、经验/初体验、FLAG:92 �
   ] of cases) {
     const fixture = stage_zero_world();
     fixture.reset_inputs(gate, 0); // 门 → 列表第 0 号（阿尔）
-    const mod = fixture.load_module('invasion/invasion-arcana-fort');
+    const mod = fixture.load_module('system/invasion/invasion-arcana-fort');
     const r = await mod.arcana_fort(knob());
     assert.equal(r, 1, `门 ${gate} 打了一仗 → RETURN 1`);
 
@@ -381,7 +381,7 @@ test('FLAG:60 的追加强化：逐级 ST_UP（2 级）后再算赏金', async (
   const fixture = stage_zero_world();
   fixture.reset_inputs(0, 0); // 东门 → 阿尔
   fixture.store.set('flag:60', 2); // REPEAT FLAG:60
-  const mod = fixture.load_module('invasion/invasion-arcana-fort');
+  const mod = fixture.load_module('system/invasion/invasion-arcana-fort');
   await mod.arcana_fort(knob());
   assert.equal(fixture.store.get('cflag:22:9'), 107, '黑方片 105 → 107 级');
   assert.equal(
@@ -401,7 +401,7 @@ test('金红桃：FLAG:500 决定精液经验档——男/扶她写、女不写'
     const fixture = stage_zero_world();
     fixture.reset_inputs(3, 0); // 北门 → 阿尔
     fixture.store.set('flag:500', king);
-    const mod = fixture.load_module('invasion/invasion-arcana-fort');
+    const mod = fixture.load_module('system/invasion/invasion-arcana-fort');
     await mod.arcana_fort(knob());
     assert.equal(fixture.store.get('exp:20:0'), 20, `${label}：私处经验恒写`);
     assert.equal(
@@ -419,7 +419,7 @@ test('胜利叙述分支：曾经的同伴（TALENT:167）与全裸（CFLAG:40 =
   const fixture = stage_zero_world();
   fixture.reset_inputs(0, 0);
   fixture.store.set('talent:1:167', 1);
-  const mod = fixture.load_module('invasion/invasion-arcana-fort');
+  const mod = fixture.load_module('system/invasion/invasion-arcana-fort');
   await mod.arcana_fort(knob());
   const texts = fixture.text_lines();
   assert(
@@ -435,7 +435,7 @@ test('胜利叙述分支：曾经的同伴（TALENT:167）与全裸（CFLAG:40 =
   const fixture2 = stage_zero_world();
   fixture2.reset_inputs(0, 0);
   fixture2.store.set('cflag:1:40', 1);
-  const mod2 = fixture2.load_module('invasion/invasion-arcana-fort');
+  const mod2 = fixture2.load_module('system/invasion/invasion-arcana-fort');
   await mod2.arcana_fort(knob());
   const texts2 = fixture2.text_lines();
   assert(
@@ -451,14 +451,14 @@ test('体型回写（GETBIT(FLAG:5,12)）：451-457 = CHAR_SIZE_GENERATE 返回�
   const fixture = stage_zero_world();
   fixture.reset_inputs(3, 0); // 北门（年龄 18）
   fixture.store.set('flag:5', 4096); // 位 12
-  const mod = fixture.load_module('invasion/invasion-arcana-fort');
+  const mod = fixture.load_module('system/invasion/invasion-arcana-fort');
   await mod.arcana_fort(knob());
 
   // knob 无状态：同一 knob 离线复算金红桃 18 岁的体型
   const expect_fixture = create_era_fixture();
   expect_fixture.seed_chara(9, { id: 9, name: '样', callname: '样' });
   expect_fixture.era.addCharacter(9);
-  const body = expect_fixture.load_module('chara/chara-body');
+  const body = expect_fixture.load_module('system/chara/chara-body');
   const size = body.char_size_generate(9, 18, 0, knob());
   assert.equal(fixture.store.get('cflag:20:451'), size[0], '年龄');
   assert.equal(fixture.store.get('cflag:20:452'), size[1], '种族年龄');
@@ -473,7 +473,7 @@ test('体型回写（GETBIT(FLAG:5,12)）：451-457 = CHAR_SIZE_GENERATE 返回�
   // 七个下标一个都不落
   const fixture2 = stage_zero_world();
   fixture2.reset_inputs(3, 0);
-  const mod2 = fixture2.load_module('invasion/invasion-arcana-fort');
+  const mod2 = fixture2.load_module('system/invasion/invasion-arcana-fort');
   assert.equal(await mod2.arcana_fort(knob()), 1);
   for (const flag of [451, 452, 453, 454, 455, 456, 457]) {
     assert.equal(
@@ -487,7 +487,7 @@ test('体型回写（GETBIT(FLAG:5,12)）：451-457 = CHAR_SIZE_GENERATE 返回�
 test('败北：骑士被移除（PARTY_CHAR_DEL + DELCHARA + NAME_RESET），FLAG:92 不动', async () => {
   const fixture = stage_zero_world({ win: false });
   fixture.reset_inputs(0, 0);
-  const mod = fixture.load_module('invasion/invasion-arcana-fort');
+  const mod = fixture.load_module('system/invasion/invasion-arcana-fort');
   const r = await mod.arcana_fort(knob());
   assert.equal(r, 1, '败北同样耗回合 → RETURN 1');
   assert.equal(fixture.store.get('flag:92') ?? 0, 0, '未置位');
@@ -505,7 +505,7 @@ test('败北狂王线（FLAG:5 位 7）：状态 9，上一次调教对象/助�
   const game_facade = fixture.load_module('facade/game');
   game_facade.game.event.上次调教对象 = 1; // 正是阿尔
   game_facade.game.event.上次助手 = 0; // 魔王，不应被动
-  const mod = fixture.load_module('invasion/invasion-arcana-fort');
+  const mod = fixture.load_module('system/invasion/invasion-arcana-fort');
   await mod.arcana_fort(knob());
   assert.equal(fixture.store.get('cflag:1:1'), 9, '狂王线败北 → 状态 9');
   assert.equal(game_facade.game.event.上次调教对象, -1, 'FLAG:1 清槽');
@@ -524,7 +524,7 @@ test('候选过滤：非妊娠模式（FLAG:5 位 10 关）把妊娠者挡在列
   const fixture = setup_fort_world();
   add_pregnant_bess(fixture);
   fixture.reset_inputs(0, 1);
-  const mod = fixture.load_module('invasion/invasion-arcana-fort');
+  const mod = fixture.load_module('system/invasion/invasion-arcana-fort');
   await assert.rejects(
     () => mod.arcana_fort(knob()),
     /输入不合法！请输入以下值之一：0, 1000, 999, 1001/,
@@ -548,7 +548,7 @@ test('妊娠出撃可（FLAG:5 位 10）：妊娠者直接可选，无需翻转'
   add_pregnant_bess(fixture);
   fixture.store.set('flag:5', 1024); // 位 10
   fixture.reset_inputs(0, 1); // 直接选 1 = 贝丝
-  const mod = fixture.load_module('invasion/invasion-arcana-fort');
+  const mod = fixture.load_module('system/invasion/invasion-arcana-fort');
   const r = await mod.arcana_fort(knob());
   assert.equal(r, 1);
   assert.equal(fixture.store.get('cflag:2:1'), 0, '贝丝出战战败（状态 0）');

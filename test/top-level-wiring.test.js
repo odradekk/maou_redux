@@ -55,7 +55,7 @@
  *
  * 现存四处正确写法（阳性对照，防检查把正解也拦下）：
  *
- *   - `ere/dungeon/dungeon-trap.js` 的 `dark_juel_trap`（函数内 require
+ *   - `ere/system/dungeon/dungeon-trap.js` 的 `dark_juel_trap`（函数内 require
  *     dungeon；#402 的 com-service 延迟 require 随公共段合流删除后换的
  *     同类写法。dungeon 不在保护集合，全树检查本就不会拦它，这格只承担
  *     扫描器分类的回归，不承担「检查不拦正解」的实证）；
@@ -509,7 +509,7 @@ test('扫描器：正确区分顶层与函数体内 require（现存阳性对照
   // 契约，只用于区分同文件同 target 的多处 require；写死后任何无关增删行
   // 都会撞红（四张票记六次，计数方式见文件头，#520 解耦）。对照来源见文件头。
   const cases = [
-    ['ere/dungeon/dungeon-trap.js', '#/dungeon/dungeon'],
+    ['ere/system/dungeon/dungeon-trap.js', '#/system/dungeon/dungeon'],
     ['ere/kojo/kojo-k2-timid.js', '#/system/train/com-hardcore'],
     ['ere/kojo/kojo-k3-noble.js', '#/system/train/com-hardcore'],
     ['ere/system/train/com-tentacle.js', '#/system/train/com-colosseum'],

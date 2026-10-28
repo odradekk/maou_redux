@@ -2,7 +2,7 @@
  * @file issue #349：家族关系设置。
  *
  * 测试边界 = chara/chara-family 的公开导出。关系矩阵通过公开读写与家族查询
- * 观察；期望值直接来自 ere/chara/chara-family.js 的关系码定义。
+ * 观察；期望值直接来自 ere/system/chara/chara-family.js 的关系码定义。
  */
 
 'use strict';
@@ -64,14 +64,14 @@ function setup_sibling_search(
   fixture.store.set('talent:2:320', target_family); // 候选者家族构成
   fixture.store.set('talent:2:160', 1); // 家族照性格位 0 + 160
   if (male) fixture.store.set('talent:1:122', 1); // 男人
-  return fixture.load_module('chara/chara-family');
+  return fixture.load_module('system/chara/chara-family');
 }
 
 test('关系读写区分登录角色与外部对象，并在读取前修复角色对角标识', () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0);
   add_chara(fixture, 17);
-  const family = fixture.load_module('chara/chara-family');
+  const family = fixture.load_module('system/chara/chara-family');
 
   family.relation_set(17, 0, 125);
   assert.equal(fixture.store.get('c_relation:17:17'), 10017);
@@ -95,7 +95,7 @@ test('家族关系只替换个位，并为普通角色写入反向关系', () =>
   const fixture = create_era_fixture();
   add_chara(fixture, 1);
   add_chara(fixture, 2);
-  const family = fixture.load_module('chara/chara-family');
+  const family = fixture.load_module('system/chara/chara-family');
   family.relation_set(1, 2, 120);
   family.relation_set(2, 1, 340);
 
@@ -108,7 +108,7 @@ test('家族关系只替换个位，并为普通角色写入反向关系', () =>
 test('关系检查、重命名修复与交换接口维护矩阵标识和列数据', () => {
   const fixture = create_era_fixture();
   for (const cid of [1, 2, 3]) add_chara(fixture, cid);
-  const family = fixture.load_module('chara/chara-family');
+  const family = fixture.load_module('system/chara/chara-family');
   family.relation_rebuild();
   family.r_set(3, 1, 11);
   family.r_set(3, 2, 22);
@@ -131,7 +131,7 @@ test('关系调试表按五字符列逐行输出、标色，并在打印后等�
   const fixture = create_era_fixture();
   for (const cid of [1, 2]) add_chara(fixture, cid);
   fixture.set_inputs(0);
-  const family = fixture.load_module('chara/chara-family');
+  const family = fixture.load_module('system/chara/chara-family');
   family.r_set(1, 2, 5);
 
   await family.relation_debugprint();
@@ -157,7 +157,7 @@ test('关系调试表按五字符列逐行输出、标色，并在打印后等�
 test('家族查询可分别忽略性别与兄弟姐妹长幼，并包含外部对象', () => {
   const fixture = create_era_fixture();
   for (const cid of [1, 2, 3, 4]) add_chara(fixture, cid);
-  const family = fixture.load_module('chara/chara-family');
+  const family = fixture.load_module('system/chara/chara-family');
   family.rf_set_both(1, 2, 1); // 哥哥
   family.rf_set_both(1, 3, 4); // 妹妹
   family.r_set(1, -4, 205); // 狂王，父亲
@@ -206,7 +206,7 @@ test('手足匹配：男性检索弟弟时扣候选侧哥哥而非姐姐', () =>
 test('NID 特殊角色边界包含角色 40', () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 40);
-  const family = fixture.load_module('chara/chara-family');
+  const family = fixture.load_module('system/chara/chara-family');
 
   family.relation_rebuild();
 
@@ -217,7 +217,7 @@ test('NID 特殊角色边界包含角色 40', () => {
 test('加入父母家庭时继承既有孩子为手足，随机源由调用者确定', () => {
   const fixture = create_era_fixture();
   for (const cid of [1, 2, 3]) add_chara(fixture, cid);
-  const family = fixture.load_module('chara/chara-family');
+  const family = fixture.load_module('system/chara/chara-family');
   family.rf_set_both(2, 1, 6); // 2 的母亲是 1
   fixture.store.set('cflag:2:451', 15);
   fixture.store.set('cflag:3:451', 15);
@@ -231,7 +231,7 @@ test('加入父母家庭时继承既有孩子为手足，随机源由调用者�
 test('加入手足家庭会复制父母；父母加入子女家庭会覆盖全部手足', () => {
   const fixture = create_era_fixture();
   for (const cid of [1, 2, 3, 4]) add_chara(fixture, cid);
-  const family = fixture.load_module('chara/chara-family');
+  const family = fixture.load_module('system/chara/chara-family');
   family.rf_set_both(2, 1, 6); // 2 的母亲是 1
   assert.equal(
     family.rf_join_to(3, 2, 4, 0, seq([])),
@@ -250,7 +250,7 @@ test('后代只能经父母关系加入家庭', () => {
   const fixture = create_era_fixture();
   for (const cid of [1, 2]) add_chara(fixture, cid);
   fixture.store.set('talent:2:220', 1);
-  const family = fixture.load_module('chara/chara-family');
+  const family = fixture.load_module('system/chara/chara-family');
 
   assert.throws(
     () => family.rf_join_to(2, 1, 2, 0, seq([])),
@@ -269,7 +269,7 @@ test('家族登记按相对年龄选首个相容角色，并保留源分支顺�
   fixture.store.set('talent:43:315', 3);
   fixture.store.set('talent:42:157', 1); // 人妻：相对年龄 +6
   fixture.store.set('talent:43:157', 1);
-  const family = fixture.load_module('chara/chara-family');
+  const family = fixture.load_module('system/chara/chara-family');
 
   assert.deepEqual(family.family_register(41, seq([])), [42, 2]);
   assert.equal(family.rf_get(41, 42), 2);
@@ -284,7 +284,7 @@ test('村娘登记直接互连，后代与特殊角色不进入随机家族登�
   fixture.store.set('talent:42:171', 1); // 村娘 B
   fixture.store.set('talent:43:220', 1); // 后代
   fixture.store.set('talent:44:157', 1); // 特殊角色若漏过滤，会与此人建立家族
-  const family = fixture.load_module('chara/chara-family');
+  const family = fixture.load_module('system/chara/chara-family');
 
   assert.deepEqual(family.family_register(41, seq([])), [42, 2]);
   assert.equal(family.rf_get(41, 42), 2);
@@ -300,7 +300,7 @@ test('特殊角色 17 号不进随机家族登记：候选齐备时过滤仍然�
   // 若 17 号不被过滤，family_register_slave 会给两人登记出家族。
   fixture.store.set('talent:44:157', 1); // 人妻：相对年龄 +6
   fixture.store.set('cflag:44:6', 3044); // 与 17 号的固定 10017 同为 ≥3000 型
-  const family = fixture.load_module('chara/chara-family');
+  const family = fixture.load_module('system/chara/chara-family');
 
   assert.deepEqual(family.family_register(17, seq([])), [0, 0]);
   assert.equal(family.rf_get(17, 44), 0, '17 与 44 无关系');
@@ -316,7 +316,7 @@ test('随机家族登记跳过作为候选的后代', () => {
   fixture.store.set('talent:42:220', 1); // 首个相容候选是后代，必须跳过
   fixture.store.set('talent:42:157', 1);
   fixture.store.set('talent:43:157', 1);
-  const family = fixture.load_module('chara/chara-family');
+  const family = fixture.load_module('system/chara/chara-family');
 
   assert.deepEqual(family.family_register(41, seq([])), [43, 2]);
 });
@@ -328,7 +328,7 @@ test('种族和经历相容规则保留精英限制、冲突与参数序的非�
   fixture.store.set('talent:41:321', 2); // 原种族
   fixture.store.set('talent:42:314', 2);
   fixture.store.set('talent:211:314', 2);
-  const family = fixture.load_module('chara/chara-family');
+  const family = fixture.load_module('system/chara/chara-family');
 
   assert.equal(family.f_is_same_race(41, 42), true);
   assert.equal(family.f_is_same_race(201, 202), false);
@@ -346,7 +346,7 @@ test('相关性检查会读取外部家族成员的经历，不擅自跳过负�
   fixture.store.set('talent:42:314', 1);
   fixture.store.set('talent:41:315', 3);
   fixture.store.set('talent:42:315', 3);
-  const family = fixture.load_module('chara/chara-family');
+  const family = fixture.load_module('system/chara/chara-family');
   family.r_set(41, -4, 5);
 
   assert.equal(family.f_check_relevant(41, 42), 1);
@@ -358,7 +358,7 @@ test('相关性检查会读取外部家族成员的经历，不擅自跳过负�
 
 test('关系类型文本、反转和十进制位工具的公式取值', () => {
   const fixture = create_era_fixture();
-  const family = fixture.load_module('chara/chara-family');
+  const family = fixture.load_module('system/chara/chara-family');
 
   assert.equal(family.f_type_reverse(5), 8);
   assert.equal(family.f_type_reverse(5, 1), 7);
@@ -372,7 +372,7 @@ test('关系类型文本、反转和十进制位工具的公式取值', () => {
 test('家族信息输出父母、手足和子女按钮，并区分显示数与总数', () => {
   const fixture = create_era_fixture();
   for (const cid of [1, 2, 3, 4, 5, 6, 7, 8]) add_chara(fixture, cid);
-  const family = fixture.load_module('chara/chara-family');
+  const family = fixture.load_module('system/chara/chara-family');
   family.r_set(1, 2, 6);
   for (const cid of [3, 4, 5]) family.r_set(1, cid, 2);
   for (const cid of [6, 7, 8]) family.r_set(1, cid, 8);
@@ -517,7 +517,7 @@ engine_test(
 test('出生包装拒绝外部母亲，普通父母按 6/5、外部父亲按 5 登记', () => {
   const fixture = create_era_fixture();
   for (const cid of [2, 3, 10]) add_chara(fixture, cid);
-  const family = fixture.load_module('chara/chara-family');
+  const family = fixture.load_module('system/chara/chara-family');
 
   assert.throws(
     () => family.family_birth_to_mom(10, -4, seq([])),

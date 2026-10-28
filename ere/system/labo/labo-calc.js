@@ -14,10 +14,10 @@ const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { wearing_cloth_able } = require('#/system/train/cloth');
-const { char_size_generate } = require('#/chara/chara-body');
-const { add_chara_ex, DECLARED_CHARA_IDS } = require('#/chara/chara-ex');
-const { normalize_idle_status } = require('#/chara/chara-init');
-const { get_look_info, KIND } = require('#/chara/look-info');
+const { char_size_generate } = require('#/system/chara/chara-body');
+const { add_chara_ex, DECLARED_CHARA_IDS } = require('#/system/chara/chara-ex');
+const { normalize_idle_status } = require('#/system/chara/chara-init');
+const { get_look_info, KIND } = require('#/system/chara/look-info');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const {

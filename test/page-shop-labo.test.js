@@ -1150,7 +1150,9 @@ test('胸围重算：FLAG:5 位 12/15 开才写 CFLAG:454/455（随机上界由 
         'FLAG:5 位 12/15 开 → 调 CHAR_SIZE_GENERATE',
       );
       // 与生产同算法的期望值：CFLAG:454 = 返回值 3（体重）、455 = 返回值 4（胸围）
-      const { char_size_generate } = fixture.load_module('chara/chara-body');
+      const { char_size_generate } = fixture.load_module(
+        'system/chara/chara-body',
+      );
       const expected = char_size_generate(1, 0, 1, (n) => n - 1);
       assert.equal(
         fixture.store.get('cflag:1:454'),

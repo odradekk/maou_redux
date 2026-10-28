@@ -52,7 +52,9 @@ for (const [male, desire, expected, label] of MODE_TABLE) {
     const fixture = setup_world();
     fixture.store.set('talent:0:122', male);
     fixture.store.set('abl:0:11', desire);
-    const { bedroom_battle_male } = fixture.load_module('dungeon/dungeon');
+    const { bedroom_battle_male } = fixture.load_module(
+      'system/dungeon/dungeon',
+    );
 
     assert.equal(await bedroom_battle_male(7), expected, '返回该行的后半句');
     assert.deepEqual(
@@ -67,7 +69,7 @@ test('边界：欲望恰为 8 不加档（> 8 判断条件）、恰为 0 的男�
   const fixture = setup_world();
   fixture.store.set('talent:0:122', 1);
   fixture.store.set('abl:0:11', 8);
-  const { bedroom_battle_male } = fixture.load_module('dungeon/dungeon');
+  const { bedroom_battle_male } = fixture.load_module('system/dungeon/dungeon');
 
   assert.equal(
     await bedroom_battle_male(7),
@@ -91,7 +93,7 @@ test('接入：run_dungeon 挑战分支把两句合成同一行（MODE 1）', as
   }
   // 魔王欲望条件（三选一）：女魔王欲望 > 3 即可；再抬到 > 8 走 MODE 1
   fixture.store.set('abl:0:11', 9);
-  const { run_dungeon } = fixture.load_module('dungeon/dungeon');
+  const { run_dungeon } = fixture.load_module('system/dungeon/dungeon');
   // 混合随机：WALK 计算要大（19/9 段与 10 段），RAND:4 恒 0 → 挑战分支
   const mixed = (n) => (n === 4 ? 0 : n - 1);
 

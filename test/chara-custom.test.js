@@ -1,5 +1,5 @@
 /**
- * ere/chara/chara-custom.js 的行为测试（issue #392，N8 段 2）。
+ * ere/system/chara/chara-custom.js 的行为测试（issue #392，N8 段 2）。
  *
  * 缝 = test/helpers/era-fixture.js。调试面板不在这张工单（不移植，文件头），
  * 故本文件也不测它。
@@ -13,7 +13,7 @@ const { test } = require('node:test');
 const { create_era_fixture } = require('./helpers/era-fixture');
 
 function load(fixture) {
-  return fixture.load_module('chara/chara-custom');
+  return fixture.load_module('system/chara/chara-custom');
 }
 
 /**

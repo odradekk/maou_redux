@@ -1,6 +1,6 @@
 // 变异条目表分片：chara-name-list（issue #388，CHARA_NAME_INIT 落表；
 // #435 文件名被引擎误判为逐角色数据、表名与读取键随改名同步）。
-// 目标文件：ere/chara/chara-name-list.js、event-first.js／event-load.js 的接入点、
+// 目标文件：ere/system/chara/chara-name-list.js、event-first.js／event-load.js 的接入点、
 // yml/NameList.yml 数据本身。对应测试见 test/chara-name-list.test.js。
 
 export const COUNT = 9;
@@ -8,7 +8,7 @@ export const COUNT = 9;
 export default [
   {
     desc: 'M7968 get_fixed_chara_name 的未注册检查被恒假绕过，缺口 id 也去读裸地址',
-    file: 'ere/chara/chara-name-list.js',
+    file: 'ere/system/chara/chara-name-list.js',
     find: '  if (!valid_ids().has(nid)) {',
     replace: '  if (false) {',
     tests: ['chara-name-list'],
@@ -16,7 +16,7 @@ export default [
   },
   {
     desc: 'M7969 get_fixed_chara_name 的检查被恒真短路，已注册 id 也查不到名字',
-    file: 'ere/chara/chara-name-list.js',
+    file: 'ere/system/chara/chara-name-list.js',
     find: '  if (!valid_ids().has(nid)) {',
     replace: '  if (true) {',
     tests: ['chara-name-list'],
@@ -24,7 +24,7 @@ export default [
   },
   {
     desc: 'M7970 valid_ids 缓存的惰性初始化被改成每次都重建，keys 被重复读取',
-    file: 'ere/chara/chara-name-list.js',
+    file: 'ere/system/chara/chara-name-list.js',
     find: "  valid_ids_cache ??= new Set(era.get('namelistkeys'));",
     replace: "  valid_ids_cache = new Set(era.get('namelistkeys'));",
     tests: ['chara-name-list'],
@@ -32,7 +32,7 @@ export default [
   },
   {
     desc: 'M7972 chara_name_init 的调用点被清空，valid_ids 缓存不再预热',
-    file: 'ere/chara/chara-name-list.js',
+    file: 'ere/system/chara/chara-name-list.js',
     find: 'function chara_name_init() {\n  valid_ids();\n}',
     replace: 'function chara_name_init() {}',
     tests: ['chara-name-list', 'event-first', 'event-load'],
@@ -68,7 +68,7 @@ export default [
   // 缺表的寻址静默返回 undefined，查表恒空而夹具播 store 的用例照样绿。
   {
     desc: 'M9473 名字读取键与表名脱节（namelistname → namelistnam），查表恒空',
-    file: 'ere/chara/chara-name-list.js',
+    file: 'ere/system/chara/chara-name-list.js',
     find: '`namelistname:${nid}`',
     replace: '`namelistnam:${nid}`',
     tests: ['chara-name-list'],
@@ -76,7 +76,7 @@ export default [
   },
   {
     desc: 'M9474 valid_ids 的 keys 读取被摘成空集，未注册检查恒判定未登录',
-    file: 'ere/chara/chara-name-list.js',
+    file: 'ere/system/chara/chara-name-list.js',
     find: "new Set(era.get('namelistkeys'))",
     replace: 'new Set([])',
     tests: ['chara-name-list'],

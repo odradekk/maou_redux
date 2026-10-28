@@ -139,7 +139,7 @@ engine_test(
     flags.communication_hero_level_one = 0;
     fixture.load_module('facade/game').game.system.外来勇者等级上限 = 100;
     const { chara_make_inport } = fixture.load_module(
-      'chara/chara-make-inport',
+      'system/chara/chara-make-inport',
     );
     assert.equal(
       chara_make_inport(() => 0),

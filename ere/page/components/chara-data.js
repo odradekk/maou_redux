@@ -16,11 +16,14 @@
  */
 
 const era = require('#/era-electron');
-const { search_family } = require('#/chara/chara-family');
-const { get_look_info } = require('#/chara/look-info');
-const { LOVER_NAMES } = require('#/dungeon/dungeon-lovers');
-const { monster_data, monster_name } = require('#/dungeon/monster-data');
-const { BATTLE_COLUMN, battle_column } = require('#/dungeon/battle-state');
+const { search_family } = require('#/system/chara/chara-family');
+const { get_look_info } = require('#/system/chara/look-info');
+const { LOVER_NAMES } = require('#/system/dungeon/dungeon-lovers');
+const { monster_data, monster_name } = require('#/system/dungeon/monster-data');
+const {
+  BATTLE_COLUMN,
+  battle_column,
+} = require('#/system/dungeon/battle-state');
 const { chara_callname } = require('#/utils/callname-utils');
 const { default_rand } = require('#/utils/numeric');
 

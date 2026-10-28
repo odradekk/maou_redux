@@ -16,9 +16,9 @@
 const era = require('#/era-electron');
 const { estimate_chara } = require('#/system/stronghold/sale');
 const { video_maturo } = require('#/system/stronghold/sell-video');
-const { search_family } = require('#/chara/chara-family');
 const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
+const { search_family } = require('#/system/chara/chara-family');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
 
 async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {

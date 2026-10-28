@@ -1,5 +1,5 @@
 /**
- * ere/dungeon/marriage-day.js 十七函数的行为测试（issue #342，阶段 5a L11）。
+ * ere/system/dungeon/marriage-day.js 十七函数的行为测试（issue #342，阶段 5a L11）。
  */
 
 'use strict';
@@ -35,7 +35,7 @@ function setup() {
   fixture.store.set('itemname:902', '恋人');
   fixture.store.set('cflag:0:1', 0);
   fixture.store.set('cflag:1:1', 0);
-  return { fixture, api: fixture.load_module('dungeon/marriage-day') };
+  return { fixture, api: fixture.load_module('system/dungeon/marriage-day') };
 }
 
 function texts(fixture) {

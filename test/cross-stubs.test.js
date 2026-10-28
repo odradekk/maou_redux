@@ -29,7 +29,7 @@ test('SEARCH_FAMILY：村娘 A/B 走专用互找分支，并保留最后一个�
   fixture.store.set('talent:1:165', 1); // 村娘 A
   fixture.store.set('talent:2:171', 1); // 村娘 B
   fixture.store.set('talent:3:171', 1); // 后出现的村娘 B
-  const { search_family } = fixture.load_module('chara/chara-family');
+  const { search_family } = fixture.load_module('system/chara/chara-family');
 
   assert.equal(search_family(1), 3);
   assert.equal(search_family(2), 1);
@@ -40,7 +40,7 @@ test('SEARCH_FAMILY：魔王的婚姻关系只认候选侧 901', () => {
   for (const cid of [0, 1, 2]) add_chara(fixture, cid);
   fixture.store.set('cflag:1:601', 902);
   fixture.store.set('cflag:2:601', 901);
-  const { search_family } = fixture.load_module('chara/chara-family');
+  const { search_family } = fixture.load_module('system/chara/chara-family');
 
   assert.equal(search_family(0, 'MARRIAGE'), 2);
 });
@@ -57,7 +57,7 @@ test('SEARCH_FAMILY：婚姻要求名字、前身、性格与家族构成一致'
   fixture.store.set('talent:2:315', 4);
   fixture.store.set('talent:2:165', 1);
   fixture.store.set('talent:2:320', 76);
-  const { search_family } = fixture.load_module('chara/chara-family');
+  const { search_family } = fixture.load_module('system/chara/chara-family');
 
   assert.equal(search_family(1, 'MARRIAGE'), 2);
   fixture.store.set('cflag:2:609', 43);
@@ -81,7 +81,7 @@ test('SEARCH_FAMILY：子找父时按家庭中的儿女数核对', () => {
   fixture.store.set('talent:2:315', 2);
   fixture.store.set('talent:2:163', 1);
   fixture.store.set('talent:2:320', 1001); // 一名儿子 + 已设置
-  const { search_family } = fixture.load_module('chara/chara-family');
+  const { search_family } = fixture.load_module('system/chara/chara-family');
 
   assert.equal(search_family(1), 2);
   fixture.store.set('talent:2:320', 2001);
@@ -100,7 +100,10 @@ test('SEARCH_FAMILY：家族数据个位为 0 时不进入兄弟姐妹推断', (
   fixture.store.set('talent:2:161', 1);
   fixture.store.set('talent:2:320', 1);
 
-  assert.equal(fixture.load_module('chara/chara-family').search_family(1), -1);
+  assert.equal(
+    fixture.load_module('system/chara/chara-family').search_family(1),
+    -1,
+  );
 });
 
 test('SEARCH_FAMILY：队伍离队调用点会清掉找到的结婚对象', () => {
@@ -109,7 +112,7 @@ test('SEARCH_FAMILY：队伍离队调用点会清掉找到的结婚对象', () =
   fixture.store.set('cflag:0:601', 9);
   fixture.store.set('cflag:2:601', 901);
 
-  fixture.load_module('dungeon/dungeon-party').party_del(0);
+  fixture.load_module('system/dungeon/dungeon-party').party_del(0);
   assert.equal(fixture.store.get('cflag:2:601'), 0);
 });
 
@@ -132,7 +135,7 @@ test('FAMILY_BIRTHTO_MOM/DAD：非法母亲抛错，父亲负号只记关系', (
   const fixture = create_era_fixture();
   add_chara(fixture, 10);
   const { family_birth_to_mom, family_birth_to_dad, rf_get } =
-    fixture.load_module('chara/chara-family');
+    fixture.load_module('system/chara/chara-family');
 
   assert.throws(() => family_birth_to_mom(10, -4), /不可能作为母亲/);
   assert.equal(family_birth_to_dad(10, -4), 0);
@@ -143,7 +146,7 @@ test('FAMILY_BIRTHTO_MOM/DAD：普通父母先重建关系，再以 6/5 加入�
   const fixture = create_era_fixture();
   for (const cid of [2, 3, 10]) add_chara(fixture, cid);
   const { family_birth_to_mom, family_birth_to_dad, rf_get } =
-    fixture.load_module('chara/chara-family');
+    fixture.load_module('system/chara/chara-family');
 
   family_birth_to_mom(10, 2, () => 0);
   family_birth_to_dad(10, 3, () => 0);
@@ -250,7 +253,9 @@ test('NAKADASHI_CHECK：已有预产日或正在妊娠时清池但不改妊娠�
 
 test('ENEMY_DATA_CHECK：保留未绑定局部变量造成的无操作行为', () => {
   const fixture = create_era_fixture();
-  const { enemy_data_check } = fixture.load_module('dungeon/monster-data');
+  const { enemy_data_check } = fixture.load_module(
+    'system/dungeon/monster-data',
+  );
 
   assert.equal(enemy_data_check(1007, 200), 0);
   assert.equal(fixture.battle('DEFENSE_3').id ?? 0, 0);
@@ -259,7 +264,7 @@ test('ENEMY_DATA_CHECK：保留未绑定局部变量造成的无操作行为', (
 test('MONSTER_DATA：1000-1009 接入 ENEMY_DATA_CHECK 且不回退成骷髅', () => {
   const fixture = create_era_fixture();
   fixture.store.set('flag:400', 1);
-  const { monster_data } = fixture.load_module('dungeon/monster-data');
+  const { monster_data } = fixture.load_module('system/dungeon/monster-data');
 
   assert.equal(
     monster_data(1007, 5, -1, -1, -1, () => 0),
@@ -270,7 +275,7 @@ test('MONSTER_DATA：1000-1009 接入 ENEMY_DATA_CHECK 且不回退成骷髅', (
 
 test('MONSTER_DATA：1010-1999 仍走 ENEMY_DATA_CHECK，不回退成骷髅', () => {
   const fixture = create_era_fixture();
-  const { monster_data } = fixture.load_module('dungeon/monster-data');
+  const { monster_data } = fixture.load_module('system/dungeon/monster-data');
 
   monster_data(1010, 5, -1, -1, -1, () => 0);
   assert.equal(fixture.battle('RAVISH').id ?? 0, 0);
@@ -339,7 +344,9 @@ test('NTR_KOUJO：旧单参数口上适配器优先传 P，并兼容直接调用
 
 test('CAMPAIGN_DUNGEON_LV：无战役为 0，战役 1 为 45，缺失编号为 0', () => {
   const fixture = create_era_fixture();
-  const { campaign_dungeon_lv } = fixture.load_module('dungeon/monster-data');
+  const { campaign_dungeon_lv } = fixture.load_module(
+    'system/dungeon/monster-data',
+  );
 
   assert.equal(campaign_dungeon_lv(), 0);
   fixture.store.set('flag:400', 1);

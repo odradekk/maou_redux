@@ -1,5 +1,5 @@
 /**
- * ere/chara/chara-custom3.js 的行为测试（issue #392，N8 段 2）。
+ * ere/system/chara/chara-custom3.js 的行为测试（issue #392，N8 段 2）。
  *
  * 缝 = test/helpers/era-fixture.js。被测量的是：按钮的快捷键编码
  * （`L_IDX*100 + 序号`，即 chara-custom2 页脚回传的编码面）、素质的写入、
@@ -14,7 +14,7 @@ const { test } = require('node:test');
 const { create_era_fixture } = require('./helpers/era-fixture');
 
 function load(fixture) {
-  return fixture.load_module('chara/chara-custom3');
+  return fixture.load_module('system/chara/chara-custom3');
 }
 
 function setup() {

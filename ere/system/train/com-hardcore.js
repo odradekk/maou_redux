@@ -71,9 +71,12 @@ const {
   com_after_extra_sex,
 } = require('#/system/train/com-vaginasex');
 const { soiling_cloth_no1 } = require('#/system/train/cloth');
-const { monster_name, monster_data } = require('#/dungeon/monster-data');
-const { BATTLE_COLUMN, battle_column } = require('#/dungeon/battle-state');
-const { karma } = require('#/dungeon/dungeon');
+const { monster_name, monster_data } = require('#/system/dungeon/monster-data');
+const {
+  BATTLE_COLUMN,
+  battle_column,
+} = require('#/system/dungeon/battle-state');
+const { karma } = require('#/system/dungeon/dungeon');
 const { chara_callname } = require('#/utils/callname-utils');
 const {
   clothtype_main2_text,

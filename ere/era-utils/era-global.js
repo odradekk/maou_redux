@@ -98,7 +98,7 @@ const era_global = {
 //       （魔改新增）跨存档共享。EVENTFIRST（ere/event/event-first.js）每次
 //       开局无条件重置为 -1；
 //       -1=女多男少、0=只有女性、1=只有男性、2=男多女少、3=男女持平、
-//       4=全是扶她（冒险者生成按此掷骰，ere/chara/chara-make.js）。
+//       4=全是扶她（冒险者生成按此掷骰，ere/system/chara/chara-make.js）。
 //       设置页 [27] 六档循环（ere/page/page-config.js，#547 实现存取）。
 //
 // 持久化：global 表即公共存档 global.sav 的主体，引擎在每次脚本启动前自动

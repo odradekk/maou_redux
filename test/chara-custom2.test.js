@@ -1,5 +1,5 @@
 /**
- * ere/chara/chara-custom2.js 的行为测试（issue #392，N8 段 2）。
+ * ere/system/chara/chara-custom2.js 的行为测试（issue #392，N8 段 2）。
  *
  * 缝 = test/helpers/era-fixture.js ＋ 三个随机源形参（RAND:3 / RAND:6 / RAND:2）。
  * 随机上界单独钉：`rand(n)` 捕获实参 n（只取上界不取命中）。
@@ -14,7 +14,7 @@ const { create_era_fixture } = require('./helpers/era-fixture');
 const { parse_yml_ids } = require('./helpers/static-names');
 
 function load(fixture) {
-  return fixture.load_module('chara/chara-custom2');
+  return fixture.load_module('system/chara/chara-custom2');
 }
 
 function setup(cid = 1) {
@@ -383,7 +383,7 @@ test('char_custom_talent_deal：胸围五档互斥，选中项保留原值（1�
   const control = create_era_fixture();
   control.store.set('talent:1:114', 1);
   const [expected_bust] = control
-    .load_module('chara/chara-body')
+    .load_module('system/chara/chara-body')
     .char_bust_generate(1, 22, 16000, seq([7]));
   assert.equal(
     fixture.store.get('cflag:1:455'),
@@ -1653,7 +1653,7 @@ test('char_custom：FLAG:5 位 12/15 打开时才调用身体生成（分支两�
     [1 << 15, 1], // 位 15
   ]) {
     const fixture = setup();
-    const body = require('#/chara/chara-body');
+    const body = require('#/system/chara/chara-body');
     const real = body.char_body_generate_wapped;
     const called = [];
     body.char_body_generate_wapped = (cid) => called.push(cid);

@@ -13,4 +13,4 @@
 #
 # 空表即够用（CFlag.yml/DB.yml 同款先例）：未声明下标读侧 getter 回 0
 # （「全区 0 起步」——未开 2D 模式时全图无村庄，VIL_CHECK 恒 0）。
-# 读写包装：ere/dungeon/labo.js 的 dc_get / dc_set。
+# 读写包装：ere/system/dungeon/labo.js 的 dc_get / dc_set。

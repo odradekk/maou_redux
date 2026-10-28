@@ -42,7 +42,6 @@ const { begin, is_state, STATE } = require('#/system/flow/game-state');
 const { kyoten_event } = require('#/page/page-invasion');
 const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
-const { get_look_info } = require('#/chara/look-info'); // #565 起接入（式中函数，纯取值）
 const { chara_callname } = require('#/utils/callname-utils');
 const { EVENT } = require('#/data/event-name-const');
 const { run_event_newday } = require('#/event/event-nextday');
@@ -52,16 +51,17 @@ const {
   party_unite,
   party_join,
   party_del,
-} = require('#/dungeon/dungeon-party');
-const { run_dungeon } = require('#/dungeon/dungeon');
-const { dungeon_map } = require('#/dungeon/labo-dungeon-map');
-const { geo_output_2 } = require('#/dungeon/labo-map');
-const { lvup } = require('#/dungeon/dungeon-lvup');
-const { dungeon_after } = require('#/dungeon/dungeon-after');
-const { marriage_day } = require('#/dungeon/marriage-day');
+} = require('#/system/dungeon/dungeon-party');
 const { run_benki } = require('#/system/train/benki');
 const { run_seedbed } = require('#/system/train/seedbed');
 const { save_train_desire } = require('#/system/train/train-end');
+const { get_look_info } = require('#/system/chara/look-info'); // #565 起接入（式中函数，纯取值）
+const { run_dungeon } = require('#/system/dungeon/dungeon');
+const { dungeon_map } = require('#/system/dungeon/labo-dungeon-map');
+const { geo_output_2 } = require('#/system/dungeon/labo-map');
+const { lvup } = require('#/system/dungeon/dungeon-lvup');
+const { dungeon_after } = require('#/system/dungeon/dungeon-after');
+const { marriage_day } = require('#/system/dungeon/marriage-day');
 const { auto_execution } = require('#/event/event-execution-batch');
 
 /** RAND:N（0..N-1）的等价物 */
@@ -138,11 +138,11 @@ on(EVENT.TURNEND, async () => {
     return settled;
   }
 
-  // 队伍结成——#172 起真身（ere/dungeon/；内含 PARTY_UNITE 复调）
+  // 队伍结成——#172 起真身（ere/system/dungeon/；内含 PARTY_UNITE 复调）
   await party_join();
 
   // 2D 模式（FLAG:502 == 1）的地图重绘（#181 起真身，
-  // ere/dungeon/labo-map.js 的 geo_output_2）
+  // ere/system/dungeon/labo-map.js 的 geo_output_2）
   if ((era.get('flag:502') || 0) === 1) {
     await geo_output_2();
   }
@@ -185,7 +185,7 @@ async function settle_in_train_window(target_pool) {
   // 该指针；后续模块按既有约定读 target_pool）
   era_flag.target = target_pool;
 
-  // 队伍编成（パーティー設定）——#172 起真身（ere/dungeon/）
+  // 队伍编成（パーティー設定）——#172 起真身（ere/system/dungeon/）
   party_unite();
 
   // 全角色：装备复原；战役中（CFLAG:1 == 12）的角色推进迷宫攻略
@@ -218,7 +218,7 @@ async function settle_in_train_window(target_pool) {
     // 迷宫攻略分档——阶段 3 的接入点之二：勇者探索中（2）或
     // 迎击中（3）且非 2D 模式（FLAG:502 == 0）走迷宫本体（#172 起真身，
     // H1 的勇者生成让这个检查第一次可达）；2D 模式走地图（#181 起真身，
-    // ere/dungeon/labo-dungeon-map.js，缺省随机源走 Math.random）。
+    // ere/system/dungeon/labo-dungeon-map.js，缺省随机源走 Math.random）。
     const place = chara(cid).invasion.状态;
     if ((place === 2 || place === 3) && (era.get('flag:502') || 0) === 0) {
       // 迷宫深处可能走到结局回标题（#852）：同上一段，转场上抛
@@ -235,13 +235,13 @@ async function settle_in_train_window(target_pool) {
     }
 
     // 升级结算（侵攻中的勇者除外）——#179 起真身
-    //（ere/dungeon/dungeon-lvup.js；跳过检查 SIF CFLAG:A:1 != 2 与
+    //（ere/system/dungeon/dungeon-lvup.js；跳过检查 SIF CFLAG:A:1 != 2 与
     // H2 写入的 CFLAG:1 = 2 直接耦合：侵攻中的勇者不升级）
     if (place !== 2) {
       lvup(cid);
     }
 
-    // 战果结算——#179 起真身（ere/dungeon/dungeon-after.js）
+    // 战果结算——#179 起真身（ere/system/dungeon/dungeon-after.js）
     await dungeon_after(cid);
 
     // 体力回复。此处 TIME 已被 #PRI 档翻转：午后结算（TIME==1，

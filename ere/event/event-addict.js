@@ -33,12 +33,12 @@
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
+const { party_del } = require('#/system/dungeon/dungeon-party');
 const { game } = require('#/facade/game');
 const { chara } = require('#/facade/chara');
 const { chara_callname, chara_nickname } = require('#/utils/callname-utils');
 const { MASTER } = require('#/utils/master');
 const { default_rand } = require('#/utils/numeric');
-const { party_del } = require('#/dungeon/dungeon-party');
 
 function get(name) {
   return era.get(name) || 0;

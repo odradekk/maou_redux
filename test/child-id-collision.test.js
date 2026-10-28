@@ -550,7 +550,7 @@ const CHARACTER_ROW_SCREENS = [
 /** chara-pregnancy.js 里声明的 FIRST_CHILD_ID（值即源码字面量，不经运行时） */
 function declared_first_child_id() {
   const text = fs.readFileSync(
-    path.join(ERE_DIR, 'chara', 'chara-pregnancy.js'),
+    path.join(ERE_DIR, 'system', 'chara', 'chara-pregnancy.js'),
     'utf8',
   );
   const m = /^const FIRST_CHILD_ID = (\d+);$/m.exec(text);
@@ -827,7 +827,7 @@ async function seed_world_with_child(template = 1) {
   fixture.store.set('talent:31:314', 5); // 种族（后代继承用）
   fixture.store.set('cflag:31:9', 4); // 等级
   const child = await fixture
-    .load_module('chara/chara-pregnancy')
+    .load_module('system/chara/chara-pregnancy')
     .gb_add_slave(template, -4, () => 0);
   return { fixture, child };
 }

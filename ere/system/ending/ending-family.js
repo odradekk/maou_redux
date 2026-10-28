@@ -26,12 +26,12 @@ const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
+const { name_reset } = require('#/system/chara/char-make');
+const { party_char_del } = require('#/system/dungeon/dungeon-party');
 const { event_chara_leave } = require('#/event/event-chara-leave');
 const { inconseq_select } = require('#/page/page-ending');
-const { name_reset } = require('#/chara/char-make');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
-const { party_char_del } = require('#/dungeon/dungeon-party');
 const { END_SCRIPTS } = require('#/data/ending-scripts');
 
 /** 二维表 / flag 读点：未声明下标读得 undefined（#13），一律 || 0 缺省处理 */

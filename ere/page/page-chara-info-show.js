@@ -47,6 +47,10 @@
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const { equip_get } = require('#/system/equip/equip-lookup');
+const { template_no_of } = require('#/system/chara/chara-pregnancy');
+const { look_info } = require('#/system/chara/look');
+const { get_look_info } = require('#/system/chara/look-info');
+const { party_char_del } = require('#/system/dungeon/dungeon-party');
 const { show_info_exp } = require('#/page/page-info-exp');
 const { show_juel } = require('#/page/page-ablup');
 const { change_screen } = require('#/page/components/screen-change');
@@ -66,10 +70,6 @@ const {
 } = require('#/page/components/chara-appearance');
 const { show_talent_condition } = require('#/page/page-chara-talent-condition');
 const { get_job_name } = require('#/page/page-select-target');
-const { template_no_of } = require('#/chara/chara-pregnancy');
-const { look_info } = require('#/chara/look');
-const { get_look_info } = require('#/chara/look-info');
-const { party_char_del } = require('#/dungeon/dungeon-party');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { chara_callname } = require('#/utils/callname-utils');
@@ -396,7 +396,7 @@ function sacrifice_chara(shadow, target_id, page) {
   // name_reset（读 TARGET）。**惰性 require**：char-make.js 是
   // rand_chara_make 的宿主，它 require 本模块（形象确认段），顶层再 require
   // 回去会成环——只有献祭分支用得到，就在用到处取。
-  require('#/chara/char-make').name_reset();
+  require('#/system/chara/char-make').name_reset();
   game.event.处刑勇者数 += 1; // （跨域写走属主域门面）
 }
 

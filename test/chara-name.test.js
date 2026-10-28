@@ -1,5 +1,5 @@
 /**
- * @file ere/chara/chara-name.js 的行为测试（issue #384，N2 段 1 枢纽）。
+ * @file ere/system/chara/chara-name.js 的行为测试（issue #384，N2 段 1 枢纽）。
  *
  * 缝 = test/helpers/era-fixture.js（全项目唯一测试注入点）。随机源一律经
  * 公开形参注入确定序列（seq / seq_capture，chara-self-call.test.js 先例）：
@@ -41,7 +41,7 @@ function seq_capture(values) {
 }
 
 function load(fixture) {
-  return fixture.load_module('chara/chara-name');
+  return fixture.load_module('system/chara/chara-name');
 }
 
 /** 姓名与称呼在 ere 侧同为 callname 表的两个键（#5 决议：-1 姓名、-2 称呼） */
@@ -158,7 +158,7 @@ test('chara_name_define：固定名列表空串（有产物但该编号没记名
 });
 
 test('chara_name_define：无效 NID（列表外）回落佳奈美', () => {
-  // 5500 是固定名表的声明尺寸（LIST_CHARA_NAME_SIZE，ere/chara/chara-name-list.js）；
+  // 5500 是固定名表的声明尺寸（LIST_CHARA_NAME_SIZE，ere/system/chara/chara-name-list.js）；
   // 5499（声明界内）与 5500（界外）都走「无效的NID」分支——判的是
   // 声明尺寸而非注册表，两个边界都必须回落到佳奈美。
   // （NID 的钳位是死写、不可观察，故本用例只断名字；见
@@ -637,14 +637,20 @@ test('chara_name_random_define：职业偏向——骑士掷中偏洋名、巫�
   const f2 = create_era_fixture();
   f2.store.set('talent:9:206', 1);
   f2.store.set('namelistkeys', []);
-  const { chara_name_random_define: run2 } = f2.load_module('chara/chara-name');
+  const { chara_name_random_define: run2 } = f2.load_module(
+    'system/chara/chara-name',
+  );
   run2(9, -1, seq([1, 0, 1, 0])); // rand(10)=1, rand(5)=0→%2=0, rand(450)=1
   assert.equal(f2.store.get('cflag:9:6'), 201, '和名编号 = rand(450) + 200');
 
   // 骑士与巫女都未命中（talent 未设）→ 不掷 rand(10)
   const f3 = create_era_fixture();
   const cap = seq_capture([0]);
-  f3.load_module('chara/chara-name').chara_name_random_define(9, -1, cap);
+  f3.load_module('system/chara/chara-name').chara_name_random_define(
+    9,
+    -1,
+    cap,
+  );
   assert.deepEqual(cap.bounds, [585], '无 talent 时不掷职业偏向的 rand(10)');
 });
 
@@ -662,7 +668,7 @@ test('chara_name_random_define：种族偏向表——九个种族偏洋名、�
   const wolf = create_era_fixture();
   wolf.store.set('cflag:9:314', 2);
   wolf
-    .load_module('chara/chara-name')
+    .load_module('system/chara/chara-name')
     .chara_name_random_define(9, -1, seq([0, 0])); // rand(5)=0 → 和名；rand(450)=0
   assert.equal(wolf.store.get('cflag:9:6'), 200, '种族 2 偏和名');
   // 无偏向：0 人类 / 9 魔族 / 12 未知
@@ -671,7 +677,7 @@ test('chara_name_random_define：种族偏向表——九个种族偏洋名、�
     fixture.store.set('cflag:9:314', race);
     const cap = seq_capture([0]);
     fixture
-      .load_module('chara/chara-name')
+      .load_module('system/chara/chara-name')
       .chara_name_random_define(9, -1, cap);
     assert.deepEqual(
       cap.bounds,
@@ -717,7 +723,7 @@ test('chara_name_random_define：男性角色的和名/洋名编号换用男名�
   // rand(WEST_MALE_NAME_COUNT) + 2000（两掷都要给，否则第二掷落真随机）
   const f2 = create_era_fixture();
   f2.store.set('talent:9:122', 1);
-  f2.load_module('chara/chara-name').chara_name_random_define(
+  f2.load_module('system/chara/chara-name').chara_name_random_define(
     9,
     1,
     seq([0, 3]),
@@ -732,7 +738,11 @@ test('chara_name_random_define：洋名编号 >= 200 时加 1000（两档区间�
   assert.equal(fixture.store.get('cflag:9:6'), 199, '< 200 不加偏移');
 
   const f2 = create_era_fixture();
-  f2.load_module('chara/chara-name').chara_name_random_define(9, 1, seq([200]));
+  f2.load_module('system/chara/chara-name').chara_name_random_define(
+    9,
+    1,
+    seq([200]),
+  );
   assert.equal(f2.store.get('cflag:9:6'), 1200, '>= 200 加 1000');
 });
 
@@ -770,7 +780,7 @@ test('chara_name_random_define：名字空间占满时逐条改换类型（三�
     }
     const cap = seq_capture(vals);
     fixture
-      .load_module('chara/chara-name')
+      .load_module('system/chara/chara-name')
       .chara_name_random_define(9, type, cap);
     return { cap, nid: fixture.store.get('cflag:9:6') };
   };
@@ -843,7 +853,7 @@ test('chara_name_random_define：名字空间占满时逐条改换类型（三�
   // 空角色表：无一重复，一轮结束
   const g = create_era_fixture();
   const cap = seq_capture([0]);
-  g.load_module('chara/chara-name').chara_name_random_define(9, 1, cap);
+  g.load_module('system/chara/chara-name').chara_name_random_define(9, 1, cap);
   assert.deepEqual(cap.bounds, [585], '空表时只掷一次');
 });
 
@@ -861,7 +871,7 @@ test('chara_name_random_define：末端尾调用 chara_name_define 真身（名�
   );
 });
 
-// —— rand_chara_make（ere/chara/chara-make.js）——
+// —— rand_chara_make（ere/system/chara/chara-make.js）——
 //
 // 这条线的 UI 依赖（chara-and-hair.js 的性格/发色交互函数与 show_chara_info）不在
 // 本文件的断言面内，故断言分两层：可观测的状态变化（新角色入库、
@@ -897,7 +907,7 @@ function seed_hero(fixture, cid) {
 }
 
 function load_rand(fixture) {
-  return fixture.load_module('chara/chara-make').rand_chara_make;
+  return fixture.load_module('system/chara/chara-make').rand_chara_make;
 }
 
 test('rand_chara_make：挑中空位——新建、加 EX、chara_make 收尾并返回新角色号', async () => {

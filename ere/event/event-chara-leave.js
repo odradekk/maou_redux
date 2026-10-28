@@ -40,7 +40,7 @@
  *
  * 四、`CALL PARTY_CHAR_DEL` 之前的 FLAG:1/FLAG:2 第二次调整（"前回の助手・
  *     調教対象より前だった場合减算"，`SIF FLAG:1==CHARA THEN FLAG:1=0` /
- *     `SIF FLAG:2>CHARA THEN FLAG:2=0`）与 ere/dungeon/dungeon-party.js
+ *     `SIF FLAG:2>CHARA THEN FLAG:2=0`）与 ere/system/dungeon/dungeon-party.js
  *     的 party_char_del 重排段是同一种事故：依赖删除后注册号前移的补偿
  *     写法，ere 扁平化（#21）下角色号=预设号、removeCharacter 不重排，此段
  *     实现即会误杀活引用——按该文件先例同判「死代码不移植」（该文件头有
@@ -51,11 +51,11 @@
 'use strict';
 
 const era = require('#/era-electron');
-const { char_body_generate_wapped } = require('#/chara/chara-body'); // #385 起真身
+const { char_body_generate_wapped } = require('#/system/chara/chara-body'); // #385 起真身
+const { party_char_del } = require('#/system/dungeon/dungeon-party');
+const { st_up } = require('#/system/dungeon/dungeon-lvup');
 const { game } = require('#/facade/game');
 const { chara } = require('#/facade/chara');
-const { party_char_del } = require('#/dungeon/dungeon-party');
-const { st_up } = require('#/dungeon/dungeon-lvup');
 
 function get(name) {
   return era.get(name) || 0;

@@ -192,7 +192,7 @@ if (this.config || (this.config = JSON.parse(JSON.stringify(this.defaultConfig))
   - **资源的注册名不跟着改**：`res/*.csv` 是「注册名,文件名」两列，注册名是 `ere/` 里调用点正在使用的名字（如 `era.playMusic('据点2.mp3')`），不跟着磁盘文件名一起改；调用点按注册名取用资源，一行不动。
 - **标识符** snake_case（`get_display_name`、`birth_list`）；引擎 API 自身是 camelCase（`era.printMultiColumns`）。
 - **模块引用** `ere/` 内一律用 `#/` 别名，引擎原生解析、无需构建步骤；别名不覆盖 `tools/`、`test/`，那些目录之间用相对路径。
-- **导入分组排序**：`era` 置顶，其后 `system` / `page` / `event` / `chara` / `kojo` / `facade` / `utils` / `data` / `i18n`（`chara` = 角色域代码，如 `#/chara/chara-ex`，T6 引入；`kojo` = 口上模块，独立顶层目录，#46 起存在；`facade` = 按域门面，#71 起存在）。
+- **导入分组排序**：`era` 置顶，其后 `system` / `page` / `event` / `kojo` / `facade` / `utils` / `data` / `i18n`（角色域代码在 `system/chara/` 下，随 `system` 组排序；`kojo` = 口上模块，独立顶层目录，#46 起存在；`facade` = 按域门面，#71 起存在）。
 - **必须注释变量的含义。** 仅凭 `era.get('global:3')` 无法判断该下标代表什么：
 
   ```js

@@ -5,7 +5,7 @@ export const COUNT = 40;
 export default [
   {
     desc: 'M6762 ex_item_name 未鉴定阈值改坏（>1000 → >2000）',
-    file: 'ere/dungeon/ex-item.js',
+    file: 'ere/system/dungeon/ex-item.js',
     find: "  return item_no > 1000\n    ? '【未鉴定品】'",
     replace: "  return item_no > 2000\n    ? '【未鉴定品】'",
     tests: ['ex-item'],
@@ -13,7 +13,7 @@ export default [
   },
   {
     desc: 'M6763 草药回复量改坏（500 → 400）',
-    file: 'ere/dungeon/ex-item.js',
+    file: 'ere/system/dungeon/ex-item.js',
     find: ') + 500, max_hp),',
     replace: ') + 400, max_hp), // 变异：草药回复量',
     tests: ['ex-item'],
@@ -21,7 +21,7 @@ export default [
   },
   {
     desc: 'M6764 快乐草欲情点数改坏（30 → 20）',
-    file: 'ere/dungeon/ex-item.js',
+    file: 'ere/system/dungeon/ex-item.js',
     find: '    add_juel(cid, 5, 30); // JUEL:A:5 欲情点数',
     replace: '    add_juel(cid, 5, 20); // 变异：欲情点数',
     tests: ['ex-item'],
@@ -29,7 +29,7 @@ export default [
   },
   {
     desc: 'M6765 回复药水诅咒品精液经验改坏（+1 → +2）',
-    file: 'ere/dungeon/ex-item.js',
+    file: 'ere/system/dungeon/ex-item.js',
     find: '    add_exp(cid, 20, 1); // EXP:A:20 精液经验',
     replace: '    add_exp(cid, 20, 2); // 变异：精液经验',
     tests: ['ex-item'],
@@ -37,7 +37,7 @@ export default [
   },
   {
     desc: 'M6766 回复之杖回复量改坏（200 → 100）',
-    file: 'ere/dungeon/ex-item.js',
+    file: 'ere/system/dungeon/ex-item.js',
     find: ') + 200, max_hp),',
     replace: ') + 100, max_hp), // 变异：回复之杖回复量',
     tests: ['ex-item'],
@@ -45,7 +45,7 @@ export default [
   },
   {
     desc: 'M6767 回复之杖未鉴定品必毁规则删除',
-    file: 'ere/dungeon/ex-item.js',
+    file: 'ere/system/dungeon/ex-item.js',
     find: '  if (appraise > 0) {\n    return 1;\n  }\n  return rand(3) > 0 ? 0 : 1;\n}\n\n/** mind_rod_item',
     replace:
       '  if (false && appraise > 0) {\n    return 1;\n  }\n  return rand(3) > 0 ? 0 : 1;\n}\n\n/** mind_rod_item',
@@ -54,7 +54,7 @@ export default [
   },
   {
     desc: 'M6768 精神之杖诅咒品肛门点数改坏（10 → 11）',
-    file: 'ere/dungeon/ex-item.js',
+    file: 'ere/system/dungeon/ex-item.js',
     find: '    add_juel(cid, 2, 10); // JUEL:A:2 肛门点数',
     replace: '    add_juel(cid, 2, 11); // 变异：肛门点数',
     tests: ['ex-item'],
@@ -62,7 +62,7 @@ export default [
   },
   {
     desc: 'M6769 力量种子基础攻击增量改坏（+1 → +2）',
-    file: 'ere/dungeon/ex-item.js',
+    file: 'ere/system/dungeon/ex-item.js',
     find: '    view.chara.基础攻击 += 1;\n  }\n  const male',
     replace:
       '    view.chara.基础攻击 += 2; // 变异：基础攻击增量\n  }\n  const male',
@@ -71,7 +71,7 @@ export default [
   },
   {
     desc: 'M6770 力量种子不再消除阴蒂钝感',
-    file: 'ere/dungeon/ex-item.js',
+    file: 'ere/system/dungeon/ex-item.js',
     find: '      view.chara.阴蒂钝感 = 0;',
     replace: '      view.chara.阴蒂钝感 = 1; // 变异：钝感不消除',
     tests: ['ex-item'],
@@ -79,7 +79,7 @@ export default [
   },
   {
     desc: 'M6771 力量种子阴蒂敏感写值改坏（1 → 2）',
-    file: 'ere/dungeon/ex-item.js',
+    file: 'ere/system/dungeon/ex-item.js',
     find: '      view.chara.阴蒂敏感 = 1;',
     replace: '      view.chara.阴蒂敏感 = 2; // 变异：敏感值',
     tests: ['ex-item'],
@@ -87,7 +87,7 @@ export default [
   },
   {
     desc: 'M6772 守护种子基础防御增量改坏（+1 → +2）',
-    file: 'ere/dungeon/ex-item.js',
+    file: 'ere/system/dungeon/ex-item.js',
     find: '  } else {\n    view.chara.基础防御 += 1;\n  }\n  item_line(',
     replace:
       '  } else {\n    view.chara.基础防御 += 2; // 变异：基础防御增量\n  }\n  item_line(',
@@ -96,7 +96,7 @@ export default [
   },
   {
     desc: 'M6773 守护种子乳房敏感写值改坏（1 → 2）',
-    file: 'ere/dungeon/ex-item.js',
+    file: 'ere/system/dungeon/ex-item.js',
     find: '      view.chara.乳房敏感 = 1;',
     replace: '      view.chara.乳房敏感 = 2; // 变异：乳房敏感值',
     tests: ['ex-item'],
@@ -104,7 +104,7 @@ export default [
   },
   {
     desc: 'M6774 经验硬币正常品经验改坏（50 → 40）',
-    file: 'ere/dungeon/ex-item.js',
+    file: 'ere/system/dungeon/ex-item.js',
     find: '    add_exp(cid, 80, 50);',
     replace: '    add_exp(cid, 80, 40); // 变异：经验硬币数值',
     tests: ['ex-item'],
@@ -112,7 +112,7 @@ export default [
   },
   {
     desc: 'M6775 命之种子最大 HP 增量改坏（10 → 5）',
-    file: 'ere/dungeon/ex-item.js',
+    file: 'ere/system/dungeon/ex-item.js',
     find: '    add_maxbase(cid, 0, 10);',
     replace: '    add_maxbase(cid, 0, 5); // 变异：最大 HP 增量',
     tests: ['ex-item'],
@@ -120,7 +120,7 @@ export default [
   },
   {
     desc: 'M6776 命之种子男性检查删除（男性误走私处敏感）',
-    file: 'ere/dungeon/ex-item.js',
+    file: 'ere/system/dungeon/ex-item.js',
     find: '  if (era.get(`talent:${cid}:122`)) {\n    cursed = false;\n  }',
     replace:
       '  if (false && era.get(`talent:${cid}:122`)) {\n    cursed = false;\n  }',
@@ -129,7 +129,7 @@ export default [
   },
   {
     desc: 'M6777 命之种子私处敏感写值改坏（1 → 2）',
-    file: 'ere/dungeon/ex-item.js',
+    file: 'ere/system/dungeon/ex-item.js',
     find: '      view.chara.私处敏感 = 1;',
     replace: '      view.chara.私处敏感 = 2; // 变异：私处敏感值',
     tests: ['ex-item'],
@@ -137,7 +137,7 @@ export default [
   },
   {
     desc: 'M6778 心之种子最大气力增量改坏（5 → 10）',
-    file: 'ere/dungeon/ex-item.js',
+    file: 'ere/system/dungeon/ex-item.js',
     find: '    add_maxbase(cid, 1, 5);',
     replace: '    add_maxbase(cid, 1, 10); // 变异：最大气力增量',
     tests: ['ex-item'],
@@ -145,7 +145,7 @@ export default [
   },
   {
     desc: 'M6779 心之种子不再消除肛门钝感',
-    file: 'ere/dungeon/ex-item.js',
+    file: 'ere/system/dungeon/ex-item.js',
     find: '      view.chara.肛门钝感 = 0;',
     replace: '      view.chara.肛门钝感 = 1; // 变异：钝感不消除',
     tests: ['ex-item'],
@@ -153,7 +153,7 @@ export default [
   },
   {
     desc: 'M6780 经验银币正常品经验改坏（150 → 100）',
-    file: 'ere/dungeon/ex-item.js',
+    file: 'ere/system/dungeon/ex-item.js',
     find: '    add_exp(cid, 80, 150);',
     replace: '    add_exp(cid, 80, 100); // 变异：经验银币数值',
     tests: ['ex-item'],
@@ -161,7 +161,7 @@ export default [
   },
   {
     desc: 'M6781 黑暗银币实际屈服点数改坏（30 → 10）',
-    file: 'ere/dungeon/ex-item.js',
+    file: 'ere/system/dungeon/ex-item.js',
     find: '    add_juel(cid, 6, 30);',
     replace: '    add_juel(cid, 6, 10); // 变异：黑暗银币数值',
     tests: ['ex-item'],
@@ -169,7 +169,7 @@ export default [
   },
   {
     desc: 'M6782 圣水正常品善恶增量改坏（+1 → +2）',
-    file: 'ere/dungeon/ex-item.js',
+    file: 'ere/system/dungeon/ex-item.js',
     find: '  karma(cid, 1);',
     replace: '  karma(cid, 2); // 变异：善恶增量',
     tests: ['ex-item'],
@@ -177,7 +177,7 @@ export default [
   },
   {
     desc: 'M6783 圣水原圣女基础防御加成改坏（+1 → +2）',
-    file: 'ere/dungeon/ex-item.js',
+    file: 'ere/system/dungeon/ex-item.js',
     find: '    view.chara.基础防御 += 1;\n  }\n  item_detox(cid);',
     replace:
       '    view.chara.基础防御 += 2; // 变异：圣女防御加成\n  }\n  item_detox(cid);',
@@ -186,7 +186,7 @@ export default [
   },
   {
     desc: 'M6784 宝石箱迎击消耗状态改坏（3 → 2）',
-    file: 'ere/dungeon/ex-item.js',
+    file: 'ere/system/dungeon/ex-item.js',
     find: '  return (era.get(`cflag:${cid}:1`) || 0) === 3 ? 1 : 0;',
     replace: '  return (era.get(`cflag:${cid}:1`) || 0) === 2 ? 1 : 0;',
     tests: ['ex-item'],
@@ -194,7 +194,7 @@ export default [
   },
   {
     desc: 'M6785 透明化状态位错写 bit6（应 bit7）',
-    file: 'ere/dungeon/ex-item.js',
+    file: 'ere/system/dungeon/ex-item.js',
     find: '    set_status_bit(cid, 7);',
     replace: '    set_status_bit(cid, 6); // 变异：透明化位错',
     tests: ['ex-item'],
@@ -202,7 +202,7 @@ export default [
   },
   {
     desc: 'M6786 透明诅咒药耻情点数改坏（15 → 10）',
-    file: 'ere/dungeon/ex-item.js',
+    file: 'ere/system/dungeon/ex-item.js',
     find: '    add_juel(cid, 8, 15);',
     replace: '    add_juel(cid, 8, 10); // 变异：耻情点数',
     tests: ['ex-item'],
@@ -210,7 +210,7 @@ export default [
   },
   {
     desc: 'M6787 英雄药 UP_VALUE 等级除数改坏（10 → 20）',
-    file: 'ere/dungeon/ex-item.js',
+    file: 'ere/system/dungeon/ex-item.js',
     find: '  const up_value = Math.trunc((era.get(`cflag:${cid}:9`) || 0) / 10) + 10;',
     replace:
       '  const up_value = Math.trunc((era.get(`cflag:${cid}:9`) || 0) / 20) + 10;',
@@ -219,7 +219,7 @@ export default [
   },
   {
     desc: 'M6788 英雄状态位错写 bit7（应 bit8）',
-    file: 'ere/dungeon/ex-item.js',
+    file: 'ere/system/dungeon/ex-item.js',
     find: '    set_status_bit(cid, 8);',
     replace: '    set_status_bit(cid, 7); // 变异：英雄位错',
     tests: ['ex-item'],
@@ -227,7 +227,7 @@ export default [
   },
   {
     desc: 'M6789 use_ex_item 丢失整数除法截断',
-    file: 'ere/dungeon/ex-item.js',
+    file: 'ere/system/dungeon/ex-item.js',
     find: 'Math.trunc(((era.get(`maxbase:${cid}:0`) || 0) * 6) / 10);\n    } else if (item_no === 401)',
     replace:
       '((era.get(`maxbase:${cid}:0`) || 0) * 6) / 10;\n    } else if (item_no === 401)',
@@ -236,7 +236,7 @@ export default [
   },
   {
     desc: 'M6790 use_ex_item 使用后不清槽',
-    file: 'ere/dungeon/ex-item.js',
+    file: 'ere/system/dungeon/ex-item.js',
     find: '      era.set(`cflag:${cid}:${slot}`, 0);',
     replace: '      era.set(`cflag:${cid}:${slot}`, stored); // 变异：不清槽',
     tests: ['ex-item'],
@@ -244,7 +244,7 @@ export default [
   },
   {
     desc: 'M6791 sell_ex_item 随机出售条件取反',
-    file: 'ere/dungeon/ex-item.js',
+    file: 'ere/system/dungeon/ex-item.js',
     find: '    const random_sale = rand(10) === 0;',
     replace: '    const random_sale = rand(10) !== 0; // 变异：出售条件取反',
     tests: ['ex-item'],
@@ -252,7 +252,7 @@ export default [
   },
   {
     desc: 'M6792 sell_ex_item 宝石箱价格改坏（1000 → 900）',
-    file: 'ere/dungeon/ex-item.js',
+    file: 'ere/system/dungeon/ex-item.js',
     find: '    money += item_no === 411 ? 1000 : 200;',
     replace: '    money += item_no === 411 ? 900 : 200; // 变异：宝石箱价格',
     tests: ['ex-item'],
@@ -260,7 +260,7 @@ export default [
   },
   {
     desc: 'M6793 前商人出售加价改坏（100 → 50）',
-    file: 'ere/dungeon/ex-item.js',
+    file: 'ere/system/dungeon/ex-item.js',
     find: '      money += 100;',
     replace: '      money += 50; // 变异：前商人加价',
     tests: ['ex-item'],
@@ -268,7 +268,7 @@ export default [
   },
   {
     desc: 'M6794 add_ex_item 消耗品起始编号错位（400 → 401）',
-    file: 'ere/dungeon/ex-item.js',
+    file: 'ere/system/dungeon/ex-item.js',
     find: 'const ITEM_MIN = 400;',
     replace: 'const ITEM_MIN = 401; // 变异：道具起始编号错位',
     tests: ['ex-item'],
@@ -276,7 +276,7 @@ export default [
   },
   {
     desc: 'M6795 add_ex_item 购买品不再强制鉴定（source >=1 → >=2）',
-    file: 'ere/dungeon/ex-item.js',
+    file: 'ere/system/dungeon/ex-item.js',
     find: '  if (item_no > 1000 && source >= 1) {',
     replace: '  if (item_no > 1000 && source >= 2) { // 变异：购买不强制鉴定',
     tests: ['ex-item'],
@@ -284,7 +284,7 @@ export default [
   },
   {
     desc: 'M6796 add_ex_item 触手武器回落编号改坏（340 → 341）',
-    file: 'ere/dungeon/ex-item.js',
+    file: 'ere/system/dungeon/ex-item.js',
     find: '      weapon_item = 340;',
     replace: '      weapon_item = 341; // 变异：触手武器回落错',
     tests: ['ex-item'],
@@ -292,7 +292,7 @@ export default [
   },
   {
     desc: 'M6797 add_ex_item 武器层数编码改坏（×1000 → ×2000）',
-    file: 'ere/dungeon/ex-item.js',
+    file: 'ere/system/dungeon/ex-item.js',
     find: '    w.存储编号 += floor * 1000;',
     replace: '    w.存储编号 += floor * 2000; // 变异：层数编码',
     tests: ['ex-item'],
@@ -300,7 +300,7 @@ export default [
   },
   {
     desc: 'M6798 add_ex_item 首个库存槽错位（560 → 561）',
-    file: 'ere/dungeon/ex-item.js',
+    file: 'ere/system/dungeon/ex-item.js',
     find: 'const ITEM_FIRST_SLOT = 560;',
     replace: 'const ITEM_FIRST_SLOT = 561; // 变异：库存基址错位',
     tests: ['ex-item'],
@@ -308,7 +308,7 @@ export default [
   },
   {
     desc: 'M6799 dungeon.js 的 add_ex_item 兼容导出接错函数',
-    file: 'ere/dungeon/dungeon.js',
+    file: 'ere/system/dungeon/dungeon.js',
     find: '  add_ex_item: ex_item_mod.add_ex_item,',
     replace: '  add_ex_item: ex_item_mod.use_ex_item, // 变异：导出接错',
     tests: ['ex-item'],
@@ -316,7 +316,7 @@ export default [
   },
   {
     desc: 'M6800 dungeon-room.js 的 sell_ex_item 真身调用删除',
-    file: 'ere/dungeon/dungeon-room.js',
+    file: 'ere/system/dungeon/dungeon-room.js',
     find: '  ex_item_mod.sell_ex_item(a, rand_n);',
     replace: '  // 变异：房间出售 EX 道具调用删除',
     tests: ['ex-item'],
@@ -324,7 +324,7 @@ export default [
   },
   {
     desc: 'M6801 dungeon-town.js 的 sell_ex_item 真身调用删除',
-    file: 'ere/dungeon/dungeon-town.js',
+    file: 'ere/system/dungeon/dungeon-town.js',
     find: '    ex_item_mod.sell_ex_item(cid, rand_n); // CALL sell_ex_item',
     replace: '    // 变异：城镇出售 EX 道具调用删除',
     tests: ['ex-item'],
