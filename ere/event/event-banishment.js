@@ -647,12 +647,9 @@ async function banishment(cid, rand_n = default_rand) {
       await printw(
         `${name}不知所措地被放逐了，嘴中还在重复着你的名字。${name}带着一副快要崩溃的悲伤表情，慢慢地消失在远方的森林中…………`,
       );
-      // 源分支把 TALENT:85 放在前一支之后，故这个“怀孕且依恋”支永不可达。
-      // eslint-disable-next-line no-dupe-else-if
-    } else if (has(cid, 'talent', 85) && has(cid, 'talent', 153)) {
-      await printw(
-        `${name}不知所措地被放逐了，嘴中还在重复着你的名字。还在怀孕期的${name}一副快要崩溃的悲伤表情，慢慢地消失在远方的森林中…………`,
-      );
+      // 原脚本另有一条「怀孕且依恋」（TALENT:85 && TALENT:153）的支，写在
+      // 前一支之后、条件被前一支整条吃掉，删掉了（#954）；依恋对象的文案
+      // 不看怀孕，落在下面这支的是「不依恋」的对象
     } else if (has(cid, 'talent', 153)) {
       await printw(`还在怀孕期的${name}一脸茫然，慢慢地消失在远方的森林中…………`);
     }
