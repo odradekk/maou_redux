@@ -3962,7 +3962,7 @@ export default [
     replace:
       "  const death_id = require('#/chara/chara-pregnancy').template_no_of(target);\n  if (death_id >= 1 && death_id <= 100) {\n    era.set(`flag:${death_id + 999}`, -2);\n  }",
     tests: ['event-charadead'],
-    must_mention: '角色 100000 的苏生登记范围',
+    must_mention: '苏生登记范围',
   },
   // —— #791：四条 SOURCE_CHECK_UP_* 的描述表化（M13721-M13760）——
   // 逐参数位打：描述表的每个字段各改错一次，四个变体都点名

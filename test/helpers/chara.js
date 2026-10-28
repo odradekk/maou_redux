@@ -62,9 +62,11 @@ function preset_chara_17(fixture) {
  * @param fixture create_era_fixture() 的返回值
  * @param {number} [id=31] 角色 ID（31 = 琼，随机奴隶的常见编号）
  * @param {string} [name] 显示名（默认 `奴隶${id}`）
+ * @param {object} [preset] 追加到预设的字段：预设模板与角色号不同的
+ *   后代用 `{ portcflag: { 预设模板: N } }` 表达双号加入
  */
-function join_slave_chara(fixture, id = 31, name = `奴隶${id}`) {
-  fixture.seed_chara(id, { id, name, callname: name });
+function join_slave_chara(fixture, id = 31, name = `奴隶${id}`, preset = {}) {
+  fixture.seed_chara(id, { id, name, callname: name, ...preset });
   fixture.era.addCharacter(id);
 }
 
