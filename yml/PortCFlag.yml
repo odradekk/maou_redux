@@ -22,7 +22,7 @@
   name: "data_version"
   type: "number"
   # 语义：该角色数据的移植版本。预设基线 0 = 移植起点的算法（现有角色
-  # 预设按旧数据直接转换）；角色加入时由 ere/chara/chara-portcflag.js 盖当时的
+  # 预设按旧数据直接转换）；角色加入时由 ere/system/chara/chara-portcflag.js 盖当时的
   # PORT_DATA_VERSION。#135 起为诊断戳（ADR-0006）：无迁移消费者，读档后
   # 可辨别该角色由哪一版预设生成——引擎 addCharacter 只在加入时套预设、
   # 存档里的老角色永不刷新（yml/CFlag.yml 头注记录的引擎行为），预设演进
@@ -48,7 +48,7 @@
   type: "number"
   # 语义：该角色由哪个预设（yml/Chara*.yml 的「番号」）生成（issue #884）。
   # 角色号是身份、预设号只决定初始数据，两者自本票起分开；需要预设号的代码
-  # 一律读这个字段（ere/chara/chara-pregnancy.js 的 template_no_of），不再
+  # 一律读这个字段（ere/system/chara/chara-pregnancy.js 的 template_no_of），不再
   # 从角色号反推，也不再靠「来源预设各占一段 ID 区间」的编码在代码里解码。
   #
   # 写入点：角色文件每张预设都带一行「预设模板: 番号」，引擎 addCharacter

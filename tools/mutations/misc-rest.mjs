@@ -54,7 +54,7 @@ export default [
   make(
     7220,
     'EX 口上扫描漏掉下界 101',
-    'ere/chara/chara-ex.js',
+    'ere/system/chara/chara-ex.js',
     'for (let count = 101; count < 801; count += 1)',
     'for (let count = 102; count < 801; count += 1)',
     ex,
@@ -62,7 +62,7 @@ export default [
   make(
     7221,
     'EX 口上扫描漏掉上界 800',
-    'ere/chara/chara-ex.js',
+    'ere/system/chara/chara-ex.js',
     'count < 801',
     'count < 800',
     ex,
@@ -70,7 +70,7 @@ export default [
   make(
     7222,
     'EX 口上编号偏移量改错',
-    'ere/chara/chara-ex.js',
+    'ere/system/chara/chara-ex.js',
     'get_ex_kojo_num_local = count + 900;',
     'get_ex_kojo_num_local = count + 899;',
     ex,
@@ -78,7 +78,7 @@ export default [
   make(
     7223,
     'EX 口上无命中时丢失静态局部',
-    'ere/chara/chara-ex.js',
+    'ere/system/chara/chara-ex.js',
     'function get_ex_kojo_num(cid) {',
     'function get_ex_kojo_num(cid) {\n  get_ex_kojo_num_local = 0;',
     ex,
@@ -86,7 +86,7 @@ export default [
   make(
     7224,
     'EX 名表重复初始化检查失效',
-    'ere/chara/chara-ex.js',
+    'ere/system/chara/chara-ex.js',
     '    return false;\n  }\n  Object.assign(ex_talent_names, {',
     '    void 0;\n  }\n  Object.assign(ex_talent_names, {',
     ex,
@@ -94,7 +94,7 @@ export default [
   make(
     7225,
     'EX 名表天神名称损坏',
-    'ere/chara/chara-ex.js',
+    'ere/system/chara/chara-ex.js',
     "    904: '天神',",
     "    904: '损坏',",
     ex,
@@ -103,7 +103,7 @@ export default [
   make(
     7226,
     '刺青扫描漏掉位置 10',
-    'ere/dungeon/dungeon-battle2.js',
+    'ere/system/dungeon/dungeon-battle2.js',
     'for (let locate = 10; locate < 20; locate += 1)',
     'for (let locate = 11; locate < 20; locate += 1)',
     tatoo,
@@ -111,7 +111,7 @@ export default [
   make(
     7227,
     '刺青扫描漏掉位置 19',
-    'ere/dungeon/dungeon-battle2.js',
+    'ere/system/dungeon/dungeon-battle2.js',
     'locate < 20',
     'locate < 19',
     tatoo,
@@ -119,7 +119,7 @@ export default [
   make(
     7228,
     '狂王纹章被当作普通刺青',
-    'ere/dungeon/dungeon-battle2.js',
+    'ere/system/dungeon/dungeon-battle2.js',
     "text !== '' && text !== '狂王的纹章'",
     "text !== ''",
     tatoo,
@@ -127,7 +127,7 @@ export default [
   make(
     7229,
     '刺青位置名肛门映射损坏',
-    'ere/dungeon/dungeon-battle2.js',
+    'ere/system/dungeon/dungeon-battle2.js',
     "      16: '肛门',",
     "      16: '损坏',",
     tatoo,
@@ -135,7 +135,7 @@ export default [
   make(
     7230,
     '刺青检索返回空列表',
-    'ere/dungeon/dungeon-battle2.js',
+    'ere/system/dungeon/dungeon-battle2.js',
     '  return positions;\n}',
     '  return [];\n}',
     tatoo,
@@ -1225,7 +1225,7 @@ export default [
   make(
     7526,
     'add_chara_ex 分发检查下界下移',
-    'ere/chara/chara-ex.js',
+    'ere/system/chara/chara-ex.js',
     'chara_id >= 17',
     'chara_id >= 16',
     chara_boundary,
@@ -1233,7 +1233,7 @@ export default [
   make(
     7527,
     'add_chara_ex 丢失魔王编号特例',
-    'ere/chara/chara-ex.js',
+    'ere/system/chara/chara-ex.js',
     'chara_id >= 17 || chara_id === 0',
     'chara_id >= 17',
     chara_table,
@@ -1241,7 +1241,7 @@ export default [
   make(
     7528,
     'EX 名称表普林希斯损坏',
-    'ere/chara/chara-ex.js',
+    'ere/system/chara/chara-ex.js',
     "    102: '普林希斯',",
     "    102: '损坏',",
     chara_table,
@@ -1249,7 +1249,7 @@ export default [
   make(
     7529,
     'EX 名称表琼损坏',
-    'ere/chara/chara-ex.js',
+    'ere/system/chara/chara-ex.js',
     "    101: '琼',",
     "    101: '损坏',",
     chara_table,
@@ -1257,7 +1257,7 @@ export default [
   make(
     7530,
     'EX 名称表丽塔损坏',
-    'ere/chara/chara-ex.js',
+    'ere/system/chara/chara-ex.js',
     "    223: '丽塔',",
     "    223: '损坏',",
     chara_table,
@@ -1265,7 +1265,7 @@ export default [
   make(
     7531,
     'EX 注册 32 写槽改错',
-    'ere/chara/chara-ex.js',
+    'ere/system/chara/chara-ex.js',
     'era.set(`ex_talent:${cid}:102`, 1);',
     'era.set(`ex_talent:${cid}:101`, 1);',
     chara_table,
@@ -1273,7 +1273,7 @@ export default [
   make(
     7532,
     'EX 注册 33 写槽改错',
-    'ere/chara/chara-ex.js',
+    'ere/system/chara/chara-ex.js',
     'era.set(`ex_talent:${cid}:103`, 1);',
     'era.set(`ex_talent:${cid}:101`, 1);',
     chara_table,
@@ -1281,7 +1281,7 @@ export default [
   make(
     7533,
     'EX 注册 35 写槽改错',
-    'ere/chara/chara-ex.js',
+    'ere/system/chara/chara-ex.js',
     'era.set(`ex_talent:${cid}:104`, 1);',
     'era.set(`ex_talent:${cid}:101`, 1);',
     chara_table,
@@ -1289,7 +1289,7 @@ export default [
   make(
     7534,
     'EX 注册 223 写槽改错',
-    'ere/chara/chara-ex.js',
+    'ere/system/chara/chara-ex.js',
     'era.set(`ex_talent:${cid}:223`, 1);',
     'era.set(`ex_talent:${cid}:101`, 1);',
     chara_table,
@@ -1297,7 +1297,7 @@ export default [
   make(
     7535,
     'EX 注册 777 写槽改错',
-    'ere/chara/chara-ex.js',
+    'ere/system/chara/chara-ex.js',
     'era.set(`ex_talent:${cid}:777`, 1);',
     'era.set(`ex_talent:${cid}:101`, 1);',
     chara_table,
@@ -1305,7 +1305,7 @@ export default [
   make(
     7536,
     'EX 注册 34 丢失无双写入',
-    'ere/chara/chara-ex.js',
+    'ere/system/chara/chara-ex.js',
     '  era.set(`ex_talent:${cid}:801`, 1);',
     '  void cid;',
     chara_table,
@@ -1313,7 +1313,7 @@ export default [
   make(
     7537,
     'EX 注册 34 丢失一人军团写入',
-    'ere/chara/chara-ex.js',
+    'ere/system/chara/chara-ex.js',
     '  era.set(`ex_talent:${cid}:901`, 1);',
     '  void cid;',
     chara_table,
@@ -1321,7 +1321,7 @@ export default [
   make(
     7538,
     'chara_ex 声明空间丢失 777',
-    'ere/chara/chara-ex.js',
+    'ere/system/chara/chara-ex.js',
     '  208, 209, 210, 211, 223, 777,',
     '  208, 209, 210, 211, 223,',
     chara_table,
@@ -1329,7 +1329,7 @@ export default [
   make(
     7539,
     'EX 素质未知名称不再回落空串',
-    'ere/chara/chara-ex.js',
+    'ere/system/chara/chara-ex.js',
     "return ex_talent_names[id] ?? '';",
     "return ex_talent_names[id] ?? '损坏';",
     ex,
@@ -1337,7 +1337,7 @@ export default [
   make(
     7540,
     '空刺青列表也进入炫耀演出',
-    'ere/dungeon/dungeon-battle2.js',
+    'ere/system/dungeon/dungeon-battle2.js',
     'if (tatoos.length > 0 && (tatoos[0] !== 10 || tatoos.length >= 2)) {',
     'if (tatoos[0] !== 10 || tatoos.length >= 2) {',
     tattoo_show,
@@ -1345,7 +1345,7 @@ export default [
   make(
     7541,
     '刺青炫耀首项条件反转',
-    'ere/dungeon/dungeon-battle2.js',
+    'ere/system/dungeon/dungeon-battle2.js',
     'tatoos[0] !== 10 || tatoos.length >= 2',
     'tatoos[0] === 10 || tatoos.length >= 2',
     tattoo_show,
@@ -1353,7 +1353,7 @@ export default [
   make(
     7542,
     '脸加一处刺青仍被隐藏',
-    'ere/dungeon/dungeon-battle2.js',
+    'ere/system/dungeon/dungeon-battle2.js',
     'tatoos.length >= 2',
     'tatoos.length >= 3',
     tattoo_show,
@@ -1361,7 +1361,7 @@ export default [
   make(
     7543,
     '脸部标签的随机选择分支反转',
-    'ere/dungeon/dungeon-battle2.js',
+    'ere/system/dungeon/dungeon-battle2.js',
     '            tatoos[0] === 10',
     '            tatoos[0] !== 10',
     tattoo_show,
@@ -1369,7 +1369,7 @@ export default [
   make(
     7544,
     '脸部标签未跳过首项',
-    'ere/dungeon/dungeon-battle2.js',
+    'ere/system/dungeon/dungeon-battle2.js',
     '? rand_n(tatoos.length - 1) + 1',
     '? rand_n(tatoos.length - 1)',
     tattoo_show,
@@ -1377,7 +1377,7 @@ export default [
   make(
     7545,
     '刺青位置标签改用抽中项',
-    'ere/dungeon/dungeon-battle2.js',
+    'ere/system/dungeon/dungeon-battle2.js',
     '${tatoo_locate_name(tatoos[0])}的刺青',
     '${tatoo_locate_name(picked)}的刺青',
     tattoo_show,
@@ -1385,7 +1385,7 @@ export default [
   make(
     7546,
     '刺青位置名胸部损坏',
-    'ere/dungeon/dungeon-battle2.js',
+    'ere/system/dungeon/dungeon-battle2.js',
     "      11: '胸',",
     "      11: '损坏',",
     tatoo,
@@ -1393,7 +1393,7 @@ export default [
   make(
     7547,
     '空刺青文本不再回落空串',
-    'ere/dungeon/dungeon-battle2.js',
+    'ere/system/dungeon/dungeon-battle2.js',
     "const text = era.get(`cstr:${cid}:${locate}`) ?? '';",
     "const text = era.get(`cstr:${cid}:${locate}`) ?? '损坏';",
     tatoo,

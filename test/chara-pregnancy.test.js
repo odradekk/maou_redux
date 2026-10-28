@@ -51,8 +51,8 @@ const PREGNANCY_FUNCTIONS = [
 
 test('两份源文件的函数全部导出真身', () => {
   const fixture = create_era_fixture();
-  const pregnancy = fixture.load_module('chara/chara-pregnancy');
-  const summon = fixture.load_module('dungeon/monster-summon');
+  const pregnancy = fixture.load_module('system/chara/chara-pregnancy');
+  const summon = fixture.load_module('system/dungeon/monster-summon');
 
   for (const name of PREGNANCY_FUNCTIONS) {
     assert.equal(typeof pregnancy[name], 'function', name);
@@ -71,7 +71,9 @@ test('两份源文件的函数全部导出真身', () => {
 test('弱召唤保留 -1 实参：基础五轮折半为两轮并增加对应怪物库存', async () => {
   const fixture = create_era_fixture();
   fixture.store.set('itemname:100', '史莱姆');
-  const { summon_monster } = fixture.load_module('dungeon/monster-summon');
+  const { summon_monster } = fixture.load_module(
+    'system/dungeon/monster-summon',
+  );
 
   await summon_monster(-1, seq([0, 0, 0, 0, 0, 0]));
 
@@ -86,7 +88,9 @@ test('弱召唤保留 -1 实参：基础五轮折半为两轮并增加对应怪�
 test('怪物抽选跳过已满种类，仍有容量时重抽', () => {
   const fixture = create_era_fixture();
   fixture.store.set('item:100', 999);
-  const { rand_monster_number } = fixture.load_module('dungeon/monster-summon');
+  const { rand_monster_number } = fixture.load_module(
+    'system/dungeon/monster-summon',
+  );
 
   assert.equal(rand_monster_number(seq([0, 0, 0, 1])), 101);
 });
@@ -94,7 +98,7 @@ test('怪物抽选跳过已满种类，仍有容量时重抽', () => {
 test('怪物总数只统计 100-184 的 45 个离散槽，全部满时允许返回满槽', () => {
   const fixture = create_era_fixture();
   const { monster_total_count, rand_monster_number } = fixture.load_module(
-    'dungeon/monster-summon',
+    'system/dungeon/monster-summon',
   );
   for (let tier = 0; tier < 9; tier += 1) {
     for (let kind = 0; kind < 5; kind += 1) {
@@ -114,7 +118,9 @@ test('生产怪物仅在实际入库分支追加双胞胎，且双胞胎文本�
   fixture.store.set('cflag:1:111', -1);
   fixture.store.set('cflag:1:102', 1);
   fixture.store.set('talent:1:314', 3);
-  const { summon_monster } = fixture.load_module('dungeon/monster-summon');
+  const { summon_monster } = fixture.load_module(
+    'system/dungeon/monster-summon',
+  );
 
   await summon_monster(1, seq([0, 0, 0, 1, 0]));
 
@@ -133,7 +139,7 @@ test('生产怪物仅在实际入库分支追加双胞胎，且双胞胎文本�
   departed.store.set('cflag:1:102', 2);
   departed.store.set('talent:1:314', 3);
   await departed
-    .load_module('dungeon/monster-summon')
+    .load_module('system/dungeon/monster-summon')
     .summon_monster(1, seq([0, 0, 0, 1]));
   assert.equal(departed.store.get('item:100'), undefined);
   assert.equal(departed.store.get('item:172'), undefined);
@@ -144,7 +150,7 @@ test('魔王生产固定近卫怪物并钳到库存上限；自跳缺陷以明�
   fixture.store.set('callname:0:-1', '魔王');
   fixture.store.set('itemname:193', '近卫');
   fixture.store.set('item:193', 998);
-  const summon = fixture.load_module('dungeon/monster-summon');
+  const summon = fixture.load_module('system/dungeon/monster-summon');
 
   assert.equal(summon.summon_monster_master(0, seq([2, 2])), 0);
   assert.equal(fixture.store.get('item:193'), 999);
@@ -159,7 +165,7 @@ test('妊娠发觉的随机边界：幼年筛选 2 失败，普通概率 3 成�
   young.store.set('cflag:1:101', 3);
   young.store.set('cflag:1:102', 1);
   young.store.set('cflag:1:110', 54);
-  const young_mod = young.load_module('chara/chara-pregnancy');
+  const young_mod = young.load_module('system/chara/chara-pregnancy');
 
   assert.equal(await young_mod.ninsin_aware(1, seq([2, 3])), 0);
   assert.equal(young.store.get('cflag:1:102'), 0);
@@ -175,7 +181,9 @@ test('妊娠发觉的随机边界：幼年筛选 2 失败，普通概率 3 成�
   adult.store.set('base:1:0', 900);
 
   assert.equal(
-    await adult.load_module('chara/chara-pregnancy').ninsin_aware(1, seq([3])),
+    await adult
+      .load_module('system/chara/chara-pregnancy')
+      .ninsin_aware(1, seq([3])),
     1,
   );
   assert.equal(adult.store.get('talent:1:153'), 1);
@@ -188,7 +196,9 @@ test('妊娠发觉的随机边界：幼年筛选 2 失败，普通概率 3 成�
   failed.store.set('cflag:1:102', 1);
   failed.store.set('cflag:1:110', 54);
   assert.equal(
-    await failed.load_module('chara/chara-pregnancy').ninsin_aware(1, seq([2])),
+    await failed
+      .load_module('system/chara/chara-pregnancy')
+      .ninsin_aware(1, seq([2])),
     0,
   );
   assert.equal(failed.store.get('cflag:1:102'), 0);
@@ -207,7 +217,9 @@ test('异常妊娠五种部位分别取得专属素质，并在发觉后清除�
     const fixture = create_era_fixture();
     add_chara(fixture, 1, '母亲');
     fixture.store.set('cflag:1:113', place);
-    const { preg_talent_get } = fixture.load_module('chara/chara-pregnancy');
+    const { preg_talent_get } = fixture.load_module(
+      'system/chara/chara-pregnancy',
+    );
 
     assert.equal(await preg_talent_get(1), 1, `部位 ${place}`);
     assert.equal(
@@ -264,7 +276,9 @@ test('胸部升档覆盖绝壁、贫乳、普通、巨乳、爆乳与超乳六�
     add_chara(fixture, 1);
     set_breast_state(fixture, before);
 
-    fixture.load_module('chara/chara-pregnancy').n_breast_grow(1, seq([]));
+    fixture
+      .load_module('system/chara/chara-pregnancy')
+      .n_breast_grow(1, seq([]));
 
     assert.deepEqual(
       breast_state(fixture),
@@ -294,7 +308,9 @@ test('胸部降档覆盖绝壁、贫乳、普通、巨乳、爆乳与超乳六�
     add_chara(fixture, 1);
     set_breast_state(fixture, before);
 
-    fixture.load_module('chara/chara-pregnancy').n_breast_reverse(1, seq([]));
+    fixture
+      .load_module('system/chara/chara-pregnancy')
+      .n_breast_reverse(1, seq([]));
 
     assert.deepEqual(
       breast_state(fixture),
@@ -327,7 +343,7 @@ test('胸部升降档在体型设定第 12 位或第 15 位单独开启时都会
       fixture.store.set('cflag:1:455', -1);
 
       fixture
-        .load_module('chara/chara-pregnancy')
+        .load_module('system/chara/chara-pregnancy')
         [action](1, seq(new Array(20).fill(0)));
 
       assert.ok(
@@ -352,7 +368,7 @@ test('清理受孕状态逐项走属主门面，保留排卵诱发剂位', () =>
   fixture.store.set('cstr:1:2', '旧父亲');
   fixture.store.set('cflag:1:1', 10);
 
-  fixture.load_module('chara/chara-pregnancy').n_flag_clear(1);
+  fixture.load_module('system/chara/chara-pregnancy').n_flag_clear(1);
 
   for (let index = 101; index <= 108; index += 1) {
     assert.equal(fixture.store.get(`cflag:1:${index}`), 0, `CFLAG:${index}`);
@@ -377,7 +393,9 @@ test('妊娠状态重置区分超乳与普通胸部，并独立清除泌乳和�
       view.chara.育儿中 = 1;
       view.dungeon.体力上限 = 500;
 
-      fixture.load_module('chara/chara-pregnancy').n_reset_status(1, seq([]));
+      fixture
+        .load_module('system/chara/chara-pregnancy')
+        .n_reset_status(1, seq([]));
 
       assert.equal(view.chara.超乳, super_breast ? 1 : 0);
       assert.equal(view.chara.巨乳, 0);
@@ -407,7 +425,7 @@ test('异常生产部位四种文案与无异常默认逐一对应', () => {
     add_chara(fixture, 1);
     if (place) chara_view(fixture, 1).chara[place] = 1;
 
-    fixture.load_module('chara/chara-pregnancy').child_birth_place(1);
+    fixture.load_module('system/chara/chara-pregnancy').child_birth_place(1);
 
     assert.deepEqual(
       fixture.lines_history.map((line) => line.text),
@@ -427,7 +445,7 @@ test('临月处理覆盖狂王早退、迎击召回随机两侧与设定位两�
     fixture.store.set('flag:2', 1);
 
     await fixture
-      .load_module('chara/chara-pregnancy')
+      .load_module('system/chara/chara-pregnancy')
       .ninsin_reach_term(1, seq([]));
 
     assert.equal(view.invasion.状态, 9);
@@ -455,7 +473,7 @@ test('临月处理覆盖狂王早退、迎击召回随机两侧与设定位两�
     fixture.store.set('flag:2', 1);
 
     await fixture
-      .load_module('chara/chara-pregnancy')
+      .load_module('system/chara/chara-pregnancy')
       .ninsin_reach_term(1, seq([roll]));
 
     assert.equal(fixture.store.get('flag:1'), -1);
@@ -479,7 +497,7 @@ test('临月处理覆盖狂王早退、迎击召回随机两侧与设定位两�
     add_chara(fixture, 1, '母亲');
     chara_view(fixture, 1).invasion.状态 = state;
     await fixture
-      .load_module('chara/chara-pregnancy')
+      .load_module('system/chara/chara-pregnancy')
       .ninsin_reach_term(1, seq([]));
     assert.equal(
       chara_view(fixture, 1).invasion.状态,
@@ -521,7 +539,7 @@ test('妊娠发觉的全部前置条件均覆盖允许与拒绝两侧', async ()
     block(view, fixture);
     assert.equal(
       await fixture
-        .load_module('chara/chara-pregnancy')
+        .load_module('system/chara/chara-pregnancy')
         .ninsin_aware(1, seq([3])),
       0,
     );
@@ -534,7 +552,7 @@ test('妊娠发觉的全部前置条件均覆盖允许与拒绝两侧', async ()
     view.train.异常妊娠部位 = kind;
     assert.equal(
       await fixture
-        .load_module('chara/chara-pregnancy')
+        .load_module('system/chara/chara-pregnancy')
         .ninsin_aware(1, seq([3])),
       0,
     );
@@ -545,7 +563,7 @@ test('妊娠发觉的全部前置条件均覆盖允许与拒绝两侧', async ()
   young_view.chara.年龄 = 9;
   assert.equal(
     await too_young
-      .load_module('chara/chara-pregnancy')
+      .load_module('system/chara/chara-pregnancy')
       .ninsin_aware(1, seq([0, 3])),
     0,
   );
@@ -557,7 +575,7 @@ test('妊娠发觉的全部前置条件均覆盖允许与拒绝两侧', async ()
   testicle_view.train.异常妊娠部位 = 2;
   assert.equal(
     await testicle
-      .load_module('chara/chara-pregnancy')
+      .load_module('system/chara/chara-pregnancy')
       .ninsin_aware(1, seq([3])),
     0,
   );
@@ -571,7 +589,7 @@ test('妊娠发觉的全部前置条件均覆盖允许与拒绝两侧', async ()
     else view.chara.男人 = 1;
     assert.equal(
       await fixture
-        .load_module('chara/chara-pregnancy')
+        .load_module('system/chara/chara-pregnancy')
         .ninsin_aware(1, seq([3])),
       1,
     );
@@ -592,7 +610,7 @@ test('妊娠发觉覆盖七种来源、怪物实名、期限及诱发剂 11／�
     const view = prepare_awareness(fixture, source);
     assert.equal(
       await fixture
-        .load_module('chara/chara-pregnancy')
+        .load_module('system/chara/chara-pregnancy')
         .ninsin_aware(1, seq([3])),
       1,
     );
@@ -611,7 +629,7 @@ test('妊娠发觉覆盖七种来源、怪物实名、期限及诱发剂 11／�
     fixture.store.set('itemname:100', '史莱姆');
     assert.equal(
       await fixture
-        .load_module('chara/chara-pregnancy')
+        .load_module('system/chara/chara-pregnancy')
         .ninsin_aware(1, seq([3, known])),
       1,
     );
@@ -637,7 +655,7 @@ test('妊娠发觉覆盖七种来源、怪物实名、期限及诱发剂 11／�
     view.event.预产日 = due;
     assert.equal(
       await fixture
-        .load_module('chara/chara-pregnancy')
+        .load_module('system/chara/chara-pregnancy')
         .ninsin_aware(1, seq([3])),
       0,
       `来源 ${source}／预产日 ${due}：来源越界或期限未到必须早退`,
@@ -650,7 +668,7 @@ test('妊娠发觉覆盖七种来源、怪物实名、期限及诱发剂 11／�
   induced_view.event.预产日 = 55;
   assert.equal(
     await induced
-      .load_module('chara/chara-pregnancy')
+      .load_module('system/chara/chara-pregnancy')
       .ninsin_aware(1, seq([9])),
     0,
   );
@@ -660,7 +678,7 @@ test('妊娠发觉覆盖七种来源、怪物实名、期限及诱发剂 11／�
   natural_view.event.预产日 = 55;
   assert.equal(
     await natural
-      .load_module('chara/chara-pregnancy')
+      .load_module('system/chara/chara-pregnancy')
       .ninsin_aware(1, seq([4])),
     0,
   );
@@ -762,7 +780,7 @@ test('妊娠压力覆盖各来源、关系与修正项，并区分崩坏、既�
     fixture.store.set('talent:1:314', spec.demon ? 9 : 0);
     fixture.store.set('cflag:1:601', spec.dog_spouse ? 900 : spec.spouse || 0);
 
-    const pregnancy = fixture.load_module('chara/chara-pregnancy');
+    const pregnancy = fixture.load_module('system/chara/chara-pregnancy');
     assert.equal(pregnancy.n_change_stress(1), spec.stress);
     await pregnancy.n_change_status(1, seq([]));
 
@@ -777,7 +795,9 @@ test('妊娠压力覆盖各来源、关系与修正项，并区分崩坏、既�
   master_view.dungeon.体力上限 = 1000;
   master_view.event.妊娠相手 = 5;
   master_view.stronghold.爱慕 = 1;
-  await master.load_module('chara/chara-pregnancy').n_change_status(0, seq([]));
+  await master
+    .load_module('system/chara/chara-pregnancy')
+    .n_change_status(0, seq([]));
   assert.equal(master_view.stronghold.崩坏 || 0, 0);
 });
 
@@ -794,7 +814,7 @@ test('崩坏母亲尾调用换护士，角色 ID 100 不与弃养选项冲突', 
   fixture.set_inputs(0);
 
   await fixture
-    .load_module('chara/chara-pregnancy')
+    .load_module('system/chara/chara-pregnancy')
     .child_care_begin(1, seq([]));
 
   assert.equal(fixture.store.get('talent:100:154'), 1);
@@ -809,7 +829,7 @@ test('同一预设连续生成两个后代不覆盖，种族字段使用 319/321
   fixture.store.set('talent:1:314', 5);
   fixture.store.set('talent:1:319', 7);
   fixture.store.set('talent:1:322', 201);
-  const pregnancy = fixture.load_module('chara/chara-pregnancy');
+  const pregnancy = fixture.load_module('system/chara/chara-pregnancy');
 
   const first = await pregnancy.gb_add_slave(
     1,
@@ -844,7 +864,7 @@ test('近卫后代随机模板覆盖 201–211 全部预设', async () => {
     const source = 201 + roll;
     fixture.seed_chara(source, { name: '后代模板' });
     const child = await fixture
-      .load_module('chara/chara-pregnancy')
+      .load_module('system/chara/chara-pregnancy')
       .gb_add_guard(0, -2, seq([roll, ...new Array(300).fill(0)]));
     assert.equal(child, 120000 + roll * 100, `模板 ${source}`);
     assert.equal(fixture.store.get(`ex_talent:${child}:1`), 1, '近卫后代');
@@ -861,7 +881,7 @@ test('异界勇者作为双亲任一方生成近卫后代，现种族显示异�
     add_chara(fixture, 211, '异界勇者');
 
     const child = await fixture
-      .load_module('chara/chara-pregnancy')
+      .load_module('system/chara/chara-pregnancy')
       .gb_add_guard(mother, father, seq(new Array(300).fill(0)));
 
     assert.ok(fixture.era.getAddedCharacters().includes(child), '后代实际加入');
@@ -872,7 +892,9 @@ test('异界勇者作为双亲任一方生成近卫后代，现种族显示异�
       '继承现种族 211',
     );
     assert.equal(
-      fixture.load_module('chara/look-info').get_look_info(child, '现种族'),
+      fixture
+        .load_module('system/chara/look-info')
+        .get_look_info(child, '现种族'),
       '异界勇者',
       '近卫后代现种族名称',
     );
@@ -945,7 +967,7 @@ test('近卫生成覆盖随机、普通、精英模板及双亲替身和等级�
     if (spec.father !== -4) fixture.store.set('cflag:0:9', 10);
 
     const child = await fixture
-      .load_module('chara/chara-pregnancy')
+      .load_module('system/chara/chara-pregnancy')
       .gb_add_guard(spec.mother, spec.father, seq(spec.rolls));
 
     assert.equal(child, spec.child);
@@ -998,7 +1020,7 @@ test('普通后代生成覆盖普通、精英、随机模板及父亲有无的�
     chara_view(fixture, spec.mother).invasion.状态 = spec.mother >= 201 ? 9 : 0;
 
     const child = await fixture
-      .load_module('chara/chara-pregnancy')
+      .load_module('system/chara/chara-pregnancy')
       .gb_add_slave(
         spec.mother,
         spec.father,
@@ -1032,7 +1054,7 @@ test('动态后代作为母亲时按「预设模板」字段取来源预设', as
   assert.equal(fixture.era.addCharacter(100000), true);
 
   const child = await fixture
-    .load_module('chara/chara-pregnancy')
+    .load_module('system/chara/chara-pregnancy')
     .gb_add_slave(100000, -1, seq(new Array(200).fill(0)));
 
   assert.equal(child, 100001);
@@ -1049,7 +1071,7 @@ test('旧编码的预设号换算：区间内任意一位都算同一模板（#5
   // 都可能照样绿（0 / 任何数都是 0）。#884 起这是**旧存档补填**的换算，
   // 读取侧一律读 portcflag 的「预设模板」字段（test/chara-template.test.js）
   const { FIRST_CHILD_ID, template_no_from_id } =
-    create_era_fixture().load_module('chara/chara-pregnancy');
+    create_era_fixture().load_module('system/chara/chara-pregnancy');
   assert.equal(template_no_from_id(0), 0, '魔王');
   assert.equal(template_no_from_id(31), 31, '普通角色的 NO 就是角色 ID');
   assert.equal(template_no_from_id(FIRST_CHILD_ID), 1, '模板 1 的区间起点');
@@ -1087,7 +1109,7 @@ test('后代命名依次采用父亲、母亲和自动名字类型', () => {
     );
     const bounds = [];
     fixture
-      .load_module('chara/chara-pregnancy')
+      .load_module('system/chara/chara-pregnancy')
       .gb_define_name(100000, spec.mother, spec.father, (n) => {
         bounds.push(n);
         return 0;
@@ -1106,7 +1128,7 @@ test('换护士覆盖无候选、主动弃养、无效输入重试与男性护�
     view.stronghold.崩坏 = 1;
     view.dungeon.体力上限 = 500;
     await fixture
-      .load_module('chara/chara-pregnancy')
+      .load_module('system/chara/chara-pregnancy')
       .child_care_change_nurse(1, seq([]));
     assert.equal(view.chara.母乳体质, 0);
     assert.equal(view.dungeon.体力上限, 1000);
@@ -1133,7 +1155,7 @@ test('换护士覆盖无候选、主动弃养、无效输入重试与男性护�
     }
 
     await fixture
-      .load_module('chara/chara-pregnancy')
+      .load_module('system/chara/chara-pregnancy')
       .child_care_change_nurse(1, seq([]));
 
     assert.equal(nurse.chara.育儿中 || 0, choose_nurse ? 1 : 0);
@@ -1168,7 +1190,7 @@ test('换护士候选筛选逐项排除不合格角色', async () => {
     mutate(view);
   });
   await fixture
-    .load_module('chara/chara-pregnancy')
+    .load_module('system/chara/chara-pregnancy')
     .child_care_change_nurse(1, seq([]));
   assert.ok(
     fixture.lines_history.some((line) =>
@@ -1193,7 +1215,7 @@ test('开始育儿覆盖母性觉醒及不满足条件的两侧', async () => {
     fixture.store.set('flag:1', 1);
     fixture.store.set('flag:2', 1);
     await fixture
-      .load_module('chara/chara-pregnancy')
+      .load_module('system/chara/chara-pregnancy')
       .child_care_begin(1, seq([]));
     assert.equal(view.chara.母性 || 0, awakens || maternal ? 1 : 0);
     assert.equal(view.chara.育儿中, 1);
@@ -1204,7 +1226,7 @@ test('开始育儿覆盖母性觉醒及不满足条件的两侧', async () => {
   const master = create_era_fixture();
   add_chara(master, 0, '魔王');
   await master
-    .load_module('chara/chara-pregnancy')
+    .load_module('system/chara/chara-pregnancy')
     .child_care_begin(0, seq([]));
   assert.ok(printed(master, '魔王开始在育儿室照顾孩子。'));
 });
@@ -1230,7 +1252,7 @@ test('生产日覆盖人类流产、怪物生产与狂王生产三条提前返�
     const fixture = create_era_fixture();
     const view = prepare_birth(fixture, -1, 3);
     await fixture
-      .load_module('chara/chara-pregnancy')
+      .load_module('system/chara/chara-pregnancy')
       .ninsin_reach_day(1, seq([]));
     assert.equal(view.dungeon.体力上限, 800);
     assert.equal(view.dungeon.体力, 100);
@@ -1244,7 +1266,7 @@ test('生产日覆盖人类流产、怪物生产与狂王生产三条提前返�
     const fixture = create_era_fixture();
     const view = prepare_birth(fixture, -3, 2);
     await fixture
-      .load_module('chara/chara-pregnancy')
+      .load_module('system/chara/chara-pregnancy')
       .ninsin_reach_day(1, seq(new Array(40).fill(0)));
     assert.equal(view.dungeon.体力上限, 1400);
     assert.equal(view.dungeon.体力, 200);
@@ -1258,7 +1280,7 @@ test('生产日覆盖人类流产、怪物生产与狂王生产三条提前返�
     const fixture = create_era_fixture();
     const view = prepare_birth(fixture, -4, 9);
     await fixture
-      .load_module('chara/chara-pregnancy')
+      .load_module('system/chara/chara-pregnancy')
       .ninsin_reach_day(1, seq(new Array(40).fill(0)));
     assert.equal(view.chara.妊娠, 0);
     assert.equal(view.invasion.状态, 9);
@@ -1278,7 +1300,7 @@ test('正常生产覆盖父亲解析、父性觉醒、处女膜与异常部位�
     fixture.store.set('flag:32', 2);
 
     await fixture
-      .load_module('chara/chara-pregnancy')
+      .load_module('system/chara/chara-pregnancy')
       .ninsin_reach_day(1, seq([]));
 
     assert.equal(view.event.孩子父亲名字, '现父亲');
@@ -1298,7 +1320,7 @@ test('正常生产覆盖父亲解析、父性觉醒、处女膜与异常部位�
     view.chara.口内妊娠 = 1;
 
     await fixture
-      .load_module('chara/chara-pregnancy')
+      .load_module('system/chara/chara-pregnancy')
       .ninsin_reach_day(1, seq([]));
 
     assert.equal(view.event.孩子父亲名字, '旧父名');
@@ -1313,7 +1335,7 @@ test('正常生产覆盖父亲解析、父性觉醒、处女膜与异常部位�
     const fixture = create_era_fixture();
     const view = prepare_birth(fixture, -5, 10);
     await fixture
-      .load_module('chara/chara-pregnancy')
+      .load_module('system/chara/chara-pregnancy')
       .ninsin_reach_day(1, seq([]));
     assert.ok(
       fixture.lines_history.some((line) =>
@@ -1330,7 +1352,7 @@ test('正常生产覆盖父亲解析、父性觉醒、处女膜与异常部位�
     chara_view(fixture, 0).chara.男人 = 1;
     fixture.store.set('flag:32', 2);
     await fixture
-      .load_module('chara/chara-pregnancy')
+      .load_module('system/chara/chara-pregnancy')
       .ninsin_reach_day(1, seq([]));
     assert.equal(chara_view(fixture, 0).chara.父性, 1);
     assert.equal(fixture.store.get('flag:32'), 3);
@@ -1343,7 +1365,7 @@ test('生产文案的异常部位按生产角色取值：魔王无异常时照�
     const view = prepare_birth(fixture, 3, 10);
     view.chara.乳内妊娠 = 1;
     await fixture
-      .load_module('chara/chara-pregnancy')
+      .load_module('system/chara/chara-pregnancy')
       .ninsin_reach_day(1, seq([]));
     assert.ok(
       fixture.lines_history.some((line) =>
@@ -1357,7 +1379,7 @@ test('生产文案的异常部位按生产角色取值：魔王无异常时照�
     const view = prepare_birth(fixture, -3, 2);
     view.chara.口内妊娠 = 1;
     await fixture
-      .load_module('chara/chara-pregnancy')
+      .load_module('system/chara/chara-pregnancy')
       .ninsin_reach_day(1, seq(new Array(40).fill(0)));
     assert.ok(
       fixture.lines_history.some((line) =>
@@ -1376,7 +1398,7 @@ test('直接生产分派覆盖角色上限的魔王与普通角色、近卫、�
     fixture.store.set('itemname:100', '史莱姆');
     assert.equal(
       await fixture
-        .load_module('chara/chara-pregnancy')
+        .load_module('system/chara/chara-pregnancy')
         .ninsin_give_birth(mother, seq(new Array(40).fill(0))),
       -1,
     );
@@ -1391,7 +1413,7 @@ test('直接生产分派覆盖角色上限的魔王与普通角色、近卫、�
   prepare_birth(monster, -2, 0);
   assert.equal(
     await monster
-      .load_module('chara/chara-pregnancy')
+      .load_module('system/chara/chara-pregnancy')
       .ninsin_give_birth(1, seq(new Array(40).fill(0))),
     -1,
   );
@@ -1401,7 +1423,7 @@ test('直接生产分派覆盖角色上限的魔王与普通角色、近卫、�
   guard.seed_chara(1, { name: '后代模板' });
   assert.equal(
     await guard
-      .load_module('chara/chara-pregnancy')
+      .load_module('system/chara/chara-pregnancy')
       .ninsin_give_birth(0, seq(new Array(200).fill(0))),
     100000,
   );
@@ -1416,7 +1438,9 @@ test('每日推进覆盖近产期自动移室、设定禁止移室与育儿提�
     view.event.预产日 = 2;
     view.invasion.状态 = 0;
     fixture.store.set('flag:5', setting ? 1 << 10 : 0);
-    await fixture.load_module('chara/chara-pregnancy').ninsin_main(seq([]));
+    await fixture
+      .load_module('system/chara/chara-pregnancy')
+      .ninsin_main(seq([]));
     assert.equal(view.invasion.状态, setting ? 0 : 10);
   }
 
@@ -1425,7 +1449,7 @@ test('每日推进覆盖近产期自动移室、设定禁止移室与育儿提�
   const care_view = chara_view(care, 1);
   care_view.chara.育儿中 = 1;
   care_view.event.预产日 = 20;
-  await care.load_module('chara/chara-pregnancy').ninsin_main(seq([]));
+  await care.load_module('system/chara/chara-pregnancy').ninsin_main(seq([]));
   assert.ok(printed(care, '母亲在育儿室照顾孩子……'));
 
   const depart = create_era_fixture();
@@ -1437,13 +1461,15 @@ test('每日推进覆盖近产期自动移室、设定禁止移室与育儿提�
   depart_view.dungeon.体力上限 = 500;
   depart.store.set('itemname:100', '史莱姆');
   await depart
-    .load_module('chara/chara-pregnancy')
+    .load_module('system/chara/chara-pregnancy')
     .ninsin_main(seq(new Array(40).fill(0)));
   assert.equal(depart_view.chara.育儿中, 0);
 
   const unaffected = create_era_fixture();
   add_chara(unaffected, 1, '无关角色');
-  await unaffected.load_module('chara/chara-pregnancy').ninsin_main(seq([]));
+  await unaffected
+    .load_module('system/chara/chara-pregnancy')
+    .ninsin_main(seq([]));
   assert.equal(unaffected.lines_history.length, 0);
 });
 
@@ -1454,7 +1480,9 @@ test('育儿结束生成孩子后，母亲与孩子都离开育儿室状态并�
   fixture.store.set('cflag:1:111', -4);
   fixture.store.set('maxbase:1:0', 500);
   fixture.store.set('talent:1:154', 1);
-  const { child_care_depart } = fixture.load_module('chara/chara-pregnancy');
+  const { child_care_depart } = fixture.load_module(
+    'system/chara/chara-pregnancy',
+  );
 
   await child_care_depart(1, seq(new Array(300).fill(0)));
 
@@ -1480,7 +1508,7 @@ test('端到端：怪物妊娠从发觉、临月推进到生产并清理状态',
   fixture.store.set('itemname:100', '史莱姆');
   fixture.store.set('maxbase:1:0', 1000);
   fixture.store.set('base:1:0', 1000);
-  const pregnancy = fixture.load_module('chara/chara-pregnancy');
+  const pregnancy = fixture.load_module('system/chara/chara-pregnancy');
   const rand = seq([3, 0, 0, 0, 0, 1]);
 
   assert.equal(await pregnancy.ninsin_main(rand), 0);
@@ -1513,8 +1541,8 @@ test('端到端：怪物妊娠从发觉、临月推进到生产并清理状态',
 
 test('日循环入口调用妊娠与通常召唤真身', async () => {
   const fixture = create_era_fixture();
-  const pregnancy = fixture.load_module('chara/chara-pregnancy');
-  const summon = fixture.load_module('dungeon/monster-summon');
+  const pregnancy = fixture.load_module('system/chara/chara-pregnancy');
+  const summon = fixture.load_module('system/dungeon/monster-summon');
   const calls = [];
   pregnancy.ninsin_main = async () => calls.push('pregnancy');
   summon.summon_monster = async (arg) => calls.push(`summon:${arg}`);

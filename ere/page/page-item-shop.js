@@ -45,10 +45,10 @@
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
-const { trap_price } = require('#/dungeon/dungeon-trap');
 const { game } = require('#/facade/game');
 const { chara } = require('#/facade/chara');
 const { item_detox } = require('#/system/equip/item-detox');
+const { trap_price } = require('#/system/dungeon/dungeon-trap');
 const { life_list } = require('#/page/page-life-list');
 const { change_screen } = require('#/page/components/screen-change');
 const { chara_callname } = require('#/utils/callname-utils');

@@ -36,7 +36,7 @@
  *   - 原流程 PRINT/PRINTS 不换行、PRINTL 换行，同一显示行的拼接在 ere 侧
  *     归并为一次 era.print（引擎 print 每调用一行，dev-guides/06）；
  *   - CHAR_MAKE_INPORT 判定（RAND(ARG:0)）缺省 ARG:0 = 1 → RAND(1) 恒 0，
- *     恒进异国判定。#394 起判定通过后进的是真身（ere/chara/chara-
+ *     恒进异国判定。#394 起判定通过后进的是真身（ere/system/chara/chara-
  *     make-inport.js），它只在 `FLAG:76 > 0` 且有可用通信记录时才建角色；
  *     默认档（FLAG:76 = 0，MAOUNET 菜单设定）下恒早退 0，「异国的勇者」
  *     前缀仍不可达——与 #170 时的可观察行为相同，但成因换成了真身的条件。
@@ -46,11 +46,11 @@ const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 // WEARING_CLOTH_ABLE 自 #215（J5）起为真身（ere/system/train/cloth.js）
 const { wearing_cloth_able } = require('#/system/train/cloth');
+const { char_make, char_make_inport } = require('#/system/chara/char-make');
+const { add_chara_ex } = require('#/system/chara/chara-ex');
+const { family_register } = require('#/system/chara/chara-family');
+const { char_body_generate_wapped } = require('#/system/chara/chara-body'); // #385 起真身
 const { chara } = require('#/facade/chara');
-const { char_make, char_make_inport } = require('#/chara/char-make');
-const { add_chara_ex } = require('#/chara/chara-ex');
-const { family_register } = require('#/chara/chara-family');
-const { char_body_generate_wapped } = require('#/chara/chara-body'); // #385 起真身
 const { show_chara_info } = require('#/page/page-chara-info-show'); // #390 起真身
 const { enterenemy_koujo } = require('#/kojo/kojo-system');
 

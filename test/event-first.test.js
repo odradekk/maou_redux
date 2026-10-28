@@ -101,7 +101,7 @@ function expected_init_writes(initial_slave) {
       { name: 'portcflag:17:数据版本', value: 1 },
       { name: 'flag:10005', value: 17 }, // TARGET = 1（序号）→ 角色 ID 17
       { name: 'cflag:17:420', value: 1 }, // 玛奥专属标记
-      // CALL CHARA_NAME_DEFINE（无实参；#565 起真身 ere/chara/
+      // CALL CHARA_NAME_DEFINE（无实参；#565 起真身 ere/system/chara/
       // chara-name.js）：省略数值参数按 0 处理（无 TARGET 代入），L_A = 0 =
       // 魔王，落特殊角色分支——两槽称呼取预设呼び名（addCharacter
       // 已写过同值，这里再写一次）、NID = 10000；村娘不经此调用
@@ -362,7 +362,7 @@ test('端到端：新的猎物 → 初期奴隶选村娘 → 初始化 → 转�
   );
   // 真身的可观察效果：NID 落 10000 + 17（特殊角色分支的「定义 NID」）
   assert.equal(fixture.store.get('cflag:17:6'), 10017);
-  // #385 起 CHAR_BODY_GENERATE_WAPPED 是真身（ere/chara/chara-body.js）：
+  // #385 起 CHAR_BODY_GENERATE_WAPPED 是真身（ere/system/chara/chara-body.js）：
   // 条件看 CFLAG:17 的落盘（本用例不注入随机源，只断言
   // 写入发生；逐值与全量写入断言在下方两条「初始化写入」用例里）
   assert(

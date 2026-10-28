@@ -1,7 +1,7 @@
 /**
- * ere/dungeon/magic.js 十八个函数的行为测试（issue #343，阶段 5a L12）。
+ * ere/system/dungeon/magic.js 十八个函数的行为测试（issue #343，阶段 5a L12）。
  *
- * 缝 = ere/dungeon/magic.js 的导出函数与 dungeon-battle 的公开导出；
+ * 缝 = ere/system/dungeon/magic.js 的导出函数与 dungeon-battle 的公开导出；
  * 随机源显式注入，状态与输出只通过 era API 夹具观察。
  */
 
@@ -29,7 +29,7 @@ function load_world() {
     fixture.store.set(`cflag:${cid}:12`, 100);
   }
   fixture.store.set('itemname:100', '狗头人');
-  return { fixture, magic: fixture.load_module('dungeon/magic') };
+  return { fixture, magic: fixture.load_module('system/dungeon/magic') };
 }
 
 function seq(...values) {
@@ -157,19 +157,19 @@ test('magic 调度怪物的魔法箭并接入 dungeon-battle，magic 不再登�
   // CFLAG:130 与怪物号都缺省 0，>= 0 畏怖分支会给 1.2 倍增伤。
   assert.equal(fixture.store.get('base:1:0'), 916);
 
-  const battle = fixture.load_module('dungeon/dungeon-battle');
+  const battle = fixture.load_module('system/dungeon/dungeon-battle');
   assert.equal(battle.magic, magic.magic);
 });
 
 test('dungeon_battle2 的无参 magic 保留 target_type=0，并显式传递交换后的 A/B', async () => {
   const { fixture } = load_world();
-  const battle = fixture.load_module('dungeon/dungeon-battle');
+  const battle = fixture.load_module('system/dungeon/dungeon-battle');
   const calls = [];
   battle.magic = async (...args) => {
     calls.push(args.slice(0, 3));
     return 999;
   };
-  const battle2 = fixture.load_module('dungeon/dungeon-battle2');
+  const battle2 = fixture.load_module('system/dungeon/dungeon-battle2');
 
   assert.equal(await battle2.duel_attack(1, 0, 2, 0, seq()), 999);
   assert.equal(await battle2.duel_attack(1, 0, 2, 1, seq()), 999);

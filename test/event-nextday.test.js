@@ -230,7 +230,8 @@ test('单元级全量写入：EVENT_NEXTDAY 写 FLAG:61 与水晶球每日结算
   fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
   fixture.era.addCharacter(0);
   fixture.store.set('flag:61', 3); // 熏香使用次数非零，验证清零
-  fixture.load_module('dungeon/monster-summon').summon_monster = async () => 0;
+  fixture.load_module('system/dungeon/monster-summon').summon_monster =
+    async () => 0;
   const { run_event_nextday, run_event_newday } = fixture.load_module(
     'event/event-nextday',
   );
@@ -3566,7 +3567,8 @@ test('#502 SENGEN_VIDEO_DE 在 run_event_nextday 的被无条件每日调用', a
   const fixture = create_era_fixture();
   fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
   fixture.era.addCharacter(0);
-  fixture.load_module('dungeon/monster-summon').summon_monster = async () => 0;
+  fixture.load_module('system/dungeon/monster-summon').summon_monster =
+    async () => 0;
   fixture.store.set('exflag:9013', 4);
   fixture.store.set('exflag:9012', 6);
   const { run_event_nextday } = fixture.load_module('event/event-nextday');

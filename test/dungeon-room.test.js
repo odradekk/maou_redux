@@ -1,5 +1,5 @@
 /**
- * ere/dungeon/dungeon-room.js 十四函数的行为测试（issue #177，阶段 3 H8）。
+ * ere/system/dungeon/dungeon-room.js 十四函数的行为测试（issue #177，阶段 3 H8）。
  *
  * 缝 = test/helpers/era-fixture.js（全项目唯一测试注入点）。随机源经各
  * 函数的 rand 参数注入（run_dungeon / dungeon-trap 先例）；贯通用例用
@@ -34,7 +34,7 @@ function seq(values) {
 }
 
 function load(fixture) {
-  return fixture.load_module('dungeon/dungeon-room');
+  return fixture.load_module('system/dungeon/dungeon-room');
 }
 
 function text_lines(fixture) {
@@ -124,8 +124,10 @@ test('campaign_room/campaign_room_extra：FLAG:400 = 1 时按楼层派发到 cam
   const fixture = create_era_fixture();
   fixture.store.set('flag:400', 1);
   fixture.load_module('page/page-campaign-1'); // 触发战役 1 的 register()
-  const { campaign_room_extra } = fixture.load_module('dungeon/dungeon-room');
-  const { campaign_room } = fixture.load_module('dungeon/dungeon');
+  const { campaign_room_extra } = fixture.load_module(
+    'system/dungeon/dungeon-room',
+  );
+  const { campaign_room } = fixture.load_module('system/dungeon/dungeon');
   // campaign_room_1：楼层 > 3 → 502，否则 0
   assert.equal(await campaign_room(3), 0);
   assert.equal(await campaign_room(4), 502);
@@ -137,8 +139,10 @@ test('campaign_room/campaign_room_extra：FLAG:400 = 1 时按楼层派发到 cam
 
 test('campaign_room/campaign_room_extra：FLAG:400 < 1 时恒 0（未在战役中）', async () => {
   const fixture = create_era_fixture();
-  const { campaign_room_extra } = fixture.load_module('dungeon/dungeon-room');
-  const { campaign_room } = fixture.load_module('dungeon/dungeon');
+  const { campaign_room_extra } = fixture.load_module(
+    'system/dungeon/dungeon-room',
+  );
+  const { campaign_room } = fixture.load_module('system/dungeon/dungeon');
   assert.equal(await campaign_room(4), 0);
   assert.equal(await campaign_room_extra(6), 0);
 });
@@ -721,7 +725,7 @@ test('娼馆街·无交集：MENU == 0 直接离开，不转账', async () => {
 test('贯通·店遭遇：RESULT 1 累进 NO_BATTLE，战斗相位走训练分支', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:0:9', 5); // 魔王等级 5 → 训练经验
-  const { run_dungeon } = fixture.load_module('dungeon/dungeon');
+  const { run_dungeon } = fixture.load_module('system/dungeon/dungeon');
   // 掷序：rand(20)×1 + rand(10)×6（WALK = 10 + 0×6 = 10 → 滞留分支）→
   // rand(3)×1 + rand(2)×1（受者掷选 → 队长）→ 房间的 rand(10) = 0 → 店遭遇
   const seq_rand = seq([
@@ -760,7 +764,7 @@ test('贯通·店遭遇：RESULT 1 累进 NO_BATTLE，战斗相位走训练分�
 
 test('贯通·迷阵：dungeon_mase 的 D:20 写经 ctx 收回侵攻度', async () => {
   const fixture = setup_world(505, 3); // 第 1 层迷阵，双扩张 BACK = 10
-  const { run_dungeon } = fixture.load_module('dungeon/dungeon');
+  const { run_dungeon } = fixture.load_module('system/dungeon/dungeon');
   // WALK = 40（rand(20)=10 + rand(10)×6=30）→ 滞留分支（侵攻度 40）→
   // 房间 rand(10) = 5 不遇店 → MASE rand(3) = 1 迷路 → D:20 = 40 - 10 = 30
   const seq_rand = seq([10, 5, 5, 5, 5, 5, 5, 1, 1, 5, 1]);

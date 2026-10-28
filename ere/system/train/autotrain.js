@@ -4,12 +4,12 @@
  */
 
 const era = require('#/era-electron');
-const { karma } = require('#/chara/chara-stats');
 const era_flag = require('#/era-utils/era-flag');
 const { chara_callname } = require('#/utils/callname-utils');
 const { clothtype_text } = require('#/utils/clothtype-utils');
 const { juel_check_main } = require('#/system/train/juel-check');
 const { auto_ablup } = require('#/system/train/ablup');
+const { karma } = require('#/system/chara/chara-stats');
 const { chara } = require('#/facade/chara');
 /** 本文件预留的调用名（空：#467 起 AUTO_ABLUP 已接真身） */
 

@@ -102,6 +102,17 @@ const era = require('#/era-electron');
 const { is_state } = require('#/system/flow/game-state');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
+const { karma } = require('#/system/chara/chara-stats');
+const { add_chara_ex } = require('#/system/chara/chara-ex');
+const { char_make, name_reset } = require('#/system/chara/char-make');
+const { monster_data } = require('#/system/dungeon/monster-data');
+const {
+  BATTLE_COLUMN,
+  battle_column,
+} = require('#/system/dungeon/battle-state');
+const { party_char_del } = require('#/system/dungeon/dungeon-party');
+const { arcana_fort } = require('#/system/invasion/invasion-arcana-fort');
+const { invasion_ryouzyoku } = require('#/system/invasion/invasion-ravish');
 const { campaign_menu } = require('#/page/page-campaign');
 const { change_screen } = require('#/page/components/screen-change');
 const { life_list_item } = require('#/page/page-life-list');
@@ -112,14 +123,6 @@ const {
   ending_5,
 } = require('#/page/page-ending');
 const { get_enemy, MAX_CHARANUM } = require('#/event/enter-enemy');
-const { karma } = require('#/chara/chara-stats');
-const { add_chara_ex } = require('#/chara/chara-ex');
-const { char_make, name_reset } = require('#/chara/char-make');
-const { monster_data } = require('#/dungeon/monster-data');
-const { BATTLE_COLUMN, battle_column } = require('#/dungeon/battle-state');
-const { party_char_del } = require('#/dungeon/dungeon-party');
-const { arcana_fort } = require('#/invasion/invasion-arcana-fort');
-const { invasion_ryouzyoku } = require('#/invasion/invasion-ravish');
 const { chara } = require('#/facade/chara');
 const { chara_callname, chara_nickname } = require('#/utils/callname-utils');
 const { pad_left } = require('#/utils/display-width');
@@ -348,7 +351,7 @@ function kyoten_next_stage(progress, stage) {
  *
  * 两个调用方：本文件的出兵结算尾与日循环的侵攻度衰减（system 域）。日循环
  * 一侧经复核维持不搬：本函数是演出（命中一档打七行横幅 + 写状态字），与
- * 本文件其余部分同款；搬进 ere/invasion/ 只换掉 require 的目录名，
+ * 本文件其余部分同款；搬进 ere/system/invasion/ 只换掉 require 的目录名，
  * system 的日循环路径上仍是同一份侵略域渲染代码。
  *
  * arg == 2/3/4（精灵/龙/天界）三分支只有判定骨架：推进赋值整体被注释、状态字
@@ -2603,7 +2606,7 @@ async function monster_result_section(region, inkou, rand) {
  * 结果段·掠夺路线（[3] 专用）。
  *
  * 掠夺额 = SINKOU（**不是**怪物路线的 ×10），经验是 SINKOU/20；善恶值先减
- * 5（`CALL KARMA, YUSYA_I, -5`，真身 ere/chara/chara-stats.js）。已
+ * 5（`CALL KARMA, YUSYA_I, -5`，真身 ere/system/chara/chara-stats.js）。已
  * 征服/未征服的封顶差别与 [0] 同款，但这一段的已征服分支列全了
  * 五个地区（含 101），故只判 FLAG:SINDO。三段 PRINTFORM/PRINT/PRINTW
  * 在同一显示行，ere 侧并入一次 print + 等键

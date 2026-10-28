@@ -71,7 +71,6 @@
 'use strict';
 
 const era = require('#/era-electron');
-const { search_family } = require('#/chara/chara-family');
 const { exucution_koujo } = require('#/kojo/kojo-system');
 const {
   video_maturo,
@@ -95,6 +94,7 @@ const { print_button_grid } = require('#/utils/button-grid');
 const { game } = require('#/facade/game');
 const era_exflag = require('#/era-utils/era-exflag');
 const era_flag = require('#/era-utils/era-flag');
+const { search_family } = require('#/system/chara/chara-family');
 const { chara_callname } = require('#/utils/callname-utils');
 const { NBSP } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 const { default_rand } = require('#/utils/numeric');

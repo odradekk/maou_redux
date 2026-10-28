@@ -15,8 +15,11 @@
 
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
-const { monster_name } = require('#/dungeon/monster-data');
-const { BATTLE_COLUMN, battle_column } = require('#/dungeon/battle-state');
+const { monster_name } = require('#/system/dungeon/monster-data');
+const {
+  BATTLE_COLUMN,
+  battle_column,
+} = require('#/system/dungeon/battle-state');
 const { chara_callname } = require('#/utils/callname-utils');
 
 /** 两段统一的粉色（0xff1493）→ 渲染层 CSS 色串 */

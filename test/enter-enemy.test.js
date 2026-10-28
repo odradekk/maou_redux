@@ -763,7 +763,7 @@ test('GET_ENEMY 主路径：俘虏入库 CFLAG:1 = 0（不侵攻）、501/508、
     '俘虏演出行；名字同「通常来袭」用例（命名链已改写预设名）',
   );
   // 异国判定掷 RAND(10)：zero → 判定通过 → 进 char_make_inport 真身
-  // （#394 起，ere/chara/chara-make-inport.js）。FLAG:76 未设时它早退 0
+  // （#394 起，ere/system/chara/chara-make-inport.js）。FLAG:76 未设时它早退 0
   // （无候选），于是**恰好只有生成分支建出的那一名**角色在场；真身的行为面
   // 在 test/chara-make-inport.test.js，这里只钉「判定通过后没有被真身另建一名」。
   assert.deepEqual(

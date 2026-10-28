@@ -4,7 +4,7 @@ export const COUNT = 7;
 export default [
   {
     desc: 'M14800 生命摇篮追加预设不检查同号角色已在场',
-    file: 'ere/chara/chara-custom.js',
+    file: 'ere/system/chara/chara-custom.js',
     find: '  if (find_chara(arg) >= 0) {',
     replace: '  if (false) {',
     tests: ['duplicate-character-creation-engine'],
@@ -40,7 +40,7 @@ export default [
   },
   {
     desc: 'M14804 生命摇篮追加被拒绝后仍进入定制',
-    file: 'ere/chara/chara-custom.js',
+    file: 'ere/system/chara/chara-custom.js',
     find: '      if (target < 0) {\n        return 0;\n      }',
     replace: '',
     tests: ['duplicate-character-creation-engine'],

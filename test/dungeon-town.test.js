@@ -1,5 +1,5 @@
 /**
- * ere/dungeon/dungeon-town.js 全量 15 函数的行为测试（issue #178，H9）。
+ * ere/system/dungeon/dungeon-town.js 全量 15 函数的行为测试（issue #178，H9）。
  *
  * 缝 = test/helpers/era-fixture.js。随机经函数级 rand 参数注入定值序
  * （seq_rand 原样吐给定值，耗尽后 99 % n）。
@@ -22,7 +22,7 @@ const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
 
-function load(fixture, name = 'dungeon/dungeon-town') {
+function load(fixture, name = 'system/dungeon/dungeon-town') {
   return fixture.load_module(name);
 }
 

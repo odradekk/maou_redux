@@ -39,7 +39,9 @@ test('死亡除名后正常回复气力：近卫后代不触发战役，普通�
       let cid = 1;
       if (source === 201) {
         fixture.seed_chara(201, { name: '近卫', callname: '近卫' });
-        const { gb_add_guard } = fixture.load_module('chara/chara-pregnancy');
+        const { gb_add_guard } = fixture.load_module(
+          'system/chara/chara-pregnancy',
+        );
         cid = await gb_add_guard(0, -2, () => 0);
         assert.equal(cid, 120000);
       } else {

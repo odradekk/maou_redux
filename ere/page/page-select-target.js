@@ -32,7 +32,7 @@
 
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
-const monster_play_mod = require('#/dungeon/monster-play');
+const monster_play_mod = require('#/system/dungeon/monster-play');
 const { change_screen } = require('#/page/components/screen-change');
 const { game } = require('#/facade/game');
 const { chara_callname } = require('#/utils/callname-utils');

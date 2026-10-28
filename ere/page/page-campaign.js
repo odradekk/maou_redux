@@ -53,7 +53,7 @@
  *     `CALL RAND_CHARA_MAKE` 无参，但 char_make_inport
  *     在 rand_chara_make 体内、主体 IF 之前，开局初始奴隶与战役招募
  *     两条路径都会跑；它由转发层
- *     `#/chara/char-make` 持有，真身反向 require 转发层会成环，故由调用点
+ *     `#/system/chara/char-make` 持有，真身反向 require 转发层会成环，故由调用点
  *     显式传（同款注入见 chara-make.js 的 JSDoc）。
  */
 
@@ -62,8 +62,8 @@
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
-const { char_make_inport } = require('#/chara/char-make');
-const { rand_chara_make } = require('#/chara/chara-make');
+const { char_make_inport } = require('#/system/chara/char-make');
+const { rand_chara_make } = require('#/system/chara/chara-make');
 const { life_list_item } = require('#/page/page-life-list');
 const { change_screen } = require('#/page/components/screen-change');
 const { chara } = require('#/facade/chara');
@@ -167,8 +167,8 @@ async function recruit_campaign_slave(rand) {
   //
   // 第二个实参是 char_make_inport：它在
   // rand_chara_make 体内、主体 IF 之前，开局初始奴隶与
-  // 战役招募**两条路径都会跑**（#494）。它由转发层 `#/chara/char-make` 持有，
-  // 而转发层 require 了本函数用到的 `#/chara/chara-make`——真身再反向 require
+  // 战役招募**两条路径都会跑**（#494）。它由转发层 `#/system/chara/char-make` 持有，
+  // 而转发层 require 了本函数用到的 `#/system/chara/chara-make`——真身再反向 require
   // 转发层即成环，所以只能由调用点作形参注入（chara-make.js 的 JSDoc 同款
   // 说明）；`rand_n` 一路传下去，两条路径共用一条 RAND 序列
   // （enter-enemy.js 的两处调用点同款）。

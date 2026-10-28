@@ -22,10 +22,10 @@ const {
   get,
   she,
 } = require('#/event/event-execution-common');
-const { search_family } = require('#/chara/chara-family');
 const { banishment_koujo } = require('#/kojo/kojo-system');
 const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
+const { search_family } = require('#/system/chara/chara-family');
 const { chara_callname } = require('#/utils/callname-utils');
 const { default_rand } = require('#/utils/numeric');
 

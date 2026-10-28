@@ -26,19 +26,19 @@ const era = require('#/era-electron');
 const { on } = require('#/system/event/registry');
 const { begin, STATE } = require('#/system/flow/game-state');
 const { first_setting } = require('#/page/page-first-setting');
-const { add_chara_ex, ex_talentname_init } = require('#/chara/chara-ex');
-const { chara_name_init } = require('#/chara/chara-name-list');
-const { chara_name_define } = require('#/chara/chara-name'); // #565 起接入
-const { char_body_generate_wapped } = require('#/chara/chara-body'); // #385 起真身
-const { rand_chara_make } = require('#/chara/chara-make'); // #565 起接入
-const { char_make_inport } = require('#/chara/char-make'); // 转发层（#494 同款注入）
-const { init_portcflag } = require('#/chara/chara-portcflag');
 const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const era_global = require('#/era-utils/era-global');
-const { geo_test, db_set } = require('#/dungeon/labo'); // 2D 模式分支（#181 H12）
-const { set_vil } = require('#/dungeon/labo-map');
+const { add_chara_ex, ex_talentname_init } = require('#/system/chara/chara-ex');
+const { chara_name_init } = require('#/system/chara/chara-name-list');
+const { chara_name_define } = require('#/system/chara/chara-name'); // #565 起接入
+const { char_body_generate_wapped } = require('#/system/chara/chara-body'); // #385 起真身
+const { rand_chara_make } = require('#/system/chara/chara-make'); // #565 起接入
+const { char_make_inport } = require('#/system/chara/char-make'); // 转发层（#494 同款注入）
+const { init_portcflag } = require('#/system/chara/chara-portcflag');
+const { geo_test, db_set } = require('#/system/dungeon/labo'); // 2D 模式分支（#181 H12）
+const { set_vil } = require('#/system/dungeon/labo-map');
 const { EVENT } = require('#/data/event-name-const');
 
 // 注册在模块顶层（往注册表塞函数，不碰 era.*——引擎允许；era.* 只在处理器
@@ -150,7 +150,7 @@ on(EVENT.FIRST, async () => {
 
   // IF FLAG:502 == 1（2D 地图模式）：GEO_TEST/SET_VIL + DB 50×50
   // 清零。#181（H12）起 FLAG:502 有玩家置位路径（first-setting 的地下城
-  // 模式一问），分支可达，正文接真身（ere/dungeon/labo.js 与
+  // 模式一问），分支可达，正文接真身（ere/system/dungeon/labo.js 与
   // labo-map.js；DA/DB/DC 的承载见 labo.js 文件头）。
   if ((era.get('flag:502') || 0) === 1) {
     geo_test(); // CALL GEO_TEST（缺省随机源走 Math.random）
@@ -234,7 +234,7 @@ on(EVENT.FIRST, async () => {
     // 代码在 -1 时临时改写 995，开局设置对魔王同置 -1）；450 一人称
     // （自称）编号（kojo-self-call 的一个人称設定，31 = 表内编号）。
     era.set('cflag:17:420', 1); // 玛奥专属标记
-    // chara_name_define（无实参；#565 起真身 ere/chara/chara-name.js）：
+    // chara_name_define（无实参；#565 起真身 ere/system/chara/chara-name.js）：
     // 省略的数值参数按 0 处理（技能手册：不做 TARGET 代入），L_A = 0 = 魔王
     // （cid 0 与 NO:0 同值）——走特殊角色分支，把魔王的称呼重写为预设
     // 值（与 addCharacter 装预设时的直写同值，CHARA_NAME_INIT 只建
@@ -342,14 +342,14 @@ on(EVENT.FIRST, async () => {
   era.print('……');
   era.print('………');
 
-  // rand_chara_make（#565 起真身 ere/chara/chara-make.js）。
+  // rand_chara_make（#565 起真身 ere/system/chara/chara-make.js）。
   // 该调用无实参、返回值此处不读（后续只判
   // 丽塔启动！）。开局是普通路径（非战役招募）：campaign_slave 缺省 false，
   // 勇者位照 RAND(1,17) 掷——掷中已占用的位就落「勇者没有
   // 出现」失败文案，不重掷。完整流程含异国判定与
   // 形象确认、收下确认的人工交互。
   //
-  // `char_make_inport` 必须从转发层 ere/chara/char-make.js 作参数注入（真身
+  // `char_make_inport` 必须从转发层 ere/system/chara/char-make.js 作参数注入（真身
   // 反向 require 转发层会成环，见 chara-make.js 文件头）；首参缺省 1 =
   // RAND(1) 恒 0，异国判定恒真身跑（开局 FLAG:76 = 0，真身首行即返回 0 =
   // 非异国，page-campaign.js 的战役招募同款传法）。rand_n 缺省均匀随机

@@ -187,7 +187,7 @@ test('100 分支：目标选择页「其它」支的转场（怪物玩弄）经 
   // 选择页 [1002]「其它」直接 return monster_play()（#340）：怪物玩弄跑完以
   // TURNEND 转场离开。此处只验转场经 select_target → usershop 逐层上抛，
   // 怪物玩弄本体另有 test/monster-play.test.js
-  const monster_play_mod = fixture.load_module('dungeon/monster-play');
+  const monster_play_mod = fixture.load_module('system/dungeon/monster-play');
   monster_play_mod.monster_play = async () => begin(STATE.TURNEND);
   fixture.set_inputs(1002);
   const { usershop } = fixture.load_module('page/page-shop');
@@ -203,7 +203,7 @@ test('496 分支：选择页「其它」支的转场同样上抛', async () => {
   const fixture = create_shop_fixture();
   join_selectable_slave(fixture, 31);
   const { begin, STATE } = fixture.load_module('system/flow/game-state');
-  const monster_play_mod = fixture.load_module('dungeon/monster-play');
+  const monster_play_mod = fixture.load_module('system/dungeon/monster-play');
   monster_play_mod.monster_play = async () => begin(STATE.TURNEND);
   fixture.set_inputs(1002);
   const { usershop } = fixture.load_module('page/page-shop');

@@ -36,9 +36,11 @@ const rand_max = (n) => n - 1;
 /** 建夹具并装载 LABO 三模块（da/db/dc 随 labo.js 一并就位） */
 function setup_labo() {
   const fixture = create_era_fixture();
-  const labo = fixture.load_module('dungeon/labo');
-  const labo_map = fixture.load_module('dungeon/labo-map');
-  const labo_dungeon_map = fixture.load_module('dungeon/labo-dungeon-map');
+  const labo = fixture.load_module('system/dungeon/labo');
+  const labo_map = fixture.load_module('system/dungeon/labo-map');
+  const labo_dungeon_map = fixture.load_module(
+    'system/dungeon/labo-dungeon-map',
+  );
   return { fixture, labo, labo_map, labo_dungeon_map };
 }
 

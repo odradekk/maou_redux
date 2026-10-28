@@ -1,5 +1,5 @@
 /**
- * ere/dungeon/dungeon-after.js dungeon_after + gohoubi + osioski 的行为
+ * ere/system/dungeon/dungeon-after.js dungeon_after + gohoubi + osioski 的行为
  * 测试（issue #179，H10）；口上分发层（ere/kojo/kojo-dungeon-after.js）
  * 的落空与命中一并在此验。
  *
@@ -22,7 +22,7 @@ const { test } = require('node:test');
 const { create_era_fixture } = require('./helpers/era-fixture');
 
 function load(fixture) {
-  return fixture.load_module('dungeon/dungeon-after');
+  return fixture.load_module('system/dungeon/dungeon-after');
 }
 
 /**

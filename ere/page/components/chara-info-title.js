@@ -18,13 +18,16 @@
  *     同款精简）；
  *   - show_info_title 的身体数据生成按项目通例开成形参 `rand`（缺省真随机，
  *     用例显式注入）；
- *   - 受注任务名接 ere/dungeon/dungeon-quest.js 的既有 quest_select，本模块
+ *   - 受注任务名接 ere/system/dungeon/dungeon-quest.js 的既有 quest_select，本模块
  *     只做接入。
  */
 
 const era = require('#/era-electron');
+const {
+  char_body_generate_wapped,
+  cup_size,
+} = require('#/system/chara/chara-body');
 const { life_bar, vital_bar } = require('#/page/components/chara-bars');
-const { char_body_generate_wapped, cup_size } = require('#/chara/chara-body');
 const { self_call } = require('#/kojo/kojo-text');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
 const { NBSP, pad_display, pad_left } = require('#/utils/display-width');
@@ -247,7 +250,7 @@ async function show_block(cid) {
  * @returns {Function} dungeon-quest 的 quest_select
  */
 function quest_now() {
-  return require('#/dungeon/dungeon-quest').quest_select;
+  return require('#/system/dungeon/dungeon-quest').quest_select;
 }
 
 /**

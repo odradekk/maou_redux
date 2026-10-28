@@ -17,7 +17,7 @@
  *
  * `%GET_LOOK_INFO(ARG, "头发颜色")%` 是旧引擎 LOOK 的式中函数。本文件
  * 的 FS_BITCH "LOOKS" 用到其中 7 个 kind。**#389 起该函数的真身在
- * ere/chara/look-info.js（整函数迁入），本文件改为 require**——#185 时期
+ * ere/system/chara/look-info.js（整函数迁入），本文件改为 require**——#185 时期
  * 那份 11 个 kind 的子集实现已随 #389 搬走，全项目只剩一份（调用面不留
  * 两份，见该文件头）。
  *
@@ -29,7 +29,7 @@
  */
 
 const era = require('#/era-electron');
-const { get_look_info } = require('#/chara/look-info'); // #389 起真身（本文件曾是它的子集实现）
+const { get_look_info } = require('#/system/chara/look-info'); // #389 起真身（本文件曾是它的子集实现）
 const { chara_callname } = require('#/utils/callname-utils');
 
 /** 默认随机源（[0, n) 整数）；测试注入定值序 */

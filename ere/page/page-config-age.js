@@ -44,7 +44,7 @@ const {
   race_age_generate,
   race_config_value,
   unpack_race_config,
-} = require('#/chara/chara-body');
+} = require('#/system/chara/chara-body');
 const { game } = require('#/facade/game');
 const { change_screen } = require('#/page/components/screen-change');
 const { chara } = require('#/facade/chara');

@@ -31,7 +31,6 @@ const era = require('#/era-electron');
 const { sell_maturo_k0 } = require('#/system/stronghold/sell-maturo-k0');
 
 const { on, TIER } = require('#/system/event/registry');
-const { search_family } = require('#/chara/chara-family');
 const {
   kojo_message_com_family,
   self_kojo_family,
@@ -74,6 +73,7 @@ const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
 const { PALAMLV } = require('#/era-utils/palam-level');
+const { search_family } = require('#/system/chara/chara-family');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
 
 // EVENTTRAIN #PRI 档：存在标志 + 总开关补 0

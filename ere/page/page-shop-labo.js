@@ -58,6 +58,7 @@
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const { weapon_restore } = require('#/system/equip/weapon-restore');
+const { char_create } = require('#/system/chara/chara-custom');
 const {
   abl,
   apply_amnesia_reset,
@@ -134,8 +135,7 @@ const {
 const {
   child_care_change_nurse,
   MAX_CHARANUM,
-} = require('#/chara/chara-pregnancy');
-const { char_create } = require('#/chara/chara-custom');
+} = require('#/system/chara/chara-pregnancy');
 const { self_kojo } = require('#/kojo/kojo-system');
 const { game } = require('#/facade/game');
 const { chara_nickname } = require('#/utils/callname-utils');
