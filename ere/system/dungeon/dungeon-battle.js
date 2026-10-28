@@ -560,8 +560,9 @@ async function enemy_attack(arg0, arg1, rand, move_ctx = {}) {
 
   // 防御侧の防御力を算出
   const { column: c, b: scan_b } = pick_defender_column();
-  // 全滅時（B >= 400）——REPEAT 3 的扫描终值最多 300，不可达（见
-  // pick_defender_column 注释：这条判据的缺陷另开工单）
+  // 全滅時（B >= 400）——**保留**：扫描终值最多 300，这一支当前判不到，
+  // 但它就是 pick_defender_column 那条缺陷的落点（阈值 400 对不上终值 300，
+  // 见该函数注释），缺陷修好之前删掉它只会让修的时候再写一遍（#954）
   if (scan_b >= 400) {
     if ((settings & 32) !== 0) {
       era.print('负责防御的怪物全灭了………');
@@ -882,7 +883,8 @@ async function slave_monster_attack(rand) {
   // 防御侧选择（同 ENEMY_ATTACK）
   const { column: c, b: scan_b } = pick_defender_column();
   if (scan_b >= 400) {
-    // 全滅時（不可达分支，见 pick_defender_column 注释）
+    // 全滅時——保留，同 ENEMY_ATTACK 那支：判据的阈值与扫描终值对不上，
+    // 缺陷修好之前这处是它的落点（#954）
     if ((settings & 32) !== 0) {
       era.print('负责防御的怪物全灭了………');
       await era.waitAnyKey();

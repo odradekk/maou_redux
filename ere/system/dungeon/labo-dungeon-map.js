@@ -19,8 +19,7 @@
  *   - MONEY → era_flag.money / era_flag.money += …（EX_FLAG:4444 镜像不在
  *     本文件正文里，不搬）；TARGET → era_flag.target；
  *   - 三分支 IF/ELSEIF/ELSEIF：第二分支条件与第一分支字面相同
- *     （复制粘贴产物），逻辑上不可达——保留结构（check_status 的
- *     不可达分支先例）；
+ *     （复制粘贴产物），判不到，已删除（#954，原「保留结构」的处置撤销）；
  *   - CLEARLINE 1（无效输入清行重问）无 era API 通道，重问循环
  *     简化为再问（SETFONT/CLEARLINE 同为渲染细节，跳过不落）；
  *   - ere 无全局 RAND 序列（#117），随机经注入的 rand 掷出（缺省
@@ -297,8 +296,8 @@ async function dungeon_map(a, rand) {
     chara(a).dungeon.休憩 -= 1;
   }
 
-  // 休憩演出（FLAG:5 & 32 渲染开关内）。第二分支条件与第一分支字面相同
-  // （复制粘贴产物），逻辑不可达，保留结构（文件头）
+  // 休憩演出（FLAG:5 & 32 渲染开关内）。原脚本的第二分支条件与第一分支
+  // 字面相同（复制粘贴产物），判不到，删除（#954，见文件头）
   if (chara(a).invasion.状态 === 2 && chara(a).dungeon.休憩 & 1) {
     if ((era.get('flag:5') || 0) & 32) {
       era.println(); // PRINTL（空行）
@@ -306,17 +305,6 @@ async function dungeon_map(a, rand) {
       await era.printAndWait(`${name_of(a)}藏起来休息了`); // PRINTFORMW（简体归一：來→来）
       era.drawLine();
       era.println(); // 真空行：PRINTFORMW 已收尾
-    }
-    // 第二分支条件与第一分支字面相同（复制粘贴产物），逻辑不可达，
-    // 保留结构（check_status 的不可达分支先例）；该规则判的正是这类重复
-    // eslint-disable-next-line no-dupe-else-if
-  } else if (chara(a).invasion.状态 === 2 && chara(a).dungeon.休憩 & 1) {
-    if ((era.get('flag:5') || 0) & 32) {
-      era.println();
-      era.drawLine();
-      await era.printAndWait(`${name_of(a)}在安全的地方扎营，休息了`); // （简体归一：紮營→扎营）
-      era.drawLine();
-      era.println();
     }
   } else if (chara(a).invasion.状态 === 3) {
     // 空体（无演出）
