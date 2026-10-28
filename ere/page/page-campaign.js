@@ -234,11 +234,8 @@ async function dispatch_campaign_slave(no_page) {
     }
     // 校验链。life_list_item 的按钮 accelerator 是角色真实 ID
     // （page-life-list.js print_row，非序号），按 CHARANUM 做的上界比较在
-    // ere 侧对应「是否在本页候选集内」；result 恒落在按钮白名单内，分支
-    // 结构保留作防御（引擎只回传已打印按钮的编号，该支不可达）
-    if (!candidate_ids.includes(result)) {
-      continue;
-    }
+    // ere 侧对应「是否在本页候选集内」；候选列表每轮重画、每颗按钮都来自
+    // candidate_ids，因此这座检查没有受理面，已随 #953 删除
     if (chara(result).dungeon.体力 < 1) {
       continue; // 临死中的角色排除
     }

@@ -1150,6 +1150,13 @@ async function demon_rebirth(rand = default_rand) {
       }
       const row = Math.trunc(result / 10); // L_T = RESULT / 10
       const id = demon_type_of(result); // L_ID = TYPEDATA:L_T:L_I
+      if (id <= 0) {
+        // 条件不足那一轮只打提示、不重画按钮，而引擎在每次成功回传后清空
+        // 白名单（`returnFromButton` 的 rule = []）——重问这一轮的输入是自由
+        // 输入，落到表外的编号必须接住（#953 判定：可达，不能按「白名单保证」
+        // 删除）
+        continue; // CLEARLINE 1 + GOTO INPUT_LOOP_1
+      }
       if (cond[row] === 0 || cflag(t, 9) < Math.trunc(item_price(id) / 20)) {
         // 条件不足：等级与素质提示
         era.print(

@@ -271,14 +271,9 @@ async function pick_action(select, floor) {
     era.drawLine(); // （DRAWLINE + INPUT）
     const result = await era.input();
 
-    // 检查（等级门在 ere 侧不可达，见文件头第 3 条；阈值的判断条件
-    // 由 WORK_GATES 一处提供，渲染侧用例覆盖）
-    if (result < 0) continue;
-    if (WORK_GATES.some((g) => g.work === result && master_lv < g.level)) {
-      continue;
-    }
-    if (result > WORK_GATES.length) continue;
-
+    // 可送达的键只有 [0]、五档 work（1-5；等级不足的那几档是 disabled、不进
+    // 白名单）与 [999]，原先「负值 / 等级门 / 大于档数」三道检查都没有受理面，
+    // 已随 #953 删除——本循环每轮都重画，不存在没被按钮约束的输入轮
     if (result === 1) {
       await print_wait('得到了在地下城中对怪物们卖淫的许可');
     } else if (result === 2) {
