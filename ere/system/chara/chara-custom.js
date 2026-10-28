@@ -20,9 +20,9 @@
  *   - **列表是按钮网格**（#710）：勇者段每行 4 格、精英与特殊段每行 5 格，
  *     排版走 `#/utils/button-grid`。原先按「一次 print 一行」拼纯文本格行，
  *     玩家只能手敲编号；按钮化后正文只写名字（补位交给网格与 showAcc）。
- *   - **末位 else 分支保留**：把输入直接当素质编号、随后由 exist_csv 拦下。
- *     #710 列表按钮化后，三种区间的显示编号各走各的映射、列表外的编号被
- *     引擎拒收，这条缺省处理在实机上不可达（结构保留，测试不再构造它的输入）。
+ *   - **末位 else 分支已删除**（#953）：它原先把输入直接当素质编号、随后由
+ *     exist_csv 拦下。#710 列表按钮化后三种区间的显示编号各走各的映射、
+ *     列表外的编号被引擎拒收，这条缺省处理没有受理面，故去掉而不是保留。
  *   - **find_chara 落成「已在场」判定**：ere 的角色 ID 即预设编号
  *     （chara-ex.js / chara-name.js 的既定标准），编号在
  *     `getAddedCharacters()` 内则返回它，否则 -1（chara-make-inport.js:136
@@ -151,10 +151,11 @@ async function char_create(arg, rand = default_rand) {
       index = result;
     } else if (result >= 21 && result <= 30) {
       index = result - 20 + 200;
-    } else if (result >= 37 && result <= 60) {
-      index = result - 20;
     } else {
-      index = result; // （缺省分支，见文件头）
+      // 37-60：调试登录时特殊段的显示编号。本屏印出的编号只有 999、
+      // 勇者段的 1-8、精英段的 21-30 与这一段的 37-60，三支之外没有
+      // 落空的值可接——原「末位 else 把输入当素质编号」的缺省支已删除（#953）
+      index = result - 20;
     }
 
     if (!exist_csv(index)) {

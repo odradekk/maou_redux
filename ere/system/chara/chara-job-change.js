@@ -34,13 +34,10 @@
  *   - **怪物持有列表用 `monsterplay_list()` 真身**
  *     （#342，ere/system/dungeon/monster-play.js）。
  *
- *   - **「无效输入重输」一支与「勋章不足」一支在 ere 侧结构性不可达**：
- *     引擎 `input()` 只回传本轮已打印
- *     按钮的快捷键（`useRule` 默认开，#130 镜像进夹具），越界值进不了
- *     游戏逻辑，而 `[10]`/`[11]` 只在勋章够时才会打印、于是那支的
- *     勋章判断也恒假。两支保留为防御性 `continue`
- *     （`MEDAL_REQUIRED` 一个常量两处共用），不构造只有夹具能触发的
- *     用例。
+ *   - **「无效输入重输」与「选中时重判勋章」两支已删除**（#953）：引擎
+ *     `input()` 只回传本轮已打印按钮的快捷键（`useRule` 默认开，#130 镜像
+ *     进夹具），越界值进不了游戏逻辑；`[10]`/`[11]` 只在勋章够时打印，而
+ *     打印与选中间没有写，选中时重判那支因此恒假。
  *
  *   - **跨域写经属主域门面**（#71）：
  *     状态 CFLAG:1 走
@@ -277,17 +274,11 @@ async function chara_info_job_change(arg) {
     print_job_menu(arg);
     const result = await era.input();
 
+    // 菜单印出的编号只有 0-9、12、[10]/[11]（勋章够时才印）与 [999]，原先
+    // 「无效输入重输」与「选中 [10]/[11] 时重判勋章」两支都没有受理面
+    // （#953）：[10]/[11] 的勋章条件由 print_job_menu 在同一轮的同一个值上
+    // 判过，中间没有写，故选不中勋章不足的项
     if (result === 999) return 0;
-    if (result < 12 && result > 9) {
-      if ((era.get(`exp:${arg}:81`) || 0) < MEDAL_REQUIRED) {
-        era.print('*勋章不足*');
-        continue; // GOTO INPUT_LOOP
-      }
-    } else if (result === 12) {
-      // 魔物使い：无额外检查
-    } else if (result < 0 || result > 9) {
-      continue; // GOTO INPUT_LOOP
-    }
 
     // 职业变更的实现：状态复位 → 十三格职业素质全清 → 常识改变复位 →
     // 目标格置 1 → 等级归 1
@@ -452,7 +443,6 @@ async function job_change_benki(arg) {
         next % COMMON_SENSE_DAILY_MOD,
       );
     }
-    // 其余输入无限重问（ere 侧结构性不可达，见文件头）
   }
 }
 

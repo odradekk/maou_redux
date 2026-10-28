@@ -51,9 +51,9 @@
  *   - **选项升格为按钮**（#572）：chara_first_xp 的六处选项行
  *     与 char_custom 的最终确认
  *     改 `era.printButton`（PR #53 通则，正文不写 [编号] 前缀）。
- *     选项全部按钮化：input() 只回传本轮已打印按钮的快捷键，「输入错误，
- *     请重新开始」等越界支在实机不可达，保留为防御分支，不为它们造用例
- *     ——逐处说明见 chara_first_xp 的 JSDoc 与各处注释。
+ *     选项全部按钮化：input() 只回传本轮已打印按钮的快捷键，故「输入错误，
+ *     请重新开始」等越界支没有受理面——已随 #953 删除（原先按「保留为防御
+ *     分支」登记），问卷只剩「还是改一下吧」这一个回头点。
  *     **一处例外**：初吻部位一问的受理集是四个固定编号，但其中两个的
  *     显示是有条件的（SIF）、受理是无条件的——按钮集写不全，改用 `rule`
  *     把整集写进正则（见该处注释）。
@@ -701,10 +701,8 @@ async function talent_empty_check(cid) {
 
 // —— chara_first_xp ——
 
-/** 初吻位置的四个可选项（GROUPMATCH 列表） */
+/** 初吻位置的四个可选项（GROUPMATCH 列表；`rule` 的受理集） */
 const KISS_POSITIONS = [1, 201, 301, 401];
-/** 野狗（995）的三个部位码：LOCAL += 1/2/3 → 996/997/998 */
-const DOG_POSITIONS = [1, 2, 3];
 
 /**
  * chara_first_xp：初吻与初体验的对象、部位、名称的问卷。
@@ -714,8 +712,8 @@ const DOG_POSITIONS = [1, 2, 3];
  * 引擎按 showAcc 自动拼）。此前的处置是「保持文本行，免得
  * 「输入错误，请重新开始」这些校验支变成不可达」（page-life-list.js 的
  * select_yes_no 先例）：改为按钮后白名单就是显示出来的编号，越界输入由
- * 引擎当场拒收（弹「输入不合法」）——那些缺省处理支因此结构性不可达，
- * 保留结构不补用例（page-ability-up.js 文件头同款登记）。**例外一处**：初吻
+ * 引擎当场拒收（弹「输入不合法」）——那些缺省处理支没有受理面，已随 #953
+ * 删除，问卷只剩「还是改一下吧」（`xp_loop`）一个回头点。**例外一处**：初吻
  * 部位一问的四个编号显示是有条件的、受理是无条件的，属「允许输入未显示编号」
  * 的既有行为，按 #572 的要求保住路径——按钮集写不全，改用 `rule` 把
  * `KISS_POSITIONS` 整集写进正则，越界值由引擎当场拒收。免费文本支
@@ -786,12 +784,7 @@ async function chara_first_xp(cid, rand = default_rand) {
       era.printButton('阴茎', 2);
       era.printButton('嘴', 3);
       const position = await era.input();
-      if (groupmatch(position, DOG_POSITIONS)) {
-        kiss += position; // LOCAL += RESULT
-      } else {
-        era.print('输入错误，请重新开始。');
-        continue xp_loop;
-      }
+      kiss += position; // LOCAL += RESULT（按钮集就是 DOG_POSITIONS）
     } else if (kiss === 996) {
       kiss = -1; // 随机
     } else if (kiss === 997) {
@@ -820,13 +813,9 @@ async function chara_first_xp(cid, rand = default_rand) {
           era.printButton('私处', 301);
           era.printButton('肛门', 401);
           const position = await era.input();
-          if (groupmatch(position, KISS_POSITIONS)) {
-            kiss_name = chara_callname(0);
-            kiss = position;
-          } else {
-            era.print('输入错误，请重新开始。');
-            continue kiss_input; // GOTO LOOP3
-          }
+          // 按钮集就是 KISS_POSITIONS 四项，故不再有越界重问
+          kiss_name = chara_callname(0);
+          kiss = position;
         }
         break;
       }
@@ -840,9 +829,6 @@ async function chara_first_xp(cid, rand = default_rand) {
       // 触手
     } else if (kiss === 998) {
       kiss = -2; // 无
-    } else {
-      era.print('输入错误，请重新开始。');
-      continue xp_loop;
     }
 
     // 初体验对象：只对非処女问
@@ -895,10 +881,9 @@ async function chara_first_xp(cid, rand = default_rand) {
         // 怪物
       } else if (sex === 105) {
         // 狂王
-      } else {
-        era.print('输入错误，请重新开始。');
-        continue xp_loop; // GOTO LOOP2
       }
+      // 本屏九枚按钮各有一支，没有落空的值可接——「输入错误」的缺省支
+      // 已删除（#953：编号只由本屏打印产生）
     }
 
     // A = ARG；非后代补 CM_NS_EXP 的经验初始化
@@ -1151,28 +1136,21 @@ async function char_custom(cid, mode, rand = default_rand) {
         return;
       }
 
-      // 分发：素质页走 char_custom_talent_deal + 重算价格，外观页走 char_custom_look_deal
-      let dealt;
+      // 分发：素质页走 char_custom_talent_deal + 重算价格，外观页走 char_custom_look_deal。
+      // 本页印出的每一个编号都在两边的登记范围里（素质页 0-489 ⊂ deal 的
+      // 0-500；外观页的组号 1/2/11-15/21-26/31-33/41/42 在 look_deal 里各有
+      // 一支），所以「未登记的编码 → 清行改写成无效值再重问」那一支没有
+      // 受理面，已随 #953 删除
       if (page >= 0 && page <= TALENT_PAGE_LAST) {
-        dealt = char_custom_talent_deal(result, cid, rand);
+        char_custom_talent_deal(result, cid, rand);
         price = chara_cost(cid); // 每次素质变更检查价格
       } else {
-        dealt = char_custom_look_deal(result, cid);
+        char_custom_look_deal(result, cid);
         if (talent(cid, T_体型) <= 100) {
           set_talent(cid, 115, 0); // 纤细体型不肥胖
         }
       }
-
-      if (dealt === 0) {
-        continue draw; // GOTO DRAW_PAGE
-      }
-      // 未登记的编码：清一行、把上一行改写成「无效值」再重问。
-      // **EraElectron 的输入集 = 本页已打印按钮的快捷键集**（夹具 era.input
-      // 的按钮白名单校验），而本页所有按钮都是已登记的素质/外观编码——
-      // 这一支因此不可达，按 page-ability-up.js:250-257 的先例留档。
-      await era.clear(1); // CLEARLINE 1
-      era.replaceText('无效值'); // REUSELASTLINE 无效值
-      continue; // GOTO INPUT_LOOP
+      continue draw; // GOTO DRAW_PAGE
     }
   }
 }

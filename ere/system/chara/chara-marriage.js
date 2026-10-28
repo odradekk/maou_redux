@@ -33,11 +33,10 @@
  *   - **`chara_id_output` 用 #332 的真身**
  *     （ere/system/chara/chara-stats.js）。
  *
- *   - **「无效输入重问」的几支在 ere 侧结构性不可达**：引擎
- *     `input()` 只回传本轮已打印按钮的快捷键（`useRule` 默认开，#130 镜像
- *     进夹具），未持有怪物的编号、越界编号、`[666]` 这些值都进不了游戏
- *     逻辑。这几支保留为防御性 `continue`，不构造只有夹具能触发
- *     的用例。
+ *   - **「无效输入重问」的几支已删除**（#953）：引擎 `input()` 只回传本轮
+ *     已打印按钮的快捷键（`useRule` 默认开，#130 镜像进夹具），未持有怪物
+ *     的编号、越界编号、`[666]`（`disabled`，不进白名单）这些值都送不到游戏
+ *     逻辑，原先的防御性 `continue` 没有受理面。
  *
  *   - **`NO:ARG + 1` 按 ID 世界写作 `arg + 1`**：#21 起角色 ID
  *     即角色编号（chara-ex.js 头注同款换算），初吻对象的「编号＋1」编码
@@ -1142,13 +1141,6 @@ async function marriage(arg, rand = default_rand) {
       // 離婚
       divorce(arg);
       return 0;
-    } else if (!(era.get(`item:${result}`) || 0) && result !== SPOUSE_DOG) {
-      continue; // いない怪物を指定（ere 侧结构性不可达）
-    } else if (result === SPOUSE_DOG && (era.get('item:22') || 0) <= 0) {
-      continue; // いない野狗を指定（同上）
-    } else if (result <= 99) {
-      era.print('恋物癖，请自重。'); // （同上）
-      continue;
     } else if (result === (era.get(`cflag:${arg}:601`) || 0)) {
       era.print('对象已婚了。');
       return 0;
@@ -1156,6 +1148,10 @@ async function marriage(arg, rand = default_rand) {
       era.print(`${name_of(arg)}已婚了。`);
       return 0;
     }
+    // 其余可送达的值只有怪物编号（100-199）：菜单用 monsterplay_list 画，它
+    // 只列「持有且已声明」的怪物，野狗 [900] 也只在 item:22 ≥ 1 时才画。
+    // 原先「不持有的怪物」「没养狗却选野狗」「恋物癖（<= 99）」三支因此没有
+    // 受理面，已随 #953 删除
 
     settle_previous_marriage(arg);
 
