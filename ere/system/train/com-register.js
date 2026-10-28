@@ -222,13 +222,11 @@ async function comseq_register() {
       break; // 填满（> 9）即 GOTO COMPLETE
     }
 
-    // 登记检查（TFLAG:204 暂存选中号；multi_comable 拒 → REUSELASTLINE
-    // 「无效指令」行内重试，ere 侧引擎白名单已在输入层拦下——
-    // 不可执行指令没有按钮，到不了这里；防御性 continue 对齐 GOTO）
+    // 登记（TFLAG:204 暂存选中号）。原先「multi_comable 拒 → REUSELASTLINE
+    // 重试」的 `continue` 已删除（#953）：本屏的指令按钮由 print_comlist
+    // 打印，它只打印 `multi_comable(id) === 1` 的编号，拒收的指令没有按钮，
+    // 白名单下到不了这里
     game_train.当前选择的调教指令编号 = result;
-    if ((await multi_comable(result)) === 0) {
-      continue; // GOTO INPUT_LOOP（ere 侧不可达路径，防御性保留）
-    }
 
     // 登记：写入槽位；首条覆盖旧菜单（SIF LOCAL:0 == 0 → 550 = 0）
     era.set(`flag:${SLOT_BASE + local0}`, game_train.当前选择的调教指令编号);

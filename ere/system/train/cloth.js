@@ -227,45 +227,39 @@ async function aftertrain_cloth(cid, soiled_mask = undefined) {
     era_flag.money >= 50
   ) {
     // オムツの場合の特殊処理（换新 / 洗涤的选择）
-    for (;;) {
-      era.print(`花费50p为${name}换尿布吗？`);
-      // #710：两枚确认键改成按钮；正文的 `- ` 是既有文案（编号后第一格是
-      // 分隔符，全项目 `[n] - …` 一族同款），编号由引擎按 showAcc 拼。
-      // 此处紧接 input，中间没有等键，按钮点得动；越界输入由引擎当场拒收，
-      // 下面的重问分支因此结构性不可达（结构保留）。
-      era.printButton('- 好的', 0);
-      era.printButton('- 不要', 1);
-      const result = await era.input();
-      if (result === 0) {
-        // 换上新的尿布（下一条耻情加成紧随其后，同段输出）
-        era.print(`（为${name}换上了新的尿布）`);
-        era_flag.money -= 50;
-        era_exflag.legit_money -= 50;
-        era.set(`cflag:${cid}:47`, 0);
-        set_mask(mask() - 16);
-        if (talent(cid, 135) === 0) {
-          // 未熟以外：耻情点数＋500（PALAMNAME:8 = 耻情）；
-          // 本句与上句连续输出、各占一行，之间不是空行——
-          // 不补 println（#595）
-          era.print(`${era.get('palamname:8') ?? ''}点数＋500`);
-          const juel8 = era.get(`juel:${cid}:8`) || 0; // JUEL:8
-          era.set(`juel:${cid}:8`, juel8 + 500);
-        }
-        await era.waitAnyKey();
-        break;
+    era.print(`花费50p为${name}换尿布吗？`);
+    // #710：两枚确认键改成按钮；正文的 `- ` 是既有文案（编号后第一格是
+    // 分隔符，全项目 `[n] - …` 一族同款），编号由引擎按 showAcc 拼。
+    // 此处紧接 input，中间没有等键，按钮点得动；本屏的键只有 0/1 且两支
+    // 各有出口，原先「其余输入 → 重问」的回边没有受理面（#953）。
+    era.printButton('- 好的', 0);
+    era.printButton('- 不要', 1);
+    const result = await era.input();
+    if (result === 0) {
+      // 换上新的尿布（下一条耻情加成紧随其后，同段输出）
+      era.print(`（为${name}换上了新的尿布）`);
+      era_flag.money -= 50;
+      era_exflag.legit_money -= 50;
+      era.set(`cflag:${cid}:47`, 0);
+      set_mask(mask() - 16);
+      if (talent(cid, 135) === 0) {
+        // 未熟以外：耻情点数＋500（PALAMNAME:8 = 耻情）；
+        // 本句与上句连续输出、各占一行，之间不是空行——
+        // 不补 println（#595）
+        era.print(`${era.get('palamname:8') ?? ''}点数＋500`);
+        const juel8 = era.get(`juel:${cid}:8`) || 0; // JUEL:8
+        era.set(`juel:${cid}:8`, juel8 + 500);
       }
-      if (result === 1) {
-        // 把尿布拿去洗了
-        era.print(`（把${name}的尿布拿去洗了）`);
-        await era.waitAnyKey();
-        // 洗衣状态不再设置：洗涤即时完成，尿布下次着衣即可穿回
-        set_mask(mask() - 16);
-        if (worn(cid) & 64) {
-          set_worn(cid, worn(cid) - 64);
-        }
-        break;
+      await era.waitAnyKey();
+    } else {
+      // [1] 把尿布拿去洗了
+      era.print(`（把${name}的尿布拿去洗了）`);
+      await era.waitAnyKey();
+      // 洗衣状态不再设置：洗涤即时完成，尿布下次着衣即可穿回
+      set_mask(mask() - 16);
+      if (worn(cid) & 64) {
+        set_worn(cid, worn(cid) - 64);
       }
-      // 其余输入 → 重问
     }
   } else if (
     special_type(cid) !== 0 &&
