@@ -266,16 +266,21 @@ test('#612 换装铺：数据表驱动的菜单与两个持有列表也带「- �
   });
   await run_core(ring_low, [7, 1, 999, 999, 999, 999]);
   // 灰字行画在选件屏上，被后续换屏清掉——取证走行史（ADR-0009）；
-  // 997 的否定同样在行史上（全程没画过强化键，与换屏前的全屏取证等价）
+  // 等级不够时那一枚是 disabled 按钮（#873：编号仍是 997，引擎不送达）
+  const low_enhance = ring_low.lines_history.find(
+    (l) => l.type === 'button' && l.accelerator === 997,
+  );
+  assert.ok(low_enhance, '等级不够时仍画出强化键（占位可见）');
+  assert.equal(low_enhance.disabled, true, '等级不够时强化键 disabled');
   assert.ok(
-    texts(ring_low.lines_history).includes(
-      '[---] - 未开放（30级后才能装备强化）',
-    ),
-    '灰字行整行保留',
+    low_enhance.text.includes('装备强化（30级后才能装备强化）'),
+    '正文带等级原因',
   );
   assert.ok(
-    !accs(ring_low.lines_history).includes(997),
-    '等级不够时没有强化键',
+    !texts(ring_low.lines_history).includes(
+      '[---] - 未开放（30级后才能装备强化）',
+    ),
+    '不再有假编号的纯文本行',
   );
 });
 
@@ -961,12 +966,12 @@ test('equip_magic_weapon：等级不足的灰显与「取下」', async () => {
   const low = tailor_fixture({ 'cflag:1:550': 40, 'cflag:0:9': 29 });
   {
     const added = await run_core(low, [8, 999, 999]);
-    // #612：灰字行保留假编号与前缀的写法
-    assert.ok(
-      texts(added).includes('[---] - 未开放（30级后才能装备强化）'),
-      '灰显行整行保留为 `[---] - 未开放（30级后才能装备强化）`',
+    // #873：等级不足的强化键画成 disabled（编号仍是 997，引擎不送达）
+    const low_enhance = added.find(
+      (l) => l.type === 'button' && l.accelerator === 997,
     );
-    assert.ok(!accs(added).includes(997), '没有强化键');
+    assert.ok(low_enhance, '强化键仍画出（占位可见）');
+    assert.equal(low_enhance.disabled, true, '等级不足时 disabled');
     assert.ok(accs(added).includes(998), '有取下键');
   }
   // 取下：装备回包（item 340 +1）、槽置 -1

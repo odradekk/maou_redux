@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 607; // #873 +2（M17900/M17901：按钮编号常量的值域守卫） // #867 净 +9（-8：BOUGHT 切屏作废的 M7891/M7892/M8113/M8114/M8115/M11971/M11972/M11973；+17：M17600–M17616 商店循环与确认后付款） // #852 +1（M17330：[109] 出兵路径里的 ENDING_1 回标题转场经菜单项上抛）；#866 +6（M17250–M17255：菜单项表的可用性条件被删、入口串到邻项的处理函数、绘制不再读表的可用性、动态正文不解析、多一处存档写点）；被 #866 搬到 page-main-menu.js 的 24 条改挂新写法，条数不变 // #868 +17（M16700–M16715：存读档列表的网格行、空槽 disabled 的两侧、行内删除与快捷键区间、备注不再补位/不再改游戏状态） // #870 +8（M16450-M16457：横幅/页脚/设置页与侵略页顶栏改用引擎排版）；#848 +1（M16250：标题页手工 addCharacter(0) 回潮）；界面流程缺陷 +5（M15300–M15304：奸商代理投放前的检查与犒赏播报的等键）；#789 +4（M13701/M13702/M13704/M13705：两版出口同源与各自的未知编号缺省）；#739 +2（M14557/M14558：p_c 的表内编号判断——删除/取反），M705 改挂新写法；#836 -2（删 M14557/M14558：指令名改由常量提供，p_c 不再读名字表，表内判断不存在）；M56/M705/M14335 改挂常量写法；#724 返工收口：+M14514/M14515/M14517/M14518/M14520/M14522（换屏前等键），恢复 M10749/M10750，删 M14455（与 M143 重复）；此前 +36（M14450–M14485，#724 子页面换屏）净 -2（删 M10749/M10750 有误后复原）（删 M10749/M10750：sengen_video 投放支的分支内等键，随回菜单换屏确认等键收口而不可观察）；#724 删 5（M137–M140、M152——screen-block.js 随画面组件删除；M141/M142 的 tests 改指 menu-button，M143 随 show_shop 直调 draw_main_menu 改写）；#723 改写 M143（主菜单换屏调用删除——tests 与 must_mention 随新行为）、删 M144（基准点不再被读，单例变异守不到行为）；#722 净 -3 +1（+M14370：调教每轮换屏调用；删 M150/M151/M154——重绘分支、EVENTTRAIN 重建与 EVENTCOM 探针随换屏方案消失）； // #721 +3（M14352-M14354：换屏入口——不清屏、只清一行、补等键）； // #717 +11（M14330-M14339/M14344：主菜单指令面板与入口行、调教方格与子菜单、能力值提升、道具商店的多列排版）； // #710 净 0（+1 M14241：page-shop-labo 的「不生成」退回纯文本；-1 M8401：SELECT_YES_NO 放行多一个输入随按钮化不可观察）；#702 起 +2（M14153/M14154：装备品页码不补位写法的回归检查，含旧单补位与双补位两种偏法）；#685 -5（M565/M566/M570/M12297/M13209 随 page-dungeon-setup.js 删除）；#652 净 +4（-14 删反向/失效：M232、M564、M8737（chara-info-show）、M8719（chara-info-show）、M10853/10854/10855（use_exflag 分派删除）、M10856、M10861（kyoten 分支空转后实参表不可观测）、M10864/10865/10866、M11490、M12200、M12202、M12203（两条分发同源后不可观测）；M12201 改挂新代码写法；+18 新回归检查 M13200-M13217）
+export const COUNT = 610; // #873 +5（M17902–M17906：不可选项的 disabled 化；-2：M12316/M12317 的灰字行随 disabled 化消失）  // #873 +2（M17900/M17901：按钮编号常量的值域守卫） // #867 净 +9（-8：BOUGHT 切屏作废的 M7891/M7892/M8113/M8114/M8115/M11971/M11972/M11973；+17：M17600–M17616 商店循环与确认后付款） // #852 +1（M17330：[109] 出兵路径里的 ENDING_1 回标题转场经菜单项上抛）；#866 +6（M17250–M17255：菜单项表的可用性条件被删、入口串到邻项的处理函数、绘制不再读表的可用性、动态正文不解析、多一处存档写点）；被 #866 搬到 page-main-menu.js 的 24 条改挂新写法，条数不变 // #868 +17（M16700–M16715：存读档列表的网格行、空槽 disabled 的两侧、行内删除与快捷键区间、备注不再补位/不再改游戏状态） // #870 +8（M16450-M16457：横幅/页脚/设置页与侵略页顶栏改用引擎排版）；#848 +1（M16250：标题页手工 addCharacter(0) 回潮）；界面流程缺陷 +5（M15300–M15304：奸商代理投放前的检查与犒赏播报的等键）；#789 +4（M13701/M13702/M13704/M13705：两版出口同源与各自的未知编号缺省）；#739 +2（M14557/M14558：p_c 的表内编号判断——删除/取反），M705 改挂新写法；#836 -2（删 M14557/M14558：指令名改由常量提供，p_c 不再读名字表，表内判断不存在）；M56/M705/M14335 改挂常量写法；#724 返工收口：+M14514/M14515/M14517/M14518/M14520/M14522（换屏前等键），恢复 M10749/M10750，删 M14455（与 M143 重复）；此前 +36（M14450–M14485，#724 子页面换屏）净 -2（删 M10749/M10750 有误后复原）（删 M10749/M10750：sengen_video 投放支的分支内等键，随回菜单换屏确认等键收口而不可观察）；#724 删 5（M137–M140、M152——screen-block.js 随画面组件删除；M141/M142 的 tests 改指 menu-button，M143 随 show_shop 直调 draw_main_menu 改写）；#723 改写 M143（主菜单换屏调用删除——tests 与 must_mention 随新行为）、删 M144（基准点不再被读，单例变异守不到行为）；#722 净 -3 +1（+M14370：调教每轮换屏调用；删 M150/M151/M154——重绘分支、EVENTTRAIN 重建与 EVENTCOM 探针随换屏方案消失）； // #721 +3（M14352-M14354：换屏入口——不清屏、只清一行、补等键）； // #717 +11（M14330-M14339/M14344：主菜单指令面板与入口行、调教方格与子菜单、能力值提升、道具商店的多列排版）； // #710 净 0（+1 M14241：page-shop-labo 的「不生成」退回纯文本；-1 M8401：SELECT_YES_NO 放行多一个输入随按钮化不可观察）；#702 起 +2（M14153/M14154：装备品页码不补位写法的回归检查，含旧单补位与双补位两种偏法）；#685 -5（M565/M566/M570/M12297/M13209 随 page-dungeon-setup.js 删除）；#652 净 +4（-14 删反向/失效：M232、M564、M8737（chara-info-show）、M8719（chara-info-show）、M10853/10854/10855（use_exflag 分派删除）、M10856、M10861（kyoten 分支空转后实参表不可观测）、M10864/10865/10866、M11490、M12200、M12202、M12203（两条分发同源后不可观测）；M12201 改挂新代码写法；+18 新回归检查 M13200-M13217）
 // 跳过、设施名表、近卫护卫条件、怪物行对齐）+4（返工轮 M11490-M11493：护卫名单的 X == 10 条件、
 // 编号宽度、ENEMY_EXIST2 首行空行、末尾无参 PRINTW 的空行）；#542 起 +6（M11313/M11314 page-config 的 [26]/[28] 提示、
 // M11320/M11321 page-shop 的 999 提示与存根名单、M11328 page-chara-info 的 [20]
@@ -210,8 +210,8 @@ export default [
   {
     desc: 'M141 menu_button 删调暗色（未选中态与选中态同色）',
     file: 'ere/page/components/menu-button.js',
-    find: '    dim ? { color: MENU_BUTTON_DIM_COLOR } : undefined,',
-    replace: '    undefined,',
+    find: '    ...(dim ? { color: MENU_BUTTON_DIM_COLOR } : {}),',
+    replace: '    ...{},',
     tests: ['menu-button', 'page-main-menu'],
     must_mention: '调暗',
   },
@@ -353,9 +353,9 @@ export default [
   {
     desc: 'M2110 [999] 取消误报成功（返回 1 消耗回合）',
     file: 'ere/system/invasion/invasion-campaign.js',
-    find: '      if (result === 999) {\n        return 0;\n      }',
+    find: '      if (result === DISPATCH_BACK_KEY) {\n        return 0;\n      }',
     replace:
-      '      if (result === 999) {\n        return 1; // 变异：取消误报成功\n      }',
+      '      if (result === DISPATCH_BACK_KEY) {\n        return 1; // 变异：取消误报成功\n      }',
     tests: ['page-invasion'],
     must_mention: '零副作用',
   },
@@ -1856,9 +1856,9 @@ export default [
   {
     desc: 'M9715 [999] 取消误报成功（征服后菜单）',
     file: 'ere/page/page-invasion.js',
-    find: '    if (result === 999) {\n      return 0;\n    }',
+    find: '    if (result === POST_CONQUEST_BACK_KEY) {\n      return 0;\n    }',
     replace:
-      '    if (result === 999) {\n      return 1; // 变异：取消误报成功\n    }',
+      '    if (result === POST_CONQUEST_BACK_KEY) {\n      return 1; // 变异：取消误报成功\n    }',
     tests: ['page-invasion'],
     must_mention: '[999] 返回 0',
   },
@@ -1874,9 +1874,9 @@ export default [
   {
     desc: 'M9717 [9] campaign_menu 调用丢失',
     file: 'ere/page/page-invasion.js',
-    find: '    if (result === 9) {\n      await campaign_menu();\n      return 0;\n    }',
+    find: '    if (result === POST_CONQUEST_CAMPAIGN_KEY) {\n      await campaign_menu();\n      return 0;\n    }',
     replace:
-      '    if (result === 9) {\n      return 0; // 变异：CAMPAIGN_MENU 调用丢失\n    }',
+      '    if (result === POST_CONQUEST_CAMPAIGN_KEY) {\n      return 0; // 变异：CAMPAIGN_MENU 调用丢失\n    }',
     tests: ['page-invasion'],
     must_mention: '[9] 调用 campaign_menu()',
   },
@@ -3141,8 +3141,9 @@ export default [
   {
     desc: 'M10834 FORT 掠夺选项号偏移丢掉（L_CHOICE = RESULT + 1 改 RESULT）',
     file: 'ere/system/invasion/invasion-event.js',
-    find: '    choice = (await fort_choice([1, 2])) + 1; // $INPUT_LOOP2',
-    replace: '    choice = await fort_choice([1, 2]); // 变异：偏移丢掉',
+    find: '    choice = (await fort_choice([FORT_STEALTH_KEY, FORT_ROUNDABOUT_KEY])) + 1; // $INPUT_LOOP2',
+    replace:
+      '    choice = await fort_choice([FORT_STEALTH_KEY, FORT_ROUNDABOUT_KEY]); // 变异：偏移丢掉',
     tests: ['page-invasion'],
     must_mention: '选项渲染',
   },
@@ -3158,8 +3159,8 @@ export default [
   {
     desc: 'M10836 invasion_event_challenge 开挂取胜档的条件改坏（LOCAL >= 2 改 >= 3）',
     file: 'ere/system/invasion/invasion-event.js',
-    find: '    if (choice === 1 && local >= 2) {',
-    replace: '    if (choice === 1 && local >= 3) {',
+    find: '    if (choice === DUEL_ITEM_KEY && local >= 2) {',
+    replace: '    if (choice === DUEL_ITEM_KEY && local >= 3) {',
     tests: ['page-invasion'],
     must_mention: '开挂取胜',
   },
@@ -4057,9 +4058,9 @@ export default [
   {
     desc: 'M11873 能力值提升表头补回空行（空内容输出只收尾那两个按钮，按钮行与分割线相邻）',
     file: 'ere/page/page-ability-up.js',
-    find: "  menu_button('勇者一览', MENU_ENEMY, dim);",
+    find: "  menu_button('勇者一览', MENU_ENEMY, dim, dim);",
     replace:
-      "  menu_button('勇者一览', MENU_ENEMY, dim);\n  era.print(''); // 变异：表头之后多补空行",
+      "  menu_button('勇者一览', MENU_ENEMY, dim, dim);\n  era.print(''); // 变异：表头之后多补空行",
     tests: ['page-ability-up'],
     must_mention: '表头按钮之后紧接分割线，不夹空行',
   },
@@ -4286,8 +4287,9 @@ export default [
   {
     desc: 'M12299 征服后菜单的 [999] 退出丢掉「- 」',
     file: 'ere/page/page-invasion.js',
-    find: "era.printButton('- 退出', 999);",
-    replace: "era.printButton('退出', 999); // 变异：丢掉「- 」",
+    find: "era.printButton('- 退出', POST_CONQUEST_BACK_KEY);",
+    replace:
+      "era.printButton('退出', POST_CONQUEST_BACK_KEY); // 变异：丢掉「- 」",
     tests: ['page-invasion'],
     must_mention: '七个按钮的正文照写「- 」',
   },
@@ -4412,26 +4414,6 @@ export default [
       'era.printButton(`- ${part.label}`, part.pid); // 变异：误加「- 」',
     tests: ['page-shop-labo'],
     must_mention: '未封锁部位',
-  },
-  {
-    // 灰字行的假编号前缀与其余两处逐字相同（靠行尾注释区分）；
-    // 两处都是文本行，去掉 `[---] - ` 时对应断言必须红
-    desc: 'M12316 戒指页的灰字行丢掉「[---] - 」',
-    file: 'ere/page/page-tailor.js',
-    find: "        { content: '[---] - 未开放（30级后才能装备强化）', color: GRAY },\n      ]);\n    } else if (cflag(cid, slot) >= 0) {",
-    replace:
-      "        { content: '未开放（30级后才能装备强化）', color: GRAY },\n      ]);\n    } else if (cflag(cid, slot) >= 0) {",
-    tests: ['page-tailor'],
-    must_mention: 'equip_magic_item',
-  },
-  {
-    desc: 'M12317 武器页的灰字行丢掉「[---] - 」',
-    file: 'ere/page/page-tailor.js',
-    find: "        { content: '[---] - 未开放（30级后才能装备强化）', color: GRAY },\n      ]);\n    } else if (current.存储编号 >= 0) {",
-    replace:
-      "        { content: '未开放（30级后才能装备强化）', color: GRAY },\n      ]);\n    } else if (current.存储编号 >= 0) {",
-    tests: ['page-tailor'],
-    must_mention: 'equip_magic_weapon',
   },
 
   // —— #615：print 正文的尾换行（page-config-age.js 的 7 处） ——
@@ -4750,9 +4732,9 @@ export default [
   {
     desc: 'M13205 FORT 绕路（INV_TYPE == 3）的平安支删除、恒埋伏（#652 补的 RAND:10 被删）',
     file: 'ere/system/invasion/invasion-event.js',
-    find: '  if (choice === 3 && inv_type === 3) {\n    if (rand(10) > 0) {',
+    find: '  if (choice === FORT_DETOUR_KEY && inv_type === 3) {\n    if (rand(10) > 0) {',
     replace:
-      '  if (choice === 3 && inv_type === 3) {\n    if (false) { // 变异：平安支删除、恒埋伏',
+      '  if (choice === FORT_DETOUR_KEY && inv_type === 3) {\n    if (false) { // 变异：平安支删除、恒埋伏',
     tests: ['page-invasion'],
     must_mention: '平安支 RETURN 0',
   },
@@ -5910,5 +5892,65 @@ export default [
     replace: 'const ABLUP_STOP_KEY = 100000; // 变异：编号落进后代 ID 段',
     tests: ['button-key-constants'],
     must_mention: '按钮编号常量必须是非负整数且小于 FIRST_CHILD_ID',
+  },
+
+  {
+    desc: 'M17902 迷宫情报的库存项不再是 disabled（未选对象时又能点，点了只出提示）',
+    file: 'ere/page/page-dungeon-info2.js',
+    find: `          '解除陷阱',
+          0,
+          none_selected ? { color: COLOR_DIM, disabled: true } : undefined,`,
+    replace: `          '解除陷阱',
+          0,
+          none_selected ? { color: COLOR_DIM } : undefined, // 变异：去掉 disabled`,
+    tests: ['page-dungeon-info'],
+    must_mention: '解除陷阱 0 是 disabled 按钮',
+  },
+  {
+    desc: 'M17903 能力值提升表头在等级不足时不再 disabled（编号重新可送达）',
+    file: 'ere/page/page-ability-up.js',
+    find: "  menu_button('奴隶一览', MENU_SLAVE, dim, dim); // （▌ 前缀由 menu_button 拼接）",
+    replace:
+      "  menu_button('奴隶一览', MENU_SLAVE, dim); // 变异：少传 disabled",
+    tests: ['page-ability-up'],
+    must_mention: '19 级的禁用',
+  },
+  {
+    desc: 'M17904 迎击行动的等级门退回纯文本（不可点但也不置灰）',
+    file: 'ere/page/page-intercept.js',
+    find: `        era.printButton(\`\${gate.label}（魔王等级不足）\`, gate.work, {
+          disabled: true,
+        });`,
+    replace: `        era.print([
+          { content: \`\${gate.label}（魔王等级不足）\`, color: '#505050' },
+        ]); // 变异：退回纯文本`,
+    tests: ['page-intercept'],
+    must_mention: '其余四档是 disabled 按钮',
+  },
+  {
+    desc: 'M17905 裁缝戒指页的强化键在等级不足时不再 disabled',
+    file: 'ere/page/page-tailor.js',
+    find: `      era.printButton(
+        \`- 装备强化（\${ENHANCE_LEVEL}级后才能装备强化）\`,
+        EQUIP_ENHANCE_KEY,
+        { disabled: true, color: GRAY },
+      );
+    } else if (cflag(cid, slot) >= 0) {`,
+    replace: `      era.printButton(
+        \`- 装备强化（\${ENHANCE_LEVEL}级后才能装备强化）\`,
+        EQUIP_ENHANCE_KEY,
+        { color: GRAY }, // 变异：去掉 disabled
+      );
+    } else if (cflag(cid, slot) >= 0) {`,
+    tests: ['page-tailor'],
+    must_mention: '等级不够时强化键 disabled',
+  },
+  {
+    desc: 'M17906 menu_cell 丢掉 disabled（调暗仍在，但引擎会送出编号）',
+    file: 'ere/page/components/menu-button.js',
+    find: '    ...(disabled ? { disabled: true } : {}),',
+    replace: '    ...{}, // 变异：丢掉 disabled',
+    tests: ['page-ability-up'],
+    must_mention: '19 级的禁用',
   },
 ];

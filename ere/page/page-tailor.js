@@ -950,11 +950,13 @@ async function pick_ring(cid, slot) {
     }
     // 强化 / 取下
     if (cflag(0, 9) < ENHANCE_LEVEL) {
-      // `[---] - 未开放（30级后才能装备强化）`：`---` 是灰字项的假编号，
-      // 整行保留（同款先例：page-intercept.js 的 `[---] （魔王等级不足）`）
-      era.print([
-        { content: '[---] - 未开放（30级后才能装备强化）', color: GRAY },
-      ]);
+      // 等级不足：强化键画成 disabled（正文带原因）。引擎只把 !disabled 的
+      // 加速键推进 inputParam.rule，按不动由引擎保证；解锁后同一编号才可达。
+      era.printButton(
+        `- 装备强化（${ENHANCE_LEVEL}级后才能装备强化）`,
+        EQUIP_ENHANCE_KEY,
+        { disabled: true, color: GRAY },
+      );
     } else if (cflag(cid, slot) >= 0) {
       era.printButton('- 装备强化', EQUIP_ENHANCE_KEY);
     }
@@ -1047,10 +1049,12 @@ async function equip_magic_weapon(cid) {
       era.printButton('- 武器化触手', WEAPON_TENTACLE_RESULT); // （[990]）
     }
     if (cflag(0, 9) < ENHANCE_LEVEL) {
-      // 灰字行与戒指页逐字相同（含 `[---] - ` 假编号前缀）
-      era.print([
-        { content: '[---] - 未开放（30级后才能装备强化）', color: GRAY },
-      ]);
+      // 武器页同款：等级不足画 disabled 的强化键（正文带原因）
+      era.printButton(
+        `- 装备强化（${ENHANCE_LEVEL}级后才能装备强化）`,
+        EQUIP_ENHANCE_KEY,
+        { disabled: true, color: GRAY },
+      );
     } else if (current.存储编号 >= 0) {
       era.printButton('- 装备强化', EQUIP_ENHANCE_KEY);
     }

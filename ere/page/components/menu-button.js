@@ -27,12 +27,14 @@ const MENU_BUTTON_DIM_COLOR = '#bbbbbb';
  * @param {string} label 按钮正文（不含 ▌，本函数统一加）
  * @param {number} accelerator 按钮编号（输入分发用）
  * @param {boolean} dim 未选中标志（真 = 调暗）
+ * @param {boolean} [disabled] 不可选标志（真 = 引擎不送达编号，见 menu_cell）
  */
-function menu_button(label, accelerator, dim) {
+function menu_button(label, accelerator, dim, disabled = false) {
   const [cell_accelerator, content, config] = menu_cell(
     label,
     accelerator,
     dim,
+    disabled,
   );
   era.printButton(content, cell_accelerator, config);
 }
@@ -43,13 +45,20 @@ function menu_button(label, accelerator, dim) {
  * @param {string} label 按钮正文（不含 ▌）
  * @param {number} accelerator 按钮编号
  * @param {boolean} dim 未选中标志（真 = 调暗）
+ * @param {boolean} [disabled] 不可选标志：config 里置 disabled，引擎的
+ *   getButtonObject 只把 `!disabled` 的加速键推进 inputParam.rule——「按不动」
+ *   由引擎保证，调用方不必再判一次。调暗与禁用可同时给。
  * @returns {[number, string, object|undefined]}
  */
-function menu_cell(label, accelerator, dim) {
+function menu_cell(label, accelerator, dim, disabled = false) {
+  const config = {
+    ...(dim ? { color: MENU_BUTTON_DIM_COLOR } : {}),
+    ...(disabled ? { disabled: true } : {}),
+  };
   return [
     accelerator,
     `▌${label}`,
-    dim ? { color: MENU_BUTTON_DIM_COLOR } : undefined,
+    Object.keys(config).length > 0 ? config : undefined,
   ];
 }
 

@@ -70,6 +70,11 @@ const COLOR_INVASION = 'rgb(255, 100, 100)';
 const COLOR_SUBORDINATE = 'rgb(255, 255, 0)';
 
 /**
+ * 未选楼层/单元时的库存项与「解除陷阱」「取下宝物」「通路」：画成
+ * `disabled`（保留灰色）。引擎的 getButtonObject 只把 `!disabled` 的加速键
+ * 推进 inputParam.rule，所以「按不动」是引擎保证的——此前这些按钮可点，
+ * 点中只会走 `dialogue[1] = -1` 打出「还没有选择对象」再重画，什么都没变。
+ *//**
  * 地下城情报主屏的固定键。三标签页 [900]-[902]、批量选择 [200]-[203]、
  * 尾部五枚 [10]-[14] 与怪物迎击开关 [100]、返回 [999]；110-190 的阶层/单元
  * 按钮与 500-507/60-88/300-320 的库存项是数据编号，由循环算出来。
@@ -517,7 +522,7 @@ async function dungeon_info2() {
         era.printButton(
           '解除陷阱',
           0,
-          none_selected ? { color: COLOR_DIM } : undefined,
+          none_selected ? { color: COLOR_DIM, disabled: true } : undefined,
         );
         for (let i = 60; i < 89; i += 1) {
           if (item_count(i) > 0) {
@@ -525,7 +530,7 @@ async function dungeon_info2() {
             era.printButton(
               `${item_name(i)}（${item_count(i)}）`,
               i,
-              none_selected ? { color: COLOR_DIM } : undefined,
+              none_selected ? { color: COLOR_DIM, disabled: true } : undefined,
             );
           }
         }
@@ -567,13 +572,13 @@ async function dungeon_info2() {
         era.printButton(
           '通路',
           0,
-          none_selected ? { color: COLOR_DIM } : undefined,
+          none_selected ? { color: COLOR_DIM, disabled: true } : undefined,
         );
         for (let i = 500; i < 508; i += 1) {
           era.printButton(
             item_name(i),
             i,
-            none_selected ? { color: COLOR_DIM } : undefined,
+            none_selected ? { color: COLOR_DIM, disabled: true } : undefined,
           );
         }
       }
@@ -583,14 +588,14 @@ async function dungeon_info2() {
         era.printButton(
           '取下宝物',
           0,
-          none_selected ? { color: COLOR_DIM } : undefined,
+          none_selected ? { color: COLOR_DIM, disabled: true } : undefined,
         );
         for (let i = 300; i < 321; i += 1) {
           if (item_count(i) > 0) {
             era.printButton(
               `${item_name(i)}（${item_count(i)}）`,
               i,
-              none_selected ? { color: COLOR_DIM } : undefined,
+              none_selected ? { color: COLOR_DIM, disabled: true } : undefined,
             );
           }
         }
