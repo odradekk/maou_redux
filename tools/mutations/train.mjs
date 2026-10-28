@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 1148; // #959 +2（M17956/M17957：相殺抽池的候选集、缺省随机源的折算基准） // #853 +3（M17810-M17812：直接调用的三个钩子调用点） // #875 净 +10：+11（M17550-M17560：结算交还引擎——当场写 base、损耗条读裸 base、AUTO 当场结算、当场加 juel、抵消写 juel、抵消行取错增量、窗口内外写错珠表、否定减半读裸 juel、结算表两处读裸 juel），-1（M24 删：结算尾部不再清零 gotjuel，双重结算由 M17553 守；M23 改指 GOTJUEL:3 死存储的写入守卫，M28/M29/M30 与 M9662/M9669/M13871/M9786 随代码改写重锚，条数不变）；#874 +6（M17400-M17403/M17405/M17407：结算交还引擎——当场写 palam、DOWN 折进 delta（完整版与静默版）、欲情快照、时常发情蓄积、参数状态短语）；#906 +2（M16200/M16204：调教结束前的欲情快照、快照名单按参与调教的角色）；#904 -1（M995 删：它守的是「CFLAG:44 经 stronghold 门面写」这条域检查要求，域检查已随 ADR-0010 删除，门面写与裸写落点相同，com-cloth 的落点断言两边都过）；#822 +4（M15706/M15707/M15710/M15711：指令名与能力名的显示文案、旧档别名迁移；M15705 随 #836 删——别名播种表改由指令常量派生，播种表不再另存一份名字）；#836：删 M15124（单一来源后跨表一致性不复存在）、增 7 条指令常量守护（M15650-M15656）、M703/M775 改挂常量写法；界面流程缺陷 +4（M15306–M15309：紧凑序号跳过调教画面子菜单号），M740/M741 改挂新写法，M1044 改由可用性表拦截；数据地址缺陷修复 +3（M15418-M15420：初体验对象改用角色 ID）；#792 净 -2（M1112/M1409 随 times 实现移到 ere/utils/numeric.js，改挂 numeric 分片）；#789 追补 +2（M13706/M13707：编号空间的守卫）；#789 +1（M13703：GET 版特别服装名的未知编号哨兵）；收尾生命周期收拢：新增 2 条登记冲账守护（M15100 重锚为 settle 形状、M15103；M15104 随入口清残留删除）；#782：新增 3 条调教死亡收尾守护（M15100-M15102）；#777：新增 12 条助手射精经验守护（M15047-M15058）；此前沿革见 git 历史。
+export const COUNT = 1152; // #876 净 +4：+6（M18102-M18107：自动调教复用手动调教——情爱漏加 B 档增量、取错列、取错表、AUTO_NUM_CHECK 不执行、自动路径退回手动全序、共用处理器默认开关），-2（M41/M42 改挂 ere/data/train-source-const.js，随表移入 data 分片）；#959 +2（M17956/M17957：相殺抽池的候选集、缺省随机源的折算基准） // #853 +3（M17810-M17812：直接调用的三个钩子调用点） // #875 净 +10：+11（M17550-M17560：结算交还引擎——当场写 base、损耗条读裸 base、AUTO 当场结算、当场加 juel、抵消写 juel、抵消行取错增量、窗口内外写错珠表、否定减半读裸 juel、结算表两处读裸 juel），-1（M24 删：结算尾部不再清零 gotjuel，双重结算由 M17553 守；M23 改指 GOTJUEL:3 死存储的写入守卫，M28/M29/M30 与 M9662/M9669/M13871/M9786 随代码改写重锚，条数不变）；#874 +6（M17400-M17403/M17405/M17407：结算交还引擎——当场写 palam、DOWN 折进 delta（完整版与静默版）、欲情快照、时常发情蓄积、参数状态短语）；#906 +2（M16200/M16204：调教结束前的欲情快照、快照名单按参与调教的角色）；#904 -1（M995 删：它守的是「CFLAG:44 经 stronghold 门面写」这条域检查要求，域检查已随 ADR-0010 删除，门面写与裸写落点相同，com-cloth 的落点断言两边都过）；#822 +4（M15706/M15707/M15710/M15711：指令名与能力名的显示文案、旧档别名迁移；M15705 随 #836 删——别名播种表改由指令常量派生，播种表不再另存一份名字）；#836：删 M15124（单一来源后跨表一致性不复存在）、增 7 条指令常量守护（M15650-M15656）、M703/M775 改挂常量写法；界面流程缺陷 +4（M15306–M15309：紧凑序号跳过调教画面子菜单号），M740/M741 改挂新写法，M1044 改由可用性表拦截；数据地址缺陷修复 +3（M15418-M15420：初体验对象改用角色 ID）；#792 净 -2（M1112/M1409 随 times 实现移到 ere/utils/numeric.js，改挂 numeric 分片）；#789 追补 +2（M13706/M13707：编号空间的守卫）；#789 +1（M13703：GET 版特别服装名的未知编号哨兵）；收尾生命周期收拢：新增 2 条登记冲账守护（M15100 重锚为 settle 形状、M15103；M15104 随入口清残留删除）；#782：新增 3 条调教死亡收尾守护（M15100-M15102）；#777：新增 12 条助手射精经验守护（M15047-M15058）；此前沿革见 git 历史。
 
 export default [
   {
@@ -347,22 +347,6 @@ export default [
 });`,
     tests: ['com-caress'],
     must_mention: '0 号可用性检查',
-  },
-  {
-    desc: 'M41 ABL:0 分档表错一格（1200 改 1201）',
-    file: 'ere/system/train/com-caress.js',
-    find: '  [1200, 100],',
-    replace: '  [1201, 100],',
-    tests: ['com-caress'],
-    must_mention: '= 3 档',
-  },
-  {
-    desc: 'M42 ABL:1 分档表错一格（300 改 301）',
-    file: 'ere/system/train/com-caress.js',
-    find: '  [300, 80],',
-    replace: '  [301, 80],',
-    tests: ['com-caress'],
-    must_mention: '= 2 档',
   },
   {
     desc: 'M43 初吻回避条件取反（CFLAG:16 === -1 改 !== -1）',
@@ -7393,9 +7377,9 @@ export default [
   {
     desc: 'M9769 AUTO ANTI/LIKE 门槛：source_check_up_anti() 调用删（专属门槛失去 ANTI 分支）',
     file: 'ere/system/train/source-check.js',
-    find: `    source_check_up_anti();
-    source_check_up_like();`,
-    replace: `    source_check_up_like();`,
+    find: `      source_check_up_anti();
+      source_check_up_like();`,
+    replace: `      source_check_up_like();`,
     tests: ['source-check'],
     must_mention: 'AUTO 专属门槛',
   },
@@ -7474,36 +7458,36 @@ export default [
   {
     desc: 'M9779 AUTO handler Block A：UP:0 减半行删（气力 0 时快乐不再减半）',
     file: 'ere/system/train/source-check.js',
-    find: '  // 气力０的快乐减半（与 manual 同款条件，含 TFLAG:201 豁免）\n  if ((era.get(`base:${cid}:1`) || 0) <= 0 && tflag(201) !== 1) {\n    set_up(0, idiv(up(0), 2));\n    set_up(1, idiv(up(1), 2));\n    set_up(2, idiv(up(2), 2));\n    set_up(14, idiv(up(14), 2));\n  }',
+    find: '  // 气力 0 的快乐减半（TFLAG:201 豁免）\n  if ((era.get(`base:${cid}:1`) || 0) <= 0 && tflag(201) !== 1) {\n    set_up(0, idiv(up(0), 2));\n    set_up(1, idiv(up(1), 2));\n    set_up(2, idiv(up(2), 2));\n    set_up(14, idiv(up(14), 2));\n  }',
     replace:
-      '  // 气力０的快乐减半（与 manual 同款条件，含 TFLAG:201 豁免）\n  if ((era.get(`base:${cid}:1`) || 0) <= 0 && tflag(201) !== 1) {\n    set_up(1, idiv(up(1), 2));\n    set_up(2, idiv(up(2), 2));\n    set_up(14, idiv(up(14), 2));\n  }',
+      '  // 气力 0 的快乐减半（TFLAG:201 豁免）\n  if ((era.get(`base:${cid}:1`) || 0) <= 0 && tflag(201) !== 1) {\n    set_up(1, idiv(up(1), 2));\n    set_up(2, idiv(up(2), 2));\n    set_up(14, idiv(up(14), 2));\n  }',
     tests: ['source-check'],
     must_mention: '两处气力 0 减半块',
   },
   {
     desc: 'M9780 AUTO handler Block A：BASE:1 <= 0 边界收窄成 < 0（气力恰为 0 时不再减半）',
     file: 'ere/system/train/source-check.js',
-    find: '  // 气力０的快乐减半（与 manual 同款条件，含 TFLAG:201 豁免）\n  if ((era.get(`base:${cid}:1`) || 0) <= 0 && tflag(201) !== 1) {',
+    find: '  // 气力 0 的快乐减半（TFLAG:201 豁免）\n  if ((era.get(`base:${cid}:1`) || 0) <= 0 && tflag(201) !== 1) {',
     replace:
-      '  // 气力０的快乐减半（与 manual 同款条件，含 TFLAG:201 豁免）\n  if ((era.get(`base:${cid}:1`) || 0) < 0 && tflag(201) !== 1) {',
+      '  // 气力 0 的快乐减半（TFLAG:201 豁免）\n  if ((era.get(`base:${cid}:1`) || 0) < 0 && tflag(201) !== 1) {',
     tests: ['source-check'],
     must_mention: '两处气力 0 减半块',
   },
   {
     desc: 'M9781 AUTO handler Block B：减半数组漏 UP:9（AUTO_NUM_CHECK 放大后不再减半）',
     file: 'ere/system/train/source-check.js',
-    find: '  // 气力０的感情减半与损耗加倍（与 manual 同款条件，但没有\n  // TFLAG:201 豁免——AUTO 侧照写没有豁免）\n  if ((era.get(`base:${cid}:1`) || 0) <= 0) {\n    for (const k of [3, 4, 5, 7, 9, 13]) {',
+    find: '  // 气力 0 的感情减半与损耗加倍（手动路径与 AUTO 同款，AUTO 侧照写没有\n  // TFLAG:201 豁免）\n  if ((era.get(`base:${cid}:1`) || 0) <= 0) {\n    for (const k of [3, 4, 5, 7, 9, 13]) {',
     replace:
-      '  // 气力０的感情减半与损耗加倍（与 manual 同款条件，但没有\n  // TFLAG:201 豁免——AUTO 侧照写没有豁免）\n  if ((era.get(`base:${cid}:1`) || 0) <= 0) {\n    for (const k of [3, 4, 5, 7, 13]) {',
+      '  // 气力 0 的感情减半与损耗加倍（手动路径与 AUTO 同款，AUTO 侧照写没有\n  // TFLAG:201 豁免）\n  if ((era.get(`base:${cid}:1`) || 0) <= 0) {\n    for (const k of [3, 4, 5, 7, 13]) {',
     tests: ['source-check'],
     must_mention: '两处气力 0 减半块',
   },
   {
     desc: 'M9782 AUTO handler Block B：BASE:1 <= 0 边界收窄成 < 0（气力恰为 0 时不再减半加倍）',
     file: 'ere/system/train/source-check.js',
-    find: '  // 气力０的感情减半与损耗加倍（与 manual 同款条件，但没有\n  // TFLAG:201 豁免——AUTO 侧照写没有豁免）\n  if ((era.get(`base:${cid}:1`) || 0) <= 0) {\n    for (const k of [3, 4, 5, 7, 9, 13]) {',
+    find: '  // 气力 0 的感情减半与损耗加倍（手动路径与 AUTO 同款，AUTO 侧照写没有\n  // TFLAG:201 豁免）\n  if ((era.get(`base:${cid}:1`) || 0) <= 0) {\n    for (const k of [3, 4, 5, 7, 9, 13]) {',
     replace:
-      '  // 气力０的感情减半与损耗加倍（与 manual 同款条件，但没有\n  // TFLAG:201 豁免——AUTO 侧照写没有豁免）\n  if ((era.get(`base:${cid}:1`) || 0) < 0) {\n    for (const k of [3, 4, 5, 7, 9, 13]) {',
+      '  // 气力 0 的感情减半与损耗加倍（手动路径与 AUTO 同款，AUTO 侧照写没有\n  // TFLAG:201 豁免）\n  if ((era.get(`base:${cid}:1`) || 0) < 0) {\n    for (const k of [3, 4, 5, 7, 9, 13]) {',
     tests: ['source-check'],
     must_mention: '两处气力 0 减半块',
   },
@@ -7518,11 +7502,10 @@ export default [
     must_mention: '乳房绝顶的回落：10000 + 312 - 9000',
   },
   {
-    desc: 'M9785 SOURCE_CHECK_AUTO：down_map.clear() 删（DOWN 跨回合残留）',
+    desc: 'M9785 SOURCE_CHECK：down_map.clear() 删（DOWN 跨回合残留）',
     file: 'ere/system/train/source-check.js',
-    find: '  down_map.clear();\n\n  // 调教者能力检查\n  player_skill_check();\n  master_skill_check();',
-    replace:
-      '  // 调教者能力检查\n  player_skill_check();\n  master_skill_check();',
+    find: '  down_map.clear();\n\n  if (!auto) {',
+    replace: '  if (!auto) {',
     tests: ['source-check'],
     must_mention: '不跨回合残留 DOWN',
   },
@@ -7532,17 +7515,11 @@ export default [
     find: `    set_lose(0, lose(0) * 2 + 80);
   }
 
-  // 苦痛的追加损耗
-  pain_damage_check_up();
-
-  // 体力气力扣减只写 deltabase，扣减与清零归引擎 nextTurnInTrain（与 manual`,
+  if (!auto) {`,
     replace: `    set_lose(0, lose(0) * 2); // 变异：漏掉 +80
   }
 
-  // 苦痛的追加损耗
-  pain_damage_check_up();
-
-  // 体力气力扣减只写 deltabase，扣减与清零归引擎 nextTurnInTrain（与 manual`,
+  if (!auto) {`,
     tests: ['source-check'],
     must_mention: 'base:31:0 初始 1450，扣减 Block B 写入的 80 损耗',
   },
@@ -11620,17 +11597,17 @@ export default [
   {
     desc: 'M17550 结算时又当场写 base（引擎再扣一次 = 双重扣减）',
     file: 'ere/system/train/source-check.js',
-    find: `  const lose0 = Math.max(lose(0), 0);
-  const lose1 = Math.max(lose(1), 0);`,
-    replace: `  const lose0 = Math.max(lose(0), 0);
-  const lose1 = Math.max(lose(1), 0);
-  // 变异：当场结算（引擎再扣一次 = 双重扣减）
-  for (const k of [0, 1]) {
-    if (lose(k) !== 0) {
-      era.set(\`base:\${cid}:\${k}\`, base_settled(cid, k));
-      era.set(\`deltabase:\${cid}:\${k}\`, 0);
-    }
-  }`,
+    find: `    lose0 = Math.max(lose(0), 0);
+    lose1 = Math.max(lose(1), 0);`,
+    replace: `    lose0 = Math.max(lose(0), 0);
+    lose1 = Math.max(lose(1), 0);
+    // 变异：当场结算（引擎再扣一次 = 双重扣减）
+    for (const k of [0, 1]) {
+      if (lose(k) !== 0) {
+        era.set(\`base:\${cid}:\${k}\`, base_settled(cid, k));
+        era.set(\`deltabase:\${cid}:\${k}\`, 0);
+      }
+    }`,
     tests: ['train-engine-settle'],
     must_mention: 'base 不应当场写',
   },
@@ -11645,17 +11622,16 @@ export default [
     must_mention: '源一览、两条损耗条与结算块与改动前逐字一致',
   },
   {
-    desc: 'M17552 AUTO 路径重新当场结算 deltabase（引擎再扣一次）',
+    desc: 'M17552 共用的结算体重新当场结算 deltabase（引擎再扣一次）',
     file: 'ere/system/train/source-check.js',
-    find: `  // 体力气力扣减只写 deltabase，扣减与清零归引擎 nextTurnInTrain（与 manual
-  // 同款语义，见文件头；AUTO 不显示损耗条，故不需要 manual 那两个
-  // lose0/lose1 快照变量）`,
+    find: `  // 体力气力扣减只写 deltabase——base 的加算、钳 0..maxbase 与 deltabase 的`,
     replace: `  for (const k of [0, 1]) {
     if (lose(k) !== 0) {
       era.set(\`base:\${cid}:\${k}\`, base_settled(cid, k));
       era.set(\`deltabase:\${cid}:\${k}\`, 0);
     }
-  }`,
+  }
+  // 变异：结算体里当场写 base（引擎再扣一次 = 双重扣减）`,
     tests: ['train-engine-settle'],
     must_mention: 'base 不应当场写',
   },
@@ -11734,6 +11710,63 @@ export default [
       '  const negative = () => era.get(`gotjuel:${cid}:100`) || 0; // 变异：只读增量表',
     tests: ['juel-check'],
     must_mention: '抵消的逐步扣减量（负值累加进 gotjuel）',
+  },
+
+  // —— #876：自动调教复用手动调教的数值表与结算（M18102-M18107）——
+  {
+    desc: 'M18102 com0_auto 情爱（SOURCE:3）漏加 B 感觉档的增量',
+    file: 'ere/system/train/autotrain.js',
+    find: `  chara(target).train.情爱 =
+    ABL_C_TIERS_COM0[abl_c][1] + ABL_B_TIERS_COM0[abl_b][1];`,
+    replace: `  chara(target).train.情爱 = ABL_C_TIERS_COM0[abl_c][1]; // 变异：漏加 B 档增量`,
+    tests: ['autotrain'],
+    must_mention: 'com0_auto 的 C/B 阶梯逐档',
+  },
+  {
+    desc: 'M18103 com0_auto 阴核快感取到档内的情爱列（[0] 改 [1]）',
+    file: 'ere/system/train/autotrain.js',
+    find: '  chara(target).train.阴核快感 = ABL_C_TIERS_COM0[abl_c][0];',
+    replace:
+      '  chara(target).train.阴核快感 = ABL_C_TIERS_COM0[abl_c][1]; // 变异：取错列',
+    tests: ['autotrain'],
+    must_mention: 'com0_auto 的 C/B 阶梯逐档',
+  },
+  {
+    desc: 'M18104 com0_auto 乳房快感取错表（C 感觉档表当 B 感觉档表读）',
+    file: 'ere/system/train/autotrain.js',
+    find: '  chara(target).train.乳房快感 = ABL_B_TIERS_COM0[abl_b][0];',
+    replace:
+      '  chara(target).train.乳房快感 = ABL_C_TIERS_COM0[abl_b][0]; // 变异：取错表',
+    tests: ['autotrain'],
+    must_mention: 'com0_auto 的 C/B 阶梯逐档',
+  },
+  {
+    desc: 'M18105 自动调教不再乘自动调教次数倍率（AUTO_NUM_CHECK 调用删）',
+    file: 'ere/system/train/source-check.js',
+    find: `    // 自动调教次数的倍率（旧注释：放在绝顶处理之后会绝顶过度，
+    // 故放在这里；因此本函数不影响 EX_CHECK_UP 的判定）
+    auto_num_check(cid);`,
+    replace: '    // 变异：自动调教次数的倍率不乘',
+    tests: ['source-check'],
+    must_mention: 'AUTO_NUM_CHECK',
+  },
+  {
+    desc: 'M18106 自动调教退回手动全序（handle_source_check_auto 不带 auto 开关）',
+    file: 'ere/system/train/source-check.js',
+    find: 'const handle_source_check_auto = () => handle_source_check(true);',
+    replace:
+      'const handle_source_check_auto = () => handle_source_check(); // 变异：不带 auto 开关',
+    tests: ['source-check'],
+    must_mention: '走自动调教那条序列',
+  },
+  {
+    desc: 'M18107 共用处理器的默认开关翻转（手动路径也跑成自动调教序列）',
+    file: 'ere/system/train/source-check.js',
+    find: 'async function handle_source_check(auto = false) {',
+    replace:
+      'async function handle_source_check(auto = true) { // 变异：默认走自动序列',
+    tests: ['source-check'],
+    must_mention: '调教者技巧（ABL:PLAYER:12）六档',
   },
 
   // —— #853：单处理器的钩子改为直接调用（M17810-M17812） ——

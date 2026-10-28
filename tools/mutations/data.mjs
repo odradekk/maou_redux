@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 66; // #883 -1（M16108：yml/E.yml 随战斗状态搬成普通对象撤除） // #884 +2（M16606/M16607：角色预设的预设模板值改错、PortCFlag 的字段条目被删）； #848 +2（M16254/M16255：GameBase 的【初始角色编号】改坏、给角色预设加上以 0 号为目标的相性）；#901 +13（M16100-M16112：变量表 name/type 的缺失、重名、非 snake_case、保留字、非法 type 与豁免名单失效）；#814 +9（M15850-M15858：角色预设在用的 cflag 序号与条目、mark/talent/cstr 的新登记、name/type 形状）；#822 +4（M15700/M15701：Abl 20/21 的 yml 名字；M15702/M15703：指令常量 54/89 的指令名——#836 把指令名搬进常量后跟着改挂，编号不变）；#746 +3（M14608-M14610：现种族 211 的名字声明、编号与名称）；#733 +1（M14540：通信回归场景漏载 Equip 名字表）；#731 +1（M14530：【最低支持版本】不得高于已发布的 0.1.0）；master 28（#640 +7：M12870-M12876 yml 装载覆盖与内容固定的行为检查）+ 4（#642：M12936-M12939 标题画面使用的 GameBase 信息改坏）
+export const COUNT = 70; // #876 +4：+2（M41/M42 从 train 分片移入——指令 0 的阶梯表搬进 ere/data/train-source-const.js），+2（M18100/M18101：取档口径的越档边界、未声明等级的默认档）；#883 -1（M16108：yml/E.yml 随战斗状态搬成普通对象撤除） // #884 +2（M16606/M16607：角色预设的预设模板值改错、PortCFlag 的字段条目被删）； #848 +2（M16254/M16255：GameBase 的【初始角色编号】改坏、给角色预设加上以 0 号为目标的相性）；#901 +13（M16100-M16112：变量表 name/type 的缺失、重名、非 snake_case、保留字、非法 type 与豁免名单失效）；#814 +9（M15850-M15858：角色预设在用的 cflag 序号与条目、mark/talent/cstr 的新登记、name/type 形状）；#822 +4（M15700/M15701：Abl 20/21 的 yml 名字；M15702/M15703：指令常量 54/89 的指令名——#836 把指令名搬进常量后跟着改挂，编号不变）；#746 +3（M14608-M14610：现种族 211 的名字声明、编号与名称）；#733 +1（M14540：通信回归场景漏载 Equip 名字表）；#731 +1（M14530：【最低支持版本】不得高于已发布的 0.1.0）；master 28（#640 +7：M12870-M12876 yml 装载覆盖与内容固定的行为检查）+ 4（#642：M12936-M12939 标题画面使用的 GameBase 信息改坏）
 
 export default [
   {
@@ -404,6 +404,39 @@ export default [
     replace: "  89: '兽奸PLAY',",
     tests: ['display-name-fullwidth'],
     must_mention: '半角字母会显示成半角小写（野外play）',
+  },
+  // —— #876（指令 0 的能力阶梯表手动与自动调教共用一份）——
+  {
+    desc: 'M41 ABL:0 分档表错一格（1200 改 1201）',
+    file: 'ere/data/train-source-const.js',
+    find: '  [1200, 100],',
+    replace: '  [1201, 100],',
+    tests: ['com-caress', 'autotrain'],
+    must_mention: '= 3 档',
+  },
+  {
+    desc: 'M42 ABL:1 分档表错一格（300 改 301）',
+    file: 'ere/data/train-source-const.js',
+    find: '  [300, 80],',
+    replace: '  [301, 80],',
+    tests: ['com-caress', 'autotrain'],
+    must_mention: '= 2 档',
+  },
+  {
+    desc: 'M18100 abl_tier 越档边界收窄（lv < 5 改 lv < 4，5 档落到表外）',
+    file: 'ere/data/train-source-const.js',
+    find: '  return lv >= 0 && lv < 5 ? lv : 5;',
+    replace: '  return lv >= 0 && lv < 4 ? lv : 5; // 变异：越档边界收窄',
+    tests: ['autotrain', 'com-caress'],
+    must_mention: 'com0_auto 的 C/B 阶梯逐档',
+  },
+  {
+    desc: 'M18101 abl_tier 丢掉未声明等级的默认 0（缺省读到末档）',
+    file: 'ere/data/train-source-const.js',
+    find: '  const lv = Math.floor(level || 0);',
+    replace: '  const lv = Math.floor(level); // 变异：未声明等级不按 0 档',
+    tests: ['autotrain', 'com-caress'],
+    must_mention: 'com0_auto 的 C/B 阶梯逐档',
   },
   // —— #814（角色预设的 cflag/cstr/mark/talent 在加入时生效）——
   {

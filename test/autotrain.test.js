@@ -200,6 +200,101 @@ test('AUTOTRAIN: 6 个 _AUTO 分支 (COM0, COM3, COM13, COM50, COM63, RAND)', as
   assert.equal(rand_autotrain(), 0);
 });
 
+test('AUTOTRAIN: com0_auto 的 C/B 阶梯逐档（六档 + 越档口径）', async () => {
+  // 表值：ABL:0 → [SOURCE:0, SOURCE:3]；ABL:1 → [SOURCE:17, SOURCE:3 增量]
+  const C = [
+    [20, 25],
+    [100, 50],
+    [500, 80],
+    [1200, 100],
+    [2000, 115],
+    [2800, 125],
+  ];
+  const B = [
+    [15, 25],
+    [50, 50],
+    [300, 80],
+    [700, 100],
+    [1100, 115],
+    [1600, 125],
+  ];
+  for (let lv = 0; lv <= 5; lv += 1) {
+    const { fixture } = seed_autotrain_world();
+    const { com0_auto } = fixture.load_module('system/train/autotrain');
+    fixture.store.set('abl:17:0', lv);
+    fixture.store.set('abl:17:1', 0);
+    assert.equal(com0_auto(), 1);
+    assert.equal(
+      fixture.store.get('source:17:0'),
+      C[lv][0],
+      `ABL:0 = ${lv} 档`,
+    );
+    assert.equal(fixture.store.get('source:17:3'), C[lv][1] + B[0][1]);
+  }
+  for (let lv = 0; lv <= 5; lv += 1) {
+    const { fixture } = seed_autotrain_world();
+    const { com0_auto } = fixture.load_module('system/train/autotrain');
+    fixture.store.set('abl:17:0', 3); // SOURCE:3 = 100 + B 档增量
+    fixture.store.set('abl:17:1', lv);
+    assert.equal(com0_auto(), 1);
+    assert.equal(
+      fixture.store.get('source:17:17'),
+      B[lv][0],
+      `ABL:1 = ${lv} 档`,
+    );
+    assert.equal(fixture.store.get('source:17:3'), C[3][1] + B[lv][1]);
+  }
+  // 越档：末档覆盖 5 及以上的等级；未声明的等级（读值 undefined）按 0 档
+  for (const [abl, tier] of [
+    [6, 5],
+    [8, 5],
+    [99, 5],
+    [undefined, 0],
+  ]) {
+    const { fixture } = seed_autotrain_world();
+    const { com0_auto } = fixture.load_module('system/train/autotrain');
+    if (abl !== undefined) {
+      fixture.store.set('abl:17:0', abl);
+    }
+    assert.equal(com0_auto(), 1);
+    assert.equal(
+      fixture.store.get('source:17:0'),
+      C[tier][0],
+      `ABL:0 = ${abl} 取 ${tier} 档`,
+    );
+  }
+});
+
+test('AUTOTRAIN: com0_auto 与手动爱抚读同一份 C/B 阶梯（同档源值逐档一致）', async () => {
+  for (let lv = 0; lv <= 5; lv += 1) {
+    for (let lv_b = 0; lv_b <= 5; lv_b += 1) {
+      const auto = seed_autotrain_world();
+      auto.fixture.store.set('abl:17:0', lv);
+      auto.fixture.store.set('abl:17:1', lv_b);
+      const { com0_auto } = auto.fixture.load_module('system/train/autotrain');
+      com0_auto();
+
+      const manual = seed_autotrain_world();
+      manual.fixture.store.set('abl:17:0', lv);
+      manual.fixture.store.set('abl:17:1', lv_b);
+      manual.fixture.store.set('cflag:17:16', 0); // 已有接吻经验：不走初吻减半
+      manual.fixture.load_module('system/train/com-caress');
+      const { com_family } = manual.fixture.load_module(
+        'system/train/com-family',
+      );
+      await com_family.call(0);
+
+      for (const idx of [0, 3, 17]) {
+        assert.equal(
+          auto.fixture.store.get(`source:17:${idx}`),
+          manual.fixture.store.get(`source:17:${idx}`),
+          `ABL:0=${lv} ABL:1=${lv_b} 的 SOURCE:${idx}`,
+        );
+      }
+    }
+  }
+});
+
 test('AUTOTRAIN: autotrain 全角色遍历与 after_autotrain', async () => {
   const fixture = create_era_fixture();
   preset_gamebase(fixture);
