@@ -54,13 +54,11 @@
  */
 
 const era = require('#/era-electron');
-const { on } = require('#/system/event/registry');
 const { settle_ejaculation_gauge } = require('#/system/train/calc-ejaculation');
 const era_flag = require('#/era-utils/era-flag');
 const { NBSP } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 const { MASTER } = require('#/utils/master');
 const { idiv, times } = require('#/utils/numeric');
-const { EVENT } = require('#/data/event-name-const');
 const { PALAMLV } = require('#/era-utils/palam-level');
 const { base_settled } = require('#/era-utils/train-settle');
 const { EXPLV } = require('#/era-utils/exp-level');
@@ -3628,13 +3626,8 @@ async function handle_source_check_auto() {
   palam_up_check_mini();
 }
 
-/**
- * 本模块的事件处理器：由 system/flow/startup.js 的装配表按顺序调用 register()
- * 注册（模块装载本身不注册，装配顺序见该文件）。
- */
-function register() {
-  on(EVENT.SOURCE_CHECK, handle_source_check);
-  on(EVENT.SOURCE_CHECK_AUTO, handle_source_check_auto);
-}
-
-module.exports = { register, auto_num_check };
+module.exports = {
+  handle_source_check,
+  handle_source_check_auto,
+  auto_num_check,
+};

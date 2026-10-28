@@ -131,7 +131,7 @@ test('端到端：2D 模式新档从标题走到 ENDING_2（LABO_DUNGEON_MAP:175
   fixture.load_module('system/flow/main-loop');
   const run_title_page = fixture.load_module('page/page-title');
   const { enter_state } = fixture.load_module('system/flow/main-loop');
-  const { emit } = fixture.load_module('system/event/registry');
+  const { handle_first } = fixture.load_module('event/event-first');
   const { STATE } = fixture.load_module('system/flow/game-state');
   const era_flag = fixture.load_module('era-utils/era-flag');
 
@@ -147,7 +147,7 @@ test('端到端：2D 模式新档从标题走到 ENDING_2（LABO_DUNGEON_MAP:175
     // 狂王性别选「扶她」[2]、初期奴隶选「村娘」[1]、地下城模式选「2D」[1]
     // （#181 加的一问——本条与 3D 版在此分岔）、搬运选「抱起」[1] ——
     fixture.set_inputs(1, 2, 1, 1, 1);
-    const first_exit = await emit('EVENTFIRST');
+    const first_exit = await handle_first();
     assert.equal(first_exit, 'SHOP', '初始化的出口必是 BEGIN SHOP');
     assert.equal(
       fixture.store.get('flag:502'),

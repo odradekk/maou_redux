@@ -61,11 +61,7 @@ async function run_corrupt_path() {
   fixture.store.set('talent:0:122', 1);
   register_handlers(fixture, 'event/event-train');
   register_handlers(fixture, 'event/event-end');
-  register_handlers(fixture, 'event/event-com');
   register_handlers(fixture, 'event/event-comend');
-  register_handlers(fixture, 'system/train/source-check');
-  register_handlers(fixture, 'page/page-train');
-  register_handlers(fixture, 'page/page-usercom');
   // COM0 自 com0-caress.js 搬入本族模块（#219 J9，原文件删除）
   fixture.load_module('system/train/com-caress');
   fixture.load_module('system/train/com-sm');

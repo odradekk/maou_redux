@@ -10,13 +10,12 @@
 
 const era = require('#/era-electron');
 const { is_state } = require('#/system/flow/game-state');
-const { emit } = require('#/system/event/registry');
+const { handle_load } = require('#/event/event-load');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
 const era_global = require('#/era-utils/era-global');
 const { chara_callname } = require('#/utils/callname-utils');
-const { EVENT } = require('#/data/event-name-const');
 
 const BACKUP_SLOT = 999;
 const SHARE_SLOT_FIRST = 1000;
@@ -66,20 +65,20 @@ function set_roster(records) {
 }
 
 /**
- * 读档（loadData）后的转场补齐：更新 LASTLOAD_NO，重放 EVENTLOAD 事件链，
- * 并把其中的 BEGIN 交给外层状态机。特殊档不经过 page-save-load，
- * 必须在这里补齐。
+ * 读档（loadData）后的转场补齐：更新 LASTLOAD_NO，跑读档钩子（只有一个
+ * 处理者，直接调用，见 ere/event/event-load.js），并把它的转场目标交给
+ * 外层状态机。特殊档不经过 page-save-load，必须在这里补齐。
  *
  * @param {number} slot 特殊档槽位
- * @returns {Promise<boolean|string>} 没读成 false；读成且链内无转场 true；
- *   链内有转场时为转场目标（STATE 取值），调用方须原样上抛
+ * @returns {Promise<boolean|string>} 没读成 false；读成且钩子没转场 true；
+ *   钩子转场时为转场目标（STATE 取值），调用方须原样上抛
  */
 async function load_special_save(slot) {
   if (!(await era.loadData(slot))) return false;
   era_flag.last_load_no = slot;
-  const next = await emit(EVENT.LOAD);
-  // 链内的转场优先于「读成」这个布尔结果：两种含义共用返回值，调用方用
-  // is_state 分辨（读成且链内无转场时给 true）
+  const next = await handle_load();
+  // 钩子的转场优先于「读成」这个布尔结果：两种含义共用返回值，调用方用
+  // is_state 分辨（读成且钩子没转场时给 true）
   return is_state(next) ? next : true;
 }
 

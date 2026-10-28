@@ -37,11 +37,9 @@ function seed_world() {
 test('#769 正常位完整回合：魔王满条后射精，保留封顶前的余量', async () => {
   const { fixture } = seed_world();
   fixture.load_module('system/train/com-sex');
-  register_handlers(fixture, 'event/event-com');
-  register_handlers(fixture, 'system/train/source-check');
   register_handlers(fixture, 'event/event-comend');
   const { execute_command_round } = fixture.load_module(
-    'system/train/train-loop',
+    'system/train/command-round',
   );
 
   assert.deepEqual(await execute_command_round(20), { missing: false });

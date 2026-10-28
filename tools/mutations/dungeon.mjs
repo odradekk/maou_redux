@@ -2307,14 +2307,14 @@ export default [
     must_mention: 'whenMissing 骸骨缺省',
   },
   {
-    desc: 'M9882 source_check_auto 接入退回存根（不再转发真实处理器）',
+    desc: 'M9882 source_check_auto 接入退回存根（不再直接调真实处理器）',
     file: 'ere/system/dungeon/dungeon-battle.js',
     find: `async function source_check_auto() {
-  await emit(EVENT.SOURCE_CHECK_AUTO);
+  await handle_source_check_auto();
   era.nextTurnInTrain();
 }`,
     replace: `async function source_check_auto() {
-  // 变异：不再转发真实处理器（事件订阅者收不到，回合循环的 UPCHECK 等价步也没了）
+  // 变异：不再转发真实处理器（回合循环的 UPCHECK 等价步也没了）
 }`,
     tests: ['dungeon-battle'],
     must_mention: '真实处理器执行',

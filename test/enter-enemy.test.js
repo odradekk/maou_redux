@@ -295,6 +295,12 @@ test('链路：生成勇者后 turnend-settle 的 DUNGEON 检查第一次为真'
 
 test('隔离接入：EVENTTURNEND 的调用点真调 enter_enemy（日推进即生成）', async () => {
   const fixture = create_era_fixture();
+  // 自动调教窗口末尾的自动结算不是本用例的观察对象：换成空操作，赶在任何
+  // 模块装载之前（钩子只有一个调用者，装载后解构的就是当时的导出）。本世界
+  // 没有珠表内容，真跑这条结算会让 juel-check 的否定抵消循环空转（抵消按
+  // gotjuel 写回递减，最小世界里写不进就转不完）
+  fixture.load_module('system/train/source-check').handle_source_check_auto =
+    async () => {};
   fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
   fixture.seed_chara(1, { id: 1, name: '阿尔', callname: '阿尔' });
   fixture.era.addCharacter(0);
@@ -787,6 +793,12 @@ test('GET_ENEMY 人数上限：CHARANUM >= 90 → RETURN 0（复制段同样在�
 
 test('夹具隔离开关：disable_enter_enemy 后 EVENTTURNEND 不再生成勇者', async () => {
   const fixture = create_era_fixture();
+  // 自动调教窗口末尾的自动结算不是本用例的观察对象：换成空操作，赶在任何
+  // 模块装载之前（钩子只有一个调用者，装载后解构的就是当时的导出）。本世界
+  // 没有珠表内容，真跑这条结算会让 juel-check 的否定抵消循环空转——开关被
+  // 拆的变异也就变成挂死，而不是「勇者没有入队」
+  fixture.load_module('system/train/source-check').handle_source_check_auto =
+    async () => {};
   fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
   fixture.seed_chara(1, { id: 1, name: '阿尔', callname: '阿尔' });
   fixture.era.addCharacter(0);

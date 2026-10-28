@@ -12,14 +12,20 @@ const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
 
-/** 载入 com-register 与依赖，返回 { fixture, mod } */
-function load_register() {
+/**
+ * 载入 com-register 与依赖，返回 { fixture, mod }。
+ *
+ * before 在装载 com-register 之前跑：指令前清理（event/event-com.js）只有一个
+ * 调用者、由回合段直接调用（#853），用例要插探针就得赶在它被解构之前。
+ */
+function load_register(before) {
   const fixture = create_era_fixture();
   fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
   fixture.era.addCharacter(0);
   fixture.seed_chara(31, { id: 31, name: '温妮', callname: '温妮' });
   fixture.era.addCharacter(31);
   fixture.era.beginTrain(0, 31); // tflag（224/204）是调教期表
+  if (before) before(fixture);
   const mod = fixture.load_module('system/train/com-register');
   return { fixture, mod };
 }
@@ -311,16 +317,23 @@ test('comseq_register：每轮重画带「选择第N个指令:」行', async () 
 // —— comseq_train 与 run_calltrain 等价 ——
 
 test('comseq_train：预检查有不可用条目 → 整体拒绝，零执行', async () => {
-  const { fixture, mod } = load_register();
+  const fired = [];
+  const { fixture, mod } = load_register((f) => {
+    // 指令前清理只有一个调用者（回合段直接调用，#853）：探针要赶在
+    // command-round 解构它之前装上
+    const event_com = f.load_module('event/event-com');
+    const real_com = event_com.handle_com;
+    event_com.handle_com = async () => {
+      fired.push('EVENTCOM');
+      return real_com();
+    };
+  });
   const { com_able_family, com_family } = fixture.load_module(
     'system/train/com-family',
   );
-  const { on } = fixture.load_module('system/event/registry');
   seed_menu(fixture, [0, 6]);
   com_able_family.register(6, async () => 0); // 第 2 条不可用
-  const fired = [];
   com_family.register(0, async () => fired.push('COM0'));
-  on('EVENTCOM', () => fired.push('EVENTCOM'));
   const prevcom_before = 12;
   fixture.load_module('era-utils/era-flag').prevcom = prevcom_before;
   fixture.store.set('tflag:224', 0);
@@ -373,15 +386,23 @@ test('comseq_train：拒绝播报在回合画面换屏前先经按键确认（#7
   );
 });
 
-test('comseq_train：序列执行——EVENTCOM→COM→EVENTCOMEND 每条一回合，prevcom 恢复', async () => {
-  const { fixture, mod } = load_register();
+test('comseq_train：序列执行——指令前清理→COM→EVENTCOMEND 每条一回合，prevcom 恢复', async () => {
+  const fired = [];
+  const { fixture, mod } = load_register((f) => {
+    // 指令前清理只有一个调用者（回合段直接调用，#853）：探针要赶在
+    // command-round 解构它之前装上
+    const event_com = f.load_module('event/event-com');
+    const real_com = event_com.handle_com;
+    event_com.handle_com = async () => {
+      fired.push('EVENTCOM');
+      return real_com();
+    };
+  });
   const { com_family } = fixture.load_module('system/train/com-family');
   const { on } = fixture.load_module('system/event/registry');
   seed_menu(fixture, [0, 6]);
-  const fired = [];
   com_family.register(0, async () => fired.push('COM0'));
   com_family.register(6, async () => fired.push('COM6'));
-  on('EVENTCOM', () => fired.push('EVENTCOM'));
   on('EVENTCOMEND', () => fired.push('EVENTCOMEND'));
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.prevcom = 12; // 进函数时的原值（要恢复的基准）

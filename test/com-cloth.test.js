@@ -716,16 +716,23 @@ test('com110 [9]：com111 返回 0（19 返回）→ com110 重绘菜单；返�
 
 test('回合取消：com110 RETURN 0 → 不结算、PREVCOM 不推、SOURCE_CHECK/EVENTCOMEND 不跑', async () => {
   const world = seed_world(15, 5);
-  const { on } = world.fixture.load_module('system/event/registry');
+  // source-check 与 EVENTCOMEND 各只有一个/多个处理者：前者直接调用（#853），
+  // 用例把模块导出的钩子换成探针再交回真身；后者的探针照旧挂在事件链上
+  const page_source_check = world.fixture.load_module(
+    'system/train/source-check',
+  );
+  const real_source_check = page_source_check.handle_source_check;
   const seen = [];
-  on('SOURCE_CHECK', () => {
+  page_source_check.handle_source_check = async () => {
     seen.push('SOURCE_CHECK');
-  });
+    return real_source_check();
+  };
+  const { on } = world.fixture.load_module('system/event/registry');
   on('EVENTCOMEND', () => {
     seen.push('EVENTCOMEND');
   });
   const { execute_command_round } = world.fixture.load_module(
-    'system/train/train-loop',
+    'system/train/command-round',
   );
   world.fixture.load_module('system/train/com-caress');
   world.era_flag.prevcom = 6; // 上一回合为接吻指令
@@ -751,16 +758,23 @@ test('回合取消：com110 RETURN 0 → 不结算、PREVCOM 不推、SOURCE_CHE
 
 test('回合不取消：COM0 RETURN 1 → 正常结算链（取消语义不误伤）', async () => {
   const world = seed_world(15, 5);
-  const { on } = world.fixture.load_module('system/event/registry');
+  // source-check 与 EVENTCOMEND 各只有一个/多个处理者：前者直接调用（#853），
+  // 用例把模块导出的钩子换成探针再交回真身；后者的探针照旧挂在事件链上
+  const page_source_check = world.fixture.load_module(
+    'system/train/source-check',
+  );
+  const real_source_check = page_source_check.handle_source_check;
   const seen = [];
-  on('SOURCE_CHECK', () => {
+  page_source_check.handle_source_check = async () => {
     seen.push('SOURCE_CHECK');
-  });
+    return real_source_check();
+  };
+  const { on } = world.fixture.load_module('system/event/registry');
   on('EVENTCOMEND', () => {
     seen.push('EVENTCOMEND');
   });
   const { execute_command_round } = world.fixture.load_module(
-    'system/train/train-loop',
+    'system/train/command-round',
   );
   world.fixture.load_module('system/train/com-caress');
   world.fixture.set_inputs(999); // COM0 不收输入；防夹具误等
