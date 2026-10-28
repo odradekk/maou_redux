@@ -164,13 +164,15 @@ test('[102] 的动态正文：FLAG:502 == 0 印「地下城」，非 0 印「场
 });
 
 test('分发到各自的处理函数：107 / 199 / 777 / 110 各走各的（不串到邻项）', async () => {
-  // 107 购物：只置 BOUGHT，不画屏、不转场
+  // 107 购物：进商店循环（#867）——先画道具店整屏，[999] 退出后分发返回
   const cart = menu_modules();
+  cart.fixture.set_inputs(999);
   assert.equal(await cart.menu.dispatch_menu_item(107), undefined);
-  assert.equal(
-    cart.fixture.load_module('era-utils/era-flag').bought,
-    1,
-    '[107] 必须置 BOUGHT = 1（show_shop 据此跳道具商店）',
+  assert(
+    cart.fixture.lines_history.some(
+      (line) => line.type === 'text' && line.text === '黑市商人',
+    ),
+    '[107] 必须进道具商店（商店的循环自己收输入、退出后回到分发层）',
   );
 
   // 199 休息：税金 +5 与 TURNEND 转场

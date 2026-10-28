@@ -15,8 +15,9 @@
  *
  * #866 起主菜单的绘制与分发共用本文件的菜单项表 MAIN_MENU_ITEMS：可用性
  * 条件只写在表里一处，各入口的处理函数也在表里（此前 26 个魔数分支在
- * page-shop.js 的 usershop）。商店轮只做店内输入分派与阶层按钮，其余输入
- * 交 dispatch_menu_item。
+ * page-shop.js 的 usershop）。#867 起 [107] 购物把控制权交给商店循环
+ * （page/page-shop-loop.js），由它自己收店内输入；商店轮仍只做菜单分派与
+ * 阶层按钮。
  */
 
 const era = require('#/era-electron');
@@ -34,6 +35,7 @@ const { invasion } = require('#/page/page-invasion');
 const { dungeon_info2 } = require('#/page/page-dungeon-info2');
 const { infrastructure } = require('#/page/page-infrastructure');
 const { monster_shop } = require('#/page/page-monster-shop');
+const { shop_loop } = require('#/page/page-shop-loop');
 const { ability_up } = require('#/page/page-ability-up');
 const { intercept } = require('#/page/page-intercept');
 const { tailor_main } = require('#/page/page-tailor');
@@ -134,9 +136,8 @@ function apply_bug_guards() {
  * A：可选的奴隶数（主菜单 A/B 计数段之 A）。
  *
  * 判断条件：已加入角色中 CFLAG:x:1 == 0（未占用）且 x != 0（排除魔王
- * 自己）的计数。渲染指令面板前算出，usershop（page-shop.js）的
- * 100/496/497 检查也读它；渲染与分发两次求值之间无写入路径，分发时
- * 重算等价。
+ * 自己）的计数。渲染指令面板前算出，[100]/[496]/[497] 的可用性条件也读
+ * 它；渲染与分发两次求值之间无写入路径，分发时重算等价。
  *
  * ere 侧按角色 ID 寻址（#21），计数语义不变。B（CFLAG:x:0 > 0 的已调教
  * 计数）由下方 [106] 贩卖奴隶入口消费。
@@ -345,14 +346,13 @@ const MAIN_MENU_ITEMS = [
     enabled: () => count_sellable_slaves() > 0,
     run: () => chara_sale(),
   },
-  // [107] 购物：置 BOUGHT = 1，下一轮 show_shop 据此跳道具商店。无条件渲染
-  // ——没有这枚按钮，道具商店在实机上进不去（同 [200]/[300] 的 #137 教训）
+  // [107] 购物：进道具店（商店自 #867 起是独立循环——店内输入、切店与
+  // 退出都在 page/page-shop-loop.js 里，本项只负责把控制权交过去）。无条件
+  // 渲染——没有这枚按钮，道具商店在实机上进不去（同 [200]/[300] 的 #137 教训）
   {
     id: 107,
     label: '购物',
-    run: () => {
-      era_flag.bought = 1;
-    },
+    run: () => shop_loop(),
   },
   // [108] 换装：A > 0 && FLAG:37 == 1。买成后 tailor_core 把 TARGET 置 -1，
   // 返回后把 TARGET 还原为「前回调教目标」（FLAG:1）

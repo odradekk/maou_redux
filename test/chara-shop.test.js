@@ -61,7 +61,6 @@ function chara_world(seed = {}) {
     fixture.store.set(name, value);
   }
   fixture.seed_chara(211, { id: 211, name: '异界勇者' });
-  fixture.load_module('era-utils/era-flag').bought = -1;
   return fixture;
 }
 

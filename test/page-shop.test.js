@@ -19,11 +19,10 @@
  *   4. 连续多轮混合操作后状态一致；
  *   5. 作用域外指令分支的分发：110/111 条件、520-530 区间的逐层分发、
  *      525 代表抽查；999 调试入口与 400 隐入口随 #638 删除（输入不被接受）；
- *   6. BOUGHT 的两个跳转：#396 起 >= 54 画陷阱商店真身、#399 起 0-53 画
- *      道具商店真身（page/page-item-shop.js），两支都整个接管本轮（进店
- *      轮改画商店整屏，本轮主菜单一行不画）。店内的 997/998/999 三键与
- *      「购物态下其余输入直接返回」在 test/shop-trap.test.js（同一张票
- *      的 usershop 购物段一侧）；购买流程（0-99 的输入分派）在同文件与
+ *   6. 购物入口 [107]：#867 起它把控制权交给商店循环
+ *      （page/page-shop-loop.js），店内输入、切店与退出都在那个循环里，
+ *      退出后回本文件的菜单循环重绘——商店不再是「下一轮改画」的状态。
+ *      商店循环自身的行为在 test/page-shop-loop.test.js，购买流程在
  *      test/item-shop.test.js。
  *
  * 已知未测行（变异测试实证，勿误当行为保护）：作用域外的每个指令壳只抽查
@@ -39,19 +38,11 @@ const { test } = require('node:test');
 const { create_era_fixture } = require('./helpers/era-fixture');
 
 /**
- * 商店轮测试的夹具：预置商店轮的入口状态 BOUGHT = -1（EVENTFIRST 链初始
- * 化，ere/event/event-first.js；每轮进店 EVENTSHOP 链再置一次）。
- *
- * 夹具的变量存储默认空 → `era_flag.bought` 读回 0，而 0 在店内购物段的
- * 判断条件里意味着「刚买了 0 号商品」——#396 接通那一段之后，这个非现实
- * 状态会吞掉全部输入（购物段里 `bought >= 0` 的输入一律直接返回）。
- * 走 run_shop 的用例本可不管（EVENTSHOP 链会置），统一经本助手是为了让
- * 直调 usershop 的用例也站在真实入口状态上。
+ * 商店轮测试的夹具：直调分发时不必再预铺店内状态——#867 起商店不是
+ * 状态、也不读任何 flag，店内输入归各自的循环（page-shop-loop.js）。
  */
 function create_shop_fixture() {
-  const fixture = create_era_fixture();
-  fixture.load_module('era-utils/era-flag').bought = -1;
-  return fixture;
+  return create_era_fixture();
 }
 
 // 跑一遍商店轮：预置 inputs，活到输入耗尽（夹具既定的终止方式），返回夹具。
@@ -496,83 +487,67 @@ test('199 休息：内联文本 + FLAG:9 += 5 + TURNEND 转场（#395，回合�
   assert.equal(fixture.store.get('flag:9'), 15, 'FLAG:9（税金）必须 += 5');
 });
 
-test('107 购物：BOUGHT = 1，下一轮 show_shop 画真身道具商店并把状态留在店内（#399）', async () => {
+test('107 购物：进道具商店的独立循环，[999] 退出后回主菜单重绘', async () => {
   const fixture = create_shop_fixture();
   fixture.set_inputs(107, 999); // 107 进店；999 退出（回主菜单）
   const { run_shop } = fixture.load_module('page/page-shop');
-  const era_flag = fixture.load_module('era-utils/era-flag');
-
+  // 退出后回菜单循环：预置输入耗尽在第二次菜单 input 处
   await assert.rejects(() => run_shop(), /预置输入已耗尽/);
 
   const texts = history_texts(fixture);
   assert(
     texts.includes('黑市商人'),
-    '107 后下一轮 show_shop 应整屏画道具商店（page/page-item-shop.js）',
+    '107 应画道具商店整屏（page/page-item-shop.js）',
   );
-  assert(
-    !texts.some((line) => line.includes('@ITEM_SHOP')),
-    '道具商店已是真身，不得再打存根占位',
-  );
-  assert.equal(
-    era_flag.bought,
-    -1,
-    '999 退出商店（usershop 的店内购物段）；退出前状态留在店内、不每轮复位',
-  );
+  // 主菜单画两轮：首轮（107 之前）与退出后的重绘——商店屏不占菜单轮
+  assert.equal(rounds_drawn(fixture), 2, '退出后回主菜单重绘一次');
+  // 全程不借购入品指针切屏：FLAG:10029 零读写
+  for (const record of [...fixture.var_reads, ...fixture.var_writes]) {
+    assert.notEqual(record.name, 'flag:10029', 'BOUGHT 已随切屏机制删除');
+  }
 });
 
-test('107 购物：BOUGHT >= 54 跳陷阱商店真身，主菜单一行不画（#396 接通）', async () => {
+test('107 购物 → [998]：陷阱商店在同一个循环里画，主菜单不重绘', async () => {
   const fixture = create_shop_fixture();
-  fixture.store.set('itemkeys', []); // 空商品列表，只观察商店与主菜单的切换
+  fixture.store.set('itemkeys', []); // 空商品列表，只观察两店的切换
+  fixture.set_inputs(107, 998, 999); // 进店 → 切陷阱店 → 退出
   const { run_shop } = fixture.load_module('page/page-shop');
-  const era_flag = fixture.load_module('era-utils/era-flag');
-  // 真实路径只能置 1（[107] 分支），此处直接造世界验证 show_shop 自身对
-  // BOUGHT >= 54 的分支条件。EVENTSHOP 链会把 BOUGHT 重置为 -1，所以要跳
-  // 过它才能观测到这个分支
-  era_flag.bought = 54;
-  fixture.set_inputs(999); // 商店里的 [999] 退出（本屏只印 997/999 两枚按钮）
 
-  await assert.rejects(
-    () => run_shop({ skip_eventshop: true }),
-    /预置输入已耗尽/,
-  );
+  await assert.rejects(() => run_shop(), /预置输入已耗尽/);
+
   const texts = history_texts(fixture);
   assert(
     texts.includes('《可以购买在地下城里布置的陷阱》'),
-    'BOUGHT >= 54 应画陷阱商店（page/page-shop-trap.js）',
+    '[998] 应画陷阱商店（page/page-shop-trap.js）',
   );
-  // 进店的改画发生在画主菜单之前——商店整屏接管本轮。行史里的第一枚按钮
-  // 是陷阱商店的 [997]（主菜单若在同轮画过，496 会排在它前面），且主菜单
-  // 整轮只重绘一次（999 退出之后那一次）
-  assert.equal(
-    fixture.lines_history.find((line) => line.type === 'button').accelerator,
-    997,
-    '先画的是商店按钮（本轮不画主菜单）',
-  );
-  assert.equal(rounds_drawn(fixture), 1, '主菜单只在退出后画一次');
-  assert.equal(
-    era_flag.bought,
-    -1,
-    '999 退出商店（usershop 的店内购物段）——购物态不每轮复位',
+  // 切店与退出都在商店循环里：主菜单只在首轮与退出后各画一次
+  assert.equal(rounds_drawn(fixture), 2, '两店互切不回到菜单轮');
+  // 先画道具店、再画陷阱店：行史里道具店的页脚 [998] 早于陷阱店的 [997]
+  const buttons = fixture.lines_history
+    .filter((line) => line.type === 'button')
+    .map((line) => line.accelerator);
+  assert(
+    buttons.indexOf(998) < buttons.indexOf(997),
+    '[998] 先于 [997]：先进道具店再切到陷阱店',
   );
 });
 
-test('show_shop：BOUGHT == 0 边界仍在 >= 0 之内，画道具商店（非 > 0）', async () => {
+test('show_shop 只画主菜单：任何 flag 都不改变画的是哪一屏', async () => {
+  // 商店切屏的旧世界（BOUGHT 0-53 / >= 54 两支）已随 #867 删除——show_shop
+  // 不再有「被指针改写」的分支，因此没有需要探的边界值
   const fixture = create_shop_fixture();
   const { run_shop } = fixture.load_module('page/page-shop');
-  const era_flag = fixture.load_module('era-utils/era-flag');
-  // BOUGHT >= 0（闭区间下界），0 与 1 同属「已购物」——只探 0 这个边界
-  // 点，>= 0 误写成 > 0 时它是唯一会漏判的输入
-  era_flag.bought = 0;
-  fixture.set_inputs(999);
-
+  fixture.set_inputs(500, 500);
   await assert.rejects(
     () => run_shop({ skip_eventshop: true }),
     /预置输入已耗尽/,
   );
-  assert(
+  assert.equal(
     history_texts(fixture).includes('黑市商人'),
-    'BOUGHT == 0 应画道具商店（>= 0 下界含 0）',
+    false,
+    '菜单轮不再改画商店',
   );
+  assert.equal(rounds_drawn(fixture), 3, '每轮都只画主菜单');
 });
 
 test('200/300：真身存读档界面（#136 接通，占位移除）', async () => {
@@ -747,17 +722,15 @@ test('非购物态的 999：调试菜单入口已删（#638），输入不被接
   );
   assert.equal(labo_fixture.waits.length, 0, '实验室隐入口不得等待读键');
 });
-test('店内 999 退出商店：清标志后直接结束，不打调试菜单提示、不等键（#592）', async () => {
+test('店内 999 退出商店：直接结束，不打调试菜单提示、不等键（#592）', async () => {
   // #562 验收在引擎里实测的缺陷：退出商店会多一行「调试菜单不在移植范围」
-  // 并要求按键。店内的 999 在购物段早退（清完标志即回主菜单），到不了链
-  // 尾的 7788 调试入口——语义依据与历史见 page-shop.js 购物段的段首注释
+  // 并要求按键。店内的 999 由商店循环自己消费（page/page-shop-loop.js），
+  // 到不了链尾的 7788 调试入口
   const fixture = create_shop_fixture();
   fixture.set_inputs(107, 999); // 107 进道具商店，999 退出
   const { run_shop } = fixture.load_module('page/page-shop');
   await assert.rejects(() => run_shop(), /预置输入已耗尽/);
 
-  const era_flag = fixture.load_module('era-utils/era-flag');
-  assert.equal(era_flag.bought, -1, '999 退出商店');
   assert(
     !history_texts(fixture).some((line) => line.includes('@DEBUG_MENU_U')),
     '店内 999 不得落到调试菜单提示（退出分支已提前返回）',
@@ -876,41 +849,4 @@ test('120 召唤：满员（已加入角色数 >= MAX_CHARANUM = 90）时只提�
   const texts = history_texts(fixture);
   assert(texts.includes('奴隶太多了！'));
   assert(!texts.includes('[1]召唤魔物从者'), '满员不得进商店');
-});
-
-test('店内输入的购买分派端点：99 进购买流程（販売アイテム数 = 100 的最后一个），100 不进', async () => {
-  // 99/100 是「店内输入 0-99 一律进购买流程」规则的两个端点。本作能上架的
-  // 编号里，道具店到 56、陷阱店到 91，再往上就是怪物商店的 201+（那条链不走
-  // 本分派），故 99 在真实流程里点不亮——两条都用直调分派 + 手工点亮的
-  // 方式把规则端点钉住：常量改成 99 或 101 时，这一条必红（幅度类条目
-  // M8887 的 100→10 拦得住，但拦不住端点）
-  {
-    const fixture = create_shop_fixture();
-    const era_flag = fixture.load_module('era-utils/era-flag');
-    era_flag.bought = 0; // 在道具商店里
-    era_flag.money = 1000;
-    fixture.store.set('itemsales:99', 1); // 手工点亮端点（真实在售表到 91）
-    fixture.store.set('itemname:99', '末号道具');
-    fixture.store.set('itemprice:99', 100);
-    fixture.set_inputs(1); // 复数支的数量选择（99 >= 60 且 != 90）
-    const { usershop } = fixture.load_module('page/page-shop');
-    await usershop(99);
-    assert.equal(fixture.store.get('item:99'), 1, '99 进购买流程：先给货');
-    assert.equal(era_flag.money, 900, '99 进购买流程：先扣钱');
-    assert.equal(era_flag.bought, 99, 'BOUGHT = 选中编号');
-  }
-  {
-    const fixture = create_shop_fixture();
-    const era_flag = fixture.load_module('era-utils/era-flag');
-    era_flag.bought = 0;
-    era_flag.money = 1000;
-    fixture.store.set('itemsales:100', 1); // 即便点亮也不该被买走
-    fixture.store.set('itemname:100', '规则外道具');
-    fixture.store.set('itemprice:100', 100);
-    const { usershop } = fixture.load_module('page/page-shop');
-    await usershop(100);
-    assert.equal(fixture.store.get('item:100') ?? 0, 0, '100 不进购买流程');
-    assert.equal(era_flag.money, 1000, '钱不动');
-    assert.equal(era_flag.bought, 0, 'BOUGHT 不动');
-  }
 });

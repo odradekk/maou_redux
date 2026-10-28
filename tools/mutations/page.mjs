@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 596; // #852 +1（M17330：[109] 出兵路径里的 ENDING_1 回标题转场经菜单项上抛）；#866 +6（M17250–M17255：菜单项表的可用性条件被删、入口串到邻项的处理函数、绘制不再读表的可用性、动态正文不解析、多一处存档写点）；被 #866 搬到 page-main-menu.js 的 24 条改挂新写法，条数不变 // #868 +17（M16700–M16715：存读档列表的网格行、空槽 disabled 的两侧、行内删除与快捷键区间、备注不再补位/不再改游戏状态） // #870 +8（M16450-M16457：横幅/页脚/设置页与侵略页顶栏改用引擎排版）；#848 +1（M16250：标题页手工 addCharacter(0) 回潮）；界面流程缺陷 +5（M15300–M15304：奸商代理投放前的检查与犒赏播报的等键）；#789 +4（M13701/M13702/M13704/M13705：两版出口同源与各自的未知编号缺省）；#739 +2（M14557/M14558：p_c 的表内编号判断——删除/取反），M705 改挂新写法；#836 -2（删 M14557/M14558：指令名改由常量提供，p_c 不再读名字表，表内判断不存在）；M56/M705/M14335 改挂常量写法；#724 返工收口：+M14514/M14515/M14517/M14518/M14520/M14522（换屏前等键），恢复 M10749/M10750，删 M14455（与 M143 重复）；此前 +36（M14450–M14485，#724 子页面换屏）净 -2（删 M10749/M10750 有误后复原）（删 M10749/M10750：sengen_video 投放支的分支内等键，随回菜单换屏确认等键收口而不可观察）；#724 删 5（M137–M140、M152——screen-block.js 随画面组件删除；M141/M142 的 tests 改指 menu-button，M143 随 show_shop 直调 draw_main_menu 改写）；#723 改写 M143（主菜单换屏调用删除——tests 与 must_mention 随新行为）、删 M144（基准点不再被读，单例变异守不到行为）；#722 净 -3 +1（+M14370：调教每轮换屏调用；删 M150/M151/M154——重绘分支、EVENTTRAIN 重建与 EVENTCOM 探针随换屏方案消失）； // #721 +3（M14352-M14354：换屏入口——不清屏、只清一行、补等键）； // #717 +11（M14330-M14339/M14344：主菜单指令面板与入口行、调教方格与子菜单、能力值提升、道具商店的多列排版）； // #710 净 0（+1 M14241：page-shop-labo 的「不生成」退回纯文本；-1 M8401：SELECT_YES_NO 放行多一个输入随按钮化不可观察）；#702 起 +2（M14153/M14154：装备品页码不补位写法的回归检查，含旧单补位与双补位两种偏法）；#685 -5（M565/M566/M570/M12297/M13209 随 page-dungeon-setup.js 删除）；#652 净 +4（-14 删反向/失效：M232、M564、M8737（chara-info-show）、M8719（chara-info-show）、M10853/10854/10855（use_exflag 分派删除）、M10856、M10861（kyoten 分支空转后实参表不可观测）、M10864/10865/10866、M11490、M12200、M12202、M12203（两条分发同源后不可观测）；M12201 改挂新代码写法；+18 新回归检查 M13200-M13217）
+export const COUNT = 605; // #867 净 +9（-8：BOUGHT 切屏作废的 M7891/M7892/M8113/M8114/M8115/M11971/M11972/M11973；+17：M17600–M17616 商店循环与确认后付款） // #852 +1（M17330：[109] 出兵路径里的 ENDING_1 回标题转场经菜单项上抛）；#866 +6（M17250–M17255：菜单项表的可用性条件被删、入口串到邻项的处理函数、绘制不再读表的可用性、动态正文不解析、多一处存档写点）；被 #866 搬到 page-main-menu.js 的 24 条改挂新写法，条数不变 // #868 +17（M16700–M16715：存读档列表的网格行、空槽 disabled 的两侧、行内删除与快捷键区间、备注不再补位/不再改游戏状态） // #870 +8（M16450-M16457：横幅/页脚/设置页与侵略页顶栏改用引擎排版）；#848 +1（M16250：标题页手工 addCharacter(0) 回潮）；界面流程缺陷 +5（M15300–M15304：奸商代理投放前的检查与犒赏播报的等键）；#789 +4（M13701/M13702/M13704/M13705：两版出口同源与各自的未知编号缺省）；#739 +2（M14557/M14558：p_c 的表内编号判断——删除/取反），M705 改挂新写法；#836 -2（删 M14557/M14558：指令名改由常量提供，p_c 不再读名字表，表内判断不存在）；M56/M705/M14335 改挂常量写法；#724 返工收口：+M14514/M14515/M14517/M14518/M14520/M14522（换屏前等键），恢复 M10749/M10750，删 M14455（与 M143 重复）；此前 +36（M14450–M14485，#724 子页面换屏）净 -2（删 M10749/M10750 有误后复原）（删 M10749/M10750：sengen_video 投放支的分支内等键，随回菜单换屏确认等键收口而不可观察）；#724 删 5（M137–M140、M152——screen-block.js 随画面组件删除；M141/M142 的 tests 改指 menu-button，M143 随 show_shop 直调 draw_main_menu 改写）；#723 改写 M143（主菜单换屏调用删除——tests 与 must_mention 随新行为）、删 M144（基准点不再被读，单例变异守不到行为）；#722 净 -3 +1（+M14370：调教每轮换屏调用；删 M150/M151/M154——重绘分支、EVENTTRAIN 重建与 EVENTCOM 探针随换屏方案消失）； // #721 +3（M14352-M14354：换屏入口——不清屏、只清一行、补等键）； // #717 +11（M14330-M14339/M14344：主菜单指令面板与入口行、调教方格与子菜单、能力值提升、道具商店的多列排版）； // #710 净 0（+1 M14241：page-shop-labo 的「不生成」退回纯文本；-1 M8401：SELECT_YES_NO 放行多一个输入随按钮化不可观察）；#702 起 +2（M14153/M14154：装备品页码不补位写法的回归检查，含旧单补位与双补位两种偏法）；#685 -5（M565/M566/M570/M12297/M13209 随 page-dungeon-setup.js 删除）；#652 净 +4（-14 删反向/失效：M232、M564、M8737（chara-info-show）、M8719（chara-info-show）、M10853/10854/10855（use_exflag 分派删除）、M10856、M10861（kyoten 分支空转后实参表不可观测）、M10864/10865/10866、M11490、M12200、M12202、M12203（两条分发同源后不可观测）；M12201 改挂新代码写法；+18 新回归检查 M13200-M13217）
 // 跳过、设施名表、近卫护卫条件、怪物行对齐）+4（返工轮 M11490-M11493：护卫名单的 X == 10 条件、
 // 编号宽度、ENEMY_EXIST2 首行空行、末尾无参 PRINTW 的空行）；#542 起 +6（M11313/M11314 page-config 的 [26]/[28] 提示、
 // M11320/M11321 page-shop 的 999 提示与存根名单、M11328 page-chara-info 的 [20]
@@ -912,29 +912,177 @@ export default [
     must_mention: '199 休息：内联文本 + FLAG:9 += 5 + TURNEND 转场',
   },
   {
-    desc: 'M7890 107 购物：BOUGHT 写成 -1（跳转条件永不成立）',
+    desc: 'M7890 107 购物：不进商店循环（入口变成空动作）',
     file: 'ere/page/page-main-menu.js',
-    find: '      era_flag.bought = 1;',
-    replace: '      era_flag.bought = -1; // 变异：不再触发商店跳转',
-    tests: ['page-shop'],
-    must_mention: '107 购物：BOUGHT = 1，下一轮 show_shop 画真身道具商店',
+    find: '    run: () => shop_loop(),',
+    replace: '    run: () => {}, // 变异：不进商店',
+    tests: ['page-shop', 'page-main-menu-items'],
+    must_mention: '[107] 必须进道具商店',
+  },
+  // —— #867：道具店与陷阱店是独立循环，确认后才扣钱 ——
+  // 三个键（退出 999 / 去陷阱店 998 / 回道具店 997）各钉一条，循环里的两处
+  // clear_shop（画屏前清货架、离店时清货架）各一条，购买分派的上界两条。
+  {
+    desc: 'M17600 商店循环的退出键编号错（999 → 998：按 999 退不出商店）',
+    file: 'ere/page/page-shop-loop.js',
+    find: 'const EXIT_KEY = 999;',
+    replace: 'const EXIT_KEY = 998; // 变异：退出键错号',
+    tests: ['page-shop-loop'],
+    must_mention: '预置输入已耗尽',
   },
   {
-    desc: 'M7891 show_shop：BOUGHT 54 边界错一格（>= 改 >，#396 重构后重钉）',
-    file: 'ere/page/page-shop.js',
-    find: '  if (era_flag.bought >= 54) {',
-    replace: '  if (era_flag.bought > 54) { // 变异：54 边界漏判',
-    tests: ['page-shop'],
-    must_mention: 'BOUGHT >= 54 跳陷阱商店真身',
+    desc: 'M17601 去陷阱店的键编号错（998 → 996：切不过去）',
+    file: 'ere/page/page-shop-loop.js',
+    find: 'const TO_TRAP_KEY = 998;',
+    replace: 'const TO_TRAP_KEY = 996; // 变异：切店键错号',
+    tests: ['page-shop-loop', 'page-shop'],
+    must_mention: '输入不合法！请输入以下值之一',
   },
   {
-    desc: 'M7892 show_shop：BOUGHT 0-53 支整段不再画商店（#399 重构后重钉）',
-    file: 'ere/page/page-shop.js',
-    find: '  if (era_flag.bought >= 0 && era_flag.bought < 54) {',
+    desc: 'M17602 回道具店的键编号错（997 → 996：切不回去）',
+    file: 'ere/page/page-shop-loop.js',
+    find: 'const TO_ITEM_KEY = 997;',
+    replace: 'const TO_ITEM_KEY = 996; // 变异：切店键错号',
+    tests: ['page-shop-loop'],
+    must_mention: '道具店画了两次',
+  },
+  {
+    desc: 'M17603 切店守卫漏判（只在陷阱店里才认 [998]）',
+    file: 'ere/page/page-shop-loop.js',
+    find: '  if (result === TO_TRAP_KEY && !in_trap_shop) {',
     replace:
-      '  if (era_flag.bought >= 54 && era_flag.bought < 54) { // 变异：支不可达',
-    tests: ['page-shop'],
-    must_mention: '107 购物：BOUGHT = 1，下一轮 show_shop 画真身道具商店',
+      '  if (result === TO_TRAP_KEY && in_trap_shop) { // 变异：守卫取反',
+    tests: ['page-shop-loop'],
+    must_mention: '输入不合法！请输入以下值之一',
+  },
+  {
+    desc: 'M17604 画屏前不清货架（上一家商店的在售位残留）',
+    file: 'ere/page/page-shop-loop.js',
+    find: `    clear_shop();
+    if (in_trap_shop) {`,
+    replace: `    if (in_trap_shop) { // 变异：画屏前不清货架`,
+    tests: ['page-shop-loop'],
+    must_mention: '画屏前清货架',
+  },
+  {
+    desc: 'M17605 离店时不清货架（退出售位留在存档里）',
+    file: 'ere/page/page-shop-loop.js',
+    find: `  // 离店前清货架：下一轮进店由 saleitem_check 重新点亮
+  clear_shop();`,
+    replace: `  // 变异：离店不清货架`,
+    tests: ['page-shop-loop'],
+    must_mention: '画屏前清货架',
+  },
+  {
+    desc: 'M17606 店内输入不派给购买（0-99 全部落空）',
+    file: 'ere/page/page-shop-loop.js',
+    find: '    if (result >= 0 && result < SHOP_ITEM_COUNT) {',
+    replace: '    if (result < 0) { // 变异：购买分派失效',
+    tests: ['page-shop-loop', 'shop-trap'],
+    must_mention: 'MONEY -= 200',
+  },
+  {
+    desc: 'M17607 可购编号的上界宽一格（< 100 → <= 100）',
+    file: 'ere/page/page-shop-loop.js',
+    find: '    if (result >= 0 && result < SHOP_ITEM_COUNT) {',
+    replace:
+      '    if (result >= 0 && result <= SHOP_ITEM_COUNT) { // 变异：上界宽一格',
+    tests: ['page-shop-loop'],
+    must_mention: '99 是最后一个可购编号',
+  },
+  {
+    desc: 'M17608 买不起的商品不禁用（disabled 配置删）',
+    file: 'ere/page/page-item-shop.js',
+    find: '      price > era_flag.money ? { disabled: true } : undefined,',
+    replace: '      undefined, // 变异：买不起也能点',
+    tests: ['page-shop-loop'],
+    must_mention: '买不起的 0 号不得出现在合法输入集里',
+  },
+  {
+    desc: 'M17609 禁用条件的下界错一格（> 钱 → >= 钱：刚好够钱也点不动）',
+    file: 'ere/page/page-item-shop.js',
+    find: '      price > era_flag.money ? { disabled: true } : undefined,',
+    replace:
+      '      price >= era_flag.money ? { disabled: true } : undefined, // 变异：闭区间变开区间',
+    tests: ['page-shop-loop'],
+    must_mention: '钱恰好等于价格时买得起',
+  },
+  {
+    desc: 'M17610 简单确认支在确认之前就扣钱（取消也扣了钱）',
+    file: 'ere/page/page-item-shop.js',
+    find: `  // 購入確認（0 好的 / 1 不要，其余重问；#572 起两项升格为按钮，
+  // 「其余」由引擎按白名单拒收，重问支不可达，结构保留）
+  for (;;) {`,
+    replace: `  era_flag.money -= item_price(bought); // 变异：确认之前就扣钱
+  // 購入確認（0 好的 / 1 不要，其余重问；#572 起两项升格为按钮，
+  // 「其余」由引擎按白名单拒收，重问支不可达，结构保留）
+  for (;;) {`,
+    tests: ['item-shop', 'page-shop-loop'],
+    must_mention: '取消不扣钱',
+  },
+  {
+    desc: 'M17611 简单确认支先给货、后扣钱（顺序颠倒）',
+    file: 'ere/page/page-item-shop.js',
+    find: `  era_flag.money -= item_price(bought);
+  era.add(\`item:\${bought}\`, 1);`,
+    replace: `  era.add(\`item:\${bought}\`, 1); // 变异：先给货
+  era_flag.money -= item_price(bought);`,
+    tests: ['page-shop-loop'],
+    must_mention: '扣钱必须先于给货',
+  },
+  {
+    desc: 'M17612 复数购买取消也扣钱（一件都没买也扣一价）',
+    file: 'ere/page/page-item-shop.js',
+    find: `    if (result === 0) {
+      return 0; // 取消：一件都没买，钱也没动
+    }`,
+    replace: `    if (result === 0) {
+      era_flag.money -= a; // 变异：取消也扣钱
+      return 0; // 取消：一件都没买，钱也没动
+    }`,
+    tests: ['item-shop', 'page-shop-loop'],
+    must_mention: '取消不扣钱',
+  },
+  {
+    desc: 'M17613 复数购买先给货、后扣钱（顺序颠倒）',
+    file: 'ere/page/page-item-shop.js',
+    find: `    era_flag.money -= a * result;
+    era.add(\`item:\${bought}\`, result);`,
+    replace: `    era.add(\`item:\${bought}\`, result); // 变异：先给货
+    era_flag.money -= a * result;`,
+    tests: ['page-shop-loop'],
+    must_mention: '扣钱必须先于给货',
+  },
+  {
+    desc: 'M17614 复数的可买数预留一件（钱的件数上限 +1）',
+    file: 'ere/page/page-item-shop.js',
+    find: '  const c = Math.trunc(era_flag.money / a);',
+    replace:
+      '  const c = Math.trunc(era_flag.money / a) + 1; // 变异：预留一件',
+    tests: ['item-shop'],
+    must_mention: '可买数',
+  },
+  {
+    desc: 'M17615 使用支取消也扣钱（选人时按 [999] 也算买下）',
+    file: 'ere/page/page-item-shop.js',
+    find: `    if (result === 999) {
+      return 0; // 取消：还没付款，道具也没动
+    }`,
+    replace: `    if (result === 999) {
+      era_flag.money -= item_price(bought); // 变异：取消也扣钱
+      return 0; // 取消：还没付款，道具也没动
+    }`,
+    tests: ['item-shop'],
+    must_mention: '取消不扣钱',
+  },
+  {
+    desc: 'M17616 使用支不扣钱（MONEY -= → +=）',
+    file: 'ere/page/page-item-shop.js',
+    find: '    era_flag.money -= item_price(bought);\n    apply_use_effect(bought, result);',
+    replace:
+      '    era_flag.money += item_price(bought); // 变异：不扣钱\n    apply_use_effect(bought, result);',
+    tests: ['item-shop'],
+    must_mention: '按 ITEMPRICE 扣一次钱',
   },
   {
     desc: 'M7893 select_assi [1002]：ASSI 复位删（旧指针残留）',
@@ -1195,33 +1343,6 @@ export default [
     replace: "' 午后' : ' 午前'",
     tests: ['shop-trap'],
     must_mention: '日期行两态',
-  },
-  {
-    desc: 'M8113 USERSHOP 998：切陷阱商店不生效（BOUGHT 不置 200）',
-    file: 'ere/page/page-shop.js',
-    find: '  } else if (result === 998 && era_flag.bought >= 0) {\n    era_flag.bought = 200;\n    clear_shop();',
-    replace:
-      '  } else if (result === 998 && era_flag.bought >= 0) {\n    // 变异：不切陷阱商店（BOUGHT 不动）\n    clear_shop();',
-    tests: ['shop-trap'],
-    must_mention: 'BOUGHT = 200',
-  },
-  {
-    desc: 'M8114 USERSHOP 999：购物态下不清 BOUGHT（退出商店失效）',
-    file: 'ere/page/page-shop.js',
-    find: '    era_flag.bought = -1;\n    return; // 支的出口：回主菜单（#592）',
-    replace:
-      '    // 变异：不退出购物态\n    return; // 支的出口：回主菜单（#592）',
-    tests: ['shop-trap'],
-    must_mention: '999 退出商店',
-  },
-  {
-    desc: 'M8115 USERSHOP 购物态检查失效（其它输入落到主菜单分发）',
-    file: 'ere/page/page-shop.js',
-    find: '  } else if (era_flag.bought >= 0) {\n    return; // 购物态下其它输入无反应，回循环重绘',
-    replace: `  } else if (era_flag.bought >= 100000) {
-    return; // 变异：购物态检查失效`,
-    tests: ['shop-trap'],
-    must_mention: '购物态下的其它输入一律 RETURN 0',
   },
   {
     desc: 'M8381 LIFE_LIST 爱慕标签正文丢两格补位（标签列塌一格）',
@@ -3875,36 +3996,6 @@ export default [
     tests: ['page-save-load'],
     must_mention: 'CSTR:MASTER:99 被清空',
   },
-  // —— #592：店内 999 是退出商店（CALL CLEAR_SHOP 无 RETURN，RESULT 被清 0） ——
-  // M11970：删除（#643，master 上已红）——它模拟「店内 999 删 return 后落回
-  // 调试菜单提示」，而 #641 已整段删除 DEBUG_MENU_U 入口，提示行不复
-  // 存在、变异无行为面；退出语义由同段的 M11971/M11972 守。
-  {
-    desc: 'M11971 店内 999 不清在售位（clear_shop 调用删——退出商店时货架不撤）',
-    file: 'ere/page/page-shop.js',
-    find: '    clear_shop();\n    era_flag.bought = -1;',
-    replace: '    era_flag.bought = -1; // （变异：:45 的 CLEAR_SHOP 删）',
-    tests: ['shop-trap'],
-    must_mention: 'CLEAR_SHOP 必须清在售位',
-  },
-  {
-    desc: 'M11972 店内 999 的购物态下界错一格（>= 0 改 > 0：BOUGHT == 0 时退出失效）',
-    file: 'ere/page/page-shop.js',
-    find: '  if (result === 999 && era_flag.bought >= 0) {',
-    replace:
-      '  if (result === 999 && era_flag.bought > 0) { // 变异：0 边界漏判',
-    tests: ['shop-trap'],
-    must_mention: 'BOUGHT == 0 仍在购物态',
-  },
-  {
-    desc: 'M11973 店内退出键编号改错（999 改 998：999 退出失效、BOUGHT 不清）',
-    file: 'ere/page/page-shop.js',
-    find: '  if (result === 999 && era_flag.bought >= 0) {',
-    replace:
-      '  if (result === 998 && era_flag.bought >= 0) { // 变异：退出键改 998',
-    tests: ['page-shop'],
-    must_mention: '999 退出商店',
-  },
   // —— #562：PRINTLC 系不换行（收尾的 PRINTL 只结束按钮那一行，不产生空行） ——
   // 四条各补回一处空行：按钮自成一行（＝ PRINTLC + 收尾的 PRINTL），多补
   // 一条就是多出来的空行（语义与勘误见 CONTEXT.md「输出 API 的排版与对齐」）。
@@ -4510,7 +4601,7 @@ export default [
     file: 'ere/page/page-shop.js',
     find: `  // 调试菜单入口（作者的调试工具）自 #542 判不移植、#638 起随占位
   // 机制一并删除：主菜单不印 [999] 按钮，引擎的输入白名单（#130）本就
-  // 送不到这里；店内的 999 在上面的购物段早退（#592），也不会落到链尾`,
+  // 送不到这里。`,
     replace: `  if (result === 999) {
     era.print('（调试菜单不在移植范围。）');
     await era.waitAnyKey();
@@ -5768,16 +5859,14 @@ export default [
     file: 'ere/page/page-main-menu.js',
     find: `    id: 107,
     label: '购物',
-    run: () => {
-      era_flag.bought = 1;
-    },`,
+    run: () => shop_loop(),`,
     replace: `    id: 107,
     label: '购物',
     run: () => {
       era.set('flag:36', 0); // 变异：购物分发接到面板切换
     },`,
     tests: ['page-main-menu-items', 'page-shop'],
-    must_mention: '[107] 必须置 BOUGHT = 1',
+    must_mention: '[107] 必须进道具商店',
   },
   {
     desc: 'M17253 指令面板绘制不看表的可用性（不可用项也画成可点按钮）',
