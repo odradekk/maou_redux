@@ -1686,10 +1686,12 @@ function create_era_fixture() {
   //     delete this.data.source,delete this.data.delta}
   // 三个转换点（重建/删表/随 resetData 消失）由 delete_train_table_keys 承载，
   // train_open 与引擎「tequip 表在不在」同步：beginTrain 开、endTrain 与
-  // resetData 关。结算的实际数值语义（gotjuel→juel、delta→palam 等）不在此
-  // 镜像：夹具的 store 是平表，per-chara 子表结构不存在——那层比对归引擎
-  // bundle 用例（test/train-loop.test.js 的寻址锁、test/juel-check.test.js
-  // 的 endTrain 结算锁）。这里只镜像「何时可寻址」与调用记录，让时序错误
+  // resetData 关。结算的数值语义只镜像游戏侧不再当场做的那几步
+  // （nextTurnInTrain 的 delta→palam、nowex→ex、deltabase→base 与
+  // endTrain 的 gotjuel→juel，#874/#875）；per-chara 子表结构不存在——那层
+  // 比对归引擎 bundle 用例（test/train-loop.test.js 的寻址锁、
+  // test/juel-check.test.js 的 endTrain 结算锁）。其余部分只镜像「何时可寻址」
+  // 与调用记录，让时序错误
   // （beginTrain 之前写 tflag）当场暴露、跨场残留不再掩盖「忘清 tflag」类
   // 真缺陷（夹具读旧值、引擎读 0——#152 的逃逸形式）。
   // 已登记偏差：引擎重建时把**静态声明**的 tflag 条目补 0，夹具无声明表
@@ -1736,6 +1738,7 @@ function create_era_fixture() {
     // 还原同一个分歧，好让「ORDER 与写入点必须落在 Palam.yml 声明集内」这条
     // 约束有测试可守（#923）。
     const palam_ids = yml_declared_ids('palam') ?? new Set();
+    const base_ids = yml_declared_ids('base') ?? new Set();
     for (const cid of chars_in_train) {
       const prefix = `source:${cid}:`;
       for (const key of [...store.keys()]) {
@@ -1758,11 +1761,48 @@ function create_era_fixture() {
         );
         store.set(key, 0);
       }
+      // deltabase → base 也在这里结算（#875）：游戏侧不再当场写 base、也不清
+      // deltabase，引擎的「base += deltabase → maxbase > 0 时钳到
+      // [0, maxbase] → deltabase = 0」是唯一结算点，遍历范围同样是
+      // `Object.keys(data.deltabase[cid])`（声明序号由 addCharacter 预置 0，
+      // 未声明序号 `undefined + n` 得 NaN——与 delta→palam 同款分歧）。
+      const deltabase_prefix = `deltabase:${cid}:`;
+      for (const key of [...store.keys()]) {
+        if (!key.startsWith(deltabase_prefix)) {
+          continue;
+        }
+        const index = Number(key.slice(deltabase_prefix.length));
+        const base_key = `base:${cid}:${index}`;
+        const before = store.get(base_key);
+        let next =
+          (before === undefined && base_ids.has(index) ? 0 : before) +
+          store.get(key);
+        const max = store.get(`maxbase:${cid}:${index}`);
+        if (max > 0) {
+          next = Math.max(Math.min(next, max), 0);
+        }
+        store.set(base_key, next);
+        store.set(key, 0);
+      }
     }
     return undefined;
   };
   era.endTrain = () => {
     calls.push({ api: 'endTrain', args: [] });
+    // 引擎在删调教域表之前逐键把 gotjuel 加进 juel（#875）：
+    // juel_check_main 只写 gotjuel（收益为正，抵消与能力提升的消费为负），
+    // 这里的加算是唯一结算点。夹具不镜像它，所有「调教结束后的珠」断言读到的
+    // 就都是没结算的值；清零 gotjuel 也不再由游戏侧做，双重加算无从发生。
+    for (const cid of chars_in_train) {
+      const prefix = `gotjuel:${cid}:`;
+      for (const key of [...store.keys()]) {
+        if (!key.startsWith(prefix)) {
+          continue;
+        }
+        const juel_key = `juel:${cid}:${key.slice(prefix.length)}`;
+        store.set(juel_key, (store.get(juel_key) || 0) + store.get(key));
+      }
+    }
     train_open = false;
     // 引擎 endTrain 的 delete 段把 source 一起删掉——它不会自动回来，下一次
     // beginTrain 或 resetData 才重建（#902 的结构比对钉住这一条）

@@ -26,11 +26,9 @@ const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
 
-/** usershop 直调用的夹具（BOUGHT = -1 的真实入口状态，page-shop.test.js 同款） */
+/** usershop 直调用的夹具（page-shop.test.js 同款，无需预铺任何店内状态） */
 function create_floor_fixture() {
-  const fixture = create_era_fixture();
-  fixture.load_module('era-utils/era-flag').bought = -1;
-  return fixture;
+  return create_era_fixture();
 }
 
 function text_lines(fixture) {

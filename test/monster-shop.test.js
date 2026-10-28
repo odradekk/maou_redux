@@ -151,7 +151,6 @@ function monster_world(seed = {}) {
   // chara_presets 检查）：召唤链要能把 202 真的加进来，预设必须经
   // seed_chara 提供（夹具不读 yml/）
   fixture.seed_chara(202, { id: 202, name: '精英狗头人' });
-  fixture.load_module('era-utils/era-flag').bought = -1;
   return fixture;
 }
 

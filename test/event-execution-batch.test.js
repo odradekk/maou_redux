@@ -1156,9 +1156,6 @@ test('列表行的等级带冒号（LV:{CFLAG:COUNT:9}）', async () => {
 
 test('主菜单 [103]：usershop 接通批量处刑真身', async () => {
   const fixture = seed_world(31);
-  // 商店轮入口状态（BOUGHT = -1；bought 缺省 0 会吞掉全部输入，见
-  // page-shop.test.js 的 create_shop_fixture 说明）
-  fixture.load_module('era-utils/era-flag').bought = -1;
   const { usershop } = fixture.load_module('page/page-shop');
   fixture.set_inputs(1999);
 

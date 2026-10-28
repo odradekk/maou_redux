@@ -5,25 +5,27 @@
  * 画面侧两个子调用在 ere/page/ 下各自模块：show_info_exp
  * （page-info-exp.js）与 show_juel / show_ablup_select（page-ablup.js）。
  *
- * == 与引擎 endTrain() 的职责划分（#47 定案，依据 app.asar 的 endTrain 源码）==
+ * == 与引擎 endTrain() 的职责划分（#47 定案，#875 改为交还结算）==
  *
  * 引擎收尾 era.endTrain()（train-end.js 的 run_aftertrain 在 EVENTEND 链
  * **之后**调用，#44 固定的顺序）做两件事：
  *   1. 对调教列里的每个角色，把 gotjuel 的**每一个键**加进 juel
  *      （`Object.entries(data.gotjuel[e])` 全键遍历）；
  *   2. 删掉调教域表（palam/gotjuel/tflag/ex/source/delta…）。
- * 相殺与结算表渲染都要读**加算后**的 juel，这一步只能留在游戏侧（引擎的
- * 加算发生在链后、渲染之后，帮不上忙）。若两边都做，本次增量会翻倍。
  *
- * 定案：游戏侧完整承载珠结算（梯子→加算→TFLAG 记录→相殺→渲染），
- * 渲染完成后把本模块写过的 gotjuel 键**清回 0**——引擎的加算成为精确
- * 无操作，删表职责不受影响。清 0 不会产生未定义键相加：引擎在
- * addCharacter/addCharacterForTrain 时已按 staticData.juel 名字表把
- * juel 与 gotjuel 的每个键预置为 0（app.asar 实证，initCharaTable 含
- * juel）。**gotjuel 的写者只有三处：本模块、自动调教路径的清零
- * （ere/system/train/autotrain.js）与 train-end.js 的 defer_train_death
- * （死亡清零，#782——死亡目标不获珠）**——后续工单不得绕过：erauma 式
- * 的逐回合 gotjuel 累积不适用，结算模型是一次性的 PALAM→珠换算。
+ * 定案（#875，与 #874 的 palam/delta 同型）：珠的加算与清零归引擎。本模块
+ * 只写 gotjuel——梯子的收益、否定抵消与能力提升的消费都落在这张表上（抵消
+ * 与消费是负值）——渲染与判定读「结算后的值」＝ juel + gotjuel
+ * （era-utils/train-settle.js 的 juel_settled）。引擎 endTrain 的加算是唯一
+ * 结算点；本模块不再当场写 juel，也不再清零 gotjuel。手工再做一次就是
+ * 双重累加。#461 漏清 delta 时出过同性质的问题。
+ *
+ * gotjuel 的写者：本模块（梯子收益与否定抵消）、ablup.js 的 pay 与
+ * ability-check.js 的否定减半（能力提升的消费与减半，窗口内写 gotjuel）、
+ * 自动调教路径的清零（ere/system/train/autotrain.js）与 train-end.js 的
+ * defer_train_death（死亡清零，#782——死亡目标不获珠）**——后续工单不得
+ * 绕过：erauma 式的逐回合 gotjuel 累积不适用，结算模型是一次性的
+ * PALAM→珠换算。
  *
  * 两处有意为之的可证偏离（勿「修回去」）：
  *   - GOTJUEL:3 = GET_JUEL（润滑）是**死存储**：写入后全库无读者
@@ -72,6 +74,7 @@ const { check_specialskil } = require('#/system/train/get-specialtalent'); // #5
 const { show_info_exp } = require('#/page/page-info-exp');
 const { show_ablup_select, show_juel } = require('#/page/page-ablup');
 const era_flag = require('#/era-utils/era-flag');
+const { juel_settled } = require('#/era-utils/train-settle');
 const { NBSP, pad_left } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 
 /**
@@ -144,10 +147,6 @@ const GAIN_LADDER = [
 ];
 const GAIN_MAX = 12000;
 
-// 的加算对象（0-10 去 3，另加 14/15/100）——也即文件头定案的
-// gotjuel 清零对象：游戏侧结算碰过哪些键，收尾前就把哪些键清回 0
-const OWNED_JUEL_KEYS = [0, 1, 2, 4, 5, 6, 7, 8, 9, 10, 14, 15, 100];
-
 // 色名 → CSS hex（颜色片段直通渲染层，page-train 的
 // #ff1493/#87cefa 先例）：SkyBlue → 三个读数列，LightSalmon → 抵消列
 const SKY_BLUE = '#87cefa';
@@ -190,9 +189,13 @@ function getbit(value, bit) {
  * 否定の珠による相殺。
  *
  * 两组池子（恭顺 4/欲情 5/屈服 6 与 耻情 8/苦痛 9/恐怖 10）各跑同一个
- * 循环：每轮随机挑一池，扣 min(否定余量的一半, 该池现有)——否定
+ * 循环：每轮随机挑一池，扣 min(否定余量的一半, 该池结算后的值)——否定
  * 余量取半为 0 且未清零时改扣 1；直到否定清零或该组池子全空。习得
  * （juel:7）与两组之外的项目不参与抵消。
+ *
+ * **扣减写进 gotjuel（负值），不写 juel**：#875 起引擎 endTrain 的
+ * `juel += gotjuel` 是唯一结算点。池值与否定余量都读 juel_settled
+ * （juel + gotjuel），所以抵消的落账与当场写 juel 时逐值相同。
  *
  * **有意偏离：循环体语义上是 do-while（先跑一遍再判条件），此处写成
  * while。** do-while 在「否定已清零」或「该组池子全空」时循环体仍会跑
@@ -214,8 +217,8 @@ function getbit(value, bit) {
  */
 function offset_negative_group(cid, pools, rng) {
   const pick_index = rng ?? (() => Math.floor(Math.random() * pools.length));
-  const negative = () => era.get(`juel:${cid}:100`) || 0;
-  const pool_value = (id) => era.get(`juel:${cid}:${id}`) || 0;
+  const negative = () => juel_settled(cid, 100);
+  const pool_value = (id) => juel_settled(cid, id);
   // 循环条件：JUEL:100 > 0 && (组内三池之和) > 0
   while (
     negative() > 0 &&
@@ -229,8 +232,8 @@ function offset_negative_group(cid, pools, rng) {
     if (pool_value(pick) < take) {
       take = pool_value(pick); // 池子里不够就整池扣走
     }
-    era.set(`juel:${cid}:${pick}`, pool_value(pick) - take);
-    era.set(`juel:${cid}:100`, negative() - take);
+    era.add(`gotjuel:${cid}:${pick}`, -take);
+    era.add(`gotjuel:${cid}:100`, -take);
   }
 }
 
@@ -241,7 +244,8 @@ function offset_negative_group(cid, pools, rng) {
  * ——阴核/私处/肛门/乳房(14)/习得/癖好(15)，无抵消列。抵消行（4/5/6/8/9/
  * 10/11）：`XX点数：( 上次值 + 本次增量 ) - 抵消量 = 结果`——上次值与
  * 抵消量读相殺前记进 TFLAG 的快照（51-53/55-57/58），结果读相殺后的
- * juel 现值。行尾竖线是每行的固定终止符。
+ * 「结算后的值」＝ juel + gotjuel（#875：juel 本身要到引擎 endTrain 才
+ * 加算，抵消与消费都记在 gotjuel 的负值里）。行尾竖线是每行的固定终止符。
  *
  * @param {number} cid 调教目标
  * @param {number} row 行号 0-12（结算表自上而下的第 N 行）
@@ -257,7 +261,7 @@ function render_settlement_row(cid, row) {
         ? `${fetish || '癖好'}点数：(`
         : `${era.get(`palamname:${idx}`)}点数：(`;
     const got = era.get(`gotjuel:${cid}:${idx}`) || 0;
-    const now = era.get(`juel:${cid}:${idx}`) || 0;
+    const now = juel_settled(cid, idx);
     era.print([
       { content: label },
       { content: figure_indent(now - got), color: SKY_BLUE },
@@ -274,8 +278,11 @@ function render_settlement_row(cid, row) {
   const record = row === 11 ? 58 : row + 47;
   const idx = row === 11 ? 100 : row;
   const tflag = era.get(`tflag:${record}`) || 0;
-  const got = era.get(`gotjuel:${cid}:${idx}`) || 0;
-  const now = era.get(`juel:${cid}:${idx}`) || 0;
+  // 本次增量 = 相殺前快照 - 相殺前的 juel 本身；抵消后的 gotjuel 已含负的
+  // 抵消量，不能拿它当「本次增量」显示
+  const raw = era.get(`juel:${cid}:${idx}`) || 0;
+  const got = tflag - raw;
+  const now = juel_settled(cid, idx);
   era.print([
     { content: `${era.get(`palamname:${idx}`)}点数：(` },
     { content: figure_indent(tflag - got), color: SKY_BLUE },
@@ -290,8 +297,9 @@ function render_settlement_row(cid, row) {
 }
 
 /**
- * juel_check_main：结算本体——梯子→加算→TFLAG 快照→相殺→
- * 结算表。渲染完成后把 gotjuel 清回 0（文件头的职责划分定案）。
+ * juel_check_main：结算本体——梯子→TFLAG 快照→相殺→结算表。
+ * 全程只写 gotjuel（收益为正、抵消为负），juel 由引擎 endTrain 加算并
+ * 清零 gotjuel（职责划分见文件头）。
  *
  * @param {number} cid 调教目标
  * @param {() => number} [rng] 相殺的随机源（返回池序号整数；
@@ -329,23 +337,17 @@ function juel_check_main(cid, rng) {
     }
   }
 
-  // 现在保有する珠に今回獲得した珠を加算（3 润滑与 11-13 的
-  // 本体不加——11-13 已汇入否定）
-  for (const key of OWNED_JUEL_KEYS) {
-    era.add(`juel:${cid}:${key}`, era.get(`gotjuel:${cid}:${key}`) || 0);
-  }
-
-  // 相殺前の珠を TFLAG:51-58 に記录（渲染的「上次值/抵消量」
-  // 快照；count 3 跳过 → tflag:54 不写，juel:7 习得无抵消）
+  // 相殺前の珠を TFLAG:51-58 に記录（渲染的「上次值/抵消量」快照；#875 起
+  // 这份快照就是「已含本次增量」的结算后值，即 juel + gotjuel）
   for (let count = 0; count <= 6; count += 1) {
     if (count === 3) {
       continue;
     }
-    era.set(`tflag:${count + 51}`, era.get(`juel:${cid}:${count + 4}`) || 0);
+    era.set(`tflag:${count + 51}`, juel_settled(cid, count + 4));
   }
-  era.set('tflag:58', era.get(`juel:${cid}:100`) || 0);
+  era.set('tflag:58', juel_settled(cid, 100));
 
-  // 否定の珠による相殺（两个循环同构，参数化）
+  // 否定の珠による相殺（两个循环同构，参数化）：扣减写进 gotjuel 的负值
   offset_negative_group(cid, [4, 5, 6], rng); // 恭顺/欲情/屈服
   offset_negative_group(cid, [8, 9, 10], rng); // 耻情/苦痛/恐怖
 
@@ -365,11 +367,8 @@ function juel_check_main(cid, rng) {
   era.drawLine();
   era.print('以上的点数变化了。');
 
-  // —— 文件头定案的 gotjuel 清零：引擎 endTrain 的 gotjuel→juel 加算
-  // 由此成为精确无操作（防双重累加），删表职责不受影响 ——
-  for (const key of OWNED_JUEL_KEYS) {
-    era.set(`gotjuel:${cid}:${key}`, 0);
-  }
+  // 不在这里清零 gotjuel：引擎 endTrain 在删除调教域表之前逐键加算，
+  // 那是唯一结算点（#875；手工清零会让本次增量整段丢失）
   return 0;
 }
 

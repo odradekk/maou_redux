@@ -6,8 +6,8 @@
  *
  *   EVENTEND 事件链（函数体在 event/event-end.js，尾部转 TURNEND）→
  *   欲情快照（PALAM:5 落 CFLAG:668，见 save_train_desire）→
- *   era.endTrain()（gotjewel 结算进 jewel、删调教域表；与游戏侧
- *   JUEL_CHECK 的职责划分见 juel-check.js，#47 定案）→ 冲账死亡登记。
+ *   era.endTrain()（gotjuel 结算进 juel、删调教域表；与游戏侧 JUEL_CHECK
+ *   的职责划分见 juel-check.js，#47 定案、#875 改为交还结算）→ 冲账死亡登记。
  *
  * 三个反直觉的顺序约束（动协议前先核这里）：
  *   1. endTrain 在链后：EVENTEND 体内的 JUEL_CHECK 要读 palam/gotjuel，

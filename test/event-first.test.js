@@ -70,7 +70,6 @@ function expected_init_writes(initial_slave) {
       value: -1,
     })), // FLAG:60..73 = -1
     { name: 'flag:10005', value: -1 }, // TARGET = -1（指针槽）
-    { name: 'flag:10029', value: -1 }, // BOUGHT = -1（购入品指针，#395）
     { name: 'flag:5', value: 17179934119 }, // 战斗日志显示设置
     { name: 'flag:10001', value: 1 }, // DAY:1 = 1（月）
     { name: 'itemsales:53', value: 1 }, // 53 号道具开局上架（#38 恢复：
@@ -426,23 +425,10 @@ test('端到端：新的猎物 → 初期奴隶选村娘 → 初始化 → 转�
     })),
     'eventshop 必须依序清 100 个道具上架位',
   );
-  // eventshop 清零之后紧接着把 BOUGHT 复位 -1（#395；与 eventfirst 的
-  // 初始化同一变量，见 page-shop.js 文件头 BOUGHT 段），随后是本轮
-  // show_shop 自己的两段写入
-  assert.deepEqual(writes[zero_start + 100], { name: 'flag:10029', value: -1 });
-  // #399 起 show_shop:25 的 CALL CLEAR_SHOP 是真身（清 ITEMSALES，
-  // page-item-shop.js clear_shop）——比 eventshop 的 100 格多出 200 格，
-  // 两层写入都要在（商店本体随后重新点亮在售位）
-  assert.deepEqual(
-    writes.slice(zero_start + 101, zero_start + 401),
-    Array.from({ length: 300 }, (_, k) => ({
-      name: `itemsales:${k}`,
-      value: 0,
-    })),
-    'show_shop 的 CLEAR_SHOP 必须依序清 300 个道具上架位',
-  );
-  // 之后才是日期钳制（）
-  assert.deepEqual(writes[zero_start + 401], { name: 'flag:10002', value: 1 });
+  // eventshop 的清零之后就轮到本轮 show_shop 自己的写入（日期钳制）。
+  // 货架的清空与重铺自 #867 起归商店循环（page/page-shop-loop.js：画屏前
+  // clear_shop、随后 saleitem_check 重新点亮），菜单轮不再清 300 格
+  assert.deepEqual(writes[zero_start + 100], { name: 'flag:10002', value: 1 });
 });
 
 test('初始化写入（随机）：问答选 0 后开局直线赋值逐项一致；随机奴隶经 rand_chara_make 真身生成（#565）', async () => {

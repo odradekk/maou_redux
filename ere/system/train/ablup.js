@@ -57,6 +57,7 @@ const { EXPLV } = require('#/era-utils/exp-level');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const era_modsave = require('#/era-utils/era-modsave');
+const { in_train_window, juel_settled } = require('#/era-utils/train-settle');
 // userablup 要调的两个检查（#462 实现，同域）
 const {
   jujun_up_check,
@@ -151,7 +152,13 @@ function make_context(spec, cid) {
     cid,
     talent,
     seal,
-    read: (ref) => era.get(ref_address(ref, cid)) || 0,
+    read: (ref) =>
+      ref[0] === 'juel'
+        ? // 调教期的珠读「结算后的值」：本次调教的收益/抵消/消费都还记在
+          // gotjuel 里，juel 要等引擎 endTrain 才加算（#875）；调教期外
+          // 没有 gotjuel 表，读到的就是 juel 本身
+          juel_settled(cid, ref[1])
+        : era.get(ref_address(ref, cid)) || 0,
     lv: era.get(ref_address(level, cid)) || 0,
   };
 }
@@ -363,13 +370,24 @@ function decide_value(spec, cid) {
 
 /**
  * 扣减：金额写法同门槛右值（轨道名、'a*3'、'c/2'）。
+ *
+ * 珠（juel）的扣减在调教窗口内写 gotjuel——引擎 endTrain 的加算是唯一
+ * 结算点，读点用 juel_settled 把这张增量表算进去（#875）；调教窗口外
+ * （商店的能力值提高）没有 gotjuel 表，照旧直接写 juel。其余表（exp）
+ * 不受结算影响，照旧直接写。
+ *
  * @param {object} opt 选项
  * @param {Record<string, number>} state 求值结果
  * @param {object} ctx 上下文
  */
 function pay(opt, state, ctx) {
   for (const [ref, amount] of opt.deduct ?? []) {
-    era.add(ref_address(ref, ctx.cid), -below_value(amount, state, ctx));
+    const delta = -below_value(amount, state, ctx);
+    if (ref[0] === 'juel' && in_train_window(ctx.cid)) {
+      era.add(`gotjuel:${ctx.cid}:${ref[1]}`, delta);
+    } else {
+      era.add(ref_address(ref, ctx.cid), delta);
+    }
   }
 }
 

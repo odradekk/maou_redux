@@ -1,41 +1,43 @@
 /**
- * @file 道具商店（issue #399 / N15 段 3）。
+ * @file 道具商店（issue #399 / N15 段 3；#867 改成确认后付款）。
  *
  * == 购买流程（EraElectron 没有内置的商品列表命令与购买回调，本文件自备） ==
  *
- * 商店列出 ITEMSALES 不为 0 的商品（名字 + 价格），点编号即买。点中之后
- * 依次做五步：
+ * 商店列出 ITEMSALES 不为 0 的商品（名字 + 价格），点编号即买；买不起的
+ * 商品画成 disabled 按钮，点不动（见 print_shopitem）。点中之后按「确认 →
+ * 扣钱 → 给货」走：
  *
- *   1. 检查 ITEMSALES:BOUGHT 与 ITEMPRICE:BOUGHT（不满足则无声退回输入）；
- *   2. BOUGHT = 选中编号；
- *   3. ITEM:BOUGHT += 1（先给货）；
- *   4. MONEY -= ITEMPRICE:BOUGHT（先扣钱）；
- *   5. 调 event_buy（买/退都在这上面做——记账用的单价与扣款用的 ITEMPRICE
- *      同值，逐条与 yml/Item.yml 的 price 对过）。
+ *   1. 校验在售与所持金（不满足则无声退回输入）；
+ *   2. 按商品种类先问一句：简单商品问「确定购买？」、复数商品问数量、当场
+ *      使用型先选使用对象——**取消都发生在这里，一分钱还没动**；
+ *   3. 确认后一次结清：MONEY -= 单价 × 件数；
+ *   4. 再给货：ITEM += 件数；当场使用型直接对目标生效，不留存货；
+ *   5. 记账：EX_FLAG:4444 与 MONEY 同步减，回合结算时对账。
+ *
+ * 「扣了钱没给货」「给了货没扣钱」的中间态不存在，因此也没有退款路径——
+ * 此前是先扣钱、先给货，玩家反悔时再倒着退回来（退的数额还要在五张表里各
+ * 写一遍）。现在取消就是什么都没发生。
  *
  * 本文件把它拆成两块：
  *
- *   - `print_shopitem()`＝列货（绘制半）；
- *   - `purchase(item_id)`＝上面五步（含 ITEMSALES/MONEY 两个校验、先给货
- *     先扣钱、再调 `event_buy`），由商店轮的输入分发调用（`BOUGHT >= 0`
- *     时编号 0-99 的输入走这里，其余交 page-shop.js 的 usershop——可购
- *     编号上限 100，见 SHOP_ITEM_COUNT）。
+ *   - `print_shopitem()`＝列货（绘制半，含买不起的禁用）；
+ *   - `purchase(item_id)`＝校验 + 按种类分派，由商店循环的输入分派调用
+ *     （page-shop-loop.js：编号 0-99 的输入走这里——可购编号上限 100，
+ *     见 SHOP_ITEM_COUNT）。
  *
  * == 有意偏离（逐条注明依据） ==
  *
- * 1. **TFLAG:15（进店时暂存所持金）改放模块内暂存**。据点期没有 tflag
- *    表（beginTrain 建、endTrain 删；page-shop-trap.js 的实测），
- *    写二段直接抛 key error。它只在一次购买交互内被读写（取消时把 MONEY
- *    还原到进店时的值），不需要进存档，故放在模块级的 `temp_money`；
- *    item_shop 每次绘制都会重置它，即「每进一次商店重新保存一次」。
- * 2. **ISASSI 判断条件精简**（三处 `ISASSI:COUNT == 1` 检查）。ISASSI
+ * 1. **ISASSI 判断条件精简**（三处 `ISASSI:COUNT == 1` 检查）。ISASSI
  *    是角色 CSV 的独立字段，本作全部 Chara CSV 都没写、也没有任何赋值
  *    路径（与 #339 在 stronghold/sale.js 的查实同一结论），故
  *    「在岗助手持调合/秘密知识」两段恒不达：`M` 只由魔王自己的素质决定。
  *    保留这些条件会读一个没有落点的变量，精简为注释。
- * 3. **输入循环由 ere 侧承担**。商店的输入改由 page-shop.js 的商店轮 +
- *    本文件内部的 `await era.input()` 循环承担，重绘时机定为「整屏重绘」
+ * 2. **输入循环由 ere 侧承担**。商店的输入由 page-shop-loop.js 的循环 +
+ *    本文件内部的 `await era.input()` 子循环承担，重绘时机定为「整屏重绘」
  *    （与 #396 陷阱商店同样的偏离，玩家可见差异是商店头两段一并重画）。
+ * 3. **当场使用型道具不再伪造存货**。此前是「购买流程先 ITEM+1、用完后
+ *    ITEM=0」，取消时把那一件收走再退钱；现在没付款就不给货，生效时也没有
+ *    那一件要收——玩家的存量不因一次购买被清零。
  */
 
 'use strict';
@@ -329,14 +331,17 @@ const SECOND_GRID_SKIP = [29, 30, 31];
 
 /**
  * 列货：把在售商品（ITEMSALES 不为 0，标签 + 价格）列成按钮，accelerator ＝
- * 道具序号——点中即进购买流程（page-shop.js 的购物段把 0-99 的输入交给
+ * 道具序号——点中即进购买流程（page-shop-loop.js 把 0-99 的输入交给
  * purchase）。
  *
  * 扫描面是引擎的 itemkeys（Item.yml 的登记序号全集，dev-guides/09-static.md
  * 「itemkeys」条），按序号升序；**价格用 ITEMPRICE**（购买流程的校验与
- * 扣款都用它，见文件头），单位取配置的 `pts.`（MONEY_UNIT）。按钮不禁用：
- * 买不起的商品也能点，回应是无声退回输入（引擎「判定失败 → 重新输入」
- * 的既定行为）——用 disabled 表达买不起会把这个无声语义变成不可达。
+ * 扣款都用它，见文件头），单位取配置的 `pts.`（MONEY_UNIT）。
+ *
+ * 买不起的商品画成 disabled：引擎的 getButtonObject 只把 `!disabled` 的
+ * accelerator 推进 inputParam.rule，而渲染层按这条规则校验键入值——所以
+ * 「按不动」是引擎保证的，不是本文件再判一次（purchase 里的钱校验只剩
+ * 防御直调的作用）。正文照旧带价格，玩家看得出差多少钱。
  */
 function print_shopitem() {
   const ids = (era.get('itemkeys') || []).slice().sort((a, b) => a - b);
@@ -345,38 +350,22 @@ function print_shopitem() {
     if (!(era.get(`itemsales:${id}`) || 0)) {
       continue;
     }
-    items.push([id, `${item_name(id)}（${item_price(id)}${MONEY_UNIT}）`]);
+    const price = item_price(id);
+    items.push([
+      id,
+      `${item_name(id)}（${price}${MONEY_UNIT}）`,
+      price > era_flag.money ? { disabled: true } : undefined,
+    ]);
   }
   // 原版 PRINT_SHOPITEM 按 PRINTC 的设置（每行 3 个）排列商品，#717 恢复
   print_button_grid(items, 3);
 }
 
 /**
- * TFLAG:15（进店时暂存所持金）的 ere 落点：据点期没有 tflag 表，改用
- * 模块内暂存（文件头第 1 条）。item_shop 每次绘制都重置它，购买流程的
- * 取消路径（event_buy/buy_plural/use_item 的退还）读它。
- */
-let temp_money = 0;
-
-/** TFLAG:15 的读数（测试与 event_buy 的退还路径用） */
-function get_temp_money() {
-  return temp_money;
-}
-
-/**
- * TFLAG:15 = MONEY（进店时暂存所持金）：两个商店在各自绘制时各存一次
- * （文件头第 1 条）。
- */
-function snapshot_money() {
-  temp_money = era_flag.money;
-}
-
-/**
  * item_shop：道具商店的绘制半 + 提示行。
  *
- * 由 page-shop.js 的 show_shop（BOUGHT 0-53 时跳过主菜单直接进店）调用，
- * 整个接管本轮。购买本身不在这里：ere 侧的购买落在 page-shop.js 商店轮的
- * 输入分发（文件头第 3 条）。
+ * 由商店循环（page-shop-loop.js）每轮调用，整个接管这一屏。购买本身不在
+ * 这里：点中的商品由该循环交给 purchase。
  *
  * @returns {Promise<number>} 0（无显式返回值）
  */
@@ -423,7 +412,6 @@ async function item_shop() {
 
   era.drawLine({ isSolid: true });
   saleitem_check();
-  snapshot_money(); // TFLAG:15 = MONEY（文件头第 1 条）
 
   // 列货（见 print_shopitem）
   print_shopitem();
@@ -444,25 +432,25 @@ async function item_shop() {
 }
 
 // ================================================================
-// 购买流程（event_buy 族）
+// 购买流程（purchase 族）
 // ================================================================
 
 /**
  * 販売アイテム数（可购编号上限，标准值 100）：0-99 的输入进购买流程、
- * 其余交 page-shop.js 的 usershop。
+ * 其余归商店循环的切店与退出键（page-shop-loop.js）。
  */
 const SHOP_ITEM_COUNT = 100;
 
-/** 复数购买的道具（`BOUGHT == …` 九项） */
+/** 复数购买的道具（道具序号九项） */
 const PLURAL_ITEMS = [24, 25, 26, 27, 28, 34, 35, 53, 55];
-/** 复数购买的第二段条件 `BOUGHT >= 60 && BOUGHT != 90`（陷阱与戒指） */
+/** 复数购买的第二段条件 `序号 >= 60 && 序号 != 90`（陷阱与戒指） */
 const PLURAL_RANGE_START = 60;
 const PLURAL_EXCLUDE = 90;
 /** 当场使用型道具 */
 const USE_ITEMS = [29, 30, 31, 32, 33, 40, 41];
 
 /**
- * 复数购买的单价表（`BOUGHT == n → A = …` 逐条）。与 yml/Item.yml 的
+ * 复数购买的单价表（道具序号 n → A 逐条）。与 yml/Item.yml 的
  * price 同值（本文件头：记账的 A 与扣款的 ITEMPRICE 必须一致）。
  */
 const PLURAL_PRICES = {
@@ -479,7 +467,7 @@ const PLURAL_PRICES = {
 };
 
 /**
- * 简单确认路径的记账额（`BOUGHT == n → EX_FLAG:4444 -= …` 逐条）。
+ * 简单确认路径的记账额（道具序号 n → EX_FLAG:4444 减去 n 的价 逐条）。
  * 同样与 yml/Item.yml 的 price 同值（0-23 与 37）。
  */
 const SIMPLE_LEDGER = {
@@ -510,22 +498,6 @@ const SIMPLE_LEDGER = {
   37: 1000, // 好感测定仪
 };
 
-/** 开局不变量常数（MONEY == EX_FLAG:4444 + 8766） */
-const LEGIT_MONEY_BASE = 8766;
-
-/**
- * 当场使用型道具的退还额（`BOUGHT == n → MONEY += …` 逐条）。与
- * yml/Item.yml 的 price 同值；32 号无退项（也不在售）。
- */
-const USE_REFUNDS = {
-  29: 500,
-  30: 1000,
-  31: 3000,
-  33: 100000,
-  40: 2000,
-  41: 2000,
-};
-
 /** 药品系三支的生效记账额（`EX_FLAG:4444 -= …` 逐条） */
 const USE_LEDGER = {
   29: 500,
@@ -537,55 +509,51 @@ const USE_LEDGER = {
 };
 
 /**
- * 购买的五步（文件头）：校验 → BOUGHT → 给货 → 扣钱 → event_buy。
+ * purchase：点中一件商品后的入口（文件头）。校验 → 按种类分派。
  *
  * 两个校验不通过时**无声退回输入**（guide 的 system-flow「判定失败 →
- * 重新输入」）：本函数直接返回，商店轮重绘同一屏。按钮侧的输入通道只会
- * 送达已打印按钮的快捷键，故这两个校验只能经直调观察（同 #130 的约定）。
+ * 重新输入」）：本函数直接返回，商店循环重画同一屏。买不起的商品在列货那
+ * 一侧是 disabled 按钮、引擎不会送达它的编号，所以钱校验只剩防直调的
+ * 作用；在售校验同理（主菜单下 0-99 的输入根本到不了这里）。
  *
- * @param {number} item_id 玩家选中的道具序号（RESULT/BOUGHT）
- * @returns {Promise<number>} event_buy 的返回值（1 = 已成交、0 = 取消）
+ * @param {number} item_id 玩家选中的道具序号
+ * @returns {Promise<number>} 1 = 已成交 / 0 = 取消或判定失败
  */
 async function purchase(item_id) {
   if (!(era.get(`itemsales:${item_id}`) || 0)) {
     return 0; // 判定失败（不在售）
   }
-  const price = item_price(item_id);
-  if (era_flag.money < price) {
+  if (era_flag.money < item_price(item_id)) {
     return 0; // 判定失败（钱不够）
   }
-  era_flag.bought = item_id; // BOUGHT 设定
-  era.add(`item:${item_id}`, 1); // ITEM 增加
-  era_flag.money -= price; // MONEY 减少
-  return event_buy(item_id);
+  // 複数持てるアイテム
+  // 末段 `>= 60 && != 90` 与前面九个 `||` 同层混写：左折叠（&& 与 ||
+  // 同优先级）应读作 `(九项 || item_id >= 60) && item_id != 90`；九项都
+  // < 60、90 又不在九项里，左折叠与 C 式分组在一切取值上同值，故按显式
+  // 括号保留结构（#517）。
+  if (
+    PLURAL_ITEMS.includes(item_id) ||
+    (item_id >= PLURAL_RANGE_START && item_id !== PLURAL_EXCLUDE)
+  ) {
+    return buy_plural(item_id);
+  }
+  // その場で使うアイテム
+  if (USE_ITEMS.includes(item_id)) {
+    return use_item(item_id);
+  }
+  return buy_simple(item_id);
 }
 
 /**
- * event_buy：购买回调。三支按固定顺序：复数购买 → 当场使用 → 简单确认。
+ * 简单确认支：问「确定购买？」→ 扣钱 → 给货 → 逐条的结算。
  *
- * @param {number} bought 购买的道具序号（BOUGHT）
- * @returns {Promise<number>} 1 = 成交 / 0 = 取消
+ * 参数里不给单价：扣款额就是 ITEMPRICE（与记账额 SIMPLE_LEDGER 同值，
+ * 逐条与 yml/Item.yml 的 price 对过）。
+ *
+ * @param {number} bought 道具序号
+ * @returns {Promise<number>} 1 = 成交 / 0 = 取消（一分钱没动）
  */
-async function event_buy(bought) {
-  // 複数持てるアイテム
-  // 末段 `BOUGHT >= 60 && BOUGHT != 90` 与前面八个 `||` 同层混写：左折叠
-  // （&& 与 || 同优先级）应读作 `(九项 || BOUGHT >= 60) && BOUGHT != 90`；
-  // 九项都 < 60、BOUGHT == 90 又不在九项里，左折叠与 C 式分组在一切取值上
-  // 同值，故这里按显式括号保留结构（#517）。
-  if (
-    PLURAL_ITEMS.includes(bought) ||
-    (bought >= PLURAL_RANGE_START && bought !== PLURAL_EXCLUDE)
-  ) {
-    await buy_plural(bought);
-    return 1;
-  }
-  // その場で使うアイテム
-  if (USE_ITEMS.includes(bought)) {
-    await use_item(bought);
-    era.set(`item:${bought}`, 0);
-    return 1;
-  }
-
+async function buy_simple(bought) {
   // 購入確認（0 好的 / 1 不要，其余重问；#572 起两项升格为按钮，
   // 「其余」由引擎按白名单拒收，重问支不可达，结构保留）
   for (;;) {
@@ -594,17 +562,16 @@ async function event_buy(bought) {
     era.printButton('- 不要', 1);
     const result = await era.input();
     if (result === 1) {
-      // 取消：退还货与钱、重建记账不变量（TFLAG:15 的暂存值）
-      era.set(`item:${bought}`, (era.get(`item:${bought}`) || 0) - 1);
-      era_flag.bought = 0;
-      era_flag.money = get_temp_money();
-      era_exflag.legit_money = get_temp_money() - LEGIT_MONEY_BASE;
-      return 0;
+      return 0; // 取消：还没扣钱、也没给货
     }
     if (result === 0) {
       break;
     }
   }
+
+  // 确认后一次结清：先扣钱、再给货
+  era_flag.money -= item_price(bought);
+  era.add(`item:${bought}`, 1);
 
   // 《购买了…》
   era.print(`《购买了${item_name(bought)}》`);
@@ -640,8 +607,9 @@ async function event_buy(bought) {
   if (bought === 52) {
     technique_of_master_up();
   }
-  // 素質アイテム【淫魔知识】（54）：买完 ITEMSALES:54 熄灭——玩家
-  // 自此只能在陷阱商店买淫魔的陷阱（BOUGHT 停在 54，下一轮跳陷阱商店）
+  // 素質アイテム【淫魔知识】（54）：买完 ITEMSALES:54 熄灭——玩家自此只能
+  // 在陷阱商店买淫魔的陷阱。店不切（#867 起没有「买完自动跳陷阱店」，那正是
+  // 借购入品指针切屏的做法）：道具店的页脚就有 [998]，玩家自己按一下
   if (bought === 54) {
     era_exflag.legit_money -= 100000;
     chara(0).stronghold.淫魔知识 = 1;
@@ -684,7 +652,7 @@ function print_quantity_prompt(bought, d, with_half = true) {
 }
 
 /**
- * 经验值道具（BOUGHT == 53）的使用对象选择。
+ * 经验值道具（53 号）的使用对象选择。
  *
  * 这里是选人内循环：角色列表 + 翻页 + 选人，选中后 `EXP:RESULT:80 += E`。
  * 尾检查（`RESULT == 1000 || 1001 → 回选人循环`）在主条件之外，但两条
@@ -748,11 +716,11 @@ async function use_exp_item(count) {
 /**
  * buy_plural：复数购买（数量选择 → 结算 → 三支尾处理）。
  *
- * 买空/取消/越界的四支行为：取消退还原价（购买流程已扣一份），越界打印两种
- * 文案后重问，成交按 `RESULT` 结算 `ITEM`/`MONEY`/`EX_FLAG:4444`。
+ * 买空/取消/越界的四支行为：取消时一分钱没动，越界打印两种文案后重问，
+ * 成交按 `RESULT` 一次结清 `MONEY`/`ITEM`/`EX_FLAG:4444`。
  *
  * @param {number} bought 道具序号
- * @returns {Promise<number>} 0/1
+ * @returns {Promise<number>} 1 = 成交 / 0 = 取消
  */
 async function buy_plural(bought) {
   // 单价
@@ -762,10 +730,10 @@ async function buy_plural(bought) {
     a = trap_price(bought);
   }
 
-  // 上限：B* 是可持数（100 - 已持有）、C 是钱够买几件（＋引擎
-  // 已扣的 1 件）、D 取小、E 记是哪一侧吃紧（0 = 持有上限、1 = 钱）
+  // 上限：B* 是可持数（100 - 已持有）、C 是钱够买几件、D 取小、E 记是哪
+  // 一侧吃紧（0 = 持有上限、1 = 钱）。确认后才付款，所以 C 不预留那一件
   const b = 100 - (era.get(`item:${bought}`) || 0);
-  const c = Math.trunc(era_flag.money / a) + 1;
+  const c = Math.trunc(era_flag.money / a);
   let d;
   let e;
   if (b <= c && bought !== 53) {
@@ -790,10 +758,7 @@ async function buy_plural(bought) {
   for (;;) {
     result = await era.input();
     if (result === 0) {
-      // 取消：退还原价（引擎已扣一份）
-      era.set(`item:${bought}`, (era.get(`item:${bought}`) || 0) - 1);
-      era_flag.money += a;
-      return 0;
+      return 0; // 取消：一件都没买，钱也没动
     }
     if (result < 0) {
       continue;
@@ -804,20 +769,18 @@ async function buy_plural(bought) {
       print_quantity_prompt(bought, d, false); // 的重画不带 D/2 档
       continue;
     }
+    // 确认后一次结清：先扣钱、再给货，记账额与件数同步
+    era_flag.money -= a * result;
+    era.add(`item:${bought}`, result);
+    era_exflag.legit_money -= a * result;
+    // 成交行：买一件与买多件两套文案，各自等一次键（别在分支外再等一次，
+    // 玩家会多按一键）
     if (result === 1) {
-      // 买一件（钱在购买流程已扣）：一支一次等键
-      era_exflag.legit_money -= a;
       era.print(`《购买了${item_name(bought)}》`);
-      await era.waitAnyKey();
     } else {
-      // 买 RESULT 件：购买流程已给 1 件、已扣 1 件的钱；这里也是
-      // 一次等键，别在分支外再等一次（玩家会多按一键）
       era.print(`《购买了${result}个${item_name(bought)}》`);
-      await era.waitAnyKey();
-      era.set(`item:${bought}`, (era.get(`item:${bought}`) || 0) + result - 1);
-      era_flag.money -= a * (result - 1);
-      era_exflag.legit_money -= a * result;
     }
+    await era.waitAnyKey();
     break;
   }
 
@@ -861,7 +824,7 @@ async function buy_plural(bought) {
   // return，这里只在成交后到达；分支内的等键已确认「购买了」，这次
   // 等键只收尾段的新输出，没有则引擎短路
   await era.waitAnyKey();
-  return 0;
+  return 1;
 }
 
 // ================================================================
@@ -874,8 +837,11 @@ async function buy_plural(bought) {
  * 选择面是本页的角色列表（life_list；分页与行渲染归 page-life-list.js，
  * 本函数只管逐轮重画与键位分派，即选人内循环）。
  *
- * @param {number} bought 道具序号（BOUGHT）
- * @returns {Promise<void>}
+ * 付款发生在选定对象之后：先问「让谁用」，该问的回答可能是取消（[999]），
+ * 而取消时一分钱都还没动。此前是买下就扣钱、取消时按种类退钱。
+ *
+ * @param {number} bought 道具序号
+ * @returns {Promise<number>} 1 = 已使用 / 0 = 取消
  */
 async function use_item(bought) {
   /** #DIM NO_PAGE（缺省 0） */
@@ -903,13 +869,7 @@ async function use_item(bought) {
 
     const result = await era.input();
     if (result === 999) {
-      // 取消：吃掉这件道具并按种类退钱（32 号无退项）
-      era.set(`item:${bought}`, 0);
-      const refund = USE_REFUNDS[bought];
-      if (refund !== undefined) {
-        era_flag.money += refund;
-      }
-      return;
+      return 0; // 取消：还没付款，道具也没动
     }
     if (result === 1000) {
       // 上一页（首页再按无反应：整块退回首屏重画）
@@ -961,7 +921,7 @@ async function use_item(bought) {
       continue;
     }
     // 妊娠中・育儿中的角色用不了排卵促进剂
-    // 该段条件 `BOUGHT == 40 && TALENT:RESULT:153 || TALENT:RESULT:154` 同层
+    // 该段条件 `道具 == 40 && TALENT:RESULT:153 || TALENT:RESULT:154` 同层
     // 混写：该层运算符序列是「`&&` … `||`」，`||` 之后没有 `&&`，左折叠与 C 式
     // 分组得到同一棵树——两种读法在一切取值上同值，故按显式括号保留结构（#517）。
     if (
@@ -981,9 +941,11 @@ async function use_item(bought) {
       await era.waitAnyKey();
       continue;
     }
+    // 目标确认可用：先扣钱、再对他生效（当场使用型没有存货可给）
+    era_flag.money -= item_price(bought);
     apply_use_effect(bought, result);
     await era.waitAnyKey(); // 每支末尾等一次键
-    return;
+    return 1;
   }
 }
 
@@ -1112,7 +1074,7 @@ function technique_of_master_up() {
   const level = (era.get('abl:0:12') || 0) + 1;
   chara(0).system.技巧 = level;
   game.stronghold.技巧素质道具数 = 0;
-  era.set('item:52', 0); // ITEM:BOUGHT = 0（本函数只服务 52 号道具）
+  era.set('item:52', 0); // 吃掉这件道具（本函数只服务 52 号）
   era_exflag.legit_money -= TECHNIQUE_UNIT_PRICE;
   era.print(`《${chara_callname(0)}的技巧LV${level}了》`);
 }
@@ -1122,14 +1084,12 @@ module.exports = {
   saleitem_check,
   item_shop,
   print_shopitem,
-  snapshot_money,
   purchase,
-  event_buy,
+  buy_simple,
   buy_plural,
   use_item,
   use_exp_item,
   technique_of_master,
   technique_of_master_up,
-  get_temp_money,
   SHOP_ITEM_COUNT,
 };

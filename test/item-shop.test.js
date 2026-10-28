@@ -1,7 +1,7 @@
 /**
- * 道具商店测试（issue #399 / N15 段 3）：九个函数
- * （item_shop / event_buy / saleitem_check / buy_plural / use_item /
- * technique_of_master / technique_of_master_up / clear_shop；
+ * 道具商店测试（issue #399 / N15 段 3）：七个函数
+ * （item_shop / purchase / saleitem_check / buy_plural / buy_simple /
+ * use_item / technique_of_master / technique_of_master_up / clear_shop；
  * item_detox 自 #333 起已在 ere/system/equip/item-detox.js，这张工单只接入）。
  *
  * 缝 = ere/page/page-item-shop.js 导出的函数 + 商店轮（page-shop.js）的
@@ -23,7 +23,6 @@ function fixture_with(seed = {}) {
   for (const [name, value] of Object.entries(seed)) {
     fixture.store.set(name, value);
   }
-  fixture.load_module('era-utils/era-flag').bought = -1;
   return fixture;
 }
 
@@ -549,7 +548,7 @@ test('print_shopitem：一件在售都没有时一行不打（空表不出按钮
 });
 
 // ================================================================
-// 购买流程（event_buy 族）：购买五步 → 三支分派 → 各支的输入循环
+// 购买流程（purchase 族）：校验 → 三支分派 → 各支的输入循环
 // ================================================================
 
 /** 铺一个可购买的世界：在售位、名字、价格齐全（价格与 yml/Item.yml 同值） */
@@ -590,7 +589,7 @@ async function run_purchase(item_id, seed = {}, inputs = []) {
   return { fixture, result };
 }
 
-test('purchase：不在售时无声退回（不出货、不扣钱、不进 event_buy）', async () => {
+test('purchase：不在售时无声退回（不出货、不扣钱、不进购买流程）', async () => {
   const fixture = buy_world({ 'itemsales:24': 0 });
   const { purchase } = fixture.load_module('page/page-item-shop');
   const era_flag = fixture.load_module('era-utils/era-flag');
@@ -598,7 +597,7 @@ test('purchase：不在售时无声退回（不出货、不扣钱、不进 event
   assert.deepEqual(fixture.lines, []);
   assert.equal(era_flag.money, 10000);
   assert.equal(fixture.store.get('item:24') ?? 0, 0);
-  assert.equal(era_flag.bought, -1, 'BOUGHT 不动');
+  assert(!fixture.var_writes.some((w) => w.name === 'flag:10004'), '钱不动');
 });
 
 test('purchase：钱不够时无声退回；恰好等于价格则成交（下界闭区间）', async () => {
@@ -624,25 +623,20 @@ test('purchase：钱不够时无声退回；恰好等于价格则成交（下界
   }
 });
 
-test('purchase：成交做四件事——BOUGHT 设定、给货、扣钱、再走 event_buy', async () => {
+test('purchase：成交做三件事——确认后扣钱、给货、记账（不再留购入品指针）', async () => {
   const { fixture, result } = await run_purchase(0, {}, [0]);
   const era_flag = fixture.load_module('era-utils/era-flag');
   const era_exflag = fixture.load_module('era-utils/era-exflag');
   assert.equal(result, 1);
-  assert.equal(era_flag.bought, 0, 'BOUGHT = 选中编号');
   assert.equal(fixture.store.get('item:0'), 1, 'ITEM += 1');
   assert.equal(era_flag.money, 9800, 'MONEY -= ITEMPRICE');
-  assert.equal(
-    era_exflag.legit_money,
-    -200,
-    'event_buy 的记账额（SIMPLE_LEDGER 的 200）',
-  );
+  assert.equal(era_exflag.legit_money, -200, '记账额（SIMPLE_LEDGER 的 200）');
   assert(history_texts(fixture).includes('《购买了振动宝石》'));
 });
 
-// —— event_buy 的三支分派 ——
+// —— purchase 的三支分派 ——
 
-test('event_buy 分派：复数购买支的名单（含 >= 60 且 != 90 的第二段条件）', async () => {
+test('purchase 分派：复数购买支的名单（含 >= 60 且 != 90 的第二段条件）', async () => {
   // 名单内：24/25/26/27/28/34/35/53/55 与 60-89/91；名单外：90 与 0-23/37
   const plural = [24, 25, 26, 27, 28, 34, 35, 53, 55, 60, 89, 91];
   for (const id of plural) {
@@ -671,7 +665,7 @@ test('event_buy 分派：复数购买支的名单（含 >= 60 且 != 90 的第�
   }
 });
 
-test('event_buy 分派：当场使用支的名单（29-33/40/41）与其余走确认', async () => {
+test('purchase 分派：当场使用支的名单（29-33/40/41）与其余走确认', async () => {
   for (const id of [29, 30, 31, 32, 33, 40, 41]) {
     const fixture = buy_world({
       [`itemsales:${id}`]: 1,
@@ -695,26 +689,21 @@ test('event_buy 分派：当场使用支的名单（29-33/40/41）与其余走�
 
 // —— 简单确认支 ——
 
-test('确认支：不要（1）时退货退钱，并从 TFLAG:15 的暂存值重建不变量', async () => {
+test('确认支：不要（1）时什么都没发生——不扣钱、不给货、不动记账', async () => {
   const fixture = buy_world({ 'exflag:4444': 5000 });
-  const { item_shop, purchase } = fixture.load_module('page/page-item-shop');
-  const { get_temp_money } = fixture.load_module('page/page-item-shop');
+  const { purchase } = fixture.load_module('page/page-item-shop');
   const era_flag = fixture.load_module('era-utils/era-flag');
   const era_exflag = fixture.load_module('era-utils/era-exflag');
-  await item_shop(); // 让 TFLAG:15 的暂存值在此刻落定
-  const temp = get_temp_money();
-  // 真实顺序：商店屏的输入集被玩家点中的商品消费掉，确认提示才是自由输入
-  fixture.set_inputs(0);
-  const chosen = await fixture.era.input();
   fixture.set_inputs(1);
-  assert.equal(await purchase(chosen), 0);
-  assert.equal(fixture.store.get('item:0'), 0, 'ITEM:BOUGHT -= 1（退货）');
-  assert.equal(era_flag.bought, 0, 'BOUGHT = 0（仍在道具商店）');
-  assert.equal(era_flag.money, temp, 'MONEY 还原到进店时的值');
-  assert.equal(
-    era_exflag.legit_money,
-    temp - 8766,
-    'EX_FLAG:4444 = TFLAG:15 - 8766',
+  assert.equal(await purchase(0), 0);
+  assert.equal(fixture.store.get('item:0') ?? 0, 0, '不给货');
+  assert.equal(era_flag.money, 10000, '不扣钱（也没有退款的痕迹）');
+  assert.equal(era_exflag.legit_money, 5000, '记账额不动');
+  assert(
+    !fixture.var_writes.some(
+      (w) => w.name === 'flag:10004' || w.name === 'exflag:4444',
+    ),
+    '取消路径连写都不该有——退款式实现会在这里留一写',
   );
 });
 
@@ -944,12 +933,12 @@ test('复数购买：单价表逐条对上（含陷阱的 TRAP_PRICE 段与 91 �
 });
 
 test('复数购买：可买数 D 取「持有上限」与「钱够买几件」的较小者，E 记被哪一侧卡住', async () => {
-  // 持有上限吃紧：ITEM:24 = 95 → 购买流程给 1 件后 B = 4，钱远够 → D = 4、E = 0
+  // 持有上限吃紧：ITEM:24 = 95 → B = 5，钱远够 → D = 5、E = 0
   {
     const { fixture } = await run_purchase(
       24,
       { 'item:24': 95, 'flag:10004': 10000 },
-      [5, 1],
+      [6, 1],
     );
     assert(
       history_texts(fixture).includes('不能持有这么多'),
@@ -957,12 +946,12 @@ test('复数购买：可买数 D 取「持有上限」与「钱够买几件」�
     );
     assert(
       history_texts(fixture).some((line) =>
-        line.includes('要买多少安全套？（1-4、'),
+        line.includes('要买多少安全套？（1-5、'),
       ),
-      'D 取持有上限 4',
+      'D 取持有上限 5（100 - 已持有 95）',
     );
   }
-  // 钱吃紧：买 1 件后 MONEY = 150 → C = floor(150/100)+1 = 2 → D = 2、E = 1
+  // 钱吃紧：MONEY = 250 → C = floor(250/100) = 2 → D = 2、E = 1
   {
     const { fixture } = await run_purchase(
       24,
@@ -985,17 +974,17 @@ test('复数购买：可买数 D 取「持有上限」与「钱够买几件」�
 test('复数购买：D/2 的档位只在大于 20 时出现', async () => {
   {
     const fixture = await buy_one(24, { 'item:24': 0, 'flag:10004': 1000000 });
-    // B = 99（上限吃紧）→ D = 99、D/2 = 49 > 20 → 出现
+    // B = 100（上限吃紧，钱远够）→ D = 100、D/2 = 50 > 20 → 出现
     assert(
       history_texts(fixture).some((line) =>
-        line.includes('[20] - [49] - [99] 买空钱包'),
+        line.includes('[20] - [50] - [100] 买空钱包'),
       ),
       'D/2 > 20 时的整行选项',
     );
   }
   {
     const fixture = await buy_one(24, { 'item:24': 0, 'flag:10004': 4000 });
-    // 买 1 件后 MONEY = 3900 → C = 40 → D = 40、D/2 = 20（不大于 20）→ 不出现
+    // C = floor(4000/100) = 40（钱吃紧）→ D = 40、D/2 = 20（不大于 20）→ 不出现
     assert(
       history_texts(fixture).some((line) =>
         line.includes('[20] - [40] 买空钱包'),
@@ -1145,8 +1134,8 @@ async function use_on(item_id, cid, seed = {}, inputs = []) {
   return fixture;
 }
 
-test('使用支：999 取消——吃掉道具并按种类退钱（退额表逐条）', async () => {
-  const refunds = {
+test('使用支：999 取消——不扣钱、道具存量不动（不再买下再退钱）', async () => {
+  const prices = {
     29: 500,
     30: 1000,
     31: 3000,
@@ -1154,25 +1143,54 @@ test('使用支：999 取消——吃掉道具并按种类退钱（退额表逐�
     40: 2000,
     41: 2000,
   };
-  for (const [key, refund] of Object.entries(refunds)) {
+  for (const [key, price] of Object.entries(prices)) {
     const id = Number(key);
     const fixture = buy_world({
       'flag:10004': 1000000,
       [`itemsales:${id}`]: 1,
       [`itemname:${id}`]: `道具${id}`,
-      [`itemprice:${id}`]: refund,
+      [`itemprice:${id}`]: price,
     });
     fixture.set_inputs(999);
     const { purchase } = fixture.load_module('page/page-item-shop');
     const era_flag = fixture.load_module('era-utils/era-flag');
-    await purchase(id);
-    assert.equal(fixture.store.get(`item:${id}`), 0, `${id} 取消后吃掉`);
+    assert.equal(await purchase(id), 0, `${id} 的取消返回 0`);
     assert.equal(
       era_flag.money,
-      1000000 - refund + refund,
-      `${id} 取消退还 ${refund}`,
+      1000000,
+      `${id} 取消不扣钱（此前是先扣 ${price} 再退回来）`,
+    );
+    assert.equal(
+      fixture.store.get(`item:${id}`) ?? 0,
+      0,
+      `${id} 取消不产生存货`,
+    );
+    assert(
+      !fixture.var_writes.some(
+        (w) => w.name === 'flag:10004' || w.name === `item:${id}`,
+      ),
+      `${id} 的取消路径连写都不该有`,
     );
   }
+});
+
+test('使用支成交：先扣钱、再对目标生效（钱的变动与效果各一次）', async () => {
+  const fixture = await use_on(30, 31, {
+    'base:31:0': 500,
+    'maxbase:31:0': 2000,
+  });
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  assert.equal(fixture.store.get('base:31:0'), 1500, '营养剂回复 1000');
+  assert.equal(era_flag.money, 1000000 - 100, '按 ITEMPRICE 扣一次钱');
+  // 顺序：钱的写入在效果之前（效果生效时钱已经付了）
+  const money_index = fixture.var_writes.findIndex(
+    (w) => w.name === 'flag:10004',
+  );
+  const effect_index = fixture.var_writes.findIndex(
+    (w) => w.name === 'base:31:0',
+  );
+  assert(money_index >= 0 && effect_index >= 0);
+  assert(money_index < effect_index, '扣钱先于生效');
 });
 
 test('使用支：30 号体力回复与上限钳制（含「已经达到最大值」的检查）', async () => {
@@ -1476,19 +1494,19 @@ test('复数购买：越界后的重画提示不带 D/2 那一段（与首次不
   const { fixture } = await run_purchase(
     24,
     { 'item:24': 0, 'flag:10004': 1000000 },
-    [100, 1],
+    [101, 1],
   );
   const prompts = history_texts(fixture).filter((line) =>
     line.includes('买空钱包'),
   );
   assert.equal(prompts.length, 2, '一次首次 + 一次重画');
   assert(
-    prompts[0].includes('[49]') && prompts[0].includes('[99]'),
-    '首次带 D/2 = 49 与 D = 99',
+    prompts[0].includes('[50]') && prompts[0].includes('[100]'),
+    '首次带 D/2 = 50 与 D = 100',
   );
   assert(
-    !prompts[1].includes('[49]') && prompts[1].includes('[99]'),
-    '重画只有 D = 99',
+    !prompts[1].includes('[50]') && prompts[1].includes('[100]'),
+    '重画只有 D = 100',
   );
 });
 

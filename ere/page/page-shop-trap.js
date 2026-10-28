@@ -1,16 +1,14 @@
 /**
  * @file 陷阱商店：item_shop_trap 与 saleitem_check_trap。
  *
- * **#399 补齐的两笔**：`PRINT_SHOPITEM`（把 ITEMSALES 不为 0 的商品连同
- * 价格列出来、点击即买）与 `TFLAG:15 = MONEY` 都已实现——列货与购买流程
- * 是**两个商店共用的一套**，真身在
- * page/page-item-shop.js（`print_shopitem` / `purchase` / `snapshot_money`）；
- * 玩家点中的编号由 page-shop.js 的输入分发（販売アイテム数 = 100 的判断条件）
- * 交给 purchase，event_buy 的三支分派与账目也都在那边。
+ * **列货与购买流程是两个商店共用的一套**，真身在 page/page-item-shop.js
+ * （`print_shopitem` / `purchase`）；玩家点中的编号由商店循环
+ * （page-shop-loop.js）的输入分派交给 purchase，三支购买的分派与账目也都
+ * 在那边。
  *
- * **进店路径**（两条，两条都通了）：show_shop 的 BOUGHT ≥ 54 跳转（买下
- * 54 号【淫魔知识】后 BOUGHT 停在 54，见 page-item-shop.js 的 event_buy），
- * 与道具商店里的 [998] 键（usershop 的 JUMP 分支）。
+ * **进店的路径**：道具店的 [998] 键（商店循环的切店分支，只翻一个局部量）。
+ * #867 之前是「把购入品指针置成 200，下一轮商店轮改画这里」，那条路已随
+ * 循环收进 page-shop-loop.js 而消失。
  *
  * 布局映射：
  *   - `CUSTOMDRAWLINE =` 的 `=` 线以 era.drawLine({isSolid: true})
@@ -24,11 +22,9 @@
  *   - 引擎每次 print 调用即一行：不换行的 PRINT/PRINTV/PRINTFORM 串
  *     一律合成一次 era.print（日期行、网格格子）。
  *
- * 出口（$INPUT_LOOP 之后的提示行）分属两处：本函数是「绘制半」，
- * 由 page-shop.js 的 show_shop（BOUGHT ≥ 54 的跳转）与 usershop（998 分支的
- * JUMP）经 era 的商店轮循环驱动；购买本身的循环（$INPUT_LOOP 标签、
- * PRINT_SHOPITEM 之后接 event_buy）在 page/page-item-shop.js 的 purchase
- * 与 event_buy 族——#399 起两个商店共用一套。
+ * 出口（$INPUT_LOOP 之后的提示行）分属两处：本函数是「绘制半」，由商店
+ * 循环每轮调用；购买本身的循环（$INPUT_LOOP 标签、PRINT_SHOPITEM 之后接
+ * 购买）在 page/page-item-shop.js 的 purchase 与三支——两个商店共用一套。
  */
 
 'use strict';
@@ -36,7 +32,7 @@
 const era = require('#/era-electron');
 const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
-const { print_shopitem, snapshot_money } = require('#/page/page-item-shop');
+const { print_shopitem } = require('#/page/page-item-shop');
 const { change_screen } = require('#/page/components/screen-change');
 const { pad_display } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 
@@ -167,8 +163,8 @@ function item_grid_rows({ start, end }) {
 /**
  * item_shop_trap：陷阱商店的绘制半。
  *
- * 由 page-shop.js 的 show_shop（BOUGHT ≥ 54 → JUMP）与 usershop
- * （998 分支 → JUMP ITEM_SHOP_TRAP）调用，等价于把商店界面整个接管本轮。
+ * 由商店循环（page-shop-loop.js）每轮调用，整个接管这一屏；购买与退出都
+ * 由该循环分派。
  *
  * @returns {Promise<number>} 落进 saleitem_check_trap 之后无 RETURN，
  *   隐式返回 0（函数体在末尾的 PRINTL 之后结束）
@@ -203,12 +199,10 @@ async function item_shop_trap() {
 
   era.drawLine({ isSolid: true }); // DRAWLINE + CALL SALEITEM_CHECK_TRAP
   saleitem_check_trap(); // CALL SALEITEM_CHECK_TRAP
-  snapshot_money(); // TFLAG:15 = MONEY（所持点を一時保存；#399 起落表）
 
   // $INPUT_LOOP：购买循环的重新进入点，循环本体是 PRINT_SHOPITEM +
-  // 引擎侧购买。ere 侧的重绘由 page-shop.js 的商店轮
-  // 循环承担（998 分支再调一次本函数），购买本身由该轮的分发交给
-  // page-item-shop.js 的 purchase，故此处不设标签。
+  // 引擎侧购买。ere 侧的重绘由商店循环（page-shop-loop.js）承担，购买
+  // 本身由该循环的分派交给 page-item-shop.js 的 purchase，故此处不设标签。
 
   // PRINT_SHOPITEM（#399 起真身，两个商店共用）
   print_shopitem();
