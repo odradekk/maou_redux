@@ -21,9 +21,9 @@ const era = require('#/era-electron');
 const { settle_ejaculation_gauge } = require('#/system/train/calc-ejaculation');
 const era_flag = require('#/era-utils/era-flag');
 const { chara } = require('#/facade/chara');
-const { PALAMLV } = require('#/era-utils/palam-level');
-const { EXPLV } = require('#/era-utils/exp-level');
 const { times } = require('#/utils/numeric');
+const { PALAMLV } = require('#/data/palam-level-const');
+const { EXPLV } = require('#/data/exp-level-const');
 
 const tal = (id, i) => era.get(`talent:${id}:${i}`) || 0;
 const abl = (id, i) => Math.floor(era.get(`abl:${id}:${i}`) || 0);

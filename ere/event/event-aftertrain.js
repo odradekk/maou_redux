@@ -16,7 +16,6 @@
 const era = require('#/era-electron');
 const { begin, STATE } = require('#/system/flow/game-state');
 const era_flag = require('#/era-utils/era-flag');
-const { palam_settled } = require('#/era-utils/palam-level');
 const era_exflag = require('#/era-utils/era-exflag');
 // maou_kouho 的真身（ere/event/event-nextday.js）——另一处调用点正是
 // 本文件的 charadead_check，ere 侧此前只有 EVENTEND 的魔王倒下分支
@@ -27,6 +26,7 @@ const { game } = require('#/facade/game');
 const { self_kojo } = require('#/kojo/kojo-system');
 const { self_call } = require('#/kojo/kojo-text');
 const { chara_callname } = require('#/utils/callname-utils');
+const { palam_settled } = require('#/data/palam-level-const');
 
 /**
  * leftover_q 是跨函数全局。AFTERTRAIN 自慰检查写，SELF_KOJO（K2 等）读

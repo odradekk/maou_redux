@@ -50,9 +50,9 @@ const { gobi_text } = require('#/data/gobi-koujo-const');
 const { EVENT } = require('#/data/event-name-const');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
-const { PALAMLV } = require('#/era-utils/palam-level');
 const { peek_aftertrain_q } = require('#/event/event-aftertrain');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
+const { PALAMLV } = require('#/data/palam-level-const');
 
 /**
  * 口上函数共用的读取面：随机源、当前角色名、自称、门面。

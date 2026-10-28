@@ -24,12 +24,12 @@ const era = require('#/era-electron');
 const { emit } = require('#/system/event/registry');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
-const { palam_settled } = require('#/era-utils/palam-level');
 const era_flag = require('#/era-utils/era-flag');
 const { name_reset } = require('#/system/chara/char-make');
 const { template_no_of } = require('#/system/chara/chara-pregnancy');
 const { party_char_del } = require('#/system/dungeon/dungeon-party');
 const { EVENT } = require('#/data/event-name-const');
+const { palam_settled } = require('#/data/palam-level-const');
 
 // EVENTEND 链内登记、引擎收尾后冲账的待除名目标。-1 = 无登记（「未选中」
 // 的同款约定，era_flag.js 的 target 语义注）；0 是魔王（真实角色号），

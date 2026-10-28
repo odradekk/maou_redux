@@ -22,7 +22,6 @@ const { event_maou_tenshin } = require('#/event/event-nextday');
 const { run_juel_check } = require('#/system/train/juel-check');
 const { sell_video } = require('#/system/stronghold/sell-video');
 const era_flag = require('#/era-utils/era-flag');
-const { palam_settled } = require('#/era-utils/palam-level');
 // aftertrain_cloth / re_clothed 自 #215（J5）起为真身（train 域的
 // ere/system/train/cloth.js——EVENTEND 在 endTrain 之前发（run_aftertrain
 // 的既有次序），TFLAG:45 的读写落在火车表内，原生成立）
@@ -34,6 +33,7 @@ const { charadead_check, self_check } = require('#/event/event-aftertrain');
 const { defer_train_death } = require('#/system/train/train-end');
 const { karma } = require('#/system/chara/chara-stats');
 const { EVENT } = require('#/data/event-name-const');
+const { palam_settled } = require('#/data/palam-level-const');
 
 async function handle_end_later() {
   era.print('调教结束了。');

@@ -27,8 +27,6 @@
 const era = require('#/era-electron');
 const { settle_ejaculation_gauge } = require('#/system/train/calc-ejaculation');
 const era_flag = require('#/era-utils/era-flag');
-const { PALAMLV } = require('#/era-utils/palam-level');
-const { EXPLV } = require('#/era-utils/exp-level');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { chara_callname } = require('#/utils/callname-utils');
@@ -51,6 +49,8 @@ const {
   train_message_b,
   train_message_b_family,
 } = require('#/system/train/train-message');
+const { PALAMLV } = require('#/data/palam-level-const');
+const { EXPLV } = require('#/data/exp-level-const');
 
 const PBAND = 4;
 

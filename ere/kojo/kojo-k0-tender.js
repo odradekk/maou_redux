@@ -74,9 +74,9 @@ const { chara } = require('#/facade/chara');
 
 const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
-const { PALAMLV } = require('#/era-utils/palam-level');
 const { search_family } = require('#/system/chara/chara-family');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
+const { PALAMLV } = require('#/data/palam-level-const');
 
 // EVENTTRAIN #PRI 档：存在标志 + 总开关补 0
 function handle_train_pri() {

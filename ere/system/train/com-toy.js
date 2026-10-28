@@ -34,8 +34,8 @@ const { chara } = require('#/facade/chara');
 const { chara_callname } = require('#/utils/callname-utils');
 const { times } = require('#/utils/numeric');
 const { confirm_lost_virgin } = require('#/system/train/com-vaginasex');
-const { EXPLV } = require('#/era-utils/exp-level');
-const { PALAMLV } = require('#/era-utils/palam-level');
+const { EXPLV } = require('#/data/exp-level-const');
+const { PALAMLV } = require('#/data/palam-level-const');
 // syokusyu_milk 的真身在触手族文件（#227/J17 导出；#548 起调用点换真身）——
 // 族模块只能函数内延迟 require，见 equip_com16 的注释
 

@@ -164,7 +164,7 @@ export default [
   },
   {
     desc: 'M17404 palam_settled 漏加 delta（「结算后的值」退回结算前的值）',
-    file: 'ere/era-utils/palam-level.js',
+    file: 'ere/data/palam-level-const.js',
     find: `    (era.get(\`palam:\${cid}:\${index}\`) || 0) +
     (era.get(\`delta:\${cid}:\${index}\`) || 0)`,
     replace: `    (era.get(\`palam:\${cid}:\${index}\`) || 0) + 0 // 变异：漏加 delta`,

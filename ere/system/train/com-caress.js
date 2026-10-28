@@ -39,7 +39,6 @@
 
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
-const { PALAMLV } = require('#/era-utils/palam-level');
 const { chara } = require('#/facade/chara');
 const { chara_callname } = require('#/utils/callname-utils');
 const { times } = require('#/utils/numeric');
@@ -65,6 +64,7 @@ const {
   BATTLE_COLUMN,
   battle_column,
 } = require('#/system/dungeon/battle-state');
+const { PALAMLV } = require('#/data/palam-level-const');
 
 // —— 纯数据表（错一格不会报错——每档的用例与变异条目固定住） ——
 

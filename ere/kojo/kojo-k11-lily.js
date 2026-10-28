@@ -102,7 +102,6 @@ const era = require('#/era-electron');
 const { on, TIER } = require('#/system/event/registry');
 const { piercing_state } = require('#/system/train/piercing-state');
 const era_flag = require('#/era-utils/era-flag');
-const { PALAMLV } = require('#/era-utils/palam-level');
 const {
   peek_aftertrain_q,
   peek_aftertrain_s,
@@ -137,6 +136,7 @@ const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { chara_callname } = require('#/utils/callname-utils');
 const { EVENT } = require('#/data/event-name-const');
+const { PALAMLV } = require('#/data/palam-level-const');
 
 /** 读未声明的序号返回 undefined 而非 0（#13），口上条件一律 || 0 保底处理 */
 const era0 = (k) => era.get(k) || 0;

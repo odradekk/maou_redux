@@ -3,7 +3,10 @@
  * 配置键未启用，无可覆盖处）。
  *
  * #216（J6）首落于 com-vaginasex / com-analsex（射精ゲージ的 EXP:0/52
- * 阈值分档）。ere/era-utils/palam-level.js 的同款形状。
+ * 阈值分档）。palam-level-const.js 的同款形状。
+ *
+ * 阈值是机制常量，与静态数据无关；同一份阈值只在本文件写一次，读的地方
+ * 一律 require 取用。
  */
 
 /** 经验等级阈值（不含下界）：EXP < EXPLV[n] 即为 n-1 级以下 */

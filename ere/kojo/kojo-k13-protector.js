@@ -32,7 +32,6 @@ const era = require('#/era-electron');
 const { sell_maturo_k0 } = require('#/system/stronghold/sell-maturo-k0');
 const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
-const { PALAMLV } = require('#/era-utils/palam-level');
 const { get_look_info } = require('#/system/chara/look-info');
 const {
   kojo_message_com_family,
@@ -70,6 +69,7 @@ const {
   ryouzyoku_kojo_family,
   ryouzyoku_after_kojo_family,
 } = require('#/kojo/kojo-dungeon-ravish');
+const { PALAMLV } = require('#/data/palam-level-const');
 
 /** 读未声明的序号返回 undefined 而非 0（#13），口上条件一律 || 0 作缺省处理 */
 const era0 = (k) => era.get(k) || 0;

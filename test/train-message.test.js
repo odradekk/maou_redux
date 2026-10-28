@@ -999,7 +999,7 @@ CHAIN_CASES.forEach((spec, index) => {
 
 test('A 射精链末支 · 放置 PLAY（指令 55）：欲情四档逐档取件', async () => {
   // [PALAM:5, TEQUIP:21, 期望行]——阈值为 PALAMLV[3] = 3000 / [4] = 10000 /
-  // [5] = 30000（ere/era-utils/palam-level.js）
+  // [5] = 30000（ere/data/palam-level-const.js）
   const cases = [
     [2999, 0, []],
     [3000, 0, ['温妮急促的呼吸着……']],

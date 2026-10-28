@@ -24,7 +24,6 @@
  */
 
 const era = require('#/era-electron');
-const { EXPLV } = require('#/era-utils/exp-level');
 const {
   NBSP,
   display_width,
@@ -32,6 +31,7 @@ const {
   pad_left,
   slice_display,
 } = require('#/utils/display-width');
+const { EXPLV } = require('#/data/exp-level-const');
 
 /** stc_printc 的缺省列宽（15） */
 const STC_PRINT_WIDTH = 15;

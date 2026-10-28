@@ -33,8 +33,6 @@
 const era = require('#/era-electron');
 const era_exflag = require('#/era-utils/era-exflag');
 const era_flag = require('#/era-utils/era-flag');
-const { EXPLV } = require('#/era-utils/exp-level');
-const { PALAMLV } = require('#/era-utils/palam-level');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const {
@@ -51,6 +49,8 @@ const { clothtype_text } = require('#/utils/clothtype-utils');
 const { chara_callname, chara_nickname } = require('#/utils/callname-utils');
 const { MASTER } = require('#/utils/master');
 const { idiv, percent_floor } = require('#/utils/numeric');
+const { EXPLV } = require('#/data/exp-level-const');
+const { PALAMLV } = require('#/data/palam-level-const');
 
 /** 本文件没有未移植的调用；口上台词分发随轴 B 实现。 */
 

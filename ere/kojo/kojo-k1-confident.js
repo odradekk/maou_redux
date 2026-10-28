@@ -15,7 +15,6 @@ const era = require('#/era-electron');
 const { sell_maturo_k0 } = require('#/system/stronghold/sell-maturo-k0');
 const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
-const { PALAMLV } = require('#/era-utils/palam-level');
 const {
   kojo_message_com_family,
   kojo_message_palamcng_family,
@@ -52,6 +51,7 @@ const { game } = require('#/facade/game');
 const { piercing_state } = require('#/system/train/piercing-state');
 const { get_look_info } = require('#/system/chara/look-info');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
+const { PALAMLV } = require('#/data/palam-level-const');
 
 const MASTER = 0;
 

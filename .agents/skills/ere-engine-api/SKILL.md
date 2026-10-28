@@ -22,7 +22,7 @@ description: Use when you need the exact EraElectron (ere) SDK surface — the s
 >     - Chara17 的「第一列 "portcflag" 不是引擎认识的字段」：`portcflag` 是 `_fixed.json` 的 `extendedCharaTables` 声明的扩展表。
 >     - 开发套件的两类警告（生成文件缺少 GENERATED 标记、套件与当前静态数据不一致）：原因见下一条。
 >   - 默认最多收集 200 条，超出的直接截断，排在后面的警告也一并丢掉。要看全量，加 `--maxFindings 100000`。
-> - `ere/era-utils/` 不是引擎的开发套件：带 `// GENERATED START/END` 标记的具名访问器由 `tools/gen-wrapper.js` 生成，`exp-level.js`、`palam-level.js` 是手写模块。它的文件名和标记与引擎生成的套件相同，但引擎的【帮助】-【生成开发套件】会把两个标记之间的内容换成 `era.raw()` 写法，还会新建一批文件，所以本项目不用它。技能正文和 `ere_check_game` 里「重新生成开发套件」的建议、「有套件就按套件写变量」的说法，在本项目都不适用。
+> - `ere/era-utils/` 不是引擎的开发套件：带 `// GENERATED START/END` 标记的具名访问器由 `tools/gen-wrapper.js` 生成，`train-settle.js` 是手写模块。它的文件名和标记与引擎生成的套件相同，但引擎的【帮助】-【生成开发套件】会把两个标记之间的内容换成 `era.raw()` 写法，还会新建一批文件，所以本项目不用它。技能正文和 `ere_check_game` 里「重新生成开发套件」的建议、「有套件就按套件写变量」的说法，在本项目都不适用。
 
 游戏代码通过 SDK 控制引擎：
 

@@ -91,7 +91,6 @@ const { gobi_text } = require('#/data/gobi-koujo-const');
 const { EVENT } = require('#/data/event-name-const');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
-const { PALAMLV } = require('#/era-utils/palam-level');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
 const { piercing_state } = require('#/system/train/piercing-state');
 const {
@@ -120,6 +119,7 @@ const {
   ryouzyoku_kojo_family,
   ryouzyoku_after_kojo_family,
 } = require('#/kojo/kojo-dungeon-ravish');
+const { PALAMLV } = require('#/data/palam-level-const');
 
 // EVENTTRAIN #PRI 档：存在标志 + 总开关补 0
 function handle_train_pri() {

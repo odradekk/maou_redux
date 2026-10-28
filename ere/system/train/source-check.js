@@ -59,9 +59,7 @@ const era_flag = require('#/era-utils/era-flag');
 const { NBSP } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 const { MASTER } = require('#/utils/master');
 const { idiv, times } = require('#/utils/numeric');
-const { PALAMLV } = require('#/era-utils/palam-level');
 const { base_settled } = require('#/era-utils/train-settle');
-const { EXPLV } = require('#/era-utils/exp-level');
 const { train_message_a } = require('#/system/train/train-message');
 const {
   passout_check,
@@ -88,6 +86,8 @@ const {
   yokubo_up_check,
   jujun_up_check,
 } = require('#/system/train/ability-check');
+const { PALAMLV } = require('#/data/palam-level-const');
+const { EXPLV } = require('#/data/exp-level-const');
 // —— 结算上下文：目标 / 调教者的变量读写助手 ——
 
 let cid; // TARGET
