@@ -1,5 +1,5 @@
 /**
- * @file 每屏按钮编号常量的值域（#873）。
+ * @file 按钮编号常量的值域（#873）。
  *
  * #873 把各屏的固定按钮编号收进模块级常量（`const NAME_KEY = 999;`）。
  * child-id-collision 的两条静态不变量只认**纯数字字面量**，常量化之后那些
@@ -7,7 +7,7 @@
  * FIRST_CHILD_ID 之下（后代 ID 从 100000 起，同屏撞号后点角色会触发功能
  * 按钮），且必须是非负整数。
  *
- * 扫描面是 `ere/page/` 下的模块：每屏的编号常量画在对应模块顶部（文件头
+ * 扫描面是 `ere/` 下的全部模块：每屏的编号常量画在对应模块顶部（文件头
  * 约定）。与逐字面量扫描互补，不替代它——未常量化的字面量仍由
  * child-id-collision 负责。
  */
@@ -21,7 +21,7 @@ const { test } = require('node:test');
 
 const REPO_DIR = path.resolve(__dirname, '..');
 const ERE_DIR = path.join(REPO_DIR, 'ere');
-const PAGE_DIR = path.join(ERE_DIR, 'page');
+const MODULE_DIR = ERE_DIR;
 const PREGNANCY_FILE = path.join(
   ERE_DIR,
   'system',
@@ -29,12 +29,12 @@ const PREGNANCY_FILE = path.join(
   'chara-pregnancy.js',
 );
 
-/** page/ 下全部 .js（含 components/） */
-function page_sources(dir = PAGE_DIR, out = []) {
+/** ere/ 下全部 .js（含各域子目录） */
+function ere_sources(dir = MODULE_DIR, out = []) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) {
-      page_sources(full, out);
+      ere_sources(full, out);
     } else if (entry.name.endsWith('.js')) {
       out.push(full);
     }
@@ -58,7 +58,7 @@ function first_child_id() {
  */
 function key_constants() {
   const found = [];
-  for (const file of page_sources()) {
+  for (const file of ere_sources()) {
     const relative = path.relative(REPO_DIR, file);
     const lines = fs.readFileSync(file, 'utf8').split(/\r?\n/);
     lines.forEach((line, i) => {
@@ -76,7 +76,7 @@ function key_constants() {
   return found;
 }
 
-test('每屏编号常量的值都小于 FIRST_CHILD_ID（常量化后的撞号防线）', () => {
+test('按钮编号常量的值都小于 FIRST_CHILD_ID（常量化后的撞号防线）', () => {
   const limit = first_child_id();
   const constants = key_constants();
   assert.ok(
@@ -91,7 +91,7 @@ test('每屏编号常量的值都小于 FIRST_CHILD_ID（常量化后的撞号�
   assert.deepEqual(
     offenders,
     [],
-    `每屏编号常量必须是非负整数且小于 FIRST_CHILD_ID = ${limit}：\n` +
+    `按钮编号常量必须是非负整数且小于 FIRST_CHILD_ID = ${limit}：\n` +
       offenders.join('\n'),
   );
 });
