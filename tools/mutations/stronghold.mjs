@@ -1,7 +1,7 @@
 // issue #336：调教录像出售、水晶录像书架及两个事件宿主接入。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
 // #764 净 +2：删除零价旧契约的 M6824，新增 M15003–M15005（零价拒绝与正价边界）。
-export const COUNT = 246; // #785 净 -3：kill_target 的机械步骤移入 chara-removal，M6820/M6822/M6823 随实现消失（改由 execution 分片 M15110–M15118 守护），M6821 改写为守出售链路的转发接入；#761 净 +2：删反向变异 M6825，新增 M15000–M15002（出售输入状态校验）；#724 +5（M14486–M14490：怪物商店四屏与奴隶贩卖换屏） // #710 净 -9：删 M8915/M8927/M8928/M8931-M8933/M8935-M8939 共 11 条补位类条目（两个一览改成按钮网格，排版字面量消失），M12024 改写成 M14236，M12027 改写成「返回退回纯文本」，新增 M14238 与 M14253 两条（异界一览正文、可选祭品行退回纯文本）；M9114 保留（返工补了上界内侧的用例）；#562 起 +1（M11864：道具商店页脚不产生空行）；#653 -1 +1（删反向变异 M6638，新增 M13255 检查无影响档倍率）；
+export const COUNT = 240; // #867 净 -6（删随退款路径消失的 M8890/M8895/M8899/M8913/M8914/M8917） // #785 净 -3：kill_target 的机械步骤移入 chara-removal，M6820/M6822/M6823 随实现消失（改由 execution 分片 M15110–M15118 守护），M6821 改写为守出售链路的转发接入；#761 净 +2：删反向变异 M6825，新增 M15000–M15002（出售输入状态校验）；#724 +5（M14486–M14490：怪物商店四屏与奴隶贩卖换屏） // #710 净 -9：删 M8915/M8927/M8928/M8931-M8933/M8935-M8939 共 11 条补位类条目（两个一览改成按钮网格，排版字面量消失），M12024 改写成 M14236，M12027 改写成「返回退回纯文本」，新增 M14238 与 M14253 两条（异界一览正文、可选祭品行退回纯文本）；M9114 保留（返工补了上界内侧的用例）；#562 起 +1（M11864：道具商店页脚不产生空行）；#653 -1 +1（删反向变异 M6638，新增 M13255 检查无影响档倍率）；
 // #396 起 +18（M8086-M8103，system/stronghold/tax.js）；
 // #397 起 +4（M8437-M8440，stronghold/gohoubi-request）；
 // #399 起 +98（M8881-M8918、M8919-M8940 与 M9101-M9138）：page-item-shop 36 /
@@ -1238,28 +1238,21 @@ export default [
     must_mention: '陷阱商店里的购买',
   },
   {
-    desc: 'M8888 引擎侧购买不给货（ITEM += 1 → += 0）',
+    desc: 'M8888 简单确认支不给货（ITEM += 1 → += 0）',
     file: 'ere/page/page-item-shop.js',
-    find: 'era.add(`item:${item_id}`, 1); // ITEM 增加',
-    replace: 'era.add(`item:${item_id}`, 0); // 变异：不给货',
+    find: 'era.add(`item:${bought}`, 1);',
+    replace: 'era.add(`item:${bought}`, 0); // 变异：不给货',
     tests: ['item-shop'],
-    must_mention: '成交做四件事',
+    must_mention: '成交做三件事',
   },
   {
-    desc: 'M8889 引擎侧购买不扣钱（MONEY -= → +=）',
+    desc: 'M8889 简单确认支不扣钱（MONEY -= → +=）',
     file: 'ere/page/page-item-shop.js',
-    find: 'era_flag.money -= price; // MONEY 减少',
-    replace: 'era_flag.money += price; // 变异：不扣钱',
+    find: '  // 确认后一次结清：先扣钱、再给货\n  era_flag.money -= item_price(bought);',
+    replace:
+      '  // 确认后一次结清：先扣钱、再给货\n  era_flag.money += item_price(bought); // 变异：不扣钱',
     tests: ['item-shop'],
-    must_mention: '成交做四件事',
-  },
-  {
-    desc: 'M8890 确认取消的还原额错源（TFLAG:15 → -1）',
-    file: 'ere/page/page-item-shop.js',
-    find: '      era_flag.money = get_temp_money();',
-    replace: '      era_flag.money = -1; // 变异：不还原暂存值',
-    tests: ['item-shop'],
-    must_mention: '退货退钱',
+    must_mention: '成交做三件事',
   },
   {
     desc: 'M8891 复数购买的单价表错一件（安全套 100 → 101）',
@@ -1272,9 +1265,9 @@ export default [
   {
     desc: 'M8892 复数购买分派的排除项错位（!= 90 → != 91）',
     file: 'ere/page/page-item-shop.js',
-    find: '    (bought >= PLURAL_RANGE_START && bought !== PLURAL_EXCLUDE)',
+    find: '    (item_id >= PLURAL_RANGE_START && item_id !== PLURAL_EXCLUDE)',
     replace:
-      '    (bought >= PLURAL_RANGE_START && bought !== PLURAL_EXCLUDE + 1)',
+      '    (item_id >= PLURAL_RANGE_START && item_id !== PLURAL_EXCLUDE + 1)',
     tests: ['item-shop'],
     must_mention: '单价表逐条对上',
   },
@@ -1294,15 +1287,6 @@ export default [
       "era.print(e !== 0 ? '不能持有这么多' : '哪怕是魔王，也不能赊账啊');",
     tests: ['item-shop'],
     must_mention: '可买数',
-  },
-  {
-    desc: 'M8895 买 n 件时少补一件（RESULT - 1 → RESULT）',
-    file: 'ere/page/page-item-shop.js',
-    find: 'era.set(`item:${bought}`, (era.get(`item:${bought}`) || 0) + result - 1);',
-    replace:
-      'era.set(`item:${bought}`, (era.get(`item:${bought}`) || 0) + result);',
-    tests: ['item-shop'],
-    must_mention: '买 n 件的账',
   },
   {
     desc: 'M8896 经验值道具的每件经验错十倍（* 10 → * 100）',
@@ -1327,14 +1311,6 @@ export default [
     replace: '      era_flag.money += x * 10; // 变异：退还额错',
     tests: ['item-shop'],
     must_mention: '戒指进 ITEM:300',
-  },
-  {
-    desc: 'M8899 使用支的退额表错一件（打虫药 500 → 501）',
-    file: 'ere/page/page-item-shop.js',
-    find: 'const USE_REFUNDS = {\n  29: 500,\n  30: 1000,',
-    replace: 'const USE_REFUNDS = {\n  29: 501,\n  30: 1000,',
-    tests: ['item-shop'],
-    must_mention: '吃掉道具并按种类退钱',
   },
   {
     desc: 'M8900 技巧等级单价的档位错（5000 → 5001）',
@@ -1441,23 +1417,6 @@ export default [
     tests: ['chara-shop'],
     must_mention: '勋章闸',
   },
-  {
-    desc: 'M8913 show_shop 的道具商店上界错一位（< 54 → < 55）',
-    file: 'ere/page/page-shop.js',
-    find: 'if (era_flag.bought >= 0 && era_flag.bought < 54) {',
-    replace: 'if (era_flag.bought >= 0 && era_flag.bought < 55) {',
-    tests: ['page-shop'],
-    must_mention: '陷阱商店',
-  },
-  {
-    desc: 'M8914 店内 997 切回道具商店不生效（BOUGHT 不置 1）',
-    file: 'ere/page/page-shop.js',
-    find: '  } else if (result === 997 && era_flag.bought >= 0) {\n    era_flag.bought = 1;\n    clear_shop();',
-    replace:
-      '  } else if (result === 997 && era_flag.bought >= 0) {\n    // 变异：不切回道具商店（BOUGHT 不动）\n    clear_shop();',
-    tests: ['shop-trap'],
-    must_mention: 'BOUGHT = 1',
-  },
   // M8915（商品一览编号字段宽 3 → 5）随 #710 的按钮网格删除：编号补位已
   // 不存在，等价检查换成 M14236（返回退回纯文本）与既有的 M8926（每行格数）。
   {
@@ -1467,14 +1426,6 @@ export default [
     replace: '  if (era.getAddedCharacters().length <= MAX_CHARANUM) {',
     tests: ['page-shop'],
     must_mention: '满员',
-  },
-  {
-    desc: 'M8917 陷阱商店的 TFLAG:15 暂存不再落（snapshot_money → 空）',
-    file: 'ere/page/page-shop-trap.js',
-    find: '  snapshot_money(); // TFLAG:15 = MONEY（所持点を一時保存；#399 起落表）',
-    replace: '  // 变异：不落 TFLAG:15 暂存',
-    tests: ['shop-trap'],
-    must_mention: '暂存值',
   },
   {
     desc: 'M8918 陷阱商店的列货不画（print_shopitem → 空）',
@@ -1594,16 +1545,16 @@ export default [
     file: 'ere/page/page-item-shop.js',
     find: 'const SHOP_ITEM_COUNT = 100;',
     replace: 'const SHOP_ITEM_COUNT = 99;',
-    tests: ['page-shop'],
-    must_mention: '购买分派端点',
+    tests: ['page-shop-loop'],
+    must_mention: '99 是最后一个可购编号',
   },
   {
-    desc: 'M9102 店内购买分派的上界宽一格（SHOP_ITEM_COUNT 100 → 101：连主菜单 100 也被吞）',
+    desc: 'M9102 店内购买分派的上界宽一格（SHOP_ITEM_COUNT 100 → 101：连 100 也被吞）',
     file: 'ere/page/page-item-shop.js',
     find: 'const SHOP_ITEM_COUNT = 100;',
     replace: 'const SHOP_ITEM_COUNT = 101;',
-    tests: ['page-shop'],
-    must_mention: '购买分派端点',
+    tests: ['page-shop-loop'],
+    must_mention: '99 是最后一个可购编号',
   },
   {
     desc: 'M9103 消耗品持有上限的槽位错一格（STOCK_LIMIT 99 → 100）',
@@ -2124,7 +2075,8 @@ export default [
     replace: `    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
     // 每完成或取消一单都从函数头重画。`,
     tests: ['sale-chara', 'subpage-clear-screen'],
-    must_mention:
-      '奴隶贩卖换屏：无效输入与返回后重画，列表屏行数不增长（#724）',
+    // 用例标题在 #872 改名（原「无效输入与返回后重画」→「返回后重画」），
+    // must_mention 一直停在旧名——`--ids M14490` 时红但命不中（#867 顺带修正）
+    must_mention: '奴隶贩卖换屏：返回后重画，列表屏行数不增长（#724）',
   },
 ];

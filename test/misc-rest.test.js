@@ -1479,10 +1479,6 @@ test('MAOUNET：等级一开关连续点击两次回到关闭', async () => {
 
 test('MAOUNET：据点 888 接入真身，读档钩子保留 999 与 1000..1019 分支', async () => {
   const shop_fixture = create_era_fixture();
-  // 商店轮的入口状态 BOUGHT = -1（event-first.js 初始化 / page-shop.js 进店再置）：直调
-  // usershop 时必须先落，否则 era_flag.bought 读回 0——那是「刚买了 0 号
-  // 商品」的店内态，#396 接通店内购物段后会吞掉全部输入
-  shop_fixture.load_module('era-utils/era-flag').bought = -1;
   shop_fixture.set_inputs(9);
   const shop = shop_fixture.load_module('page/page-shop');
   await shop.usershop(888);

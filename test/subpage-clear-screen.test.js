@@ -191,7 +191,7 @@ test('指令登录换屏：连续登记多条，各轮菜单行数不增长（#7
 
 // —— 商店族（道具/陷阱商店 page-item-shop.js·page-shop-trap.js）——
 
-/** 可购买世界的最小播种（在售位、名字、价格、商品序号面，同 test/item-shop.test.js；进店先经主菜单 [107]——EVENTSHOP 会把 BOUGHT 重置回 -1） */
+/** 可购买世界的最小播种（在售位、名字、价格、商品序号面，同 test/item-shop.test.js；进店先经主菜单 [107]） */
 function seed_item_shop(fixture) {
   const seed = {
     'flag:10004': 10000, // MONEY
@@ -217,7 +217,6 @@ function seed_item_shop(fixture) {
   for (const [name, value] of Object.entries(seed)) {
     fixture.store.set(name, value);
   }
-  fixture.load_module('era-utils/era-flag').bought = -1;
 }
 
 test('道具商店换屏：连续两轮购买取消，各轮商品屏与数量屏行数相同（#724）', async () => {
@@ -245,12 +244,12 @@ test('道具商店换屏：陷阱等级与戒指退还的尾段输出在换屏�
     const fixture = create_era_fixture();
     seed_item_shop(fixture);
     fixture.store.set('cflag:0:9', 2); // 魔王等级（陷阱等级上限）
-    const { event_buy } = fixture.load_module('page/page-item-shop');
+    const { purchase } = fixture.load_module('page/page-item-shop');
     const { change_screen } = fixture.load_module(
       'page/components/screen-change',
     );
     fixture.set_inputs(1); // 数量选择：买一件
-    await event_buy(55);
+    await purchase(55);
     // 商店轮的下一轮绘制（item_shop 的换屏）由这里显式代演
     await change_screen();
     assert(
@@ -266,12 +265,12 @@ test('道具商店换屏：陷阱等级与戒指退还的尾段输出在换屏�
     const fixture = create_era_fixture();
     seed_item_shop(fixture);
     fixture.store.set('item:300', 99);
-    const { event_buy } = fixture.load_module('page/page-item-shop');
+    const { purchase } = fixture.load_module('page/page-item-shop');
     const { change_screen } = fixture.load_module(
       'page/components/screen-change',
     );
     fixture.set_inputs(1); // 数量选择：买一件
-    await event_buy(91);
+    await purchase(91);
     // 商店轮的下一轮绘制（item_shop 的换屏）由这里显式代演
     await change_screen();
     assert(
@@ -374,7 +373,6 @@ function seed_monster_shop(fixture, seed = {}) {
     fixture.store.set(name, value);
   }
   fixture.seed_chara(202, { id: 202, name: '精英狗头人' });
-  fixture.load_module('era-utils/era-flag').bought = -1;
 }
 
 test('怪物商店换屏：种族屏与商品屏反复重画，行数不增长（#724）', async () => {
@@ -429,7 +427,6 @@ test('奴隶贩卖换屏：返回后重画，列表屏行数不增长（#724）'
   join_slave_chara(fixture, 31, '温妮');
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.money = 100;
-  era_flag.bought = -1;
   // 31 号是可出售的候选，但带收藏标记：选中后只提示不成交，回到列表屏重画
   fixture.store.set('cflag:31:0', 2);
   fixture.store.set('base:31:0', 100);
@@ -459,7 +456,6 @@ test('奴隶贩卖换屏：成交后的威望值播报在换屏前先经按键�
   fixture.store.set('base:31:0', 100); // 有体力（非临死）
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.money = 100;
-  era_flag.bought = -1;
   const { chara_sale } = fixture.load_module('system/stronghold/sale');
 
   // 选 31 → 确认 [0] 成交（威望值播报）→ 回列表屏换屏 → [999] 返回
