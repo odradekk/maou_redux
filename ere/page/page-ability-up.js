@@ -234,9 +234,11 @@ async function ability_up() {
         }
         if (result < 0 || !era.getAddedCharacters().includes(result)) {
           // 范围外。检查的是「ID 是否已加入」而非编号上限：编号空间是
-          // 角色 ID，未加入的 ID 等同于「不存在的人」，与越界同路
-          // （page-select-target.js 同款；实机上这一支不可达——列表按钮即
-          // 输入集，见文件头第 3 条）
+          // 角色 ID，未加入的 ID 等同于「不存在的人」，与越界同路。
+          // 这一支**可达**（#953 判定，原文说「列表按钮即输入集」不准确）：
+          // 下面的两道守卫 `continue` 回本输入循环时并不重画列表，而引擎在
+          // 每次成功回传后清空白名单（rule = []），所以那一轮的输入是自由
+          // 输入，typed 一个列表外的编号就落在这里
           await print_guard('数值已超出允许范围外');
           continue;
         }

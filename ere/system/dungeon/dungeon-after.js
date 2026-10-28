@@ -14,11 +14,11 @@
  *     之间」的界面（page-dungeon-info2.js 的逐层 WAIT），按钮会在后续回传
  *     时被清出白名单/禁用；本文件两处的 WAIT 都在菜单**之前**
  *     （gohoubi 与 osioski；选项与紧跟的 INPUT 成对），选项打印后紧接
- *     `input_choice`，中途没有
+ *     一次 `era.input()`，中途没有
  *     成功回传，按钮照常可点（引擎 app.asar 的 returnFromButton /
  *     getButtonObject 与 valCount 三处机制，逐字见 #180、#572 的核对）。
- *     随之「越界值重问」支在实机上不可达，保留结构不补用例
- *     （page-ability-up.js 文件头同款登记）；
+ *     原先「RESULT < 0 或 >= 上界就重问」的循环已删除（#953）：白名单就是
+ *     本轮打印的那几枚按钮，越界值引擎当场拒收，重问支没有受理面；
  *   - ABL/EXP 走门面（chara 域：顺从/欲望/私处感觉/肛门感觉/露出癖/抖M
  *     气质；dungeon 域：私处/肛门/绝顶/性交/自慰/调教自慰/精液/口交/私处
  *     扩张/肛门扩张/兽奸/药物经验）；EXP:23（爱情）/EXP:81（勋章）无门面
@@ -64,24 +64,6 @@ const {
 /** 名字承载（#5 决议；savestr 通道不存在，dungeon-trap.js 同款） */
 function name_of(cid) {
   return era.get(`callname:${cid}:-1`) ?? '';
-}
-
-/**
- * INPUT 循环（RESULT < 0 或 >= 上界时 GOTO 重输）。
- *
- * #572 起两个调用点的选项都打成了按钮，白名单＝按钮集，越界值由引擎
- * 拒收（弹「输入不合法」），`while` 那支在实机上不可达——保留结构
- * 与文案，不补用例（page-ability-up.js 文件头同款登记）。
- *
- * @param {number} upper 合法输入的上界（gohoubi 3 / osioski 9）
- * @returns {Promise<number>} 合法的选择值
- */
-async function input_choice(upper) {
-  let result = await era.input();
-  while (result < 0 || result >= upper) {
-    result = await era.input();
-  }
-  return result;
 }
 
 /**
@@ -158,8 +140,8 @@ async function gohoubi(cid) {
   era.printButton('这是你应份的', 0);
   era.printButton('授予勋章', 1);
   era.printButton('赐予承诺的东西', 2);
-  // $INPUT_LOOP（白名单＝上面三枚按钮，越界值由引擎拒收）
-  const result = await input_choice(3);
+  // $INPUT_LOOP（白名单＝上面三枚按钮，越界值由引擎拒收，故没有重问支）
+  const result = await era.input();
 
   // LOCAL:10 = 顺从档位（点数增量）
   const local10 = gohoubi_reward_level(cid);
@@ -555,8 +537,8 @@ async function osioski(cid) {
   era.printButton('打扫厕所刑', 6);
   era.printButton('不给吃饭刑', 7);
   era.printButton('媚药放置刑', 8);
-  // $INPUT_LOOP（白名单＝上面九枚按钮）
-  const result = await input_choice(9);
+  // $INPUT_LOOP（白名单＝上面九枚按钮，越界值由引擎拒收，故没有重问支）
+  const result = await era.input();
 
   // 档位表：LOCAL:10 顺从（欲情）/ LOCAL:11 欲望（苦痛・屈服）
   const { ju: local10, desire: local11 } = osioski_reward_levels(cid);

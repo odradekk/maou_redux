@@ -161,42 +161,34 @@ async function precipitate_withdrawal(cid, rand = default_rand) {
 
   // 持有媚药道具（ITEM:26）时可喂服免除本轮
   if (get('item:26')) {
-    for (;;) {
-      era.print(`给予${chara_callname(cid)}媚药吗？`);
-      // #710：两枚确认键改成按钮（正文的 `- ` 是既有文案，编号由引擎按
-      // showAcc 拼）。此处紧接 input，中间没有等键，按钮点得动；越界输入
-      // 由引擎当场拒收，下面的重问分支因此结构性不可达（结构保留）。
-      era.printButton('- 好的', 0);
-      era.printButton('- 不要', 1);
-      const result = await era.input();
-      if (result === 0) {
-        if (cflag(cid, 1) === 2) {
-          // 侵攻中角色：为媚药而诱惑魔王军，直接陷落退出侵攻
-          const name = chara_callname(cid);
-          await era.printAndWait(`${name}为了获得媚药，诱惑着魔王军上下人众。`);
-          await era.printAndWait(
-            '流下了贪欲的口水，完全忘记了作为勇者的使命。',
-          );
-          era.print(`${name}陷落了。`);
-          set_cflag(cid, 1, 0);
-          era_flag.money += 100 * cflag(cid, 9);
-          era_exflag.legit_money += 100 * cflag(cid, 9);
-          await era.printAndWait(`获得${100 * cflag(cid, 9)}G！`);
-          set_cflag(cid, 506, 1);
-          set_cflag(cid, 507, 0);
-          party_del(cid);
-        }
-        era.print(`${chara_callname(cid)}抢过了装着浓缩媚药的瓶子，`);
-        era.print('马上如饥似渴地一饮而尽，放心地叹了一口气。');
-        await era.waitAnyKey();
-        era.add(`cflag:${cid}:31`, 1);
-        game.train.媚药 -= 1;
-        return 0;
+    era.print(`给予${chara_callname(cid)}媚药吗？`);
+    // #710：两枚确认键改成按钮（正文的 `- ` 是既有文案，编号由引擎按
+    // showAcc 拼）。此处紧接 input，中间没有等键，按钮点得动；本屏只有
+    // 0/1，原先「其余值重问」的回边没有受理面（#953）
+    era.printButton('- 好的', 0);
+    era.printButton('- 不要', 1);
+    // [1] 不要：落到下面「无媚药」的处理
+    if ((await era.input()) === 0) {
+      if (cflag(cid, 1) === 2) {
+        // 侵攻中角色：为媚药而诱惑魔王军，直接陷落退出侵攻
+        const name = chara_callname(cid);
+        await era.printAndWait(`${name}为了获得媚药，诱惑着魔王军上下人众。`);
+        await era.printAndWait('流下了贪欲的口水，完全忘记了作为勇者的使命。');
+        era.print(`${name}陷落了。`);
+        set_cflag(cid, 1, 0);
+        era_flag.money += 100 * cflag(cid, 9);
+        era_exflag.legit_money += 100 * cflag(cid, 9);
+        await era.printAndWait(`获得${100 * cflag(cid, 9)}G！`);
+        set_cflag(cid, 506, 1);
+        set_cflag(cid, 507, 0);
+        party_del(cid);
       }
-      if (result !== 1) {
-        continue;
-      }
-      break;
+      era.print(`${chara_callname(cid)}抢过了装着浓缩媚药的瓶子，`);
+      era.print('马上如饥似渴地一饮而尽，放心地叹了一口气。');
+      await era.waitAnyKey();
+      era.add(`cflag:${cid}:31`, 1);
+      game.train.媚药 -= 1;
+      return 0;
     }
   }
 

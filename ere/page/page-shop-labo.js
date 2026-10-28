@@ -30,11 +30,12 @@
  *    - 自由文字（TATOO 的刺青、SET_FREE_TRAIN 的调教内容）是玩家自己写字符串，
  *      规则给不出约束，照旧自由输入——那一轮没有打印按钮，默认就是自由输入，
  *      不需要再传 `useRule: false`。
- *    随之而来的结构性不可达：按钮化之后「输入不在按钮集里」的缺省分支
- *    （各 `ELSE GOTO INPUT_LOOP` / `ELSE RETURN 0`）在实机上不可达，结构保留
- *    不补用例（page-ability-up.js 文件头同款）；本文件里因 #872 改成 rule 或
- *    候选按钮而**变得**不可达的那几支（SUMMON_SLAVE 的范围/存在性/重复三道
- *    校验、ST_UP_LABO 的非数字归一）随改动一起删除。
+ *    **「输入不在按钮集里」这一类分支已删除**：本文件的输入集就是本轮
+ *    打印过的按钮（引擎只把已打印按钮的编号回传），所以各 `ELSE GOTO
+ *    INPUT_LOOP` / `ELSE RETURN 0` 的缺省支、以及只靠它们回头的重问循环
+ *    都没有受理面，连同回边一并去掉（#953）；因 #872 改成 rule 或候选按钮
+ *    而**变得**不可达的那几支（SUMMON_SLAVE 的范围/存在性/重复三道校验、
+ *    ST_UP_LABO 的非数字归一）更早就随改动删除。
  *    **两处自由文字输入（刺青、自由局部调教）的 0 ＝ 空输入**
  *    （#567）：旧引擎靠「留空」表达消去/重置，ere 侧经共享判断条件
  *    `#/utils/input-text` 把引擎归一后的 0 还原成空串（引擎把 `''` 与 `"0"`
@@ -308,44 +309,35 @@ async function run_modify(item, rand) {
   if (!(await require_money(item.price, item.poor))) {
     return 0;
   }
-  for (;;) {
-    const picked = await pick_slave({
-      intro: item.intro,
-      mode: item.mode,
-      master: item.master,
-      cancel: item.cancel,
-      guard: item.guard,
-    });
-    if (picked.cancelled) {
-      return 0;
-    }
-    const cid = picked.cid;
-    for (const text of item.confirm(cid)) {
-      era.print(text);
-    }
-    const answer = await ask_yes_no();
-    if (answer === 1) {
-      return 0; // IF RESULT == 1 → RETURN 0
-    }
-    if (answer === 0) {
-      // 结果文案 + 变量写入都在 system/labo 里（#888），这里只把行打出去
-      for (const text of item.apply(cid, rand)) {
-        era.print(text);
-      }
-      pay(item.price); // MONEY -= C / EX_FLAG:4444 -= C
-      if (item.after) {
-        item.after(cid, rand); // 应用之后的追加动作（身体重算等）
-      }
-      // apply 的结果文案在回主菜单屏前经按键确认（ADR-0009）——全部
-      // 条目的 apply 都打印，这里必等且只等一次
-      await era.waitAnyKey();
-      return 1;
-    }
-    if (item.confirm_else === 'return') {
-      return 0; // 少数条目的 `ELSE RETURN 0`
-    }
-    // 其余条目 `ELSE GOTO INPUT_LOOP`（按钮化之后不可达，见文件头第 3 条）
+  const picked = await pick_slave({
+    intro: item.intro,
+    mode: item.mode,
+    master: item.master,
+    cancel: item.cancel,
+    guard: item.guard,
+  });
+  if (picked.cancelled) {
+    return 0;
   }
+  const cid = picked.cid;
+  for (const text of item.confirm(cid)) {
+    era.print(text);
+  }
+  if ((await ask_yes_no()) === 1) {
+    return 0; // IF RESULT == 1 → RETURN 0
+  }
+  // 结果文案 + 变量写入都在 system/labo 里（#888），这里只把行打出去
+  for (const text of item.apply(cid, rand)) {
+    era.print(text);
+  }
+  pay(item.price); // MONEY -= C / EX_FLAG:4444 -= C
+  if (item.after) {
+    item.after(cid, rand); // 应用之后的追加动作（身体重算等）
+  }
+  // apply 的结果文案在回主菜单屏前经按键确认（ADR-0009）——全部
+  // 条目的 apply 都打印，这里必等且只等一次
+  await era.waitAnyKey();
+  return 1;
 }
 
 // ————————————————————————————————————————————————
@@ -386,9 +378,6 @@ async function modify_bustup(rand = default_rand) {
     if (answer === 1) {
       return 0;
     }
-    if (answer !== 0) {
-      return 0; // 的 ELSE RETURN 0（不可达，见文件头第 3 条）
-    }
     // 乳房档位递升（档位取舍见 labo-calc 的 apply_bustup）
     for (const text of apply_bustup(cid)) {
       era.print(text);
@@ -421,9 +410,6 @@ async function modify_bustdown(rand = default_rand) {
     if (answer === 1) {
       return 0;
     }
-    if (answer !== 0) {
-      return 0; // 的 ELSE RETURN 0
-    }
     // 乳房档位递降（档位取舍见 labo-calc 的 apply_bustdown）
     for (const text of apply_bustdown(cid)) {
       era.print(text);
@@ -446,46 +432,41 @@ async function modify_futanari() {
   if (!(await require_money(50000, '这么穷，就不要这么变态啦。'))) {
     return 0; // （C = 50000）
   }
-  for (;;) {
-    const picked = await pick_slave({
-      intro: [
-        '将改造对象的阴蒂给阳具化，',
-        '在卵巢内加入精囊一样的组织。',
-        '要将谁扶她化？',
-      ],
-      master: true,
-      guard: (cid) => {
-        if (talent(cid, 121) || talent(cid, 122)) {
-          return `${savestr(cid)}已经有兵器了。`;
-        }
-        return null;
-      },
-    });
-    if (picked.cancelled) {
-      return 0;
-    }
-    const cid = picked.cid;
-    era.print(`给${savestr(cid)}怎么样的阳具呢？？`);
-    // 阳具形状选项
-    for (const [index, label] of FUTANARI_SHAPES.entries()) {
-      era.printButton(`- ${label}`, index);
-    }
-    era.printButton('- 停止', LABO_BACK_KEY);
-    const shape = await era.input(); // INPUT
-    if (shape === LABO_BACK_KEY) {
-      return 0;
-    }
-    if (shape < 0 || shape > 4) {
-      continue; // 的 ELSE GOTO INPUT_LOOP（不可达）
-    }
-    for (const text of apply_futanari(cid, shape)) {
-      era.print(text);
-    }
-    pay(50000);
-    // 改造播报在回选人屏前经按键确认（ADR-0009）
-    await era.waitAnyKey();
-    return 1;
+  const picked = await pick_slave({
+    intro: [
+      '将改造对象的阴蒂给阳具化，',
+      '在卵巢内加入精囊一样的组织。',
+      '要将谁扶她化？',
+    ],
+    master: true,
+    guard: (cid) => {
+      if (talent(cid, 121) || talent(cid, 122)) {
+        return `${savestr(cid)}已经有兵器了。`;
+      }
+      return null;
+    },
+  });
+  if (picked.cancelled) {
+    return 0;
   }
+  const cid = picked.cid;
+  era.print(`给${savestr(cid)}怎么样的阳具呢？？`);
+  // 阳具形状选项（编号就是 FUTANARI_SHAPES 的下标 0-4，本屏的键只有这五个加 999）
+  for (const [index, label] of FUTANARI_SHAPES.entries()) {
+    era.printButton(`- ${label}`, index);
+  }
+  era.printButton('- 停止', LABO_BACK_KEY);
+  const shape = await era.input(); // INPUT
+  if (shape === LABO_BACK_KEY) {
+    return 0;
+  }
+  for (const text of apply_futanari(cid, shape)) {
+    era.print(text);
+  }
+  pay(50000);
+  // 改造播报在回选人屏前经按键确认（ADR-0009）
+  await era.waitAnyKey();
+  return 1;
 }
 
 /** modify_futanari_erase */
@@ -535,9 +516,6 @@ async function modify_amnesia() {
   const answer = await ask_yes_no();
   if (answer === 1) {
     return 0;
-  }
-  if (answer !== 0) {
-    return 0; // 的 ELSE GOTO INPUT_LOOP（不可达）
   }
 
   apply_amnesia_reset(d); // 助手解除 + 全清（见 labo-calc）
@@ -648,19 +626,13 @@ async function tatoo_set_off() {
   }
   era.printButton('- 停止', LABO_BACK_KEY);
 
-  let select = 0;
-  for (;;) {
-    const result = await era.input(); // INPUT
-    if (result === LABO_BACK_KEY) {
-      return 0;
-    }
-    if (TATOO_NAME[result]) {
-      era.print(`${TATOO_NAME[result]}的刺青被处理了。`);
-      select = result; // TATOO_SELECT = RESULT
-      break;
-    }
-    return 0; // 的 ELSE GOTO INPUT_LOOP（不可达）
+  // 本屏的键只有 TATOO_NAME 的 10-17 与 999，两者在下面各有一支
+  const result = await era.input(); // INPUT
+  if (result === LABO_BACK_KEY) {
+    return 0;
   }
+  const select = result; // TATOO_SELECT = RESULT
+  era.print(`${TATOO_NAME[select]}的刺青被处理了。`);
 
   era.print('请自由输入想雕刻的刺青，留空代表将要被消去。');
   const current = cstr(target, select);
@@ -683,9 +655,6 @@ async function tatoo_set_off() {
   const answer = await ask_yes_no();
   if (answer === 1) {
     return 0;
-  }
-  if (answer !== 0) {
-    return 0; // 的 ELSE GOTO INPUT_LOOP（不可达）
   }
   era.print(apply_tattoo(target, select, results));
   pay(cost);
@@ -711,38 +680,24 @@ async function modify_hair_color() {
     }
     const t = picked.cid; // T = RESULT
 
-    // 颜色菜单
+    // 颜色菜单（键是 colors 的下标 0-6 与 999，两者下面各有一支）
     const colors = ['金色', '栗色', '黑色', '红色', '银色', '蓝色', '绿色'];
-    let col = 0;
-    for (;;) {
-      era.print(`变成什么颜色？（现在：${hair_color_name(t)}）`);
-      for (const [index, name] of colors.entries()) {
-        era.printButton(name, index);
-      }
-      era.printButton('- 算了，居然没有光头……', LABO_BACK_KEY);
-      const result = await era.input();
-      if (result === LABO_BACK_KEY) {
-        continue restart; // RESTART（回函数头重选角色）
-      }
-      if (result < 0 || result > 6) {
-        continue; // LOOP !INRANGE(RESULT, 0, 6)（不可达）
-      }
-      col = result + 1; // COL = RESULT + 1
-      break;
+    era.print(`变成什么颜色？（现在：${hair_color_name(t)}）`);
+    for (const [index, name] of colors.entries()) {
+      era.printButton(name, index);
     }
+    era.printButton('- 算了，居然没有光头……', LABO_BACK_KEY);
+    const result = await era.input();
+    if (result === LABO_BACK_KEY) {
+      continue restart; // RESTART（回函数头重选角色）
+    }
+    const col = result + 1; // COL = RESULT + 1
 
     // 确认（临时 SWAP 取显示名再换回，见 labo-calc 的 hair_color_preview）
-    for (;;) {
-      const shown = hair_color_preview(t, col);
-      era.print(`要将${savestr(t)}的头发变成${shown}吗？`);
-      const answer = await ask_yes_no('确定', '取消');
-      if (answer === 1) {
-        return 0;
-      }
-      if (answer === 0) {
-        break;
-      }
-      return 0; // LOOP RESULT != 0（不可达）
+    const shown = hair_color_preview(t, col);
+    era.print(`要将${savestr(t)}的头发变成${shown}吗？`);
+    if ((await ask_yes_no('确定', '取消')) === 1) {
+      return 0;
     }
     era.print(apply_hair_color(t, col)); // TALENT:T:头发颜色 = COL
     pay(5000);
@@ -771,33 +726,20 @@ async function modify_skin_color() {
     // 现在的肤色
     const current = skin_color_name(t);
 
-    let col = 0;
-    for (;;) {
-      era.print(`想要变成什么肤色？（现在：${current}）`);
-      for (const [index, name] of SKIN_NAMES.entries()) {
-        era.printButton(name, index);
-      }
-      era.printButton('- 取消', LABO_BACK_KEY);
-      const result = await era.input();
-      if (result === LABO_BACK_KEY) {
-        continue restart; // RESTART（回函数头重选角色）
-      }
-      if (result < 0 || result > 2) {
-        continue; // LOOP !INRANGE(RESULT, 0, 2)（不可达）
-      }
-      col = result; // COL = RESULT
-      break;
+    // 肤色菜单（键是 SKIN_NAMES 的下标 0-2 与 999，两者下面各有一支）
+    era.print(`想要变成什么肤色？（现在：${current}）`);
+    for (const [index, name] of SKIN_NAMES.entries()) {
+      era.printButton(name, index);
     }
-    for (;;) {
-      era.print(`将${savestr(t)}变为${SKIN_NAMES[col]}吗？`);
-      const answer = await ask_yes_no('确定', '取消');
-      if (answer === 1) {
-        return 0;
-      }
-      if (answer === 0) {
-        break;
-      }
-      return 0; // LOOP RESULT != 0（不可达）
+    era.printButton('- 取消', LABO_BACK_KEY);
+    const result = await era.input();
+    if (result === LABO_BACK_KEY) {
+      continue restart; // RESTART（回函数头重选角色）
+    }
+    const col = result; // COL = RESULT
+    era.print(`将${savestr(t)}变为${SKIN_NAMES[col]}吗？`);
+    if ((await ask_yes_no('确定', '取消')) === 1) {
+      return 0;
     }
     era.print(apply_skin_color(t, col)); // 三清再置一（见 labo-calc）
     pay(5000);
@@ -861,9 +803,6 @@ async function block_feeling() {
       if (pid === LABO_BACK_KEY) {
         return 0;
       }
-      if (pid < 0 || pid > 3) {
-        continue; // 无支（按钮外输入不可达）
-      }
       if (abl(cid, PID_ABL[pid]) > 0) {
         era.print('已经超过LV1以上的部位无法封锁'); // PRINTL
         await era.waitAnyKey(); // WAIT
@@ -926,9 +865,6 @@ async function brain_washing(cost, b) {
   if (answer === 1) {
     return 0;
   }
-  if (answer !== 0) {
-    return 0; // 的 ELSE GOTO INPUT_LOOP（不可达）
-  }
   era.print(apply_washing(cid, b)); // TALENT:T:B = 1（参数化下标，直写）
   await era.waitAnyKey(); // WAIT
   pay(cost);
@@ -940,23 +876,18 @@ async function bougt_tentacles() {
   if (!(await require_money(50000, '钱不够'))) {
     return 0; // （C = 50000）
   }
-  for (;;) {
-    era.drawLine({ isSolid: true }); // CUSTOMDRAWLINE =
-    era.print(`${itemname(90)}是身体改造失败的性奴隶的悲催下场……`);
-    era.print(`　购买${itemname(90)}吗？`);
-    era.drawLine(); // DRAWLINE
-    const answer = await ask_yes_no();
-    if (answer === 0) {
-      era.print(buy_tentacles()); // ITEM:90 = 1
-      pay(50000);
-      await era.waitAnyKey(); // WAIT
-      return 1;
-    }
-    if (answer === 1) {
-      return 0;
-    }
-    // GOTO INPUT_LOOP（不可达）
+  era.drawLine({ isSolid: true }); // CUSTOMDRAWLINE =
+  era.print(`${itemname(90)}是身体改造失败的性奴隶的悲催下场……`);
+  era.print(`　购买${itemname(90)}吗？`);
+  era.drawLine(); // DRAWLINE
+  const answer = await ask_yes_no();
+  if (answer !== 0) {
+    return 0; // [1] 不买
   }
+  era.print(buy_tentacles()); // ITEM:90 = 1
+  pay(50000);
+  await era.waitAnyKey(); // WAIT
+  return 1;
 }
 
 /** given_human_life：赋予生命（延长寿命，消耗勋章）。 */
@@ -993,9 +924,6 @@ async function given_human_life(rand = default_rand) {
   if (answer === 1) {
     return 0;
   }
-  if (answer !== 0) {
-    return 0; // 的 ELSE GOTO INPUT_LOOP（不可达）
-  }
   for (const text of apply_given_life(t)) {
     era.print(text);
   }
@@ -1030,22 +958,15 @@ async function resulection() {
     await era.waitAnyKey();
     return 0;
   }
-  // 确认
-  for (;;) {
-    era.drawLine({ isSolid: true }); // CUSTOMDRAWLINE =
-    era.print('过去从这个世界上消失和逝去的人，');
-    era.print('所有的记忆都将被忘记，');
-    era.print('好似重获新生一般出现在你面前。');
-    era.print('……这样的结果，是你想要的吗？');
-    era.drawLine(); // DRAWLINE
-    const answer = await ask_yes_no('确定', '取消');
-    if (answer === 1) {
-      return 0;
-    }
-    if (answer === 0) {
-      break;
-    }
-    // ELSE GOTO INPUT_LOOP_00（不可达）
+  // 确认（键只有 [0] 确定 / [1] 取消 两个）
+  era.drawLine({ isSolid: true }); // CUSTOMDRAWLINE =
+  era.print('过去从这个世界上消失和逝去的人，');
+  era.print('所有的记忆都将被忘记，');
+  era.print('好似重获新生一般出现在你面前。');
+  era.print('……这样的结果，是你想要的吗？');
+  era.drawLine(); // DRAWLINE
+  if ((await ask_yes_no('确定', '取消')) === 1) {
+    return 0;
   }
   // 选人（按钮 100-199 = 预设 1-100）
   for (;;) {
@@ -1117,9 +1038,6 @@ async function reget_chastity_key() {
   if (answer === 1) {
     return 0;
   }
-  if (answer !== 0) {
-    return 0; // 的 ELSE GOTO INPUT_LOOP（不可达）
-  }
   for (const text of apply_chastity_key(t)) {
     era.print(text);
   }
@@ -1146,10 +1064,8 @@ async function evilapp() {
   // 的 PRINTL 只结束 [999] 那一行（PRINTLC 不换行，见 CONTEXT.md
   // 「输出 API 的排版与对齐」）；ere 的 printButton 自成一行（＝ PRINTLC +
   // 收尾的 PRINTL），不再补空行。
+  // 本屏的键只有 1-4 与 999：999 与「按钮之外」共用一个出口
   const result = await era.input();
-  if (result === LABO_BACK_KEY) {
-    return 0;
-  }
   if (result === 1) {
     return blueskin();
   }
@@ -1162,7 +1078,7 @@ async function evilapp() {
   if (result === 4) {
     return evilsight();
   }
-  return 0; // 无 ELSE（按钮外输入不可达）
+  return 0; // [999] 返  回
 }
 
 /** blueskin */
@@ -1235,7 +1151,11 @@ async function demon_rebirth(rand = default_rand) {
       const row = Math.trunc(result / 10); // L_T = RESULT / 10
       const id = demon_type_of(result); // L_ID = TYPEDATA:L_T:L_I
       if (id <= 0) {
-        continue; // CLEARLINE 1 + GOTO INPUT_LOOP_1（不可达）
+        // 条件不足那一轮只打提示、不重画按钮，而引擎在每次成功回传后清空
+        // 白名单（`returnFromButton` 的 rule = []）——重问这一轮的输入是自由
+        // 输入，落到表外的编号必须接住（#953 判定：可达，不能按「白名单保证」
+        // 删除）
+        continue; // CLEARLINE 1 + GOTO INPUT_LOOP_1
       }
       if (cond[row] === 0 || cflag(t, 9) < Math.trunc(item_price(id) / 20)) {
         // 条件不足：等级与素质提示
@@ -1264,23 +1184,17 @@ async function demon_rebirth(rand = default_rand) {
     }
 
     // 确认与转生
-    for (;;) {
-      era.print(`确定要将${savestr(t)}转生为${itemname(type_id)}吗？`);
-      const answer = await ask_yes_no('确定', '取消');
-      if (answer === 1) {
-        return 0;
-      }
-      if (answer !== 0) {
-        return 0; // 的 ELSE GOTO INPUT_LOOP（不可达）
-      }
-      for (const text of apply_rebirth(t, type_id, rand)) {
-        era.print(text);
-      }
-      pay(50000);
-      // 转生播报在回选人屏前经按键确认（ADR-0009）
-      await era.waitAnyKey();
-      return 1;
+    era.print(`确定要将${savestr(t)}转生为${itemname(type_id)}吗？`);
+    if ((await ask_yes_no('确定', '取消')) === 1) {
+      return 0;
     }
+    for (const text of apply_rebirth(t, type_id, rand)) {
+      era.print(text);
+    }
+    pay(50000);
+    // 转生播报在回选人屏前经按键确认（ADR-0009）
+    await era.waitAnyKey();
+    return 1;
   }
 }
 
@@ -1399,9 +1313,6 @@ async function set_free_train() {
   const answer = await ask_yes_no('是', '放弃');
   if (answer === 1) {
     return 0;
-  }
-  if (answer !== 0) {
-    return 0; // 的 ELSE GOTO INPUT_LOOP（不可达）
   }
   era.print('请输入新的自由局部调教项目。');
   era.print('发送空白将会重置。');
@@ -1524,43 +1435,38 @@ async function penis_remodel() {
   if (!(await require_money(20000, '没钱还想让肉棒变大？噗噗杂鱼~'))) {
     return 0; // （C = 20000）
   }
-  for (;;) {
-    const picked = await pick_slave({
-      intro: [
-        '只要使用实验室传下来的秘传魔法！就可以让任何的肉棒大小进行改造！',
-        '也就是说无论是变大！还是变小∽都可以的哦？',
-        '所以说魔王大人…要对谁使用呢？',
-      ],
-      master: true,
-      guard: penis_remodel_guard,
-    });
-    if (picked.cancelled) {
-      return 0;
-    }
-    const t = picked.cid; // T = RESULT
-    for (const text of penis_remodel_intro(t)) {
-      era.print(text);
-    }
-    // 形状选项
-    for (const [index, label] of FUTANARI_SHAPES.entries()) {
-      era.printButton(`- ${label}`, index);
-    }
-    era.printButton('- 我再想想', LABO_BACK_KEY);
-    const shape = await era.input(); // INPUT
-    if (shape === LABO_BACK_KEY) {
-      return 0;
-    }
-    if (shape < 0 || shape > 4) {
-      continue; // 的 ELSE GOTO INPUT_LOOP（不可达）
-    }
-    for (const text of apply_penis_remodel(t, shape)) {
-      era.print(text);
-    }
-    pay(20000);
-    // 改造播报在回选人屏前经按键确认（ADR-0009）
-    await era.waitAnyKey();
-    return 1;
+  const picked = await pick_slave({
+    intro: [
+      '只要使用实验室传下来的秘传魔法！就可以让任何的肉棒大小进行改造！',
+      '也就是说无论是变大！还是变小∽都可以的哦？',
+      '所以说魔王大人…要对谁使用呢？',
+    ],
+    master: true,
+    guard: penis_remodel_guard,
+  });
+  if (picked.cancelled) {
+    return 0;
   }
+  const t = picked.cid; // T = RESULT
+  for (const text of penis_remodel_intro(t)) {
+    era.print(text);
+  }
+  // 形状选项（编号就是 FUTANARI_SHAPES 的下标 0-4，本屏的键只有这五个加 999）
+  for (const [index, label] of FUTANARI_SHAPES.entries()) {
+    era.printButton(`- ${label}`, index);
+  }
+  era.printButton('- 我再想想', LABO_BACK_KEY);
+  const shape = await era.input(); // INPUT
+  if (shape === LABO_BACK_KEY) {
+    return 0;
+  }
+  for (const text of apply_penis_remodel(t, shape)) {
+    era.print(text);
+  }
+  pay(20000);
+  // 改造播报在回选人屏前经按键确认（ADR-0009）
+  await era.waitAnyKey();
+  return 1;
 }
 
 // ————————————————————————————————————————————————
@@ -1830,9 +1736,10 @@ async function secret_labo(rand = default_rand) {
     } else if (result === LABO_NEXT_PAGE_KEY) {
       p += 1; // 后一页
       p %= 4;
-    } else {
-      // ELSE CLEARLINE 1 + GOTO INPUT_LOOP（不可达，见文件头第 3 条）
     }
+    // 四页印出的编号（0-25、30-33、50-56/59/60/64-68、70-74）与页脚
+    // 997/999/998 在链上各有一支，没有落空的值可接——缺省支已删除
+    // （#953：编号只由本屏打印产生，引擎只回传打印过的编号）
     // GOTO DRAW_PAGE
   }
 }
