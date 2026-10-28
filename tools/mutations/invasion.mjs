@@ -1,7 +1,7 @@
 // issue #470（Q13 侵略残余·3）：ARCANA_BATTLE / ARCANA_FORT /
 // INVASION_RYOUZYOKU 的变异条目与 GROUP_BATTLE 判死登记的回归检查。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 52; // #872 +1（M16507：sengen_video 数量读数走 rule） // #724 +1（M14498：要塞勇者选择换屏） // #470：首批 M10300-M10317（ARCANA_BATTLE 17 条 +
+export const COUNT = 53; // #887 +1（M17850：回合结算反向引用 page-invasion，分层守卫） // #872 +1（M16507：sengen_video 数量读数走 rule） // #724 +1（M14498：要塞勇者选择换屏） // #470：首批 M10300-M10317（ARCANA_BATTLE 17 条 +
 // 1 条 dungeon-battle2.js 攻击演出解码修复的回退检查）+ 第二批
 // M10318-M10345（ARCANA_FORT 15 条 + INVASION_RYOUZYOKU 13 条；
 // GROUP_BATTLE 判死无代码可变异，只有 RULINGS 登记的检查）+ 第三批
@@ -446,5 +446,14 @@ export default [
     replace: "  return era.input({ rule: '.*' }); // 变异：非数字放行",
     tests: ['page-invasion'],
     must_mention: 'sengen_video 数量输入：非数字由 rule 在输入框里拦下',
+  },
+  // —— #887：侵略主流程移出页面后的引用方向 ——
+  {
+    desc: 'M17850 回合结算反向引用 page-invasion（kyoten_event 的 require 改回页面模块）',
+    file: 'ere/system/turnend-settle.js',
+    find: "const { kyoten_event } = require('#/system/invasion/invasion-kyoten');",
+    replace: "const { kyoten_event } = require('#/page/page-invasion');",
+    tests: ['invasion-layers'],
+    must_mention: '系统层与事件层不得引用 page-invasion',
   },
 ];

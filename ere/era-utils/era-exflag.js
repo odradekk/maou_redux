@@ -489,7 +489,7 @@ const era_exflag = {
 //
 // 威望（prestige，寻址 exflag:99）的两个关键量点：
 //   - 开局播种 70（ere/event/event-first.js 的 EVENTFIRST）；
-//   - 每次侵略结算 +2（ere/page/page-invasion.js）；出兵效率按区间打折。
+//   - 每次侵略结算 +2（system/invasion/invasion-campaign.js）；出兵效率按区间打折。
 //
 // 口上分发（ere/kojo/kojo-system.js）的 EX 口上存在判定以动态下标读取
 // EX_FLAG:(LOCAL-900)，不能落到某个固定语义访问器。这个方法只供该分发入口使用。
