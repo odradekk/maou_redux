@@ -621,7 +621,7 @@ test('check_status：满状态判元气满满（CFLAG:534 = 1，STATUS[0]）', a
   assert(text_lines(fixture).includes('阿尔元气满满。'), '演出行');
 });
 
-test('check_status：HP 半血判轻伤（首分支吞并，有意保留）', async () => {
+test('check_status：HP 半血判轻伤（首分支吞并 S2/S3 档）', async () => {
   const fixture = setup_world();
   fixture.store.set('base:1:0', 1000); // 50% < 60
   const { check_status } = load(fixture);

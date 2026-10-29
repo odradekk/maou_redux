@@ -3,7 +3,7 @@
 // 分配，只作引用编号，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 86; // #814 净 -1（+M15859：chara-ex 的 34 号回调把 MARK:4 的补偿写回来；-M11478/M11479：补偿本身已删除，那两条的目标代码不存在了）；#822 +1（M15708：chara-make 的抖Ｓ气质预设写到半角属性名）；#696 +1（M14109：组合名单段名不宜独存段值的追加段回归检查）；#546 起 +7（M11532-M11538，random_self_call 的 MODE 1 分支）；#547 起 +1（M11581，chara-make.js 的 cm_gender 接通 global:3——由 test/chara-make.test.js 盯守）；#548 返工轮 +2（M11478/M11479 的目标位置从 enter-enemy.js 搬到 chara_ex 的 34 号注册回调——补偿写在所有加入路径都过的 add_chara_ex 里）；#565 起 +2（M11614/M11615，cm_st/cm_st_ace 的 st_up 接入）+ 审查轮 +2（M11624/M11625，show_chara_info 页码与 [100] 進む按钮）+ 返工轮 +4（M11631/M11632/M11634/M11635：印象/发色按钮、FLAG 复辟检查、#DIM 静态语义）；#383 起 +18（M7808-M7825）；#384 起 -2（M6538 的目标代码被改写、M7821 的目标搬到 chara-name.js）；#487 起 +10（M10600-M10609）；#483 起 +4（M10610-M10613）；#494 起 +7（M10614-M10619、M10623）；#530 起 +4（M11200-M11203，招募确认对话的选项是按钮、编号与正文前缀各一条）。合并 #547 时两侧 80/77 调和为 81：这张工单 4 条之外收进 master 的 M11581，按导入实测条目数写回；#567 起 M11534 目标改为共享判断条件调用、M11537 随真身搬到 utils/input-text.js（条目数不变）
+export const COUNT = 87; // #954 +1（M18150：cm_cloth 的精英分支不被职业分支吞掉） // #814 净 -1（+M15859：chara-ex 的 34 号回调把 MARK:4 的补偿写回来；-M11478/M11479：补偿本身已删除，那两条的目标代码不存在了）；#822 +1（M15708：chara-make 的抖Ｓ气质预设写到半角属性名）；#696 +1（M14109：组合名单段名不宜独存段值的追加段回归检查）；#546 起 +7（M11532-M11538，random_self_call 的 MODE 1 分支）；#547 起 +1（M11581，chara-make.js 的 cm_gender 接通 global:3——由 test/chara-make.test.js 盯守）；#548 返工轮 +2（M11478/M11479 的目标位置从 enter-enemy.js 搬到 chara_ex 的 34 号注册回调——补偿写在所有加入路径都过的 add_chara_ex 里）；#565 起 +2（M11614/M11615，cm_st/cm_st_ace 的 st_up 接入）+ 审查轮 +2（M11624/M11625，show_chara_info 页码与 [100] 進む按钮）+ 返工轮 +4（M11631/M11632/M11634/M11635：印象/发色按钮、FLAG 复辟检查、#DIM 静态语义）；#383 起 +18（M7808-M7825）；#384 起 -2（M6538 的目标代码被改写、M7821 的目标搬到 chara-name.js）；#487 起 +10（M10600-M10609）；#483 起 +4（M10610-M10613）；#494 起 +7（M10614-M10619、M10623）；#530 起 +4（M11200-M11203，招募确认对话的选项是按钮、编号与正文前缀各一条）。合并 #547 时两侧 80/77 调和为 81：这张工单 4 条之外收进 master 的 M11581，按导入实测条目数写回；#567 起 M11534 目标改为共享判断条件调用、M11537 随真身搬到 utils/input-text.js（条目数不变）
 
 export default [
   // —— #565 st_up 接入（cm_st / cm_st_ace） ——
@@ -855,5 +855,15 @@ export default [
       '  era.set(`ex_talent:${cid}:901`, 1);\n  era.set(`mark:${cid}:4`, 3);\n});',
     tests: ['dispatch-family', 'chara34-mark'],
     must_mention: 'cid 经 args 透传进实现',
+  },
+  // —— #954：cm_cloth 的精英支被判为可达（无职业素质的精英） ——
+  {
+    desc: 'M18150 cm_cloth 的精英（220）分支被职业素质分支吞掉（无职业的精英落到默认 R = 1）',
+    file: 'ere/system/chara/chara-make.js',
+    find: '  } else if (tv(220)) {',
+    replace:
+      '  } else if (tv(220) && tv(200)) { // 变异：精英分支被职业分支吞掉',
+    tests: ['chara-make'],
+    must_mention: '精英分支的服装 193',
   },
 ];

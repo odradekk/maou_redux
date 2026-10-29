@@ -380,13 +380,8 @@ async function museum(a, rand_n = default_rand) {
             `变成喷水像的${chara_callname(a)}散发着说不出的美丽…`,
           );
           locals += '魅惑';
-          // TALENT:153（妊娠）与前支条件重叠、永不可达，保留死分支写法。
-          // eslint-disable-next-line no-dupe-else-if
-        } else if (get(`talent:${a}:153`)) {
-          await era.printAndWait(
-            `妊娠的${chara_callname(a)}、就那样以腹部膨胀起来的状态被变成了喷水像装饰了起来…`,
-          );
-          locals += '妊娠';
+          // 妊娠那一条在链的更前面（TALENT:153）已经判过，这里原有的重复
+          // 支判不到，删掉了（#954）
         } else if (rand_n(8) === 0) {
           await era.printAndWait(
             `变成喷水像的${chara_callname(a)}，不知为何被摆成尿尿小僧的形象。`,

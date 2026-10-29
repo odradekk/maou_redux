@@ -425,7 +425,8 @@ async function handle_turnend_pri() {
     // 一族：投放时累加、每日 SENGEN_VIDEO_DE 衰减）。#502 起真读——此前
     // 「EX_FLAG 表未实现、按 0 承接」的 TODO 已过时（门面早已备好）。
     // DAY 分档（>=100/>=300/>=500 各减一档，注意 IF 顺序：
-    // DAY >= 500 的分支因 >= 100 先命中而不可达，按原样保留）
+    // >=300 与 >=500 两档已被 >=100 先命中、判不到，删除（#954）；
+    // 原阶梯记在这里——落到 else 的是 DAY < 100）
     const ex_flag_9012 = era_exflag.crystal_ball_popularity;
     const day = era_flag.day_count;
     let sengen;
@@ -433,12 +434,6 @@ async function handle_turnend_pri() {
     if (day >= 100) {
       sengen = ex_flag_9012 - 2;
       sengenmax = 12 - 2;
-    } else if (day >= 300) {
-      sengen = ex_flag_9012 - 3;
-      sengenmax = 12 - 3;
-    } else if (day >= 500) {
-      sengen = ex_flag_9012 - 4;
-      sengenmax = 12 - 4;
     } else {
       sengen = ex_flag_9012 - 2;
       sengenmax = 12 - 1;

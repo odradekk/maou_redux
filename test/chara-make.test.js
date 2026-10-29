@@ -838,6 +838,25 @@ test('cm_cloth 眼镜素质配眼镜饰品', async () => {
   assert.equal(fixture.store.get('cflag:3:42'), 83, '眼镜饰品');
 });
 
+test('cm_cloth 精英（220）无职业素质：走精英分支，性别不改变初始服装', async () => {
+  // 精英素质（talent:220）与职业素质（200-208）各自独立发放，所以
+  // 「有精英、没有职业」是可达组合——这支不是死分支（#954 判定）
+  const female = create_era_fixture();
+  female.store.set('talent:3:220', 1);
+  const { cm_cloth } = load(female);
+  await cm_cloth(3, never); // RAND:6/5/4/3/2 都 != 0 → 末位 193；RAND:10 = 1 → 接頭語
+  assert.equal(female.store.get('cflag:3:41'), 193, '精英分支的服装 193');
+  assert.equal(female.store.get('cflag:3:550'), 100042, '鞭 42 + 接頭語');
+
+  const male = create_era_fixture();
+  male.store.set('talent:4:220', 1);
+  male.store.set('talent:4:122', 1); // 男人
+  const { cm_cloth: cloth2 } = load(male);
+  await cloth2(4, never);
+  assert.equal(male.store.get('cflag:4:41'), 193, '精英的性别不改变服装');
+  assert.equal(male.store.get('cflag:4:550'), 100042, '精英的性别不改变装备');
+});
+
 // —— 转发层 ere/system/chara/char-make.js（验收第 2 条：不折叠）——
 
 test('转发层 char_make：参数与返回值原样转发到 chara_make（不折叠）', async () => {
