@@ -3161,6 +3161,47 @@ test('PALAM_UP_CHECK_MINI：UPID 14 单次结算、UPID 15 照常写回（#14 �
   );
 });
 
+test('SOURCE_CHECK_AUTO：走自动调教那条序列（无读键、无损耗条、无相性提示行）', async () => {
+  // 两条路径共用同一个处理器（#876），手动专属的分段由开关关掉：这条用例守住
+  // 「自动调教没有退化成手动全序」——退化了会多出 39 个‥的读键、体力/气力
+  // 损耗条、相性倍率行，并写下手动路径才写的 TFLAG:59 / TFLAG:50。
+  const fixture = await run_auto_check(
+    (f) => {
+      f.store.set('source:31:0', 1200);
+      f.store.set('source:31:3', 180);
+      f.store.set('relation:31:0', 150); // 手动路径的相性梯度会用它
+      f.store.set('cflag:31:42', 11); // 手动路径的服装减益条件
+      f.store.set('cflag:31:40', 64);
+      f.store.set('tequip:31:54', 1); // 手动路径的野外 PLAY 失神分支
+    },
+    { settle: false },
+  );
+  const lines = fixture.text_lines();
+  assert.ok(
+    !lines.some((line) => line.includes('‥‥')),
+    '自动调教不打印 ‥×39 的读键行',
+  );
+  assert.ok(
+    !lines.some((line) => line.includes('体力[') || line.includes('气力[')),
+    '自动调教不显示体力/气力损耗条',
+  );
+  assert.ok(
+    !lines.some((line) => line.includes('＜相性')),
+    '自动调教不打印相性倍率行',
+  );
+  assert.equal(fixture.waits.length, 0, '自动调教全程不读键');
+  assert.equal(
+    fixture.store.get('tflag:59'),
+    undefined,
+    'TFLAG:59（旧 PREVCOM）只在手动路径写',
+  );
+  assert.equal(
+    fixture.store.get('tflag:50'),
+    undefined,
+    'TFLAG:50（上次调教者是助手）只在手动路径写',
+  );
+});
+
 test('down_map 在每次 SOURCE_CHECK_AUTO 开头清空，不跨回合残留 DOWN', async () => {
   const fixture = await run_auto_check((f) => {
     f.store.set('palam:31:0', 10000); // 与本回合 UP:0=0 合计恰好触及 LV4 门槛

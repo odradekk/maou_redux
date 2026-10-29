@@ -670,26 +670,26 @@ export default [
   {
     desc: 'M1100 SOURCE_CHECK 对象避孕套前置清 TFLAG:10 删（逆侵犯误计数）（#221）',
     file: 'ere/system/train/source-check.js',
-    find: `  if (chara(cid).train.对象避孕套 && tflag(10)) {
-    era.print(\`射在避孕套里（\${era.get(\`callname:\${cid}:-2\`) ?? ''}）\`);
-    chara(cid).train.对象避孕套 = 0;
-    game.system.对象射精 = 0;
-  }`,
-    replace: '  // 变异：对象避孕套不在内射链前清 TFLAG:10',
+    find: `    if (chara(cid).train.对象避孕套 && tflag(10)) {
+      era.print(\`射在避孕套里（\${era.get(\`callname:\${cid}:-2\`) ?? ''}）\`);
+      chara(cid).train.对象避孕套 = 0;
+      game.system.对象射精 = 0;
+    }`,
+    replace: '    // 变异：对象避孕套不在内射链前清 TFLAG:10',
     tests: ['source-check'],
     must_mention: '阻止同回合逆侵犯计数',
   },
   {
     desc: 'M1101 SOURCE_CHECK 兽奸分支提前到 3P 主人前（优先链错序）（#221）',
     file: 'ere/system/train/source-check.js',
-    find: `    } else if (tflag(2) && tflag(40) === 1) {
-      chara(cid).system.主人膣内射精 += tflag(38);
-    } else if (era.get(\`tequip:\${cid}:89\`) && tflag(16)) {
-      chara(cid).dungeon.犬膣内射精 += tflag(16);`,
-    replace: `    } else if (era.get(\`tequip:\${cid}:89\`) && tflag(16)) {
-      chara(cid).dungeon.犬膣内射精 += tflag(16);
-    } else if (tflag(2) && tflag(40) === 1) {
-      chara(cid).system.主人膣内射精 += tflag(38);`,
+    find: `      } else if (tflag(2) && tflag(40) === 1) {
+        chara(cid).system.主人膣内射精 += tflag(38);
+      } else if (era.get(\`tequip:\${cid}:89\`) && tflag(16)) {
+        chara(cid).dungeon.犬膣内射精 += tflag(16);`,
+    replace: `      } else if (era.get(\`tequip:\${cid}:89\`) && tflag(16)) {
+        chara(cid).dungeon.犬膣内射精 += tflag(16);
+      } else if (tflag(2) && tflag(40) === 1) {
+        chara(cid).system.主人膣内射精 += tflag(38);`,
     tests: ['source-check'],
     must_mention: '3P 主人优先于兽奸',
   },
@@ -2962,31 +2962,31 @@ export default [
   {
     desc: 'M9880 避孕套判定·主人侧：清位删（TEQUIP:35 不清零，下次判定会重复触发）',
     file: 'ere/system/train/source-check.js',
-    find: `    era.print('射在避孕套里');
-    chara(cid).event.主人避孕套 = 0;
-    clear_condom_ejac();
-  } else if (`,
-    replace: `    era.print('射在避孕套里');
-    clear_condom_ejac(); // 变异：主人避孕套清位删
-  } else if (`,
+    find: `      era.print('射在避孕套里');
+      chara(cid).event.主人避孕套 = 0;
+      clear_condom_ejac();
+    } else if (`,
+    replace: `      era.print('射在避孕套里');
+      clear_condom_ejac(); // 变异：主人避孕套清位删
+    } else if (`,
     tests: ['source-check'],
     must_mention: '避孕套',
   },
   {
     desc: 'M9881 避孕套判定：主人/助手分支的清位对象写反（TEQUIP:35/36 互换）',
     file: 'ere/system/train/source-check.js',
-    find: `    era_flag.assiplay === 0 &&
-    chara(cid).event.主人避孕套 &&
-    condom_ejac_hit()
-  ) {
-    era.print('射在避孕套里');
-    chara(cid).event.主人避孕套 = 0;`,
-    replace: `    era_flag.assiplay === 0 &&
-    chara(cid).train.助手避孕套 && // 变异：主人侧误读助手位
-    condom_ejac_hit()
-  ) {
-    era.print('射在避孕套里');
-    chara(cid).train.助手避孕套 = 0;`,
+    find: `      era_flag.assiplay === 0 &&
+      chara(cid).event.主人避孕套 &&
+      condom_ejac_hit()
+    ) {
+      era.print('射在避孕套里');
+      chara(cid).event.主人避孕套 = 0;`,
+    replace: `      era_flag.assiplay === 0 &&
+      chara(cid).train.助手避孕套 && // 变异：主人侧误读助手位
+      condom_ejac_hit()
+    ) {
+      era.print('射在避孕套里');
+      chara(cid).train.助手避孕套 = 0;`,
     tests: ['source-check'],
     must_mention: '避孕套',
   },
