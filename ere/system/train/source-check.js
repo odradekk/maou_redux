@@ -3156,115 +3156,135 @@ function loss_bar(label, base, maxbase, loss, vital_variant) {
   )}]`;
 }
 
-// —— source_check 主体（按既有顺序编排） ——
-
-async function handle_source_check() {
+// —— source_check 主体 ——
+//
+// SOURCE_CHECK（手动调教，issue #45）与 SOURCE_CHECK_AUTO（自动调教，issue
+// #461）走同一个处理器：AUTO 走的是同一串步骤的子序列，差别只有「哪几段整段
+// 不出现」与「哪几处条件换成 AUTO 专属门槛」。前者按 `auto` 分段，后者在条件
+// 里写。两条路径各写一份时，任何一处换算的改动都要改两处，改漏的那处只有
+// 自动调教路径看得见（#876）。
+//
+// @param {boolean} [auto] true = 自动调教路径（EVENT_AUTOTRAIN 与迷宫的
+//   source_check_auto）：不含口上、装备链、服装减益、近亲/处女判定、失神
+//   与结算展示，逐段差异见各分段注释。
+async function handle_source_check(auto = false) {
   cid = era_flag.target;
   player = era_flag.player;
   down_map.clear();
 
-  // 指令口上（SIF FLAG:7 > 0 / CALL KOJO_MESSAGE_COM——真身在
-  // kojo/kojo-system.js，#46：总开关 + 存在判定 + 性格分发，K3/K5 已实现）
-  if ((era.get('flag:7') || 0) > 0) {
-    await kojo_message_com();
-  }
-
-  // 避孕套判定（#461 落真身）。谁在戴：TEQUIP:35（主人避孕套，属
-  // event 域，本域内直写）/ TEQUIP:36（助手避孕套，属 train 域，跨域写走
-  // #461 新补门面）命中同一组射精类 TFLAG 即清位。TFLAG:0/1/2/4/5/7/8/9
-  // 属 train 域、TFLAG:18 属 dungeon 域，读写均走各自门面
-  // （game.train.*/game.dungeon.*）。
-  const condom_ejac_hit = () =>
-    game.train.口中射精 ||
-    game.train.手中射精 ||
-    game.train.性交射精 ||
-    game.train.接吻射精 ||
-    game.train.舔阴射精 ||
-    game.train.主人犯助手射精 ||
-    game.train.口交射精后 ||
-    game.train.股间射精 ||
-    game.dungeon.足交射精或处遇口上;
-  const clear_condom_ejac = () => {
-    game.train.口中射精 = 0;
-    game.train.手中射精 = 0;
-    game.train.性交射精 = 0;
-    game.train.接吻射精 = 0;
-    game.train.舔阴射精 = 0;
-    game.train.主人犯助手射精 = 0;
-    game.train.口交射精后 = 0;
-    game.train.股间射精 = 0;
-    game.dungeon.足交射精或处遇口上 = 0;
-  };
-  if (
-    era_flag.assiplay === 0 &&
-    chara(cid).event.主人避孕套 &&
-    condom_ejac_hit()
-  ) {
-    era.print('射在避孕套里');
-    chara(cid).event.主人避孕套 = 0;
-    clear_condom_ejac();
-  } else if (
-    era_flag.assiplay &&
-    chara(cid).train.助手避孕套 &&
-    condom_ejac_hit()
-  ) {
-    era.print('射在避孕套里');
-    chara(cid).train.助手避孕套 = 0;
-    clear_condom_ejac();
-  }
-
-  // 避孕套判定·助手射精（同段内独立 IF，紧接上段）：与上面「调教者是谁」
-  // 的条件无关，TEQUIP:36 若已被上一段清零则本段条件自然不成立（段内
-  // 顺序执行，照写）
-  if (chara(cid).train.助手避孕套 && game.train.助手射精 && era_flag.assi > 0) {
-    era.print(
-      `射在避孕套里（${era.get(`callname:${era_flag.assi}:-2`) ?? ''}）`,
-    );
-    chara(cid).train.助手避孕套 = 0;
-    game.train.助手射精 = 0;
-  }
-
-  // CUSTOMDRAWLINE ‥ —— ere 的 drawLine 是实线（实机参数只按类型取值，不按名匹配；
-  // 见 issue #45；TRAIN_MESSAGE_B/A 的同类分隔线同此）
-  era.drawLine();
-
-  // 装备持续效果组（SIF TEQUIP:n / CALL EQUIP_COM<n> 链，#223
-  // 接通）：按链序遍历装备位。EQUIP_COM_CHAIN 的每个号都已注册进
-  // equip_com_family（道具/SM/特殊/重度/触手各族的 EQUIP_COM 注册），链上
-  // 不再有缺失位——缺位回落分支随占位机制一并删除（#638）
-  for (const [bit, com] of EQUIP_COM_CHAIN) {
-    if (!era.get(`tequip:${cid}:${bit}`)) {
-      continue;
+  if (!auto) {
+    // 指令口上（SIF FLAG:7 > 0 / CALL KOJO_MESSAGE_COM——真身在
+    // kojo/kojo-system.js，#46：总开关 + 存在判定 + 性格分发，K3/K5 已实现）
+    if ((era.get('flag:7') || 0) > 0) {
+      await kojo_message_com();
     }
-    await equip_com_family.call(com);
+
+    // 避孕套判定（#461 落真身）。谁在戴：TEQUIP:35（主人避孕套，属
+    // event 域，本域内直写）/ TEQUIP:36（助手避孕套，属 train 域，跨域写走
+    // #461 新补门面）命中同一组射精类 TFLAG 即清位。TFLAG:0/1/2/4/5/7/8/9
+    // 属 train 域、TFLAG:18 属 dungeon 域，读写均走各自门面
+    // （game.train.*/game.dungeon.*）。
+    const condom_ejac_hit = () =>
+      game.train.口中射精 ||
+      game.train.手中射精 ||
+      game.train.性交射精 ||
+      game.train.接吻射精 ||
+      game.train.舔阴射精 ||
+      game.train.主人犯助手射精 ||
+      game.train.口交射精后 ||
+      game.train.股间射精 ||
+      game.dungeon.足交射精或处遇口上;
+    const clear_condom_ejac = () => {
+      game.train.口中射精 = 0;
+      game.train.手中射精 = 0;
+      game.train.性交射精 = 0;
+      game.train.接吻射精 = 0;
+      game.train.舔阴射精 = 0;
+      game.train.主人犯助手射精 = 0;
+      game.train.口交射精后 = 0;
+      game.train.股间射精 = 0;
+      game.dungeon.足交射精或处遇口上 = 0;
+    };
+    if (
+      era_flag.assiplay === 0 &&
+      chara(cid).event.主人避孕套 &&
+      condom_ejac_hit()
+    ) {
+      era.print('射在避孕套里');
+      chara(cid).event.主人避孕套 = 0;
+      clear_condom_ejac();
+    } else if (
+      era_flag.assiplay &&
+      chara(cid).train.助手避孕套 &&
+      condom_ejac_hit()
+    ) {
+      era.print('射在避孕套里');
+      chara(cid).train.助手避孕套 = 0;
+      clear_condom_ejac();
+    }
+
+    // 避孕套判定·助手射精（同段内独立 IF，紧接上段）：与上面「调教者是谁」
+    // 的条件无关，TEQUIP:36 若已被上一段清零则本段条件自然不成立（段内
+    // 顺序执行，照写）
+    if (
+      chara(cid).train.助手避孕套 &&
+      game.train.助手射精 &&
+      era_flag.assi > 0
+    ) {
+      era.print(
+        `射在避孕套里（${era.get(`callname:${era_flag.assi}:-2`) ?? ''}）`,
+      );
+      chara(cid).train.助手避孕套 = 0;
+      game.train.助手射精 = 0;
+    }
+
+    // CUSTOMDRAWLINE ‥ —— ere 的 drawLine 是实线（实机参数只按类型取值，不按名匹配；
+    // 见 issue #45；TRAIN_MESSAGE_B/A 的同类分隔线同此）
+    era.drawLine();
+
+    // 装备持续效果组（SIF TEQUIP:n / CALL EQUIP_COM<n> 链，#223
+    // 接通）：按链序遍历装备位。EQUIP_COM_CHAIN 的每个号都已注册进
+    // equip_com_family（道具/SM/特殊/重度/触手各族的 EQUIP_COM 注册），链上
+    // 不再有缺失位——缺位回落分支随占位机制一并删除（#638）
+    for (const [bit, com] of EQUIP_COM_CHAIN) {
+      if (!era.get(`tequip:${cid}:${bit}`)) {
+        continue;
+      }
+      await equip_com_family.call(com);
+    }
   }
 
-  // 调教者侧检查三连
-  source_sex_check();
+  // 调教者侧检查：三段里的 SOURCE_SEX_CHECK 只在手动路径（自动调教从
+  // PLAYER_SKILL_CHECK 直接起步）
+  if (!auto) {
+    source_sex_check();
+  }
   player_skill_check();
   master_skill_check();
 
-  // 服装（CFLAG:42 == 11 && CFLAG:40 & 64 的茲古着ぐるみ减益）：
-  // 着衣位无写入路径，照写条件
-  if (
-    (era.get(`cflag:${cid}:42`) || 0) === 11 &&
-    (era.get(`cflag:${cid}:40`) || 0) & 64
-  ) {
-    set_src(6, times(src(6), 0.1));
-    if (!era.get(`tequip:${cid}:90`)) {
-      set_src(0, times(src(0), 0.1));
-      set_src(1, times(src(1), 0.1));
-      set_src(2, times(src(2), 0.1));
-      set_src(17, times(src(17), 0.1));
+  if (!auto) {
+    // 服装（CFLAG:42 == 11 && CFLAG:40 & 64 的茲古着ぐるみ减益）：
+    // 着衣位无写入路径，照写条件
+    if (
+      (era.get(`cflag:${cid}:42`) || 0) === 11 &&
+      (era.get(`cflag:${cid}:40`) || 0) & 64
+    ) {
+      set_src(6, times(src(6), 0.1));
+      if (!era.get(`tequip:${cid}:90`)) {
+        set_src(0, times(src(0), 0.1));
+        set_src(1, times(src(1), 0.1));
+        set_src(2, times(src(2), 0.1));
+        set_src(17, times(src(17), 0.1));
+      }
     }
-  }
 
-  // 近亲与处女丧失（两个检查函数，正文为登记说明）
-  incest_sex_check();
-  lost_virgin_check();
-  // 初吻（TFLAG:13 由接吻指令置位）
-  if (tflag(13)) {
-    era.print('初吻');
+    // 近亲与处女丧失（两个检查函数，正文为登记说明）
+    incest_sex_check();
+    lost_virgin_check();
+    // 初吻（TFLAG:13 由接吻指令置位）
+    if (tflag(13)) {
+      era.print('初吻');
+    }
   }
 
   // 快乐源的换算（C/V/A/B/FREE）
@@ -3274,13 +3294,16 @@ async function handle_source_check() {
   source_check_up_b();
   source_check_up_free();
 
-  // 同一指令连续 / 气力 0 的快乐减半
-  if (era_flag.selectcom === era_flag.prevcom && tflag(201) !== 1) {
-    set_up(0, idiv(up(0), 2));
-    set_up(1, idiv(up(1), 2));
-    set_up(2, idiv(up(2), 2));
-    set_up(14, idiv(up(14), 2));
+  if (!auto) {
+    // 同一指令连续（AUTO 不读 SELECTCOM，没有这一段）
+    if (era_flag.selectcom === era_flag.prevcom && tflag(201) !== 1) {
+      set_up(0, idiv(up(0), 2));
+      set_up(1, idiv(up(1), 2));
+      set_up(2, idiv(up(2), 2));
+      set_up(14, idiv(up(14), 2));
+    }
   }
+  // 气力 0 的快乐减半（TFLAG:201 豁免）
   if ((era.get(`base:${cid}:1`) || 0) <= 0 && tflag(201) !== 1) {
     set_up(0, idiv(up(0), 2));
     set_up(1, idiv(up(1), 2));
@@ -3288,13 +3311,16 @@ async function handle_source_check() {
     set_up(14, idiv(up(14), 2));
   }
 
-  // 相性（快乐系，RELATION:PLAYER）
-  const relation_p = era.get(`relation:${cid}:${player}`) || 0;
-  if (relation_p !== 0 && tflag(201) !== 1) {
-    set_up(0, idiv(up(0) * relation_p, 100));
-    set_up(1, idiv(up(1) * relation_p, 100));
-    set_up(2, idiv(up(2) * relation_p, 100));
-    set_up(14, idiv(up(14) * relation_p, 100));
+  // 相性（快乐系，RELATION:PLAYER）——AUTO 路径没有这两段梯度，也不读关系值
+  let relation_p = 0;
+  if (!auto) {
+    relation_p = era.get(`relation:${cid}:${player}`) || 0;
+    if (relation_p !== 0 && tflag(201) !== 1) {
+      set_up(0, idiv(up(0) * relation_p, 100));
+      set_up(1, idiv(up(1) * relation_p, 100));
+      set_up(2, idiv(up(2) * relation_p, 100));
+      set_up(14, idiv(up(14) * relation_p, 100));
+    }
   }
 
   // 素质乘算（快乐系）与爱液处理
@@ -3304,12 +3330,14 @@ async function handle_source_check() {
   // 绝顶
   await ex_check_up();
 
-  // 调教对象的射精/喷乳/蠕虫出産
+  // 调教对象的射精/喷乳/蠕虫出産（#462 真身化，三个检查的检查真身自带早退）
   target_ejac_check();
   target_milk_check();
   await target_wormbaby_check();
-  // 主人调教的好感度累积
-  master_flag_check();
+  if (!auto) {
+    // 主人调教的好感度累积
+    master_flag_check();
+  }
 
   // 情爱以下全部源换算
   source_check_up_love();
@@ -3323,33 +3351,49 @@ async function handle_source_check() {
   source_check_up_flasher();
   source_check_up_submit();
   source_check_up_deviate();
-  source_check_up_like();
+  // 反感／恭顺：手动路径只算 LIKE（ANTI 调用被注释掉）；AUTO 两者同受一道
+  // 门槛限制——CFLAG:1==0 且调教者是主人
+  if (auto) {
+    if ((era.get(`cflag:${cid}:1`) || 0) === 0 && player === MASTER) {
+      source_check_up_anti();
+      source_check_up_like();
+    }
+  } else {
+    source_check_up_like();
+  }
 
   // 素质乘算（全参数）
   up_talent_check();
 
-  // 相性（感情系：恭顺/欲情/习得/反感/不快/抑郁）
-  if (relation_p !== 0) {
-    set_up(4, idiv(up(4) * relation_p, 100));
-    set_up(5, idiv(up(5) * relation_p, 100));
-    set_up(7, idiv(up(7) * relation_p, 100));
-    set_up(11, idiv(up(11) * 100, relation_p));
-    set_up(12, idiv(up(12) * 100, relation_p));
-    set_up(13, idiv(up(13) * 100, relation_p));
-  }
-
-  // 同一指令连续（感情系减半）
-  if (era_flag.selectcom === era_flag.prevcom) {
-    for (const k of [4, 5, 6, 7, 8]) {
-      set_up(k, idiv(up(k), 2));
+  if (auto) {
+    // 自动调教次数的倍率（旧注释：放在绝顶处理之后会绝顶过度，
+    // 故放在这里；因此本函数不影响 EX_CHECK_UP 的判定）
+    auto_num_check(cid);
+  } else {
+    // 相性（感情系：恭顺/欲情/习得/反感/不快/抑郁）
+    if (relation_p !== 0) {
+      set_up(4, idiv(up(4) * relation_p, 100));
+      set_up(5, idiv(up(5) * relation_p, 100));
+      set_up(7, idiv(up(7) * relation_p, 100));
+      set_up(11, idiv(up(11) * 100, relation_p));
+      set_up(12, idiv(up(12) * 100, relation_p));
+      set_up(13, idiv(up(13) * 100, relation_p));
     }
+
+    // 同一指令连续（感情系减半）
+    if (era_flag.selectcom === era_flag.prevcom) {
+      for (const k of [4, 5, 6, 7, 8]) {
+        set_up(k, idiv(up(k), 2));
+      }
+    }
+
+    // TFLAG:59 = PREVCOM（读的是**旧值**——PREVCOM 的更新在其后，
+    // ere 侧由回合循环承载，见 train-loop.js 步骤 13）
+    era.set('tflag:59', era_flag.prevcom);
   }
 
-  // TFLAG:59 = PREVCOM（读的是**旧值**——PREVCOM 的更新在其后，
-  // ere 侧由回合循环承载，见 train-loop.js 步骤 13）
-  era.set('tflag:59', era_flag.prevcom);
-
-  // 气力 0 的感情减半与损耗加倍
+  // 气力 0 的感情减半与损耗加倍（手动路径与 AUTO 同款，AUTO 侧照写没有
+  // TFLAG:201 豁免）
   if ((era.get(`base:${cid}:1`) || 0) <= 0) {
     for (const k of [3, 4, 5, 7, 9, 13]) {
       set_up(k, idiv(up(k), 2));
@@ -3357,17 +3401,19 @@ async function handle_source_check() {
     set_lose(0, lose(0) * 2 + 80);
   }
 
-  // 灵魂错位
-  soul_dislocation_debuff();
-  // 失神检查（J6 真身，system/train/passout.js——TFLAG:899 的写入
-  // 路径，#213 七道检查第四道的置位者）
-  await passout_check();
-  // 野外 PLAY 中失神 → 解除并带回
-  if (
-    (era.get(`tequip:${cid}:54`) || 0) > 0 &&
-    (era.get('tflag:899') || 0) > 0
-  ) {
-    await passout_outdoor();
+  if (!auto) {
+    // 灵魂错位
+    soul_dislocation_debuff();
+    // 失神检查（J6 真身，system/train/passout.js——TFLAG:899 的写入
+    // 路径，#213 七道检查第四道的置位者）
+    await passout_check();
+    // 野外 PLAY 中失神 → 解除并带回
+    if (
+      (era.get(`tequip:${cid}:54`) || 0) > 0 &&
+      (era.get('tflag:899') || 0) > 0
+    ) {
+      await passout_outdoor();
+    }
   }
 
   // 苦痛的追加损耗
@@ -3375,113 +3421,132 @@ async function handle_source_check() {
 
   // 体力气力扣减只写 deltabase——base 的加算、钳 0..maxbase 与 deltabase 的
   // 清零归引擎 nextTurnInTrain（本回合的 loop 第 13 步紧接在 SOURCE_CHECK
-  // 之后），手工再做一次就是双重扣减。损耗值先快照：后面的损耗条在结算之前
-  // 打印，读 base_settled 得到扣减后的值，LOSEBASE 本身独立存活到引擎结算
-  const lose0 = Math.max(lose(0), 0);
-  const lose1 = Math.max(lose(1), 0);
+  // 之后），手工再做一次就是双重扣减。损耗值只给下面的损耗条用，AUTO 不显示
+  // 损耗条，不取这份快照
+  let lose0 = 0;
+  let lose1 = 0;
+  if (!auto) {
+    // 损耗值先快照：后面的损耗条在结算之前打印，读 base_settled 得到扣减后
+    // 的值，LOSEBASE 本身独立存活到引擎结算
+    lose0 = Math.max(lose(0), 0);
+    lose1 = Math.max(lose(1), 0);
 
-  // 挿しっぱ无判定（TFLAG:60：体位组指令才置 1，爱抚恒 0——条件
-  // 挿しっぱ无判定（TFLAG:60：体位组指令才置 1，爱抚恒 0——条件照写）
-  era.set('tflag:60', 0);
-  if (
-    [
-      20, 21, 22, 23, 26, 27, 28, 29, 34, 36, 56, 120, 121, 128, 129, 130, 131,
-      132, 133, 134,
-    ].includes(era_flag.selectcom || 0)
-  ) {
-    if (tflag(2) === 0 || palam(5) >= PALAMLV[4]) {
-      era.set('tflag:60', 1);
-    }
-  }
-
-  // 对象侧避孕套：目标射精先消耗避孕套，并清掉 TFLAG:10；后续
-  // 内射链看的是清零后的值（这段顺序不可调整）。TEQUIP:37 属 train，
-  // source-check 是 system 域，故跨域写走生成门面。
-  if (chara(cid).train.对象避孕套 && tflag(10)) {
-    era.print(`射在避孕套里（${era.get(`callname:${cid}:-2`) ?? ''}）`);
-    chara(cid).train.对象避孕套 = 0;
-    game.system.对象射精 = 0;
-  }
-
-  // 该段后续为膣内射精计数。首段是一个严格的 if / else-if 优先级链；其后
-  // 的 COM24/62/65 三条是同一顶层链的后续独立分支。不能按「对称」重排。
-  if (tflag(19)) {
-    if (tflag(6) && tflag(41) === 1) {
-      chara(cid).system.助手膣内射精 += tflag(38);
-    } else if (tflag(2) && tflag(40) === 1) {
-      chara(cid).system.主人膣内射精 += tflag(38);
-    } else if (era.get(`tequip:${cid}:89`) && tflag(16)) {
-      chara(cid).dungeon.犬膣内射精 += tflag(16);
-    } else if (era_flag.assiplay && tflag(2)) {
-      chara(cid).system.助手膣内射精 += tflag(38);
-    } else if (tflag(15) && era.get(`tequip:${cid}:55`)) {
-      chara(cid).dungeon.怪物膣内射精 += tflag(15);
-    } else if (tflag(2)) {
-      chara(cid).system.主人膣内射精 += tflag(38);
-    } else if (
-      era.get(`tequip:${cid}:90`) &&
-      era.get(`tequip:${cid}:11`) &&
-      tflag(15)
+    // 挿しっぱ无判定（TFLAG:60：体位组指令才置 1，爱抚恒 0——条件照写）
+    era.set('tflag:60', 0);
+    if (
+      [
+        20, 21, 22, 23, 26, 27, 28, 29, 34, 36, 56, 120, 121, 128, 129, 130,
+        131, 132, 133, 134,
+      ].includes(era_flag.selectcom || 0)
     ) {
-      chara(cid).dungeon.怪物膣内射精 += tflag(15);
+      if (tflag(2) === 0 || palam(5) >= PALAMLV[4]) {
+        era.set('tflag:60', 1);
+      }
     }
-  } else if (era_flag.selectcom === 24 && tflag(10) && era_flag.assiplay) {
-    chara(era_flag.assi).system.对象膣内射精 += tflag(10);
-  } else if (era_flag.selectcom === 24 && tflag(10)) {
-    chara(MASTER).system.对象膣内射精 += tflag(10);
-  } else if (era_flag.selectcom === 62 && tflag(7)) {
-    chara(era_flag.assi).system.主人膣内射精 += tflag(7);
-  } else if (era_flag.selectcom === 65 && era_flag.assi >= 1 && tflag(10)) {
-    chara(era_flag.assi).system.对象膣内射精 += tflag(10);
+
+    // 对象侧避孕套：目标射精先消耗避孕套，并清掉 TFLAG:10；后续
+    // 内射链看的是清零后的值（这段顺序不可调整）。TEQUIP:37 属 train，
+    // source-check 是 system 域，故跨域写走生成门面。
+    if (chara(cid).train.对象避孕套 && tflag(10)) {
+      era.print(`射在避孕套里（${era.get(`callname:${cid}:-2`) ?? ''}）`);
+      chara(cid).train.对象避孕套 = 0;
+      game.system.对象射精 = 0;
+    }
+
+    // 该段后续为膣内射精计数。首段是一个严格的 if / else-if 优先级链；其后
+    // 的 COM24/62/65 三条是同一顶层链的后续独立分支。不能按「对称」重排。
+    if (tflag(19)) {
+      if (tflag(6) && tflag(41) === 1) {
+        chara(cid).system.助手膣内射精 += tflag(38);
+      } else if (tflag(2) && tflag(40) === 1) {
+        chara(cid).system.主人膣内射精 += tflag(38);
+      } else if (era.get(`tequip:${cid}:89`) && tflag(16)) {
+        chara(cid).dungeon.犬膣内射精 += tflag(16);
+      } else if (era_flag.assiplay && tflag(2)) {
+        chara(cid).system.助手膣内射精 += tflag(38);
+      } else if (tflag(15) && era.get(`tequip:${cid}:55`)) {
+        chara(cid).dungeon.怪物膣内射精 += tflag(15);
+      } else if (tflag(2)) {
+        chara(cid).system.主人膣内射精 += tflag(38);
+      } else if (
+        era.get(`tequip:${cid}:90`) &&
+        era.get(`tequip:${cid}:11`) &&
+        tflag(15)
+      ) {
+        chara(cid).dungeon.怪物膣内射精 += tflag(15);
+      }
+    } else if (era_flag.selectcom === 24 && tflag(10) && era_flag.assiplay) {
+      chara(era_flag.assi).system.对象膣内射精 += tflag(10);
+    } else if (era_flag.selectcom === 24 && tflag(10)) {
+      chara(MASTER).system.对象膣内射精 += tflag(10);
+    } else if (era_flag.selectcom === 62 && tflag(7)) {
+      chara(era_flag.assi).system.主人膣内射精 += tflag(7);
+    } else if (era_flag.selectcom === 65 && era_flag.assi >= 1 && tflag(10)) {
+      chara(era_flag.assi).system.对象膣内射精 += tflag(10);
+    }
+
+    // 调教文本的后半
+    await train_message_a();
+
+    // 失神文本（J6 真身）。两分支（TFLAG:899 < 1 与 ≥ 1）都调
+    // PASSOUT_TEXT——未失神回合跑快照 else 段（装备变化的 -1 标记），失神
+    // 中另按相位调参数暂存（== 2）/ 回流（== 3，含刻印复查与口上）
+    await passout_text();
+    if (
+      (era.get('tflag:896') || 0) === 2 ||
+      (era.get('tflag:897') || 0) === 2 ||
+      (era.get('tflag:898') || 0) === 2
+    ) {
+      passout_palam_check();
+    }
+    if (
+      (era.get('tflag:896') || 0) === 3 ||
+      (era.get('tflag:897') || 0) === 3 ||
+      (era.get('tflag:898') || 0) === 3
+    ) {
+      passout_palam_up();
+      mark_got_check();
+      await kojo_message_markcng();
+    }
   }
 
-  // 调教文本的后半
-  await train_message_a();
-
-  // 失神文本（J6 真身）。两分支（TFLAG:899 < 1 与 ≥ 1）都调
-  // PASSOUT_TEXT——未失神回合跑快照 else 段（装备变化的 -1 标记），失神
-  // 中另按相位调参数暂存（== 2）/ 回流（== 3，含刻印复查与口上）
-  await passout_text();
-  if (
-    (era.get('tflag:896') || 0) === 2 ||
-    (era.get('tflag:897') || 0) === 2 ||
-    (era.get('tflag:898') || 0) === 2
-  ) {
-    passout_palam_check();
-  }
-  if (
-    (era.get('tflag:896') || 0) === 3 ||
-    (era.get('tflag:897') || 0) === 3 ||
-    (era.get('tflag:898') || 0) === 3
-  ) {
-    passout_palam_up();
-    mark_got_check();
-    await kojo_message_markcng();
-  }
   // 绝顶漏尿
   await pissing_ecst_check();
 
-  // 参数变动口上 / 刻印取得口上（FLAG:7，#46/#232）
-  if ((era.get('flag:7') || 0) > 0) {
-    await kojo_message_palamcng();
+  if (!auto) {
+    // 参数变动口上（FLAG:7，#46/#232）
+    if ((era.get('flag:7') || 0) > 0) {
+      await kojo_message_palamcng();
+    }
   }
 
   // 刻印取得
   mark_got_check();
-  if ((era.get('flag:7') || 0) > 0) {
-    await kojo_message_markcng();
+  if (!auto) {
+    // 刻印取得口上
+    if ((era.get('flag:7') || 0) > 0) {
+      await kojo_message_markcng();
+    }
   }
 
   // 经验检查；:523 容易陷落
   exp_got_check();
   sokuochi_check();
 
-  // PRINTW ‥×39（读键；点线逐字）
-  era.print('‥'.repeat(39));
-  await era.waitAnyKey();
+  if (!auto) {
+    // PRINTW ‥×39（读键；点线逐字）
+    era.print('‥'.repeat(39));
+    await era.waitAnyKey();
+  }
 
   // 源一览
   show_source();
+
+  if (auto) {
+    // 参数变动的静默结算（含 DOWN，不打印）
+    palam_up_check_mini();
+    return;
+  }
 
   // 相性与连续执行的提示行
   if (relation_p !== 0) {
@@ -3526,105 +3591,13 @@ async function handle_source_check() {
   await era.waitAnyKey();
 }
 
-// SOURCE_CHECK_AUTO（issue #461）：自动调教
-// 入口。与 manual 共享大部分函数，但序列不同——不含口上/EQUIP_COM 链/服装
-// 减益/近亲处女判定/SOURCE_SEX_CHECK（这些只在 manual 路径出现，
-// AUTO 从 PLAYER_SKILL_CHECK 直接起步）、不含"同一指令连续"减半（AUTO 不
-// 读 SELECTCOM）、不含两处"相性"梯度块、不含 TFLAG:59 赋值、不含灵魂错位/
-// 失神检查、不含挿しっぱ判定
-async function handle_source_check_auto() {
-  cid = era_flag.target;
-  player = era_flag.player;
-  down_map.clear();
-
-  // 调教者能力检查
-  player_skill_check();
-  master_skill_check();
-
-  // 快乐源换算（C/V/A/B/FREE）
-  source_check_up_c();
-  source_check_up_v();
-  source_check_up_a();
-  source_check_up_b();
-  source_check_up_free();
-
-  // 气力０的快乐减半（与 manual 同款条件，含 TFLAG:201 豁免）
-  if ((era.get(`base:${cid}:1`) || 0) <= 0 && tflag(201) !== 1) {
-    set_up(0, idiv(up(0), 2));
-    set_up(1, idiv(up(1), 2));
-    set_up(2, idiv(up(2), 2));
-    set_up(14, idiv(up(14), 2));
-  }
-
-  // 素质乘算（快乐系）与爱液处理
-  up_talent_cva_check();
-  love_moist_check_up();
-
-  // 绝顶
-  await ex_check_up();
-
-  // 调教对象的射精/喷乳/蠕虫出産（#462 真身化，原「素质门槛
-  // 不可达」登记已撤销——三个检查的检查真身自带早退）
-  target_ejac_check();
-  target_milk_check();
-  await target_wormbaby_check();
-
-  // 情爱以下全部源换算
-  source_check_up_love();
-  source_check_up_impulsive();
-  source_check_up_achieve();
-  source_check_up_pain();
-  source_check_up_poison();
-  source_check_up_dirty();
-  source_check_up_moist();
-  source_check_up_desire();
-  source_check_up_flasher();
-  source_check_up_submit();
-  source_check_up_deviate();
-
-  // 反感／恭顺——AUTO 专属门槛（manual 路径的 ANTI 调用被
-  // 注释掉，LIKE 在 manual 无条件调用；两者在 AUTO 都受同一门槛限制）
-  if ((era.get(`cflag:${cid}:1`) || 0) === 0 && player === MASTER) {
-    source_check_up_anti();
-    source_check_up_like();
-  }
-
-  // 素质乘算（全参数）
-  up_talent_check();
-
-  // 自动调教次数的倍率（旧注释：放在绝顶处理之后会绝顶过度，
-  // 故放在这里；因此本函数不影响 EX_CHECK_UP 的判定）
-  auto_num_check(cid);
-
-  // 气力０的感情减半与损耗加倍（与 manual 同款条件，但没有
-  // TFLAG:201 豁免——AUTO 侧照写没有豁免）
-  if ((era.get(`base:${cid}:1`) || 0) <= 0) {
-    for (const k of [3, 4, 5, 7, 9, 13]) {
-      set_up(k, idiv(up(k), 2));
-    }
-    set_lose(0, lose(0) * 2 + 80);
-  }
-
-  // 苦痛的追加损耗
-  pain_damage_check_up();
-
-  // 体力气力扣减只写 deltabase，扣减与清零归引擎 nextTurnInTrain（与 manual
-  // 同款语义，见文件头；AUTO 不显示损耗条，故不需要 manual 那两个
-  // lose0/lose1 快照变量）
-
-  // 绝顶时的漏尿处理（#462 真身化）
-  await pissing_ecst_check();
-  // 刻印取得检查
-  mark_got_check();
-  // 经验与陷落检查（#462 真身化）
-  exp_got_check();
-  sokuochi_check();
-
-  // 调教源展示
-  show_source();
-  // 参数变动的静默结算（含 DOWN，不打印）
-  palam_up_check_mini();
-}
+// SOURCE_CHECK_AUTO（issue #461）：自动调教入口。
+//
+// 与手动路径共用上面这一个处理器，序列差异全在那里按 `auto` 分段（口上、
+// EQUIP_COM 链、服装减益、近亲/处女判定、SOURCE_SEX_CHECK、「同一指令连续」
+// 减半、两处相性梯度、TFLAG:59、灵魂错位与失神、挿しっぱ判定、结算展示与
+// 损耗条、参数变动的逐行打印）。
+const handle_source_check_auto = () => handle_source_check(true);
 
 module.exports = {
   handle_source_check,

@@ -65,6 +65,11 @@ const {
   battle_column,
 } = require('#/system/dungeon/battle-state');
 const { PALAMLV } = require('#/data/palam-level-const');
+const {
+  ABL_B_TIERS_COM0,
+  ABL_C_TIERS_COM0,
+  abl_tier,
+} = require('#/data/train-source-const');
 
 // —— 纯数据表（错一格不会报错——每档的用例与变异条目固定住） ——
 
@@ -72,23 +77,8 @@ const { PALAMLV } = require('#/data/palam-level-const');
 // 各等级从 0 起依次取下表值。
 const EXPLV = [0, 1, 4, 20, 50, 200, 400, 700, 1000, 1500, 2000];
 
-// COM0ABL:0/1 分档 → [SOURCE:0, SOURCE:3] / [SOURCE:17, SOURCE:3 增量]
-const ABL_C_TIERS_COM0 = [
-  [20, 25],
-  [100, 50],
-  [500, 80],
-  [1200, 100],
-  [2000, 115],
-  [2800, 125],
-];
-const ABL_B_TIERS_COM0 = [
-  [15, 25],
-  [50, 50],
-  [300, 80],
-  [700, 100],
-  [1100, 115],
-  [1600, 125],
-];
+// COM0ABL:0/1 分档（[SOURCE:0, SOURCE:3] / [SOURCE:17, SOURCE:3 增量]）
+// 与自动调教的 com0_auto 共用，见 data/train-source-const.js。
 
 // COM1ABL:0 → SOURCE:0
 const ABL_C_TIERS_COM1 = [40, 160, 700, 1500, 2400, 3300];
@@ -334,12 +324,12 @@ async function com0() {
   set(12, 100);
 
   // ABL:0（阴蒂感觉）分档
-  const abl_c = Math.min(Math.floor(era.get(`abl:${target}:0`) || 0), 5);
+  const abl_c = abl_tier(era.get(`abl:${target}:0`));
   set(0, ABL_C_TIERS_COM0[abl_c][0]);
   set(3, ABL_C_TIERS_COM0[abl_c][1]);
 
   // ABL:1（乳房感觉）分档（SOURCE:3 是增量累加）
-  const abl_b = Math.min(Math.floor(era.get(`abl:${target}:1`) || 0), 5);
+  const abl_b = abl_tier(era.get(`abl:${target}:1`));
   set(17, ABL_B_TIERS_COM0[abl_b][0]);
   set(3, src(3) + ABL_B_TIERS_COM0[abl_b][1]);
 

@@ -13,6 +13,11 @@ const source_check_mod = require('#/system/train/source-check');
 const { karma } = require('#/system/chara/chara-stats');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
+const {
+  ABL_B_TIERS_COM0,
+  ABL_C_TIERS_COM0,
+  abl_tier,
+} = require('#/data/train-source-const');
 /** 本文件预留的调用名（空：#467 起 AUTO_ABLUP 已接真身） */
 
 /**
@@ -211,6 +216,10 @@ async function autotrain() {
 
 /**
  * com0_auto：爱抚自动调教
+ *
+ * 分档读手动路径的同一份阶梯（data/train-source-const.js 的
+ * ABL_C_TIERS_COM0 / ABL_B_TIERS_COM0）：两边各写一份时，改档位要记得改两处，
+ * 漏改的一边只有自动调教路径的玩家看得见。
  */
 function com0_auto() {
   const target = era_flag.target;
@@ -219,61 +228,17 @@ function com0_auto() {
   lose(target, 0, 1);
   lose(target, 1, 5);
 
-  let source0 = 0;
-  let source17 = 0;
-  let source3 = 0;
-  const source4 = 60;
-  const source8 = 30;
-  const source12 = 100;
+  const abl_c = abl_tier(era.get(`abl:${target}:0`)); // C感觉
+  const abl_b = abl_tier(era.get(`abl:${target}:1`)); // B感觉
 
-  const abl0 = era.get(`abl:${target}:0`) || 0; // C感觉
-  if (abl0 === 0) {
-    source0 = 20;
-    source3 = 25;
-  } else if (abl0 === 1) {
-    source0 = 100;
-    source3 = 50;
-  } else if (abl0 === 2) {
-    source0 = 500;
-    source3 = 80;
-  } else if (abl0 === 3) {
-    source0 = 1200;
-    source3 = 100;
-  } else if (abl0 === 4) {
-    source0 = 2000;
-    source3 = 115;
-  } else {
-    source0 = 2800;
-    source3 = 125;
-  }
-
-  const abl1 = era.get(`abl:${target}:1`) || 0; // B感觉
-  if (abl1 === 0) {
-    source17 = 15;
-    source3 += 25;
-  } else if (abl1 === 1) {
-    source17 = 50;
-    source3 += 50;
-  } else if (abl1 === 2) {
-    source17 = 300;
-    source3 += 80;
-  } else if (abl1 === 3) {
-    source17 = 700;
-    source3 += 100;
-  } else if (abl1 === 4) {
-    source17 = 1100;
-    source3 += 115;
-  } else {
-    source17 = 1600;
-    source3 += 125;
-  }
-
-  chara(target).train.阴核快感 = source0;
-  chara(target).train.乳房快感 = source17;
-  chara(target).train.情爱 = source3;
-  chara(target).train.性行为 = source4;
-  chara(target).train.不洁 = source8;
-  chara(target).train.露出 = source12;
+  chara(target).train.阴核快感 = ABL_C_TIERS_COM0[abl_c][0];
+  chara(target).train.乳房快感 = ABL_B_TIERS_COM0[abl_b][0];
+  // SOURCE:3（情爱）是 C 感觉档的值加 B 感觉档的增量
+  chara(target).train.情爱 =
+    ABL_C_TIERS_COM0[abl_c][1] + ABL_B_TIERS_COM0[abl_b][1];
+  chara(target).train.性行为 = 60;
+  chara(target).train.不洁 = 30;
+  chara(target).train.露出 = 100;
 
   chara(target).train.自动调教 += 1;
   return 1;
