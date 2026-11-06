@@ -11,7 +11,7 @@
  *   - TEQUIP:43-49（眼罩/绳/口塞/灌肠+肛塞/拘束衣/—/电极）是本族的装备位，
  *     属主 train（ownership/tequip-ownership.yml "43-47"/"49"），域内直写；
  *     桶随 beginTrain 建、endTrain 删。
- *   - 触手回合计数 → flag:10029（era_flag.tentacle_round，旧 T:0）：写者是
+ *   - 触手回合计数 → flag:10030（era_flag.tentacle_round，旧 T:0）：写者是
  *     本族 com46/com49 的触手支，消费者是触手族的 100 号装备持续位（随 J17）。
  *   - NOITEM → ere/data/noitem-const.js 的常量（全库无写点、恒 0）：
  *     「ITEM:x == 0 && NOITEM == 0」在当前移植面下等价于「没有该道具就
@@ -488,7 +488,7 @@ async function com44() {
   era.add(`exp:${target}:51`, 5);
   era.print('紧缚经验＋５');
 
-  // 绳子の着脱 + 触手调教中重置触手回合计数（flag:10029）
+  // 绳子の着脱 + 触手调教中重置触手回合计数（flag:10030）
   set_tq(target, 44, 1 - tq(target, 44));
   if (tq(target, 90)) {
     era_flag.tentacle_round = 0;

@@ -7,7 +7,7 @@
  *
  * - SOURCE/UP/LOSEBASE 分别落 source/delta/deltabase；后者以负值累计，结算由
  *   source-check 与回合循环消费。
- * - TEQUIP:11/13–19、STAIN、TFLAG:19、触手回合计数（flag:10029）都属 train，
+ * - TEQUIP:11/13–19、STAIN、TFLAG:19、触手回合计数（flag:10030）都属 train，
  *   可在本域直写。
  * - EXP:0/1 属 dungeon，统一经 chara(cid).dungeon；EXP:40/41/54 属 train，
  *   经 chara(cid).train。TALENT:190/191 属 dungeon，经其门面写入。
@@ -56,7 +56,7 @@ const has_item = (i) => (era.get(`item:${i}`) || 0) > 0 || NOITEM.value !== 0;
 const target_name = () => chara_callname(era_flag.target);
 const player_name = () => chara_callname(era_flag.player);
 
-/** 触手回合计数（旧 T:0，flag:10029）；本族切换装备后清零、持续效果中递增。 */
+/** 触手回合计数（旧 T:0，flag:10030）；本族切换装备后清零、持续效果中递增。 */
 function reset_tentacle_turn(cid) {
   if (tq(cid, 90)) {
     era_flag.tentacle_round = 0;

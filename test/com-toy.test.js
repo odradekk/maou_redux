@@ -223,12 +223,12 @@ test('com11：处女确认取消保持回合取消；满月取消不写数值', 
 test('com11：装着时写私处经验、触手污渍与 T 清零', async () => {
   const world = seed_world();
   world.fixture.store.set('tequip:31:90', 1);
-  world.fixture.store.set('flag:10029', 9);
+  world.fixture.store.set('flag:10030', 9);
   world.fixture.store.set('abl:31:2', 2);
   assert.equal(await run_com(world, 11), 1);
   assert.equal(world.fixture.store.get('tequip:31:11'), 1);
   assert.equal(world.fixture.store.get('stain:31:3'), 6);
-  assert.equal(world.fixture.store.get('flag:10029'), 0);
+  assert.equal(world.fixture.store.get('flag:10030'), 0);
   assert.equal(world.fixture.store.get('exp:31:0'), 2);
 });
 
