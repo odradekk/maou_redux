@@ -28,24 +28,10 @@ function seed_world(fixture) {
   return era_flag;
 }
 
-// train_name_init 的播种写入（TRAIN_MAIN 链；TRAIN_NAME_TABLE
-// 的键升序，150 号槽在循环后单独内插写入——实现见 train-name.js）
-function expected_train_name_writes(train_name_table) {
-  return [
-    ...Object.entries(train_name_table).map(([id, name]) => ({
-      name: `trainalias:${id}`,
-      value: name,
-    })),
-    // TRAIN_NAME:150 = %CSTR:7%調教（TARGET=31 的 CSTR:7 未播种 → 空串）
-    { name: 'trainalias:150', value: '调教' },
-  ];
-}
-
-// eventtrain 直线赋值的完整期望（按语句顺序；含
-// train_name_init 播种与 pritrain_message 承载头部的三笔，
-// EVENT_BEFORETRAIN 一份）。train_name_table 由用例侧经夹具装载传入
-//（播种表以实现为准——表内容错漏由 train-name.test.js 的逐条断言守）。
-function expected_train_writes(train_name_table) {
+// eventtrain 直线赋值的完整期望（按语句顺序；含 pritrain_message 承载头部的
+// 三笔，EVENT_BEFORETRAIN 一份）。指令名自 #835 起在读取时现算，EVENTTRAIN
+// 不再有别名表播种的写入。
+function expected_train_writes() {
   return [
     { name: 'base:0:2', value: 0 }, // 主人的射精清零
     { name: 'base:31:2', value: 0 }, // 目标的射精清零
@@ -61,8 +47,6 @@ function expected_train_writes(train_name_table) {
     { name: 'flag:10012', value: 31 }, // TARGET:1 = TARGET（记录目标）
     // SIF TALENT:TARGET:271 → PALAM 3/5 = 3000（无素质，不写）
     { name: 'tflag:402', value: 0 }, // 死斗场收入初始化
-    // CALL TRAIN_NAME_INIT（#212 真身：TRAIN_NAME 播种，检查空过）
-    ...expected_train_name_writes(train_name_table),
     // PRITRAIN_MESSAGE（真身写入）：
     { name: 'cflag:31:10', value: 1 }, // CFLAG:TARGET:10 += 1（调教回数）
     { name: 'flag:10014', value: 0 }, // T:10 = MASTER
@@ -75,7 +59,6 @@ function expected_train_writes(train_name_table) {
 test('eventtrain 直线赋值：与既有清单逐项一致（全量断言，意外写入当场暴露）', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
-  const { TRAIN_NAME_TABLE } = fixture.load_module('system/train/train-name');
   const { emit } = fixture.load_module('system/event/registry');
   register_handlers(fixture, 'event/event-train'); // 注册 EVENTTRAIN 处理器
 
@@ -86,10 +69,7 @@ test('eventtrain 直线赋值：与既有清单逐项一致（全量断言，意
   // 世界底座的指针写入（seed_world 侧）不计：从 eventtrain 第一笔写起看
   const start = fixture.var_writes.findIndex((w) => w.name === 'base:0:2');
   assert.ok(start >= 0, 'eventtrain 必须先清主人的射精槽');
-  assert.deepEqual(
-    fixture.var_writes.slice(start),
-    expected_train_writes(TRAIN_NAME_TABLE),
-  );
+  assert.deepEqual(fixture.var_writes.slice(start), expected_train_writes());
 });
 
 test('时常发情（TALENT:TARGET:271）：润滑与欲情从 3000 起步', async () => {

@@ -11,12 +11,11 @@
  *   - TEQUIP:43-49（眼罩/绳/口塞/灌肠+肛塞/拘束衣/—/电极）是本族的装备位，
  *     属主 train（ownership/tequip-ownership.yml "43-47"/"49"），域内直写；
  *     桶随 beginTrain 建、endTrain 删。
- *   - T（= T:0，触手回合计数）→ `t:0`：写者是本族 com46/com49 的触手支，
- *     消费者是触手族的 100 号装备持续位（随 J17）——yml/T.yml 建桶
- *     （单字母数组变量，本文件首次写入）。
- *   - NOITEM → `noitem:0`：全库无写点、恒 0（yml/NOITEM.yml 建桶，文件头
- *     有说明）。「ITEM:x == 0 && NOITEM == 0」在当前移植面下等价于
- *     「没有该道具就不可执行」。
+ *   - 触手回合计数 → flag:10029（era_flag.tentacle_round，旧 T:0）：写者是
+ *     本族 com46/com49 的触手支，消费者是触手族的 100 号装备持续位（随 J17）。
+ *   - NOITEM → ere/data/noitem-const.js 的常量（全库无写点、恒 0）：
+ *     「ITEM:x == 0 && NOITEM == 0」在当前移植面下等价于「没有该道具就
+ *     不可执行」。
  *   - EXP:1（肛门经验）/ EXP:30（被虐快乐经验）/ EXP:50（异常经验）属主
  *     dungeon（ownership/exp-ownership.yml）——跨域写走门面
  *     chara(cid).dungeon.<字段>（#71）；EXP:23/40/41/51 属主 train，直写。
@@ -68,6 +67,7 @@ const { times } = require('#/utils/numeric');
 const { soiling_cloth_no2 } = require('#/system/train/cloth');
 const { clothtype_special_text } = require('#/utils/clothtype-utils');
 const { PALAMLV } = require('#/data/palam-level-const');
+const { NOITEM } = require('#/data/noitem-const');
 // —— 读数缺省处理（未声明下标 undefined → 0，#13；包装层 getter 一律 || 0） ——
 
 const tq = (cid, i) => era.get(`tequip:${cid}:${i}`) || 0;
@@ -86,11 +86,8 @@ const add_up = (cid, i, v) => era.add(`delta:${cid}:${i}`, v);
  */
 const EXPLV = [0, 1, 4, 20, 50, 200];
 
-/** NOITEM：全库无写点，恒 0 → 道具持有检查生效 */
-const noitem = () => era.get('noitem:0') || 0;
-
 /** 持有检查（各号可用性检查共用的「ITEM:x == 0 && NOITEM == 0」写法） */
-const has_item = (i) => (era.get(`item:${i}`) || 0) > 0 || noitem() !== 0;
+const has_item = (i) => (era.get(`item:${i}`) || 0) > 0 || NOITEM.value !== 0;
 
 /** PALAM:i 对 PALAMLV:n 的档位比较用阈值（n = 1..4） */
 const palam_below = (cid, i, n) => palam(cid, i) < PALAMLV[n];
@@ -491,10 +488,10 @@ async function com44() {
   era.add(`exp:${target}:51`, 5);
   era.print('紧缚经验＋５');
 
-  // 绳子の着脱 + 触手调教中重置触手回合计数（T:0）
+  // 绳子の着脱 + 触手调教中重置触手回合计数（flag:10029）
   set_tq(target, 44, 1 - tq(target, 44));
   if (tq(target, 90)) {
-    era.set('t:0', 0);
+    era_flag.tentacle_round = 0;
   }
 
   love_exp(target, 1, true);
@@ -661,9 +658,9 @@ async function com46() {
     era.set(`cflag:${target}:4`, 2);
   }
 
-  // 触手灌肠処理（T:0 清零）
+  // 触手灌肠処理（触手回合计数清零）
   if (tq(target, 90)) {
-    era.set('t:0', 0);
+    era_flag.tentacle_round = 0;
   }
   // 插入侧（当前未装备）且触手调教 → A 口污垢置位
   if (tq(target, 46) === 0 && tq(target, 90)) {
@@ -1008,9 +1005,9 @@ async function equip_com44() {
   same_sex_exp(target, player, 1);
   master_exp(target, 2); // ASSIPLAY == 0 && ABL:21 >= 2
 
-  // 触手调教中 T:0 += 1
+  // 触手调教中 触手回合计数 += 1
   if (tq(target, 90)) {
-    era.add('t:0', 1);
+    era_flag.tentacle_round += 1;
   }
 
   era.add(`exp:${target}:51`, 2);
@@ -1147,9 +1144,9 @@ async function equip_com46() {
   era.print('肛门经验＋３');
   same_sex_exp(target, player, 1);
 
-  // 触手调教中 T:0 += 1
+  // 触手调教中 触手回合计数 += 1
   if (tq(target, 90)) {
-    era.add('t:0', 1);
+    era_flag.tentacle_round += 1;
   }
 
   return 0; // 持续效果已写入变量，返回值不参与结算
@@ -1323,9 +1320,9 @@ async function equip_com49() {
   era.print('肛门经验＋５');
   same_sex_exp(target, player, 1);
 
-  // 触手调教中 T:0 += 1
+  // 触手调教中 触手回合计数 += 1
   if (tq(target, 90)) {
-    era.add('t:0', 1);
+    era_flag.tentacle_round += 1;
   }
 
   return 1; // 与 equip_com43/47 一样返回 1

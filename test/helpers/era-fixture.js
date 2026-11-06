@@ -2071,6 +2071,25 @@ function create_era_fixture() {
     seed_res(name, type = 'image') {
       res_registry.set(String(name).toLowerCase(), type);
     },
+    /**
+     * 预置一条固定名（对应 `ere/data/chara-name-const.js` 的常量表）。
+     *
+     * 固定名表不进存档、也不再是静态表：它没有变量地址可播 store，用例只能
+     * 改表本身。写入立刻对 get_fixed_chara_name 生效（查表在调用时读表）；
+     * 每个夹具都重新装载 ere/ 模块（purge_ere_cache），改动不跨用例。
+     */
+    seed_fixed_name(id, name) {
+      require('#/data/chara-name-const').LIST_CHARA_NAME[id] = name;
+    },
+    /**
+     * 拨动道具无视模式（对应 `ere/data/noitem-const.js` 的 `NOITEM.value`）。
+     *
+     * 游戏里没有写点、值恒 0；用例靠它覆盖「非 0 时持有检查全部放行」那一支。
+     * 与 seed_fixed_name 同理：常量表没有变量地址可播 store，只能改表本身。
+     */
+    seed_noitem(value) {
+      require('#/data/noitem-const').NOITEM.value = value;
+    },
     /** 引擎 system 配置的镜像（hideUserInput / disableClear，默认与引擎
      *  一致为 false）：置 true 后 input 回显不计 Row / clear 整体无操作，
      *  覆盖两条引擎短路的对应段，见「输入」段与 clear 处注释 */

@@ -101,7 +101,6 @@ test('able135：无头骑士（TALENT:314==4）；男人挡', async () => {
 test('com120：插入Ｇ点蹂躏，显式回填 SELECTCOM=120', async () => {
   const world = seed_world();
   world.era_flag.selectcom = 34;
-  world.fixture.store.set('trainalias:34', '骑乘位');
   const result = await world.com_family.call(120);
   assert.equal(result, 1);
   assert.equal(world.era_flag.selectcom, 120, '显式回填 selectcom = 120');
@@ -129,7 +128,6 @@ test('com120：默认档 SOURCE / TFLAG 与骑乘派生', async () => {
   const riding = seed_world();
   riding.era_flag.prevcom = 34;
   riding.era_flag.selectcom = 34;
-  riding.fixture.store.set('trainalias:34', '骑乘位');
   await riding.com_family.call(120);
   assert.equal(riding.fixture.store.get('source:31:12'), 1300);
   assert.equal(riding.fixture.store.get('source:31:4'), 200);
@@ -167,7 +165,6 @@ test('com121：插入子宫口蹂躏，回填 SELECTCOM 与默认 SOURCE', async
   const world = seed_world();
   world.era_flag.prevcom = 20;
   world.era_flag.selectcom = 20;
-  world.fixture.store.set('trainalias:20', '正常位');
   world.fixture.store.set('abl:31:2', 3);
   world.fixture.store.set('exp:31:0', 4);
   world.fixture.store.set('palam:31:3', 500);

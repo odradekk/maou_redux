@@ -30,7 +30,6 @@ const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const era_global = require('#/era-utils/era-global');
 const { add_chara_ex, ex_talentname_init } = require('#/system/chara/chara-ex');
-const { chara_name_init } = require('#/system/chara/chara-name-list');
 const { chara_name_define } = require('#/system/chara/chara-name'); // #565 起接入
 const { char_body_generate_wapped } = require('#/system/chara/chara-body'); // #385 起真身
 const { rand_chara_make } = require('#/system/chara/chara-make'); // #565 起接入
@@ -160,8 +159,6 @@ async function handle_first() {
     }
   }
 
-  // chara_name_init —— 角色名初始化（#388）
-  chara_name_init();
   // ex_talentname_init —— 非存档的 EX 素质名表。
   ex_talentname_init();
 

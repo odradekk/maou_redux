@@ -13,8 +13,6 @@
  *     它），不镜像」，前提是 global 表变量改完都立即 SAVEGLOBAL（当时的
  *     标题画面开关确实如此）；#547 的 global:3（冒險者性別）改完不即时保存，前提失效，
  *     改为在本链首行镜像 `await era.loadGlobal()`（副作用核对见下）；
- *   - chara_name_init——真身在 chara-name-list.js（#388）：数据已在
- *     yml/NameList.yml，读档后调用是空操作，仅保留调用点可检索；
  *   - ex_talentname_init——非存档的 EX 素质名表初始化，真身在
  *     chara-ex.js；读档后重放，重复调用按检查早退；
  *   - 待机档归一（#814）与预设模板补填（#884）——两处都是「旧存档里没有
@@ -50,7 +48,6 @@ const era_flag = require('#/era-utils/era-flag');
 const { ex_talentname_init } = require('#/system/chara/chara-ex');
 const { normalize_idle_status } = require('#/system/chara/chara-init');
 const { backfill_chara_templates } = require('#/system/chara/chara-pregnancy');
-const { chara_name_init } = require('#/system/chara/chara-name-list');
 
 /**
  * EVENTLOAD：读档成功后的固定钩子。
@@ -69,8 +66,6 @@ async function handle_load() {
   // SAVEGLOBAL」的前提被 global:3 打破）。副作用核对过引擎源码：随后
   // listSaveFiles 重扫备注、saveGlobal 写回同值，不动刚读入的存档数据
   await era.loadGlobal();
-  // 角色名初始化，真身见 chara-name-list.js（#388）
-  chara_name_init();
   // EX素质名初始化（非存档表，读档后重放；重复调用按检查早退）
   ex_talentname_init();
 

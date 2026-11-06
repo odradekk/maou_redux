@@ -123,9 +123,9 @@ test('able100：秘密知识 + 道具；未开启时装备互斥；浴室/新妻
   assert.equal(await com_able_family.call(100), 1, '秘密知识 + 道具 → 可');
 
   fixture.store.set('item:90', 0);
-  fixture.store.set('noitem:0', 1);
+  fixture.seed_noitem(1);
   assert.equal(await com_able_family.call(100), 1, 'NOITEM 替代持有');
-  fixture.store.set('noitem:0', 0);
+  fixture.seed_noitem(0);
   fixture.store.set('item:90', 1);
 
   fixture.store.set('tequip:31:11', 1);
@@ -303,7 +303,7 @@ test('com100：B 在翻转之前（未开启 → 缠上了）；置位并按 EXP
   assert.equal(fixture.store.get('deltabase:31:1'), -600);
   assert.equal(fixture.store.get('delta:31:10'), 6000);
   assert.equal(fixture.store.get('source:31:14'), 1500);
-  assert.equal(fixture.store.get('t:0'), 0, '尾段 T = 0');
+  assert.equal(fixture.store.get('flag:10029'), 0, '尾段 T = 0');
 });
 
 test('com100：胆怯 ×2、感情淡薄 ×0.6；半阈值各档', async () => {
@@ -422,7 +422,7 @@ test('com108：侍奉精神/技巧分档、取反 TEQUIP:98、初吻直写 -1→
   );
   assert.equal(fixture.store.get('tflag:13'), 1);
   assert.equal(fixture.store.get('exp:31:22'), 1);
-  assert.equal(fixture.store.get('t:0'), 0);
+  assert.equal(fixture.store.get('flag:10029'), 0);
 
   const off = await run_com(world, 108);
   assert.equal(off, 1);
@@ -649,7 +649,7 @@ test('equip_com100：半阈值（整档 EXPLV）缩放损耗、SOURCE 倍率、�
   assert.equal(fixture.store.get('source:31:13'), 18); // ×1.80
   assert.equal(fixture.store.get('exp:31:50'), 1);
   assert.equal(fixture.store.get('exp:31:55'), 1, 'T+=1 后 EXP:55 += T');
-  assert.equal(fixture.store.get('t:0'), 0);
+  assert.equal(fixture.store.get('flag:10029'), 0);
 });
 
 test('equip_com100：MAXBASE:4 非 0 时射精检查写 TFLAG:15；大量射精走 E=2', async () => {
@@ -679,7 +679,7 @@ test('equip_com108：喜欢精液减半损耗；侍奉分档与口交经验；T 
   fixture.store.set('talent:31:47', 1);
   fixture.store.set('abl:31:16', 0);
   fixture.store.set('abl:31:12', 0);
-  fixture.store.set('t:0', 4);
+  fixture.store.set('flag:10029', 4);
   const result = await world.equip_com_family.call(108);
   assert.equal(result, 1);
   assert.ok(fixture.text_lines().includes('＜触手口辱中＞'));
@@ -688,7 +688,11 @@ test('equip_com108：喜欢精液减半损耗；侍奉分档与口交经验；T 
   assert.equal(fixture.store.get('deltabase:31:1'), -60);
   assert.equal(fixture.store.get('source:31:4'), 100);
   assert.equal(fixture.store.get('exp:31:22'), 1);
-  assert.equal(fixture.store.get('t:0'), 5, 'equip_com108 只累加 T，不清零');
+  assert.equal(
+    fixture.store.get('flag:10029'),
+    5,
+    'equip_com108 只累加 T，不清零',
+  );
 });
 
 // —— train_message_b 100-109 / 150 ——

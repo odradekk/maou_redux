@@ -51,6 +51,7 @@ const { MASTER } = require('#/utils/master');
 const { idiv, percent_floor } = require('#/utils/numeric');
 const { EXPLV } = require('#/data/exp-level-const');
 const { PALAMLV } = require('#/data/palam-level-const');
+const { NOITEM } = require('#/data/noitem-const');
 
 /** 本文件没有未移植的调用；口上台词分发随轴 B 实现。 */
 
@@ -64,9 +65,8 @@ const set_src = (cid, index, value) => era.set(`source:${cid}:${index}`, value);
 const add_src = (cid, index, value) => era.add(`source:${cid}:${index}`, value);
 const add_lose = (cid, index, value) =>
   era.add(`deltabase:${cid}:${index}`, -value);
-const noitem = () => era.get('noitem:0') || 0;
 const has_item = (index) =>
-  (era.get(`item:${index}`) || 0) > 0 || noitem() !== 0;
+  (era.get(`item:${index}`) || 0) > 0 || NOITEM.value !== 0;
 const target_name = () => chara_callname(target_id());
 
 /** 两个角色同为非男人 / 同为男人时的同性经验共通段。 */

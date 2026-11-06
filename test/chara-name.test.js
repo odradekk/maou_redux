@@ -102,8 +102,7 @@ test('chara_name_define：特殊角色区间两侧——16 与 41 走普通路�
 test('chara_name_define：默认（NID = -1）时沿用 CFLAG:6 现值', () => {
   const fixture = create_era_fixture();
   fixture.store.set('cflag:5:6', 205);
-  fixture.store.set('namelistkeys', [205]);
-  fixture.store.set('namelistname:205', '露娜');
+  fixture.seed_fixed_name(205, '露娜');
   const { chara_name_define } = load(fixture);
   chara_name_define(5);
   assert.equal(fixture.store.get('cflag:5:6'), 205, '沿用 CFLAG:6 现值');
@@ -135,8 +134,7 @@ test('chara_name_define：显式 NID 写回 CFLAG:6，并在两次改名点重�
 
 test('chara_name_define：固定名列表命中时写入三个名字键', () => {
   const fixture = create_era_fixture();
-  fixture.store.set('namelistkeys', [205]);
-  fixture.store.set('namelistname:205', '露娜');
+  fixture.seed_fixed_name(205, '露娜');
   const { chara_name_define } = load(fixture);
   chara_name_define(9, 205);
   assert.deepEqual(names_of(fixture, 9), {
@@ -145,10 +143,9 @@ test('chara_name_define：固定名列表命中时写入三个名字键', () => 
   });
 });
 
-test('chara_name_define：固定名列表空串（有产物但该编号没记名字）回落佳奈美', () => {
+test('chara_name_define：固定名列表空串（条目在但名字是空串）回落佳奈美', () => {
   const fixture = create_era_fixture();
-  fixture.store.set('namelistkeys', [205]); // 已注册、但名字是空串
-  fixture.store.set('namelistname:205', '');
+  fixture.seed_fixed_name(205, ''); // 条目在、但名字是空串
   const { chara_name_define } = load(fixture);
   chara_name_define(9, 205);
   assert.deepEqual(names_of(fixture, 9), {
@@ -165,7 +162,6 @@ test('chara_name_define：无效 NID（列表外）回落佳奈美', () => {
   // chara-name.js 相应位置的注释。）
   for (const nid of [5499, 5500]) {
     const fixture = create_era_fixture();
-    fixture.store.set('namelistkeys', [205]);
     const { chara_name_define } = load(fixture);
     chara_name_define(9, nid);
     assert.deepEqual(
@@ -174,17 +170,16 @@ test('chara_name_define：无效 NID（列表外）回落佳奈美', () => {
       `NID ${nid}`,
     );
   }
-  // 尺寸判断条件的上界：5500 号**即使已注册**也必须走无效分支（5500 是
-  // 声明尺寸，不是注册表尺寸——把常量抬到 5501 就会去查这张表）
+  // 尺寸判断条件的上界：5500 号**即使表里有条目**也必须走无效分支（5500 是
+  // 声明尺寸，不是表的条目数——把常量抬到 5501 就会去查这张表）
   const boundary = create_era_fixture();
-  boundary.store.set('namelistkeys', [5500]);
-  boundary.store.set('namelistname:5500', '越界名');
+  boundary.seed_fixed_name(5500, '越界名');
   const { chara_name_define: run_boundary } = load(boundary);
   run_boundary(9, 5500);
   assert.deepEqual(
     names_of(boundary, 9),
     { name: '佳奈美', callname: '佳奈美' },
-    '5500 在声明尺寸外，即便已注册也不查表',
+    '5500 在声明尺寸外，即便表里有条目也不查表',
   );
 });
 
@@ -199,11 +194,10 @@ test('chara_name_define：NID >= 1e9 走随机组合名（生成串写入三个�
   });
 });
 
-test('chara_name_define：NID < 1e9 一侧走固定名表（空表回落佳奈美，不产随机名）', () => {
+test('chara_name_define：NID < 1e9 一侧走固定名表（表里没有该编号回落佳奈美，不产随机名）', () => {
   // 999999999 是随机名下限 2000000000 与固定名上限 1e9 之间的最大值——
   // 两侧产出可辨（固定名分支回落「佳奈美」，随机名分支产出组合名串）
   const fixture = create_era_fixture();
-  fixture.store.set('namelistkeys', [0]);
   const { chara_name_define } = load(fixture);
   chara_name_define(9, 999_999_999);
   assert.deepEqual(names_of(fixture, 9), {
@@ -636,7 +630,6 @@ test('chara_name_random_define：职业偏向——骑士掷中偏洋名、巫�
   // 巫女（206）+ rand(10) != 0 → 名字类型 0 → 经 rand(5) % 2 再定
   const f2 = create_era_fixture();
   f2.store.set('talent:9:206', 1);
-  f2.store.set('namelistkeys', []);
   const { chara_name_random_define: run2 } = f2.load_module(
     'system/chara/chara-name',
   );
@@ -859,15 +852,14 @@ test('chara_name_random_define：名字空间占满时逐条改换类型（三�
 
 test('chara_name_random_define：末端尾调用 chara_name_define 真身（名字写入）', () => {
   const fixture = create_era_fixture();
-  fixture.store.set('namelistkeys', [0]);
-  fixture.store.set('namelistname:0', '');
+  fixture.seed_fixed_name(0, '');
   const { chara_name_random_define } = load(fixture);
   const result = chara_name_random_define(9, 1, seq([0]));
   assert.equal(result, undefined, '尾调用不向调用点返回结果');
   assert.equal(
     fixture.store.get('callname:9:-1'),
     '佳奈美',
-    '固定名 0 未注册名字 → 佳奈美（真身已执行）',
+    '固定名 0 的名字是空串 → 佳奈美（真身已执行）',
   );
 });
 

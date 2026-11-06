@@ -719,9 +719,9 @@ export default [
 
   // —— #212（J2 调教回合骨架）：M704-M712 ——
   {
-    desc: 'M705 p_c 回落顺序倒置（TRAIN_NAME 抢在静态名前）',
+    desc: 'M705 p_c 回落顺序倒置（指令别名抢在静态名前）',
     file: 'ere/page/page-usercom.js',
-    find: '  let name = train_command_name(local);\n  // 静态名空 → TRAIN_NAME:LOCAL（定制覆盖层，train_name_init 播种）\n  if (name.length < 1) {\n    name = read_train_name(local);\n  }',
+    find: '  let name = train_command_name(local);\n  // 静态名空 → 指令别名（read_train_name 现算）\n  if (name.length < 1) {\n    name = read_train_name(local);\n  }',
     replace: `  let name = read_train_name(local);
   if (name.length < 1) {
     name = train_command_name(local);

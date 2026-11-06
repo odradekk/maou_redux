@@ -25,7 +25,7 @@ function seed_world({ assi = -1 } = {}) {
       messages: 'system/train/train-message',
     },
   });
-  world.fixture.store.set('noitem:0', 1);
+  world.fixture.seed_noitem(1);
   const { com_able_family, com_family, equip_com_family } =
     world.modules.family;
   const { train_message_a, train_message_b } = world.modules.messages;
@@ -87,9 +87,9 @@ test('10 号可用性检查：器具过滤、无道具和下装各阻止执行',
   fixture.store.set('flag:25', 2);
   assert.equal(await com_able_family.call(10), 0);
   fixture.store.set('flag:25', 0);
-  fixture.store.set('noitem:0', 0);
+  fixture.seed_noitem(0);
   assert.equal(await com_able_family.call(10), 0);
-  fixture.store.set('noitem:0', 1);
+  fixture.seed_noitem(1);
   fixture.store.set('flag:37', 1);
   fixture.store.set('cflag:31:40', 1);
   assert.equal(await com_able_family.call(10), 0);
@@ -223,12 +223,12 @@ test('com11：处女确认取消保持回合取消；满月取消不写数值', 
 test('com11：装着时写私处经验、触手污渍与 T 清零', async () => {
   const world = seed_world();
   world.fixture.store.set('tequip:31:90', 1);
-  world.fixture.store.set('t:0', 9);
+  world.fixture.store.set('flag:10029', 9);
   world.fixture.store.set('abl:31:2', 2);
   assert.equal(await run_com(world, 11), 1);
   assert.equal(world.fixture.store.get('tequip:31:11'), 1);
   assert.equal(world.fixture.store.get('stain:31:3'), 6);
-  assert.equal(world.fixture.store.get('t:0'), 0);
+  assert.equal(world.fixture.store.get('flag:10029'), 0);
   assert.equal(world.fixture.store.get('exp:31:0'), 2);
 });
 
