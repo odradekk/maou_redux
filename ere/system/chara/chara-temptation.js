@@ -94,7 +94,7 @@ function print_bar(label, value, max) {
  */
 function check_able_to_temptation(arg) {
   if (state_of(arg) !== 2) return TEMPTATION_NOT_HERO;
-  if ((era.get(`cflag:${arg}:800`) || 0) === 4) return TEMPTATION_CRAZY_KING;
+  if (chara(arg).system.特殊角色标记 === 4) return TEMPTATION_CRAZY_KING;
   return 0;
 }
 

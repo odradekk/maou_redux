@@ -74,7 +74,7 @@ export default [
     desc: 'M203 一人称直设删除（CSTR:60 = 我 / CFLAG:450 = 9，#383 起真身落在 chara-self-call.js）',
     file: 'ere/system/chara/chara-self-call.js',
     find: `    era.set(\`cstr:\${cid}:60\`, '我');
-    era.set(\`cflag:\${cid}:450\`, 9);`,
+    chara(cid).chara.一人称档位 = 9;`,
     replace: '    // 变异：一人称直设删除',
     tests: ['chara-self-call'],
     must_mention: 'CSTR:x:60 = 我',

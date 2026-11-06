@@ -32,8 +32,8 @@ function faith(cid, delta) {
   if (chara(cid).stronghold.魂缚) {
     return 0;
   }
-  const value = (era.get(`cflag:${cid}:152`) || 0) + delta; // CFLAG:152 信仰
-  era.set(`cflag:${cid}:152`, Math.max(0, Math.min(100, value)));
+  const value = chara(cid).chara.信仰值 + delta;
+  chara(cid).chara.信仰值 = Math.max(0, Math.min(100, value));
   return 0;
 }
 

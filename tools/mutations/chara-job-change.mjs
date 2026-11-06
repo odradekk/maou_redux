@@ -162,9 +162,9 @@ export default [
   {
     desc: 'M8840 神官/巫女的高信仰值 20 改成 21',
     file: 'ere/system/chara/chara-job-change.js',
-    find: '      era.set(`cflag:${arg}:152`, HIGH_FAITH); // 高い信仰値を持つ',
+    find: '      chara(arg).chara.信仰值 = HIGH_FAITH; // 高い信仰値を持つ',
     replace:
-      '      era.set(`cflag:${arg}:152`, HIGH_FAITH + 1); // 高い信仰値を持つ',
+      '      chara(arg).chara.信仰值 = HIGH_FAITH + 1; // 高い信仰値を持つ',
     tests: ['chara-job-change'],
     must_mention: '转职实现——职业表先清后设',
   },

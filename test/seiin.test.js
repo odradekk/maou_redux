@@ -5,8 +5,8 @@
  * 缝 = test/helpers/era-fixture.js。覆盖：
  *   - seiin_start 的三道检查（FLAG:72 系统开关 / TFLAG:0 未口内射精 /
  *     TFLAG:899 失神中）与两分支分发（喜欢精液直行 / 绝顶中查计数器）；
- *   - seiin_orgasm 的计数（EX:13 / EXP:8）、两版文案（TFLAG:0 == 2）、
- *     源加成的四档乘算；
+ *   - seiin_orgasm 的计数（只有 EXP:8；EX:13 从未登记、没有读点，已删）、
+ *     两版文案（TFLAG:0 == 2）、源加成的四档乘算；
  *   - seiin_check 的阈值表（素质加减，抽测边界组合）；
  *   - seiin_compulsion_orgasm 的三段文案（达阈值 / 初回 / 以降）、
  *     TFLAG:110 获得旗（game.event 门面）、精液中毒 LV3 直抬、
@@ -64,13 +64,19 @@ test('检查：失神中（TFLAG:899 ≥ 1）抑制精饮绝顶', async () => {
   assert.deepEqual(fixture.text_lines(), []);
 });
 
-test('喜欢精液（TALENT:47）直行 ORGASM：EX:13 / EXP:8 / 基础源与文案', async () => {
+test('喜欢精液（TALENT:47）直行 ORGASM：EXP:8 / 基础源与文案（不写 EX:13）', async () => {
   const { fixture, seiin } = seed_world();
   fixture.store.set('tflag:0', 1);
   fixture.store.set('talent:31:47', 1);
   fixture.store.set('exp:31:8', 10); // 避开初次 ×3 档
   await seiin.seiin_start();
-  assert.equal(fixture.store.get('ex:31:13'), 1);
+  // EX 表登记的是状态画面绝顶行那六个（0-5）：13 号从未登记、也不存在读点，
+  // 写下去只会是 undefined + 1 = NaN（存档里落成 null）
+  assert.equal(
+    fixture.store.get('ex:31:13'),
+    undefined,
+    '精饮绝顶只在 EXP:8 上计数，不写未登记的 EX:13',
+  );
   assert.equal(fixture.store.get('exp:31:8'), 11, '播种 10 + 1');
   assert.equal(fixture.store.get('source:31:10'), 2000);
   assert.equal(fixture.store.get('source:31:11'), 5000);

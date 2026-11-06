@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 91; // #831 +6（M18406-M18411：cflag 补登面的漏登记、名字分叉、name 重复、序号写错，以及 add / 旧档补 0 两条行为锁） // #830 +6（M18400-M18405：TFlag/Flag/TEquip/CStr 的四类漏登记与名字分叉） // #834 +5（M18350-M18354：EX 素质名进 yml、八个注册实现搬进角色预设）；#949 +3（M18250–M18252：33 号条目的删除、price 改错、name 非 snake_case——商店 32/33 号的道具表补齐与对账）；#815 +1（M18301：Ex.yml 漏登记射精槽——exkeys 少一格，取消回合的 NOWEX:5 漏到下一回合）；#876 +4：+2（M41/M42 从 train 分片移入——指令 0 的阶梯表搬进 ere/data/train-source-const.js），+2（M18100/M18101：取档口径的越档边界、未声明等级的默认档）；#883 -1（M16108：yml/E.yml 随战斗状态搬成普通对象撤除） // #884 +2（M16606/M16607：角色预设的预设模板值改错、PortCFlag 的字段条目被删）； #848 +2（M16254/M16255：GameBase 的【初始角色编号】改坏、给角色预设加上以 0 号为目标的相性）；#901 +13（M16100-M16112：变量表 name/type 的缺失、重名、非 snake_case、保留字、非法 type 与豁免名单失效）；#814 +9（M15850-M15858：角色预设在用的 cflag 序号与条目、mark/talent/cstr 的新登记、name/type 形状）；#822 +4（M15700/M15701：Abl 20/21 的 yml 名字；M15702/M15703：指令常量 54/89 的指令名——#836 把指令名搬进常量后跟着改挂，编号不变）；#746 +3（M14608-M14610：现种族 211 的名字声明、编号与名称）；#733 +1（M14540：通信回归场景漏载 Equip 名字表）；#731 +1（M14530：【最低支持版本】不得高于已发布的 0.1.0）；master 28（#640 +7：M12870-M12876 yml 装载覆盖与内容固定的行为检查）+ 4（#642：M12936-M12939 标题画面使用的 GameBase 信息改坏）
+export const COUNT = 101; // #970 +4（M18418-M18421：delta:17 那处未声明读数复辟、stain 的登记序号写错、声明集判据退化成「文件存在」、动态地址不计数） // #982 +6（M18412-M18417：add 落点漏登记、中文键分叉、命名表重名、name 非 snake_case、序号写错、尾部条目分区） // #831 +6（M18406-M18411：cflag 补登面的漏登记、名字分叉、name 重复、序号写错，以及 add / 旧档补 0 两条行为锁） // #830 +6（M18400-M18405：TFlag/Flag/TEquip/CStr 的四类漏登记与名字分叉） // #834 +5（M18350-M18354：EX 素质名进 yml、八个注册实现搬进角色预设）；#949 +3（M18250–M18252：33 号条目的删除、price 改错、name 非 snake_case——商店 32/33 号的道具表补齐与对账）；#815 +1（M18301：Ex.yml 漏登记射精槽——exkeys 少一格，取消回合的 NOWEX:5 漏到下一回合）；#876 +4：+2（M41/M42 从 train 分片移入——指令 0 的阶梯表搬进 ere/data/train-source-const.js），+2（M18100/M18101：取档口径的越档边界、未声明等级的默认档）；#883 -1（M16108：yml/E.yml 随战斗状态搬成普通对象撤除） // #884 +2（M16606/M16607：角色预设的预设模板值改错、PortCFlag 的字段条目被删）； #848 +2（M16254/M16255：GameBase 的【初始角色编号】改坏、给角色预设加上以 0 号为目标的相性）；#901 +13（M16100-M16112：变量表 name/type 的缺失、重名、非 snake_case、保留字、非法 type 与豁免名单失效）；#814 +9（M15850-M15858：角色预设在用的 cflag 序号与条目、mark/talent/cstr 的新登记、name/type 形状）；#822 +4（M15700/M15701：Abl 20/21 的 yml 名字；M15702/M15703：指令常量 54/89 的指令名——#836 把指令名搬进常量后跟着改挂，编号不变）；#746 +3（M14608-M14610：现种族 211 的名字声明、编号与名称）；#733 +1（M14540：通信回归场景漏载 Equip 名字表）；#731 +1（M14530：【最低支持版本】不得高于已发布的 0.1.0）；master 28（#640 +7：M12870-M12876 yml 装载覆盖与内容固定的行为检查）+ 4（#642：M12936-M12939 标题画面使用的 GameBase 信息改坏）
 
 export default [
   {
@@ -828,5 +828,90 @@ export default [
     replace: '',
     tests: ['cflag-names'],
     must_mention: 'cflag:666 自动调教',
+  },
+  // —— #982 cflag 剩下 43 个无名位的补名与 NaN 修复 ——
+  {
+    desc: 'M18412 CFlag.yml 漏登记「示众台正字_肉穴」661（示众台计数又回到 NaN，add 落点扫描必须红）（#982）',
+    file: 'yml/CFlag.yml',
+    find: '"示众台正字_肉穴":\n  id: 661\n  name: "pillory_tally_vagina"\n  type: "number"\n',
+    replace: '',
+    tests: ['cflag-names'],
+    must_mention: 'cflag 上有 add 但 yml 没登记',
+  },
+  {
+    desc: 'M18413 CFlag.yml 的「迷失状态」中文键改坏（与 facade-names 的名字分叉）（#982）',
+    file: 'yml/CFlag.yml',
+    find: '"迷失状态":\n  id: 509\n',
+    replace: '"迷失状态X":\n  id: 509\n',
+    tests: ['cflag-names'],
+    must_mention: '与 facade-names「迷失状态」不一致',
+  },
+  {
+    desc: 'M18414 facade-names 的「同伴_0」中文键抄成「同伴_1」（命名表重名，门面访问器互相覆盖）（#982）',
+    file: 'tools/facade-names.js',
+    find: "  531: named_tail('同伴_0', 'CFLAG:531 仲間A（同伴角色号，0 = 空）'),",
+    replace:
+      "  531: named_tail('同伴_1', 'CFLAG:531 仲間A（同伴角色号，0 = 空）'),",
+    tests: ['cflag-names'],
+    must_mention: '重名「同伴_1」',
+  },
+  {
+    desc: 'M18415 CFlag.yml 的「调教者的经验」name 写成连字符（name 会直接成为访问器标识符）（#982）',
+    file: 'yml/CFlag.yml',
+    find: '"调教者的经验":\n  id: 22\n  name: "trainer_experience"\n',
+    replace: '"调教者的经验":\n  id: 22\n  name: "trainer-experience"\n',
+    tests: ['yml-name-type'],
+    must_mention: '不是英文 snake_case',
+  },
+  {
+    desc: 'M18416 CFlag.yml 的「剧情线阶进计数」序号写成 5150（515 退回未声明，无名位清单必须红）（#982）',
+    file: 'yml/CFlag.yml',
+    find: '"剧情线阶进计数":\n  id: 515\n',
+    replace: '"剧情线阶进计数":\n  id: 5150\n',
+    tests: ['cflag-names'],
+    must_mention: '这些序号源码在用、CFlag.yml 没有登记',
+  },
+  {
+    desc: 'M18417 facade-names 的 682 从尾部条目改成既有条目（尾部升序分区必须红）（#982）',
+    file: 'tools/facade-names.js',
+    find: "  682: named_tail('魔法伤害上升率', 'CFLAG:682 受魔法伤害上升（每回合衰减）'),",
+    replace:
+      "  682: named('魔法伤害上升率', 'CFLAG:682 受魔法伤害上升（每回合衰减）'),",
+    tests: ['gen-facade'],
+    must_mention: '域 cflag 组应以尾部条目（升序）收尾',
+  },
+  // —— #970 静态地址的序号必须落在声明集内 ——
+  {
+    desc: 'M18418 com-caress 的 e 把 delta:<角色>:17 加回来（#923 那处恒为 0 的 D 段复辟）（#970）',
+    file: 'ere/system/train/com-caress.js',
+    find: '  const e = a + b + c;',
+    replace:
+      '  const d = era.get(`delta:${target}:17`) || 0;\n  const e = a + b + c + d;',
+    tests: ['static-address-declared'],
+    must_mention: '新增越界（要修代码、补登记，或确认后加进 KNOWN_GAPS）',
+  },
+  {
+    desc: 'M18419 Stain.yml 把「阴道污渍」的登记序号写成 4（源码用的 3 变回未声明，读到恒 0，且与已知缺口 4 混作一处）（#970）',
+    file: 'yml/Stain.yml',
+    find: '"阴道污渍":\n  id: 3\n',
+    replace: '"阴道污渍":\n  id: 4\n',
+    tests: ['static-address-declared'],
+    must_mention: '新增越界（要修代码、补登记，或确认后加进 KNOWN_GAPS）',
+  },
+  {
+    desc: 'M18420 声明集判据退化成「文件存在」（只注释的空表被当成空集，它的地址整族报越界）（#970）',
+    file: 'test/static-address-declared.test.js',
+    find: '    if (ids.size > 0) {',
+    replace: '    if (true) {',
+    tests: ['static-address-declared'],
+    must_mention: '张无声明集表',
+  },
+  {
+    desc: 'M18421 序号插值的地址不再计入「动态地址」（跳过数归零，「全跳过也算绿」失去可见性）（#970）',
+    file: 'test/static-address-declared.test.js',
+    find: '    if (!/^-?\\d+$/.test(index)) {\n      dynamic += 1;\n      continue;\n    }',
+    replace: '    if (!/^-?\\d+$/.test(index)) {\n      continue;\n    }',
+    tests: ['static-address-declared'],
+    must_mention: '处动态地址',
   },
 ];
