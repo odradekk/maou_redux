@@ -211,7 +211,10 @@ test('中文键与 tools/facade-names.js 逐条一致，只在 yml 有名字的�
 
 /**
  * 造一份引擎实例（`new era_api(fake_era)`）：path 指向临时目录，静态表取
- * yml/ 装载结果，角色预设只给 31 号（没有 CFLAG 预设段，登记过的槽全部落 0）。
+ * yml/ 装载结果。角色只给 31 号的最小形状（只有 id / name / callname，
+ * **不带 CFLAG 预设段**）——这样登记过的槽全部落「没有预设 → 0」这一支，
+ * 断言不必跟着角色文件里的具体数值走；预设值的落库由
+ * test/chara-preset-apply.test.js 逐字段覆盖。
  *
  * @returns {{ api: object, errors: string[] }}
  */
@@ -266,7 +269,7 @@ engine_test(
           `cflag:31:${index} 必须由 addCharacter 建成数字（登记前是 undefined）`,
         );
       }
-      // 31 号没有 CFLAG 预设段，登记过的槽全部落 0
+      // 夹具里的 31 号不带 CFLAG 预设段，登记过的槽全部落 0
       for (const index of declared.keys()) {
         assert.equal(
           data.cflag[31][index],
