@@ -445,7 +445,8 @@ test('com108：CFLAG:16 非 -1 时不改初吻', async () => {
   world.fixture.store.set('cflag:31:16', 3);
   await run_com(world, 108);
   assert.equal(world.fixture.store.get('cflag:31:16'), 3);
-  assert.equal(world.fixture.store.get('tflag:13'), undefined);
+  // TFLAG:13 由 beginTrain 预置 0（事件码走调教外通道也不落这里）
+  assert.equal(world.fixture.store.get('tflag:13'), 0);
 });
 
 // —— COM150 ——

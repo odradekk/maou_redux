@@ -123,8 +123,8 @@ test('COM27 不套用玩家技巧段；COM26 也无该段', async () => {
     await run_com(world, id);
     assert.equal(
       world.fixture.store.get('source:31:10'),
-      undefined,
-      `COM${id}`,
+      0,
+      `COM${id}：SOURCE:10 不写，停在声明集预置的 0`,
     );
   }
 });
@@ -257,7 +257,7 @@ test('A：无玩家射精时保留高潮余韵；姿势句六条指令都受失�
 test('COM26–28：欲情段乘肛门快感与屈从格，不得误乘情爱格', () => {
   const cases = [
     [26, [240, 210, 1440, 0]],
-    [27, [300, 100, 1800, undefined]],
+    [27, [300, 100, 1800, 0]], // 15 号由声明集预置 0：这一支不写它
     [28, [120, 940, 840, 0]],
   ];
   for (const [id, expected] of cases) {

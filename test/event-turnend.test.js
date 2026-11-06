@@ -868,6 +868,8 @@ test('调教窗口（#816）：结算中某一步返回转场目标也照样关�
     [],
     '窗口后的尾段跑在关窗之后（中途 return 不跳过 endTrain）',
   );
+  // 这里断言的是**整表消失**（endTrain 的 delete 段），不是「没写过」：
+  // 仍在训时 tflag:0 会由 beginTrain 按声明集预置成 0（#977）
   assert.equal(fixture.store.get('tflag:0'), undefined, '关窗即删调教域表');
 });
 

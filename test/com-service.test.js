@@ -122,7 +122,12 @@ for (const id of SERVICE_COMS) {
     arm_service_world(world);
     assert.equal(await world.com_family.call(id), 1);
     assert.equal(world.fixture.store.get('tflag:100'), 1);
-    assert.notEqual(world.fixture.store.get('tflag:200'), undefined);
+    // TFLAG:200（屈服刻印结算）在 beginTrain 时已预置 0，读值区分不出「写过 0」；
+    // 判据改成「有这一笔写入」（var_writes 是 era.set 的观测面，#977）
+    assert.ok(
+      world.fixture.var_writes.some((w) => w.name === 'tflag:200'),
+      'TFLAG:200 被写过（值为 0 也算）',
+    );
   });
 }
 
@@ -312,7 +317,8 @@ test('高级目标缺失：COM_MISSING 上抛，不回退执行基础 COM', asyn
     COM_MISSING,
   );
   assert.equal(era_flag.selectcom, 30);
-  assert.equal(fixture.store.get('source:31:4'), undefined);
+  // 上抛即不结算：源值停在预置的 0
+  assert.equal(fixture.store.get('source:31:4'), 0);
 });
 
 test('TRAIN_MESSAGE_B：COM31 死斗场、COM35 肤色、COM36 连续体位都走各自的条件分支', async () => {

@@ -345,7 +345,8 @@ test('com41/42：鞭与针的 SOURCE:14 与 TFLAG:30 门槛差', async () => {
   w1.fixture.store.set('abl:31:21', 1);
   await run_com(w1, 41);
   assert.equal(w1.fixture.store.get('source:31:14'), 1000);
-  assert.equal(w1.fixture.store.get('tflag:30'), undefined, '鞭要抖M ≥ 2');
+  // TFLAG:30 由 beginTrain 按声明集预置 0，门槛不满足时不涨
+  assert.equal(w1.fixture.store.get('tflag:30'), 0, '鞭要抖M ≥ 2');
 
   const w2 = seed_world();
   w2.fixture.store.set('abl:31:21', 2);

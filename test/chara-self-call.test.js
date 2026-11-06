@@ -242,7 +242,8 @@ test('set_suit_selfcall：CASE 0 的 && 不能换成 ||（两侧各有用例）'
     -1,
     '开放<-2 但教育<=0 不该进 CASE 0',
   );
-  assert.equal(fixture1.store.get('cstr:1:60'), undefined);
+  // cstr:60 由 addCharacter 预置空串（CStr.yml 的声明集），落空时仍是它
+  assert.equal(fixture1.store.get('cstr:1:60'), '');
 
   // 开放>=-2 但教育>0：&& 时不该进 CASE 0，应落到 CASE 3
   const fixture2 = create_era_fixture();
@@ -303,7 +304,7 @@ test('set_suit_selfcall：CASE 2（教育>2）姿态四态与落空回退', () =
   add_chara(fixture, 1);
   set_talents(fixture, 1, { 163: 1, 172: 1 }); // edu=4, attitude=1
   assert.equal(load(fixture).set_suit_selfcall(1, 1, seq([])), -1);
-  assert.equal(fixture.store.get('cstr:1:60'), undefined);
+  assert.equal(fixture.store.get('cstr:1:60'), '', '四档落空：仍是预置的空串');
 });
 
 test('set_suit_selfcall：CASE 2 姿态>2 是严格边界，姿态=3 才走本少爷/本小姐', () => {
@@ -334,7 +335,7 @@ test('set_suit_selfcall：CASE 3 命中时的男女用词与全档落空', () =>
   add_chara(fixture, 1);
   set_talents(fixture, 1, { 15: 1 });
   assert.equal(load(fixture).set_suit_selfcall(1, -1, seq([])), -1);
-  assert.equal(fixture.store.get('cstr:1:60'), undefined);
+  assert.equal(fixture.store.get('cstr:1:60'), '', '全档落空：仍是预置的空串');
 });
 
 test('set_suit_selfcall：CASE 3 六个边界逐条表驱动（教育/姿态/开放各自的下界与上界，每界一行「正好在界」+一行「刚出界」，另加一行三维居中的正例）', () => {
@@ -417,8 +418,8 @@ test('set_suit_selfcall：CASE 3 六个边界逐条表驱动（教育/姿态/开
       assert.equal(local, -1, `${msg}，不应命中 CASE 3，落到 default`);
       assert.equal(
         fixture.store.get('cstr:1:60'),
-        undefined,
-        `${msg}，不应命中 CASE 3，不写 cstr`,
+        '',
+        `${msg}，不应命中 CASE 3，cstr 仍是预置的空串`,
       );
     }
   }

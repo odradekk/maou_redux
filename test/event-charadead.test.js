@@ -393,5 +393,9 @@ test('接入：存活路径 RESULT == 0 → SELF_CHECK 照常执行', async () =
   assert.equal(pending, 'TURNEND');
   // SELF_CHECK 跑过（无调教后行为命中 → 静默）+ 珠结算到达（死亡才会跳过）
   assert(fixture.text_lines().includes('以上的点数变化了。'));
-  assert.equal(fixture.store.get('tflag:13'), undefined, '事件码 999 未误写');
+  assert.equal(
+    fixture.store.get('tflag:13'),
+    0,
+    '事件码 999 未误写（预置的 0 保持）',
+  );
 });

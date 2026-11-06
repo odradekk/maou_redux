@@ -4249,7 +4249,11 @@ test('交谈二次：不写 CFLAG / 插着不拔情话 / 沉默', async () => {
     '你让琼作个自我介绍。',
     '但琼把头转向一边什么话也不说。',
   ]);
-  assert.equal(silent.store.get('tflag:32'), undefined, '沉默支不写 TFLAG:32');
+  assert.equal(
+    silent.store.get('tflag:32'),
+    0,
+    '沉默支不写 TFLAG:32（预置的 0 保持）',
+  );
   assert.equal(silent.store.get('cflag:31:357'), 1, '交谈二次沉默也不写 CFLAG');
 });
 
