@@ -11,6 +11,9 @@
  *   2. 狂王加入后的具体数值（工单验收的第一条）；
  *   3. 旧存档读档时补进哪些槽（ADR-0006 判定「是否需要迁移代码」的依据）。
  *
+ * #834 起 ex_talent 也走这条通道（角色专属的 EX 素质，原本由 chara-ex.js 的
+ * 八个注册实现在加入时手工写），所以第一项的表清单里含它。
+ *
  * 引擎不在场（无 app.asar）时整文件的引擎用例 skip 并留警告，跳过数计入
  * test/engine-skip-baseline.txt；文件级的 yml 形状用例不依赖引擎，任何环境都跑。
  */
@@ -133,7 +136,7 @@ engine_test(
     // 这一类。
     const blank = (table, value) =>
       value === undefined || value === '' || Number(value) === 0;
-    for (const table of ['cflag', 'cstr', 'mark', 'talent']) {
+    for (const table of ['cflag', 'cstr', 'ex_talent', 'mark', 'talent']) {
       const used = new Set();
       for (const cid of Object.keys(loader.static_data.chara)) {
         const preset = preset_of(loader, cid, table);
@@ -159,7 +162,7 @@ engine_test(
     let checked = 0;
     for (const cid of Object.keys(loader.static_data.chara)) {
       assert.equal(adder.add(Number(cid)), true, `角色 ${cid} 必须能加入`);
-      for (const table of ['cflag', 'mark', 'talent']) {
+      for (const table of ['cflag', 'ex_talent', 'mark', 'talent']) {
         const preset = preset_of(loader, cid, table);
         for (const index of declared(table)) {
           const want = Number(preset[index] ?? 0);

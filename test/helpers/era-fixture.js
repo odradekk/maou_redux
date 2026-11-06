@@ -784,9 +784,11 @@ function create_era_fixture() {
   // 引擎读 `<表>name:<序号>` 直接取 fieldNames[表][序号].n：yml 里有这张表
   // 而序号未声明时抛 TypeError，不返回 undefined（#739）。用例显式播种的
   // 名字键算作已声明，用于测试 yml 里没有的条目；绕开已知缺陷的播种要在
-  // 用例里注明工单号
+  // 用例里注明工单号。
+  // 表名允许下划线（ex_talent、c_relation_sub 这类扩展表，#834）：引擎按
+  // 「地址以 name / keys 结尾」切表名，不看字符集。
   const is_undeclared_name = (var_name) => {
-    const match = /^([a-z]+)name:(\d+)$/.exec(var_name);
+    const match = /^([a-z0-9_]+)name:(\d+)$/.exec(var_name);
     if (match === null || store.has(var_name)) {
       return false;
     }
@@ -798,13 +800,13 @@ function create_era_fixture() {
   // 序号集。store 命中优先（用例播种的键与假名字仍然有效），播种的名字键
   // 也算作声明——引擎里两者同源于同一张名字表，夹具的播种是它的代身。
   function yml_derived_value(var_name) {
-    const name_match = /^([a-z]+)name:(\d+)$/.exec(var_name);
+    const name_match = /^([a-z0-9_]+)name:(\d+)$/.exec(var_name);
     if (name_match !== null) {
       return yml_name_table(name_match[1])?.id_to_name.get(
         Number(name_match[2]),
       );
     }
-    const keys_match = /^([a-z]+)keys$/.exec(var_name);
+    const keys_match = /^([a-z0-9_]+)keys$/.exec(var_name);
     if (keys_match === null) {
       return undefined;
     }
@@ -1627,14 +1629,18 @@ function create_era_fixture() {
       const preset = chara_presets.get(source);
       store.set(`callname:${target}:-1`, preset.name);
       store.set(`callname:${target}:-2`, preset.callname ?? preset.name);
-      // 扩展表 portcflag 的预设同样抄到目标角色（#884）：引擎的 addCharacter
-      // 对登记过的扩展表逐字段赋值，双号写法抄的是源预设的值——游戏侧读
-      // 「预设模板」时靠它区分角色号与预设号。写 store 不经 era.set，理由同
-      // 上面两条 callname。
-      for (const [field, value] of Object.entries(preset.portcflag ?? {})) {
-        // 平表按归一后的地址落键（名字翻成序号），与 era.get/era.set 同一个
-        // 口径——种子里的「预设模板」要按 portcflag:角色:2 落下才读得到
-        store.set(normalize_address(`portcflag:${target}:${field}`), value);
+      // 扩展表的预设同样抄到目标角色（#884 的 portcflag、#834 的 ex_talent）：
+      // 引擎的 addCharacter 对登记过的扩展表逐字段赋值，双号写法抄的是源预设
+      // 的值——游戏侧读「预设模板」时靠它区分角色号与预设号，角色专属的
+      // EX 素质则整批由它落库（加入点不再手工写）。引擎还会给登记过、没有
+      // 预设的序号填 0，夹具不造那些键（见 seed_chara 的说明）。写 store 不经
+      // era.set，理由同上面两条 callname。
+      for (const table of ['portcflag', 'ex_talent']) {
+        for (const [field, value] of Object.entries(preset[table] ?? {})) {
+          // 平表按归一后的地址落键（名字翻成序号），与 era.get/era.set 同一个
+          // 口径——种子里的「预设模板」要按 portcflag:角色:2 落下才读得到
+          store.set(normalize_address(`${table}:${target}:${field}`), value);
+        }
       }
       return true;
     });
@@ -2090,6 +2096,10 @@ function create_era_fixture() {
      * 文件每张预设都带这一行，夹具的种子是它们的简化替身，缺了它加入的角色
      * 就读不到自己的预设号。用例要种子预设与角色号不一致时显式给
      * `portcflag: { 预设模板: N }`（双号加入的后代就是这么来的）。
+     *
+     * `ex_talent` 段（#834）按引擎的 addCharacter 抄进目标角色：角色专属的
+     * EX 素质由它落库，加入点不再写。引擎另会把登记过、没有预设的序号填 0，
+     * 夹具不造那些键——游戏侧一律真值判断，0 与未落键同结论。
      */
     seed_chara(chara_id, preset) {
       chara_presets.set(chara_id, {

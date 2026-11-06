@@ -461,7 +461,14 @@ const PLURAL_ITEMS = [24, 25, 26, 27, 28, 34, 35, 53, 55];
 /** 复数购买的第二段条件 `序号 >= 60 && 序号 != 90`（陷阱与戒指） */
 const PLURAL_RANGE_START = 60;
 const PLURAL_EXCLUDE = 90;
-/** 当场使用型道具 */
+/**
+ * 当场使用型道具。
+ *
+ * 32 号在这张名单里没有落点：它没有名字与价格（yml/Item.yml 不登记）、
+ * saleitem_check 从不点亮它的在售位、apply_use_effect 也没有对应分支——
+ * 补一条只能凭空造价，故不登记，只保留它在分派名单里（对账用例钉住
+ * 「没有 yml 条目的分派成员只有它」）。
+ */
 const USE_ITEMS = [29, 30, 31, 32, 33, 40, 41];
 
 /**
@@ -1101,4 +1108,10 @@ module.exports = {
   technique_of_master,
   technique_of_master_up,
   SHOP_ITEM_COUNT,
+  // 三张记账表与当场使用型名单：记账额与 yml/Item.yml 的 price 是两份真相，
+  // 对账用例要直接拿这两份比，抄一份到测试里就变成三份
+  SIMPLE_LEDGER,
+  USE_LEDGER,
+  PLURAL_PRICES,
+  USE_ITEMS,
 };

@@ -118,10 +118,13 @@ engine_test(
         callname: '你',
         base: { 0: 10000, 1: 10000, 2: 10000 },
         talent: { 1: 1, 122: 1 },
+        // 角色专属的 EX 素质（#834）：魔王的高贵标识写在预设里，由
+        // addCharacter 套用，加入点不再手工赋值
+        ex_talent: { 200: 1 },
         // 移植自建的扩展表预设（#884）：魔王的预设号就是 0
         portcflag: { 2: 0 },
       },
-      '角色 0 的预设内容（基礎全满、素質 1/122、portcflag 预设模板）',
+      '角色 0 的预设内容（基礎全满、素質 1/122、ex_talent 魔王、portcflag 预设模板）',
     );
 
     const adder = create_add_character(loader.static_data);

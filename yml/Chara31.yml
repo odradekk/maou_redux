@@ -63,5 +63,9 @@
   "317": 10
 "ABL":
   "21": 3
+# 角色专属标记（EX_TALENT:101 = 琼）：#834 起写在预设里，由引擎在
+# addCharacter 时套用，加入点不再手工赋值。序号语义见 yml/Ex_Talent.yml。
+"ex_talent":
+  "101": 1
 "portcflag":
   "预设模板": 31

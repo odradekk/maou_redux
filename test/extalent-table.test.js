@@ -20,6 +20,9 @@
  *   - ex_talent：登记后 addCharacter 建桶、chara-ex.js 同款写入被引擎
  *     接受；未登记的反面；存档往返；旧档缺桶时 fillData 为已加入角色
  *     重建桶（引擎 4.8.3 起，4.8.0 是死分支 #13）。
+ *   - 名字与预设（#834）：yml/Ex_Talent.yml 登记 17 个名字后，角色加入时的
+ *     ex_talent 终值与「chara-ex.js 手工赋值」时代逐键相同；读档的 fillData
+ *     只补缺、不覆盖已有值。
  *
  * 引擎不在场（无 app.asar）时引擎级用例 skip 并留警告；文件级用例始终跑。
  */
@@ -54,6 +57,29 @@ const BATCH_IDS = [
 
 // 本工单登记的两张二维扩展表（_fixed.json 的登记集）
 const EXTENDED_TABLES = { portcflag: 2, ex_talent: 2 };
+
+// yml/Ex_Talent.yml 登记的全部序号（#834 从头注挪进来的 17 个名字）。
+// 排序即增长序，与 yml 里的书写顺序一致
+const EX_TALENT_IDS = [
+  0, 1, 2, 3, 4, 101, 102, 103, 104, 200, 223, 777, 801, 901, 902, 903, 904,
+];
+
+// 带 EX 素质预设的八个角色（#834 之前由 chara-ex.js 的注册实现在加入时写）
+const EX_TALENT_PRESET_IDS = [0, 31, 32, 33, 34, 35, 223, 777];
+
+// 「改动前」的分行赋值：chara-ex.js 八个注册实现逐字照抄，作为逐键对照的
+// 旧路径输入。写在这边而不是从代码里取——它描述的正是本工单删掉的那段代码，
+// 留在实现里就没有可对照的第二份了
+const OLD_JOIN_WRITES = {
+  0: { 200: 1 },
+  31: { 101: 1 },
+  32: { 102: 1 },
+  33: { 103: 1 },
+  34: { 4: 1, 801: 1, 901: 1 },
+  35: { 104: 1 },
+  223: { 223: 1 },
+  777: { 777: 1 },
+};
 
 function read_yml(name) {
   return fs.readFileSync(path.join(YML_DIR, name), 'utf8');
@@ -146,6 +172,23 @@ function load_batch_presets(extended_tables = EXTENDED_TABLES) {
   return loader;
 }
 
+/**
+ * 装载库内全部角色文件（含 0/17/35 这些不在常规批里的）。
+ * 带 EX 素质预设的八个角色都在其中，逐键对照要用真实预设而不是替身。
+ */
+function load_all_chara_presets(extended_tables = EXTENDED_TABLES) {
+  const loader = create_chara_loader({ extended_tables });
+  attach_variable_tables(loader, repo_tables);
+  for (const file of fs.readdirSync(YML_DIR)) {
+    if (!/^Chara.*\.yml$/i.test(file)) {
+      continue;
+    }
+    loader.load_rows(engine.parse_data_file(read_yml(file), 'yml', 'chara'));
+  }
+  assert.deepEqual(loader.errors, [], '角色文件必须零装载错误');
+  return loader;
+}
+
 engine_test(
   '消费验证：addCharacter 加入后预设值确实可读（base/maxbase/talent/abl/mark/callname）',
   () => {
@@ -232,7 +275,7 @@ engine_test(
 );
 
 engine_test(
-  'ex_talent：登记后 addCharacter 为每个角色建桶，chara-ex 同款写入被引擎接受',
+  'ex_talent：登记后 addCharacter 按登记集建槽，加入后的终值与手工赋值时代逐键相同',
   () => {
     const loader = load_batch_presets();
     const adder = create_add_character(loader.static_data, {
@@ -240,8 +283,14 @@ engine_test(
     });
     assert.equal(adder.add(31), true);
     // #21 已知缺口的修复证明：表落库前这句写入静默丢弃（chara-ex.js 头注），
-    // 落库后 data.ex_talent[31] 在、写入落值
-    assert.deepEqual(adder.data.ex_talent[31], {}, 'addCharacter 必须建桶');
+    // 落库后 data.ex_talent[31]（琼）按登记集建槽，琼自己的预设落 1、其余 0
+    assert.deepEqual(
+      Object.entries(adder.data.ex_talent[31])
+        .filter(([, value]) => value !== 0)
+        .map(([id, value]) => [Number(id), value]),
+      [[101, 1]],
+      'addCharacter 按登记集建槽，只有角色预设那一格非零',
+    );
     assert.equal(
       engine.set_var.call(
         {
@@ -258,8 +307,69 @@ engine_test(
       1,
     );
     assert.equal(adder.data.ex_talent[31][101], 1);
+
+    // —— 逐键对照（#834）：角色加入后的 EX 素质与「chara-ex.js 手工赋值」
+    // 时代相同。
+    //
+    // 两遍跑的是同一份角色预设：旧路径是 OLD_JOIN_WRITES 逐行写下的值（本工单
+    // 删掉的那段代码），新路径交给引擎的 addCharacter 套 yml/Chara*.yml 的
+    // ex_talent 段。终值 JSON 逐键 diff——旧路径写过的每个键必须同值；新路径
+    // 多出来的键只能是被登记、但没有预设的 0（所有消费者都是真值判断，0 与
+    // undefined 同结论，get_ex_kojo_num 扫 101..800 的写法也在内）。
+    {
+      const all = load_all_chara_presets();
+      const engine_adder = create_add_character(all.static_data, {
+        extended_tables: EXTENDED_TABLES,
+      });
+      const declared = Object.values(all.static_data[TABLE_NAME])
+        .map(Number)
+        .sort((a, b) => a - b);
+      assert.deepEqual(declared, EX_TALENT_IDS, '登记集必须是那 17 个序号');
+
+      // 去掉「值为 0 的登记空槽」后的视图，就是旧路径的 JSON
+      const nonzero = (bucket) =>
+        Object.fromEntries(
+          Object.entries(bucket).filter(([, value]) => value !== 0),
+        );
+
+      for (const cid of EX_TALENT_PRESET_IDS) {
+        assert.equal(engine_adder.add(cid), true, `角色 ${cid} 必须能加入`);
+        const after = engine_adder.data.ex_talent[cid];
+        assert.deepEqual(
+          nonzero(after),
+          OLD_JOIN_WRITES[cid],
+          `角色 ${cid} 的 EX 素质终值必须与手工赋值时代逐键相同`,
+        );
+        assert.deepEqual(
+          Object.keys(after)
+            .map(Number)
+            .sort((a, b) => a - b),
+          declared,
+          `角色 ${cid} 的键集合必须是登记集（空槽以 0 存在）`,
+        );
+      }
+
+      // 反向：不在八个之列的角色一个非零 EX 素质都没有（预设没有蔓延）
+      for (const cid of Object.keys(all.static_data.chara)) {
+        if (EX_TALENT_PRESET_IDS.includes(Number(cid))) {
+          continue;
+        }
+        assert.equal(
+          engine_adder.add(Number(cid)),
+          true,
+          `角色 ${cid} 必须能加入`,
+        );
+        assert.deepEqual(
+          nonzero(engine_adder.data.ex_talent[cid]),
+          {},
+          `角色 ${cid} 不该有 EX 素质`,
+        );
+      }
+    }
   },
 );
+
+// —— 已有值不被读档覆盖（??=）：见下面「存档往返」用例 ——
 
 engine_test(
   'ex_talent 未登记的反面：引擎按一维自动生效，桶不建、写入静默 undefined',
@@ -294,7 +404,7 @@ engine_test(
 engine_test(
   '存档往返：真 EraApi 实例（临时目录、真文件）——加入 → 写 ex_talent → 存 → 清 data → 读 → 取回',
   async () => {
-    const loader = load_batch_presets();
+    const loader = load_all_chara_presets();
     const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'ere-extalent-'));
     try {
       const fake_era = {
@@ -324,33 +434,52 @@ engine_test(
       const api = new engine.era_api(fake_era);
 
       // 新游戏路径：resetData 建 data + fillData 建扩展表顶层桶，并自动
-      // 加入 defaultChara 0（角色 0 的 per-chara 桶随之建立）；
+      // 加入 defaultChara 0（角色 0 的 per-chara 桶随之按预设建槽）；
       // addCharacter(31) 再建 31 的桶（引擎真方法，不是镜像）
       api.resetData();
       assert.deepEqual(
-        fake_era.data.ex_talent,
-        { 0: {} },
-        'fillData 建顶层桶，resetData 自动加入的角色 0 已带桶',
+        Object.entries(fake_era.data.ex_talent[0])
+          .filter(([, value]) => value !== 0)
+          .map(([id, value]) => [Number(id), value]),
+        [[200, 1]],
+        'fillData 建顶层桶，resetData 自动加入的角色 0 已按预设建槽',
       );
       assert.equal(api.addCharacter(31), true);
       assert.deepEqual(api.get('base:31:0'), 1800, '预设值经引擎寻址可读');
 
-      // chara-ex 同款写入（chara_ex 的 31 号实现：EX_TALENT:101 = 琼）
-      assert.equal(api.set('ex_talent:31:101', 1), 1);
+      // 玩家侧的写入（灵魂错位等级）：与预设无关的值同样要能往返
+      assert.equal(api.set('ex_talent:31:0', 2), 2);
+      // 玩家把琼的本人标记清零：读档补齐用的是 `桶[序号] ?? 预设`，
+      // 这个 0 必须原样留着，不能被角色预设复活（#834 的存档兼容判据）
+      assert.equal(api.set('ex_talent:31:101', 0), 0);
+      assert.equal(api.addCharacter(35), true);
 
       assert.equal(await api.saveData(1, 'EX_TALENT 往返'), true);
-      const saved = JSON.parse(
-        fs.readFileSync(path.join(tmp, 'sav', 'save1.sav'), 'utf8'),
-      );
+      const save_path = path.join(tmp, 'sav', 'save1.sav');
+      const saved = JSON.parse(fs.readFileSync(save_path, 'utf8'));
       assert.deepEqual(
-        saved.ex_talent[31],
-        { 101: 1 },
-        '存档载荷里必须有扩展角色表',
+        Object.entries(saved.ex_talent[31])
+          .filter(([, value]) => value !== 0)
+          .map(([id, value]) => [Number(id), value])
+          .sort(),
+        [[0, 2]],
+        '存档载荷里必须有扩展角色表，且带着玩家写值',
       );
+      // 旧档形状：把两格删掉，等价于「0.1.0 时代从没写过这个槽」
+      delete saved.ex_talent[31][102];
+      delete saved.ex_talent[35][104];
+      fs.writeFileSync(save_path, JSON.stringify(saved));
 
       fake_era.data = {};
       assert.equal(await api.loadData(1), true);
-      assert.equal(api.get('ex_talent:31:101'), 1);
+      assert.equal(api.get('ex_talent:31:0'), 2, '玩家写值随存档往返');
+      assert.equal(api.get('ex_talent:35:104'), 1, '缺的槽按角色预设补 1');
+      assert.equal(api.get('ex_talent:31:102'), 0, '没有预设的登记序号补 0');
+      assert.equal(
+        api.get('ex_talent:31:101'),
+        0,
+        '玩家清零的标记不被预设复活（??= 不覆盖已有值）',
+      );
       assert.equal(api.get('base:31:0'), 1800, '预设随存档往返不丢');
     } finally {
       fs.rmSync(tmp, { recursive: true, force: true });
@@ -507,3 +636,101 @@ engine_test(
     }
   },
 );
+
+// —— 已有值不被读档覆盖：见上面「存档往返」与「逐键对照」两处的 ??= 断言 ——
+
+// —— yml 形状：登记的 17 条带中文键 + 英文 snake_case 的 name + type（#820）——
+
+/**
+ * 解析一张 yml 名字表里的「键 / id / name / type」四元组。
+ * @param {string} file yml 文件名
+ * @returns {Array<{ key: string, id: number, name?: string, type?: string }>}
+ */
+function parse_entries(file) {
+  const entries = [];
+  for (const match of read_yml(file).matchAll(
+    /^"([^"]+)":\r?\n((?: {2}.+\r?\n)+)/gm,
+  )) {
+    const entry = { key: match[1] };
+    for (const line of match[2].split(/\r?\n/)) {
+      const field = /^ {2}(id|name|type): (.+)$/.exec(line);
+      if (!field) {
+        continue;
+      }
+      entry[field[1]] =
+        field[1] === 'id' ? Number(field[2]) : field[2].replace(/"/g, '');
+    }
+    entries.push(entry);
+  }
+  return entries;
+}
+
+test('Ex_Talent.yml 的 17 条带中文键 + 英文 snake_case 的 name + number 类型（#834）', () => {
+  const entries = parse_entries('Ex_Talent.yml');
+  assert.deepEqual(
+    entries.map((entry) => entry.id).sort((a, b) => a - b),
+    EX_TALENT_IDS,
+    '登记集必须是全库实际用到的 17 个序号',
+  );
+  for (const entry of entries) {
+    assert.match(
+      entry.name ?? '',
+      /^[a-z][a-z0-9_]*$/,
+      `ex_talent:${entry.id}「${entry.key}」的 name 必须是英文 snake_case，实为 ${entry.name}`,
+    );
+    assert.equal(entry.type, 'number', `ex_talent:${entry.id} 的 type`);
+  }
+  const names = entries.map((entry) => entry.name);
+  assert.equal(new Set(names).size, names.length, 'name 不得重复');
+});
+
+// —— 角色预设侧：八个角色文件的 ex_talent 段逐项固定（无引擎也跑）——
+//
+// 引擎级用例证明「套用后的终值」与手工赋值时代相同（上面那条逐键对照），
+// 这一条证明「预设本身」也对得上：两处各守一段，预设写错时不至于要先有引擎
+// 才能发现。
+
+/**
+ * 读一张角色文件的 ex_talent 段（`"ex_talent":` 下缩进一层的数字键）。
+ * @param {string} file yml 文件名
+ * @returns {Object<number, number>}
+ */
+function ex_talent_preset(file) {
+  const block = /^"ex_talent":\r?\n((?: {2}.*\r?\n)*)/m.exec(read_yml(file));
+  const preset = {};
+  if (block === null) {
+    return preset;
+  }
+  for (const line of block[1].split(/\r?\n/)) {
+    const field = /^ {2}"(\d+)": (\d+)$/.exec(line);
+    if (field !== null) {
+      preset[Number(field[1])] = Number(field[2]);
+    }
+  }
+  return preset;
+}
+
+test('八个角色文件的 ex_talent 预设与手工赋值时代逐项相同（#834）', () => {
+  for (const cid of EX_TALENT_PRESET_IDS) {
+    assert.deepEqual(
+      ex_talent_preset(`Chara${cid}.yml`),
+      OLD_JOIN_WRITES[cid],
+      `Chara${cid}.yml 的 ex_talent 预设必须与 chara-ex.js 原注册实现写的槽一致`,
+    );
+  }
+  // 其余角色文件不带 ex_talent 段：预设不该蔓延到没有专属标记的角色
+  for (const file of fs.readdirSync(YML_DIR)) {
+    if (!/^Chara.*\.yml$/i.test(file)) {
+      continue;
+    }
+    const cid = Number(/^Chara(\d+)\.yml$/i.exec(file)?.[1]);
+    if (EX_TALENT_PRESET_IDS.includes(cid)) {
+      continue;
+    }
+    assert.deepEqual(
+      ex_talent_preset(file),
+      {},
+      `${file} 不该带 ex_talent 预设`,
+    );
+  }
+});
