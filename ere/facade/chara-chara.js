@@ -254,6 +254,36 @@ class CharaFacade {
   }
 
   /**
+   * 胸围差（cflag:cid:458）
+   * CFLAG:458 胸围差（实际值 / 100 的缓存）
+   * @returns {number}
+   */
+  get 胸围差() {
+    return era.get(`cflag:${this.cid}:458`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 胸围差(v) {
+    era.set(`cflag:${this.cid}:458`, v);
+  }
+
+  /**
+   * 下胸围（cflag:cid:459）
+   * CFLAG:459 下胸围（实际值 / 100 的缓存）
+   * @returns {number}
+   */
+  get 下胸围() {
+    return era.get(`cflag:${this.cid}:459`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 下胸围(v) {
+    era.set(`cflag:${this.cid}:459`, v);
+  }
+
+  /**
    * 结婚对象（cflag:cid:601）
    * CFLAG:601 = 結婚相手
    * @returns {number}
@@ -281,6 +311,51 @@ class CharaFacade {
    */
   set 结婚爱情(v) {
     era.set(`cflag:${this.cid}:602`, v);
+  }
+
+  /**
+   * 血缘名字编号（cflag:cid:604）
+   * CFLAG:604 血縁関係の名前番号（605 と対）
+   * @returns {number}
+   */
+  get 血缘名字编号() {
+    return era.get(`cflag:${this.cid}:604`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 血缘名字编号(v) {
+    era.set(`cflag:${this.cid}:604`, v);
+  }
+
+  /**
+   * 血缘关系数据（cflag:cid:605）
+   * CFLAG:605 血縁関係の圧縮データ（個位 = 関係）
+   * @returns {number}
+   */
+  get 血缘关系数据() {
+    return era.get(`cflag:${this.cid}:605`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 血缘关系数据(v) {
+    era.set(`cflag:${this.cid}:605`, v);
+  }
+
+  /**
+   * 结婚对象名字编号（cflag:cid:609）
+   * CFLAG:609 結婚相手の名前番号（601 と対）
+   * @returns {number}
+   */
+  get 结婚对象名字编号() {
+    return era.get(`cflag:${this.cid}:609`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 结婚对象名字编号(v) {
+    era.set(`cflag:${this.cid}:609`, v);
   }
 
   /**
