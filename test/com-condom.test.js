@@ -234,7 +234,8 @@ test('每次问 + 有套 + [1] 不戴：不消耗、放行', async () => {
   fixture.set_inputs(1);
   assert.equal(await condom.confirm_condom(), 1);
   assert.equal(fixture.store.get('item:24'), 3);
-  assert.equal(fixture.store.get('tequip:31:35'), undefined);
+  // TEQUIP:35 由 addCharacterForTrain 按声明集预置 0，这里不应被写成 1
+  assert.equal(fixture.store.get('tequip:31:35'), 0);
 });
 
 test('每次问 + 无套：两段 IF 均不进（静默返回 1——不问也不提示）', async () => {

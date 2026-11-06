@@ -2730,7 +2730,7 @@ export default [
     find: "  era.set('tflag:15', e); // 死斗场怪物が射精フラグ（source-check/A 头消费）",
     replace: '  // 变异：TFLAG:15 写删',
     tests: ['com-colosseum'],
-    must_mention: '2880 < 10000 → E = 0',
+    must_mention: 'E = 0 也要把 TFLAG:15 写下来（写 0 ≠ 不写）',
   },
   {
     desc: 'M1038 com207 的 JUMP com51 尾调用改不设 SELECTCOM',
@@ -3381,7 +3381,7 @@ export default [
     replace:
       '  let e = 1; // 变异：GOTO 命中默认值误设为 1\n  if ((era.get(`maxbase:${player_master}:4`) || 0) !== 0) {',
     tests: ['com-hardcore'],
-    must_mention: 'E 默认值 0',
+    must_mention: 'E 停在缺省 0',
   },
   {
     desc: 'M1245 equip_com89 射精路径误跳过 TFLAG:16 尾段写入（#226）',
@@ -3390,7 +3390,8 @@ export default [
     replace:
       '  if ((era.get(`maxbase:${player_master}:4`) || 0) !== 0)\n    game.event.犬射精或处刑口上 = e; // 变异：GOTO 命中时误跳过\n  const t_final = era_flag.tentacle_round;',
     tests: ['com-hardcore'],
-    must_mention: 'E 默认值 0',
+    must_mention:
+      '尾段无条件写下 TFLAG:16（E = 0 也要写，跳过射精检查不等于跳过它）',
   },
   {
     desc: 'M1246 get_adv_com CASE 80 上回合是 3P 条件删除（#226）',

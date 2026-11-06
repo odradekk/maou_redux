@@ -217,7 +217,8 @@ test('com11：处女确认取消保持回合取消；满月取消不写数值', 
   moon.era_flag.date = 15;
   moon.fixture.set_inputs(1);
   assert.equal(await run_com(moon, 11), 0);
-  assert.equal(moon.fixture.store.get('source:31:1'), undefined);
+  // 取消回合不写源值（Source.yml 的声明集预置 0）
+  assert.equal(moon.fixture.store.get('source:31:1'), 0);
 });
 
 test('com11：装着时写私处经验、触手污渍与 T 清零', async () => {

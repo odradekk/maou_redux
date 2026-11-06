@@ -781,6 +781,29 @@ function create_era_fixture() {
     }
   };
 
+  // 引擎的「登记即预置」：beginTrain / addCharacterForTrain / addCharacter /
+  // fillData 都按**静态声明集**给数据层补缺省值（原文见各调用点）。声明集
+  // 就是 yml 里解析出的序号；判据是「解析出至少一条条目」而不是「文件存在」
+  // ——只有注释的空表在引擎眼里同样没有 staticData[表]，一格都不补（#970 的
+  // 分界；本项目 tcvar 连 TCvar.yml 都没有）。返回 undefined 表示没有声明集。
+  const declared_ids = (table) => {
+    const ids = yml_declared_ids(table);
+    return ids === undefined || ids.size === 0 ? undefined : [...ids];
+  };
+
+  // 引擎 fillData 的 flag 段（resetData 与 loadData 共用）：
+  //   `Object.values(this.staticData.flag||{}).forEach(e => this.data.flag[e] ??= 0)`
+  // ——声明序号缺值补 0，写过的值不动。夹具此前一格都不补：真机上
+  // `era.get('flag:80')` 是 0、测试里是 undefined，#830 把 flag 的声明集从
+  // 89 条补到 166 条之后这个偏差开始骗人（#977）。
+  const fill_data = () => {
+    for (const id of declared_ids('flag') ?? []) {
+      if (!store.has(`flag:${id}`)) {
+        store.set(`flag:${id}`, 0);
+      }
+    }
+  };
+
   // 引擎读 `<表>name:<序号>` 直接取 fieldNames[表][序号].n：yml 里有这张表
   // 而序号未声明时抛 TypeError，不返回 undefined（#739）。用例显式播种的
   // 名字键算作已声明，用于测试 yml 里没有的条目；绕开已知缺陷的播种要在
@@ -993,6 +1016,9 @@ function create_era_fixture() {
     // 引擎版本闸门逐字（含 truthy 短路）：拒读 = false，数据不动
     if (record.version && !(record.version < save_gate.allow_version)) {
       restore_store(record.snapshot);
+      // 引擎 `this.era.data = r, this.fillData()`：读进来的档缺登记序号时
+      // 由 fillData 补缺省，老档因此也能读到 0 而不是 undefined
+      fill_data();
       return true;
     }
     return false;
@@ -1053,11 +1079,12 @@ function create_era_fixture() {
   //     且下限 0 时 loadData 拒（0 falsy 短路）、loadGlobal 收（0 是合法版本）；
   //     version 0 且下限 1 时两者都拒但机制相反（比较命中 vs 短路漏过会放行）。
   //     两条用例在 test/fixture.test.js 各自钉住，不许共用断言（验收清单明写）。
-  //   - 静态 global 键：引擎按 yml/Global.yml 声明表补 0 / 清 0，夹具无声明
-  //     表——loadGlobal 灌回后 store 里不在文件中的旧键直接删（引擎整份替换
-  //     `this.era.global=n`，未声明键同样消失）；resetGlobal 对现存 global:*
-  //     变量键一律置 0（声明键的引擎语义；未声明键引擎置 undefined，夹具以 0
-  //     代之——getter 一律 || 0 缺省，两侧可观察等价）。
+  //   - 静态 global 键：引擎按 yml/Global.yml 声明表补 0 / 清 0，夹具的
+  //     global 域不镜像这层声明集预置——loadGlobal 灌回后 store 里不在文件中
+  //     的旧键直接删（引擎整份替换 `this.era.global=n`，未声明键同样消失）；
+  //     resetGlobal 对现存 global:* 变量键一律置 0（声明键的引擎语义；未声明
+  //     键引擎置 undefined，夹具以 0 代之——Global.yml 的五条读者全走
+  //     `|| 0`，两侧可观察等价）。
   //   - 槽位对账 list_save_files（引擎内部 listSaveFiles，不在 SDK 面上，
   //     ere/era-electron.js 无此方法）：文件在 = save_files 有该槽。文件在＋
   //     备注缺 → 'UNNAMED SAVE FILE'；文件在＋备注带前缀 → 剥前缀（引擎
@@ -1157,8 +1184,8 @@ function create_era_fixture() {
         rebuilt = true;
       } else {
         restore_global(global_sav);
-        // 声明槽补 0（引擎 forEach）：夹具无声明表，缺失即 undefined，
-        // getter || 0 缺省等价（见段首「镜像要点」）
+        // Global.yml 的声明槽补 0（引擎 forEach）不镜像：global 域的读者
+        // 一律 `|| 0`，缺键与 0 可观察等价（见段首「镜像要点」）
       }
       if (mismatch) {
         // 引擎逐字 `throw new Error`——裸抛无 message，装载循环按报错
@@ -1339,10 +1366,13 @@ function create_era_fixture() {
   //     过的角色），所以读没加入的角色的具名属性是 `undefined[序号]`，与引擎
   //     一样抛 TypeError（#902 第三条验收）。**视图不自动建行**：行在不在是
   //     语义，不是便利。
-  //   - 值缺省不镜像：引擎在 resetData 之后由 fillData 把声明过的序号填成 0、
-  //     resetGlobal 把 Global.yml 的声明序号填成 0；夹具保持平表的稀疏语义
-  //     （没写过就是 undefined，与 era.get 一致，游戏代码按 `|| 0` 读）。
-  //     比对用例因此只比结构（表与行的存在性）和写过的值，不比缺省值。
+  //   - 值缺省只镜像调教域与 flag：引擎在 resetData / loadData 之后由
+  //     fillData 把 flag 的声明序号填成 0、在建表/加角色时把调教域表的声明
+  //     序号填成 0，夹具按同一份声明集补（fill_data / join_train_chara /
+  //     beginTrain，#977）；其余表的逐角色预设（cflag / abl / talent / base
+  //     一类）仍是平表的稀疏语义——没写过就是 undefined，与 era.get 一致，
+  //     游戏代码按 `|| 0` 读。比对用例因此只比结构（表与行的存在性）和写过
+  //     的值，不比那些表的缺省值。
   const DATA_TABLES = [
     'abl',
     'base',
@@ -1629,6 +1659,14 @@ function create_era_fixture() {
       const preset = chara_presets.get(source);
       store.set(`callname:${target}:-1`, preset.name);
       store.set(`callname:${target}:-2`, preset.callname ?? preset.name);
+      // cstr 是字符串表：引擎给 CStr.yml 的每个声明序号取预设值，
+      // **缺省是空串不是 0**（`data.cstr[n][e] = …preset ?? ""`）。夹具此前
+      // 一格都不写，`era.get('cstr:x:60')` 读到的 undefined 与真机的 ""
+      // 在 `|| 缺省` 的读者面前同义、在 `!== undefined` 一类判断面前不同
+      // （#977）。30 号在源码里读写、CStr.yml 没有登记，不预置。
+      for (const field of declared_ids('cstr') ?? []) {
+        store.set(`cstr:${target}:${field}`, preset.cstr?.[field] ?? '');
+      }
       // 扩展表的预设同样抄到目标角色（#884 的 portcflag、#834 的 ex_talent）：
       // 引擎的 addCharacter 对登记过的扩展表逐字段赋值，双号写法抄的是源预设
       // 的值——游戏侧读「预设模板」时靠它区分角色号与预设号，角色专属的
@@ -1700,24 +1738,58 @@ function create_era_fixture() {
   // 与调用记录，让时序错误
   // （beginTrain 之前写 tflag）当场暴露、跨场残留不再掩盖「忘清 tflag」类
   // 真缺陷（夹具读旧值、引擎读 0——#152 的逃逸形式）。
-  // 已登记偏差：引擎重建时把**静态声明**的 tflag 条目补 0，夹具无声明表
-  // ——删键后读 undefined（未声明条目引擎侧同样是 undefined；声明条目是
-  // 0，getter 一律 || 0 缺省，对游戏代码可观察等价）。
+  // 预置口径与引擎同源：tflag / tequip / source / stain / ex / nowex 各自按
+  // yml 的声明集补缺省值（declared_ids / join_train_chara），所以「登记了
+  // 一个序号」在测试里同样意味着那一格从 0 起算、而不只是真机上如此。
+  //
+  // join_train_chara 是引擎 addCharacterForTrain 的尾巴，逐角色补：
+  //   ["tequip","tcvar","source","stain"].forEach(t => staticData[t] 在 &&
+  //     Object.values(staticData[t]).forEach(r => data[t][e][r] = 0))
+  //   staticData.ex 在 → ex 与 nowex 成对置 0
+  // tequip 是「已入训」的判据（引擎 `e.filter(e => !this.data.tequip[e])`），
+  // 已在训的角色不再重建行——重复 beginTrain / addCharacterForTrain 不冲掉
+  // 装备状态。palam / delta / gotjuel / deltabase 的缺省由 nextTurnInTrain
+  // 的结算段按声明集补（#874/#875/#923 在那里还原引擎的 `undefined + n`），
+  // 这里不另开一路，免得同一格有两处来源。
+  const join_train_chara = (id) => {
+    if (chars_in_train.has(id)) {
+      return;
+    }
+    chars_in_train.add(id);
+    for (const table of ['tequip', 'tcvar', 'source', 'stain']) {
+      for (const field of declared_ids(table) ?? []) {
+        store.set(`${table}:${id}:${field}`, 0);
+      }
+    }
+    // nowex 没有自己的名字表，引擎与 ex 共用 Ex.yml
+    for (const field of declared_ids('ex') ?? []) {
+      store.set(`ex:${id}:${field}`, 0);
+      store.set(`nowex:${id}:${field}`, 0);
+    }
+  };
+
   era.beginTrain = (...chara_ids) => {
     calls.push({ api: 'beginTrain', args: chara_ids });
     if (!train_open) {
       // 引擎检查逐字：只在 tequip 表不存在时重建——同场重复 beginTrain
       // 不清 tflag（train-loop 的 beginTrain 幂等语义依赖它）
       delete_train_table_keys();
+      // 重建时随表把 TFlag.yml 的声明序号补 0（上方 beginTrain 原文的
+      // `staticData.tflag && …forEach(e => data.tflag[e] = 0)`）。不补的话
+      // 夹具读 undefined、真机读 0，`era.get('tflag:30')` 这类 `=== 0` /
+      // `!== undefined` 判据在测试里永远走另一支（#977）
+      for (const field of declared_ids('tflag') ?? []) {
+        store.set(`tflag:${field}`, 0);
+      }
     }
     train_open = true;
     source_present = true; // beginTrain 逐字重建 source（`this.data.source={}`）
-    chara_ids.forEach((id) => chars_in_train.add(id));
+    chara_ids.forEach(join_train_chara); // 引擎末尾的 this.addCharacterForTrain(...e)
     return undefined;
   };
   era.addCharacterForTrain = (...chara_ids) => {
     calls.push({ api: 'addCharacterForTrain', args: chara_ids });
-    chara_ids.forEach((id) => chars_in_train.add(id));
+    chara_ids.forEach(join_train_chara);
     return undefined;
   };
   // beginTrain 入列序＝参数序（Set 插入序），但 get 的返回序是键升序（见
@@ -1834,6 +1906,8 @@ function create_era_fixture() {
     source_present = true; // resetData 字面量里 source 重新出现
     chars_in_train.clear();
     delete_train_table_keys();
+    // 引擎 resetData 的第二步是 this.fillData()：声明过的 flag 补 0。
+    fill_data();
     // 引擎 resetData 末尾（app.asar 逐字）：`void 0 !==
     // this.staticData.gamebase.defaultChara && this.addCharacter(...)`——
     // GameBase 声明了【初始角色编号】就按它的预设建角色，未声明一个都不建。

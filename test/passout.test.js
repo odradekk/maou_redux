@@ -57,7 +57,8 @@ test('系统开关：FLAG:70 = 1 时整体跳过（全库零写点，检查保�
   fixture.store.set('flag:70', 1);
   seed_strong_orgasm(fixture);
   await passout.passout_check(() => 0);
-  assert.equal(fixture.store.get('tflag:897'), undefined);
+  // TFLAG:897 由 beginTrain 按声明集预置 0：整体跳过时不动它
+  assert.equal(fixture.store.get('tflag:897'), 0);
 });
 
 test('强绝顶线：首回（Z≥16，rand<8）记相位 897 = 1，不失神', async () => {
@@ -65,7 +66,7 @@ test('强绝顶线：首回（Z≥16，rand<8）记相位 897 = 1，不失神', 
   seed_strong_orgasm(fixture);
   await passout.passout_check(() => 0);
   assert.equal(fixture.store.get('tflag:897'), 1);
-  assert.equal(fixture.store.get('tflag:899'), undefined);
+  assert.equal(fixture.store.get('tflag:899'), 0);
   assert.deepEqual(fixture.text_lines(), []);
 });
 
@@ -73,7 +74,7 @@ test('强绝顶线：rand ≥ 8 时首回不记相位（80% 概率的另一半�
   const { fixture, passout } = seed_world();
   seed_strong_orgasm(fixture);
   await passout.passout_check(() => 8);
-  assert.equal(fixture.store.get('tflag:897'), undefined);
+  assert.equal(fixture.store.get('tflag:897'), 0);
 });
 
 test('强绝顶线：次回（897 = 1，rand<6）失神——895/897/899/EXP:65 全套', async () => {
@@ -95,7 +96,7 @@ test('强绝顶线：次回 rand ≥ 6 不失神（60% 概率的另一半）', a
   await passout.passout_check(() => 6);
   assert.equal(fixture.store.get('tflag:895'), 0);
   assert.equal(fixture.store.get('tflag:897'), 1, '相位保持，不失神');
-  assert.equal(fixture.store.get('tflag:899'), undefined);
+  assert.equal(fixture.store.get('tflag:899'), 0);
 });
 
 test('苦痛线：UP:9 < 7500（rand 命中也不触发）', async () => {
@@ -103,7 +104,7 @@ test('苦痛线：UP:9 < 7500（rand 命中也不触发）', async () => {
   fixture.store.set('delta:31:9', 7000);
   await passout.passout_check(() => 0);
   assert.equal(fixture.store.get('tflag:895'), 0);
-  assert.equal(fixture.store.get('tflag:898'), undefined);
+  assert.equal(fixture.store.get('tflag:898'), 0);
 });
 
 test('强绝顶线：连续中断（Z < 16）相位回退 897 = 0', async () => {
@@ -269,9 +270,10 @@ test('失神次回：性交射精按指令位分流 871（膣内）/ 872（肛�
       fixture.store.set('tequip:31:35', 1);
     }
     await passout.passout_text();
+    // 戴套那一档不写旗标：读到的是 addCharacterForTrain 按声明集预置的 0
     assert.equal(
       fixture.store.get(key),
-      condom ? undefined : 2,
+      condom ? 0 : 2,
       `selectcom ${com}${condom ? '（戴套）' : ''} → ${key}`,
     );
   }
@@ -503,7 +505,7 @@ test('PALAM_CHECK：失神瞬间（895 > 0）UP 进 883-888，UP 清零', () => 
   passout.passout_palam_check();
   assert.equal(fixture.store.get('tflag:883'), 600);
   assert.equal(fixture.store.get('tflag:888'), 30);
-  assert.equal(fixture.store.get('tflag:889'), undefined);
+  assert.equal(fixture.store.get('tflag:889'), 0);
   for (const k of [4, 6, 7, 8, 9, 10, 11, 12, 13]) {
     assert.equal(fixture.store.get(`delta:31:${k}`), 0, `delta:31:${k} 清零`);
   }
@@ -514,7 +516,7 @@ test('PALAM_CHECK：失神中（895 = 0）UP 进 889-894', () => {
   fixture.store.set('delta:31:6', 120);
   passout.passout_palam_check();
   assert.equal(fixture.store.get('tflag:889'), 120);
-  assert.equal(fixture.store.get('tflag:883'), undefined);
+  assert.equal(fixture.store.get('tflag:883'), 0);
 });
 
 test('PALAM_UP：折算与 Z 分配（Z = 100 → 快乐路空、恐怖/屈服路全额）', () => {

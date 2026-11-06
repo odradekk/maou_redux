@@ -205,7 +205,7 @@ test('endTrain 删表：火车表内的写入随收尾消失（跨期残留窗�
   fixture.era.set('tequip:31:45', 1);
   fixture.era.endTrain();
   assert.equal(fixture.era.get('tequip:31:45'), undefined, '表已删');
-  // 再开火车表：新桶从干净状态起步
+  // 再开火车表：新桶按 TEquip.yml 的声明集从 0 起步，不留上一场的 1
   fixture.era.beginTrain(0, 31);
-  assert.equal(fixture.era.get('tequip:31:45'), undefined, '重开无残留');
+  assert.equal(fixture.era.get('tequip:31:45'), 0, '重开只剩预置的 0');
 });

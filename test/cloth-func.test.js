@@ -530,7 +530,8 @@ test('soiling_cloth_no1 调教外调用：返回掩码、不写 tflag（in_train
 test('soiling_cloth_no1：着衣设定关（FLAG:37=0）→ 返回 0 无输出；开着 → 三段置位', async () => {
   const off = seed_train_world();
   assert.equal(await off.cloth.soiling_cloth_no1(31), 0, 'FLAG:37=0 早退');
-  assert.equal(off.fixture.store.get('tflag:45'), undefined);
+  // TFLAG:45 由 beginTrain 按 TFlag.yml 的声明集预置 0，早退时一位都没置
+  assert.equal(off.fixture.store.get('tflag:45'), 0);
 
   const on = seed_train_world();
   on.fixture.store.set('flag:37', 1);

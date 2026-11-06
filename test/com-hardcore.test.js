@@ -505,10 +505,13 @@ test('equip_com89：射精检查关闭时污渍/T 收尾仍无条件执行', asy
     '尾段的污渍位仍写入',
   );
   assert.equal(fixture.store.get('tflag:200'), 2);
-  assert.equal(
-    fixture.store.get('tflag:16'),
-    0,
-    'E 默认值 0（从未刷新的死变量语义）',
+  // TFLAG:16（犬射精或处刑口上）的值本来就是 E 的缺省 0：beginTrain 预置之后
+  // 「写 0」与「没写」同值，读值区分不出来。判据落在写入清单上——尾段那一笔
+  // `game.event.犬射精或处刑口上 = e` 无条件执行（#226 的代码契约）
+  assert.equal(fixture.store.get('tflag:16'), 0, 'E 停在缺省 0');
+  assert.ok(
+    fixture.var_writes.some((w) => w.name === 'tflag:16'),
+    '尾段无条件写下 TFLAG:16（E = 0 也要写，跳过射精检查不等于跳过它）',
   );
 });
 
