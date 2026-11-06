@@ -554,8 +554,11 @@ export default [
     file: 'ere/system/chara/chara-pregnancy.js',
     find: 'const FIRST_CHILD_ID = 100000;',
     replace: 'const FIRST_CHILD_ID = 1000;',
-    tests: ['child-id-collision'],
-    must_mention: '固定按钮编号必须小于 FIRST_CHILD_ID = ',
+    // #873 把页面按钮编号全收进常量之后，逐字面量扫描（child-id-collision）看不到
+    // 它们了——同一道防线的常量化版本在 button-key-constants，这里一并挂上，
+    // 让这条条目继续证明「不变量」，而不是只能靠下游行为用例陪跑
+    tests: ['child-id-collision', 'button-key-constants'],
+    must_mention: '按钮编号常量必须是非负整数且小于 FIRST_CHILD_ID',
   },
   {
     desc: 'M11781 后代模板号反推改用旧的 1000 起点',

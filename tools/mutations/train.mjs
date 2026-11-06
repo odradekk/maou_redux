@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 1152; // #876 净 +4：+6（M18102-M18107：自动调教复用手动调教——情爱漏加 B 档增量、取错列、取错表、AUTO_NUM_CHECK 不执行、自动路径退回手动全序、共用处理器默认开关），-2（M41/M42 改挂 ere/data/train-source-const.js，随表移入 data 分片）；#959 +2（M17956/M17957：相殺抽池的候选集、缺省随机源的折算基准） // #853 +3（M17810-M17812：直接调用的三个钩子调用点） // #875 净 +10：+11（M17550-M17560：结算交还引擎——当场写 base、损耗条读裸 base、AUTO 当场结算、当场加 juel、抵消写 juel、抵消行取错增量、窗口内外写错珠表、否定减半读裸 juel、结算表两处读裸 juel），-1（M24 删：结算尾部不再清零 gotjuel，双重结算由 M17553 守；M23 改指 GOTJUEL:3 死存储的写入守卫，M28/M29/M30 与 M9662/M9669/M13871/M9786 随代码改写重锚，条数不变）；#874 +6（M17400-M17403/M17405/M17407：结算交还引擎——当场写 palam、DOWN 折进 delta（完整版与静默版）、欲情快照、时常发情蓄积、参数状态短语）；#906 +2（M16200/M16204：调教结束前的欲情快照、快照名单按参与调教的角色）；#904 -1（M995 删：它守的是「CFLAG:44 经 stronghold 门面写」这条域检查要求，域检查已随 ADR-0010 删除，门面写与裸写落点相同，com-cloth 的落点断言两边都过）；#822 +4（M15706/M15707/M15710/M15711：指令名与能力名的显示文案、旧档别名迁移；M15705 随 #836 删——别名播种表改由指令常量派生，播种表不再另存一份名字）；#836：删 M15124（单一来源后跨表一致性不复存在）、增 7 条指令常量守护（M15650-M15656）、M703/M775 改挂常量写法；界面流程缺陷 +4（M15306–M15309：紧凑序号跳过调教画面子菜单号），M740/M741 改挂新写法，M1044 改由可用性表拦截；数据地址缺陷修复 +3（M15418-M15420：初体验对象改用角色 ID）；#792 净 -2（M1112/M1409 随 times 实现移到 ere/utils/numeric.js，改挂 numeric 分片）；#789 追补 +2（M13706/M13707：编号空间的守卫）；#789 +1（M13703：GET 版特别服装名的未知编号哨兵）；收尾生命周期收拢：新增 2 条登记冲账守护（M15100 重锚为 settle 形状、M15103；M15104 随入口清残留删除）；#782：新增 3 条调教死亡收尾守护（M15100-M15102）；#777：新增 12 条助手射精经验守护（M15047-M15058）；此前沿革见 git 历史。
+export const COUNT = 1164; // #815 +3（M18300/M18302/M18303：回合开始的 NOWEX 清零——固定清 0 号、改读 Exp 名字表、指令之后重复清零） // #923 +9（M18200-M18208：com-caress 删掉 D 段后，自慰文案的 E 只由 A/B/C 合计——漏加 UP:2、五道档位边界、把 UP:17 / PALAM:17 加回来、UP:2 读错序号） // #876 净 +4：+6（M18102-M18107：自动调教复用手动调教——情爱漏加 B 档增量、取错列、取错表、AUTO_NUM_CHECK 不执行、自动路径退回手动全序、共用处理器默认开关），-2（M41/M42 改挂 ere/data/train-source-const.js，随表移入 data 分片）；#959 +2（M17956/M17957：相殺抽池的候选集、缺省随机源的折算基准） // #853 +3（M17810-M17812：直接调用的三个钩子调用点） // #875 净 +10：+11（M17550-M17560：结算交还引擎——当场写 base、损耗条读裸 base、AUTO 当场结算、当场加 juel、抵消写 juel、抵消行取错增量、窗口内外写错珠表、否定减半读裸 juel、结算表两处读裸 juel），-1（M24 删：结算尾部不再清零 gotjuel，双重结算由 M17553 守；M23 改指 GOTJUEL:3 死存储的写入守卫，M28/M29/M30 与 M9662/M9669/M13871/M9786 随代码改写重锚，条数不变）；#874 +6（M17400-M17403/M17405/M17407：结算交还引擎——当场写 palam、DOWN 折进 delta（完整版与静默版）、欲情快照、时常发情蓄积、参数状态短语）；#906 +2（M16200/M16204：调教结束前的欲情快照、快照名单按参与调教的角色）；#904 -1（M995 删：它守的是「CFLAG:44 经 stronghold 门面写」这条域检查要求，域检查已随 ADR-0010 删除，门面写与裸写落点相同，com-cloth 的落点断言两边都过）；#822 +4（M15706/M15707/M15710/M15711：指令名与能力名的显示文案、旧档别名迁移；M15705 随 #836 删——别名播种表改由指令常量派生，播种表不再另存一份名字）；#836：删 M15124（单一来源后跨表一致性不复存在）、增 7 条指令常量守护（M15650-M15656）、M703/M775 改挂常量写法；界面流程缺陷 +4（M15306–M15309：紧凑序号跳过调教画面子菜单号），M740/M741 改挂新写法，M1044 改由可用性表拦截；数据地址缺陷修复 +3（M15418-M15420：初体验对象改用角色 ID）；#792 净 -2（M1112/M1409 随 times 实现移到 ere/utils/numeric.js，改挂 numeric 分片）；#789 追补 +2（M13706/M13707：编号空间的守卫）；#789 +1（M13703：GET 版特别服装名的未知编号哨兵）；收尾生命周期收拢：新增 2 条登记冲账守护（M15100 重锚为 settle 形状、M15103；M15104 随入口清残留删除）；#782：新增 3 条调教死亡收尾守护（M15100-M15102）；#777：新增 12 条助手射精经验守护（M15047-M15058）；此前沿革见 git 历史。
 
 export default [
   {
@@ -11798,5 +11798,109 @@ export default [
     replace: '    // 变异：指令菜单不画',
     tests: ['train-clear-screen-e2e'],
     must_mention: '应走过七轮指令菜单',
+  },
+
+  // —— #923：com-caress 的 D 段删除（自慰文案的 E 只由 A/B/C 合计）——
+  {
+    desc: 'M18200 自慰文案的 E 漏加 UP:2（`a + b + c` → `a + b`）（#923）',
+    file: 'ere/system/train/com-caress.js',
+    find: 'const e = a + b + c;',
+    replace: 'const e = a + b; // 变异：漏加 UP:2',
+    tests: ['com-caress'],
+    must_mention: 'A 分支 3 的 E 档 6000：第五档下边界',
+  },
+  {
+    desc: 'M18201 自慰文案的 E 档第一道边界偏移（300 → 301）（#923）',
+    file: 'ere/system/train/com-caress.js',
+    find: 'if (e < 300) {',
+    replace: 'if (e < 301) { // 变异：第一道边界偏移',
+    tests: ['com-caress'],
+    must_mention: 'A 分支 3 的 E 档 300：第二档下边界',
+  },
+  {
+    desc: 'M18202 自慰文案的 E 档第二道边界偏移（1000 → 1001）（#923）',
+    file: 'ere/system/train/com-caress.js',
+    find: '} else if (e < 1000) {',
+    replace: '} else if (e < 1001) { // 变异：第二道边界偏移',
+    tests: ['com-caress'],
+    must_mention: 'A 分支 3 的 E 档 1000：第三档下边界',
+  },
+  {
+    desc: 'M18203 自慰文案的 E 档第三道边界偏移（3000 → 3001）（#923）',
+    file: 'ere/system/train/com-caress.js',
+    find: '} else if (e < 3000) {',
+    replace: '} else if (e < 3001) { // 变异：第三道边界偏移',
+    tests: ['com-caress'],
+    must_mention: 'A 分支 3 的 E 档 3000：第四档下边界',
+  },
+  {
+    desc: 'M18204 自慰文案的 E 档第四道边界偏移（6000 → 6001）（#923）',
+    file: 'ere/system/train/com-caress.js',
+    find: '} else if (e < 6000) {',
+    replace: '} else if (e < 6001) { // 变异：第四道边界偏移',
+    tests: ['com-caress'],
+    must_mention: 'A 分支 3 的 E 档 6000：第五档下边界',
+  },
+  {
+    desc: 'M18205 自慰文案的 E 档第五道边界偏移（10000 → 10001）（#923）',
+    file: 'ere/system/train/com-caress.js',
+    find: '} else if (e < 10000) {',
+    replace: '} else if (e < 10001) { // 变异：第五道边界偏移',
+    tests: ['com-caress'],
+    must_mention: 'A 分支 3 的 E 档 10000：最高档',
+  },
+  {
+    desc: 'M18206 自慰文案的 E 把已删除的 D 段（UP:17）加回来（#923）',
+    file: 'ere/system/train/com-caress.js',
+    find: 'const e = a + b + c;',
+    replace:
+      'const e = a + b + c + (era.get(`delta:${target}:17`) || 0); // 变异：把 UP:17 加回来',
+    tests: ['com-caress'],
+    must_mention: 'A/B/C 合计 0 → 最低档，17 号地址的值不影响判定',
+  },
+  {
+    desc: 'M18207 自慰文案的 E 改读未声明的 PALAM:17（#923）',
+    file: 'ere/system/train/com-caress.js',
+    find: 'const e = a + b + c;',
+    replace:
+      'const e = a + b + c + (era.get(`palam:${target}:17`) || 0); // 变异：改读 PALAM:17',
+    tests: ['com-caress'],
+    must_mention: 'A/B/C 合计 0 → 最低档，17 号地址的值不影响判定',
+  },
+  {
+    desc: 'M18208 自慰文案的 C 段读错序号（UP:2 读成 UP:3）（#923）',
+    file: 'ere/system/train/com-caress.js',
+    find: 'const c = era.get(`delta:${target}:2`) || 0;',
+    replace:
+      'const c = era.get(`delta:${target}:3`) || 0; // 变异：UP:2 读成 UP:3',
+    tests: ['com-caress'],
+    must_mention: 'A 分支 3 的 E 档 1000：第三档下边界',
+  },
+
+  // —— #815：回合开始的 NOWEX 清零真生效（Ex.yml 登记 0-5 才有可枚举的格） ——
+  {
+    desc: 'M18300 回合开始的 NOWEX 清零把 exkeys 改成固定清 0 号（取消回合的 NOWEX 漏到下一回合）（#815）',
+    file: 'ere/system/train/command-round.js',
+    find: "  const ex_keys = era.get('exkeys') || [];",
+    replace: '  const ex_keys = [0]; // 变异：不按 Ex.yml 枚举',
+    tests: ['train-loop'],
+    must_mention: '取消回合写下的 NOWEX 必须被下一回合的清零抹掉',
+  },
+  {
+    desc: 'M18302 清零枚举改读 Exp 名字表（expkeys——旧注释里「Exp 名字表」的说法回潮，EX:4 漏清）（#815）',
+    file: 'ere/system/train/command-round.js',
+    find: "  const ex_keys = era.get('exkeys') || [];",
+    replace: "  const ex_keys = era.get('expkeys') || []; // 变异：读错名字表",
+    tests: ['train-loop'],
+    must_mention: '取消回合写下的 NOWEX 必须被下一回合的清零抹掉',
+  },
+  {
+    desc: 'M18303 指令处理器之后又清一次 NOWEX（本回合写的绝顶计数被抹掉——清零排到指令之后的双重清零）（#815）',
+    file: 'ere/system/train/command-round.js',
+    find: '  await handle_source_check();',
+    replace: `  clear_nowex_all(); // 变异：结算前又清一次
+  await handle_source_check();`,
+    tests: ['train-loop'],
+    must_mention: '本回合写的 NOWEX 必须活到结算',
   },
 ];
