@@ -489,22 +489,6 @@ class SystemFacade {
   set 放尿经验(v) {
     era.set(`exp:${this.cid}:31`, v);
   }
-
-  // —— ex ——
-  /**
-   * 喷乳绝顶（ex:cid:5）
-   * EX:5 射精·喷乳（com_ejac_player_milk 的 EX:PLAYER:5 += 1）
-   * @returns {number}
-   */
-  get 喷乳绝顶() {
-    return era.get(`ex:${this.cid}:5`) || 0;
-  }
-  /**
-   * @param {number} v
-   */
-  set 喷乳绝顶(v) {
-    era.set(`ex:${this.cid}:5`, v);
-  }
 }
 // GENERATED END
 

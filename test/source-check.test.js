@@ -1275,8 +1275,19 @@ test('TARGET_EJAC_CHECK：大量射精档（BASE:2 > EJAC*2），扶她非男人
   assert.equal(fixture.store.get('exp:31:3'), 2);
   assert.equal(fixture.store.get('stain:31:2'), 4);
   assert.equal(fixture.store.get('tflag:10'), 2);
-  assert.equal(fixture.store.get('nowex:31:5'), 1);
-  assert.equal(fixture.store.get('ex:31:5'), 1);
+  // 5 号与 0-4 号同一条路：回合内只写 NOWEX，EX:5 由 nextTurnInTrain 折入
+  // 一次。一次大量射精 → NOWEX:5 记 1（不是 2：回合内直写 EX 会让结算再加
+  // 一遍，状态画面的「射精·喷乳绝顶」次数翻倍，#980）
+  assert.equal(
+    fixture.store.get('nowex:31:5'),
+    1,
+    '一次大量射精只在 NOWEX:5 记 1 次',
+  );
+  assert.equal(
+    fixture.store.has('ex:31:5'),
+    false,
+    'EX:5 交给结算折入一次，回合内不得直写（直写会让画面次数翻倍）',
+  );
   assert.equal(fixture.store.get('base:31:2'), 999); // 3500-2000=1500≥1000 → 钳制 EJAC-1
 });
 
@@ -1506,8 +1517,16 @@ test('TARGET_MILK_CHECK：普通档（EJAC < BASE:3 ≤ EJAC*2），EXP:54 非 0
   assert.equal(fixture.store.get('base:31:3'), 850); // 1850-1000=850，不再触发钳制
   assert.equal(fixture.store.get('stain:31:5'), 16);
   assert.equal(fixture.store.get('tflag:11'), 1);
-  assert.equal(fixture.store.get('nowex:31:5'), 1);
-  assert.equal(fixture.store.get('ex:31:5'), 1);
+  assert.equal(
+    fixture.store.get('nowex:31:5'),
+    1,
+    '一次喷乳只在 NOWEX:5 记 1 次',
+  );
+  assert.equal(
+    fixture.store.has('ex:31:5'),
+    false,
+    'EX:5 交给结算折入一次，回合内不得直写（直写会让画面次数翻倍）',
+  );
 });
 
 test('TARGET_MILK_CHECK：大量档（BASE:3 > EJAC*2）', async () => {
@@ -1533,8 +1552,16 @@ test('TARGET_MILK_CHECK：大量档（BASE:3 > EJAC*2）', async () => {
   assert.equal(fixture.store.get('exp:31:54'), 5);
   assert.equal(fixture.store.get('stain:31:5'), 16);
   assert.equal(fixture.store.get('tflag:11'), 2);
-  assert.equal(fixture.store.get('nowex:31:5'), 1);
-  assert.equal(fixture.store.get('ex:31:5'), 1);
+  assert.equal(
+    fixture.store.get('nowex:31:5'),
+    1,
+    '一次大量喷乳只在 NOWEX:5 记 1 次（档位大小不改变事件次数）',
+  );
+  assert.equal(
+    fixture.store.has('ex:31:5'),
+    false,
+    'EX:5 交给结算折入一次，回合内不得直写（直写会让画面次数翻倍）',
+  );
   assert.equal(fixture.store.get('base:31:3'), 750); // 2750-2000=750，不再触发钳制
 });
 
@@ -1641,11 +1668,63 @@ for (const [name, initial, breast_up, grade, remaining] of [
     assert.equal(fixture.era.get('base:31:3'), remaining);
     assert.equal(fixture.era.get('exp:31:54'), 3 + grade);
     assert.equal(fixture.era.get('tflag:11') || 0, grade);
-    assert.equal(fixture.era.get('nowex:31:5') || 0, grade ? 1 : 0);
-    assert.equal(fixture.era.get('ex:31:5') || 0, grade ? 1 : 0);
+    assert.equal(
+      fixture.era.get('nowex:31:5') || 0,
+      grade ? 1 : 0,
+      grade ? '一档只记 1 次：NOWEX:5 收本回合增量' : '未成档不写 NOWEX:5',
+    );
+    assert.equal(
+      fixture.era.get('ex:31:5') || 0,
+      0,
+      'EX:5 不直写，由回合结算折入（直写 + 折入 = 画面次数翻倍）',
+    );
     assert.equal(fixture.era.get('stain:31:5'), grade ? 20 : 4);
   });
 }
+
+test('EX:5 同回合两次事件：NOWEX:5 累加到 2，结算折入后恰为 2（#980）', async () => {
+  // 同一回合里大量射精（TALENT:121）与喷乳（TALENT:130）各成一次事件。
+  // 5 号若在回合内直写 EX:5，两次事件会先各写一次、结算再折入两次，画面
+  // 上显示 4 次；只写 NOWEX 时这里累加到 2，结算一次折入，仍是 2 次。
+  // UP:0 经 up_talent_cva_check 的关系缩放两次折半后才落进射精判定，
+  // 30000 折后仍越过 EJAC*2，稳定落在大量射精档。
+  const fixture = await run_caress(
+    (f) => {
+      f.store.set('talent:31:121', 1);
+      f.store.set('talent:31:130', 1);
+      f.store.set('maxbase:31:2', 1000);
+      f.store.set('maxbase:31:3', 1000);
+      f.store.set('base:31:2', 0);
+      f.store.set('base:31:3', 0);
+    },
+    (f) => {
+      zero_up_sources(f);
+      for (let i = 0; i <= 16; i += 1) {
+        f.store.set(`delta:31:${i}`, 0);
+      }
+      f.store.set('delta:31:0', 30000);
+      f.store.set('delta:31:14', 1500);
+    },
+  );
+  const texts = fixture.text_lines();
+  assert.ok(texts.includes('温妮大量射精'), '射精档成立');
+  // 「的乳头」是两条喷乳文案的共同片段；绝顶演出行的「从胸前滴落母乳」
+  // 也含「母乳」二字，用它判档会把没喷乳的回合误判成喷乳
+  assert.ok(
+    texts.some((t) => t.includes('的乳头')),
+    '喷乳档成立',
+  );
+  assert.equal(
+    fixture.store.get('nowex:31:5'),
+    2,
+    '同回合两次事件各记 1 次：NOWEX:5 是累加量',
+  );
+  assert.equal(
+    fixture.store.has('ex:31:5'),
+    false,
+    'EX:5 不直写：直写会让两次事件在画面上显示成 4 次',
+  );
+});
 
 test('TARGET_MILK_CHECK：十一项乘算系数各自方向正确（克制/接受快感/淫乱化/否定快感/乳房敏感/媚药/利尿剂/调教者幼儿退行/调教者幼稚/贫乳/绝壁）', async () => {
   // EJAC 设得足够大，任何一档系数都不会跨过三档判定门槛——只比较 BASE:3 这个中间量
