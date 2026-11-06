@@ -195,9 +195,8 @@ async function enter_enemy(arg0 = 0, rand) {
     if (foreign) {
       head += '异国的'; // SIF LOCAL
     }
-    if ((era.get(`talent:${result}:1000`) || 0) !== 0) {
-      head += '异界的'; // TALENT:RESULT:1000（异界素质）
-    }
+    // 前缀只有「异国的」一种：TALENT:1000 在素质表里没有条目、全库也没有写点，
+    // 那个「异界的」判断从未成立过（ADR-0008：从未生效的分支不恢复）。
     // 冒险者（TALENT:RESULT:122 男人位非 0）/ 勇者
     head += (era.get(`talent:${result}:122`) || 0) !== 0 ? '冒险者' : '勇者';
     // 角色名读 callname:-1（#5 决议，文件头）
@@ -501,9 +500,7 @@ async function get_enemy(rand) {
   if (inport !== 0) {
     head += '异国的'; // 异国路径
   }
-  if ((era.get(`talent:${result}:1000`) || 0) !== 0) {
-    head += '异界的';
-  }
+  // 同本文件上段：TALENT:1000 无条目、无写点，「异界的」从未出现过。
   head += (era.get(`talent:${result}:122`) || 0) !== 0 ? '冒险者' : '勇者';
   const name = era.get(`callname:${result}:-1`) ?? ''; // 角色名
   era.print(`${head}${name}被俘虏了！`);

@@ -1,7 +1,7 @@
 /**
  * ere/kojo/kojo-k19-fia.js 的行为测试（issue #247：J37 口上·K19 菲娅）。
  *
- * 缝 = test/helpers/era-fixture.js。世界底座：菲娅（性格素质 179 →
+ * 缝 = test/helpers/era-fixture.js。世界底座：菲娅（旧口上标记 TALENT:179 →
  * GET_KOJO_NUM = 119 → 分发 key 19）。
  */
 

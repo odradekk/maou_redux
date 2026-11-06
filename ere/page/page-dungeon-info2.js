@@ -187,7 +187,7 @@ function enemy_compare(a, b) {
 
 /**
  * enemy_exist2：打印一层楼的部下（勇者侧）按队伍分组的一行。
- * 筛选：CFLAG:x:501 == floor 且（侵攻 2 / 迎击 3 / TALENT:x:221 的奴隶），
+ * 筛选：CFLAG:x:501 == floor 且状态为侵攻 2 / 迎击 3，
  * 排序经 enemy_compare 插入。纯输出、不输入。
  *
  * 首行空行：调用方进入本函数时行已经落了（show_floor 与
@@ -219,14 +219,16 @@ async function enemy_exist2(floor) {
     if (cflag_get(cid, 501) !== floor) {
       continue;
     }
-    // 不在侵攻/迎击/奴隶（TALENT:x:221 = 勇者奴隶素质）
-    const is_slave = (era.get(`talent:${cid}:221`) || 0) !== 0;
-    const state = cflag_get(cid, 1);
-    if (
-      (state !== 2 && state !== 3 && !is_slave) ||
-      (((state !== 0 && floor === 10) || (state !== 3 && state !== 2)) &&
-        is_slave)
-    ) {
+    // 不在侵攻（2）或迎击（3）就跳过。
+    //
+    // 原写法还并了一项「勇者素质 221」（读档钩子把它搬去了 EX_TALENT:1，
+    // 所以照抄的这个地址读到的恒是 0）。即使把它指回 ex_talent:1，这一项
+    // 也不改变结果：`floor === 10` 在上面已经整轮 continue，于是
+    // `(state≠0 ∧ floor=10)` 不可达，剩下的 `(state≠3 ∧ state≠2) ∧ 近卫`
+    // 与「非近卫」那半正好互补——两者合起来等于「state 不是 2 也不是 3
+    // 就跳过」，与近卫无关。近卫层的名单由护卫行单独打印（读的是
+    // ex_talent:1）。ADR-0008：从未生效的分支不恢复。
+    if (cflag_get(cid, 1) !== 2 && cflag_get(cid, 1) !== 3) {
       continue;
     }
     const name = name_of(cid);

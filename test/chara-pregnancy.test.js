@@ -85,6 +85,37 @@ test('弱召唤保留 -1 实参：基础五轮折半为两轮并增加对应怪�
   );
 });
 
+test('魔界公主（TALENT:35:1254）：菲娅在场时每轮召唤数 ×1.5（#991 补登记）', async () => {
+  // rand 只在抽怪物与取召唤数两个位置被调用：抽选固定 100 号（史莱姆），
+  // 每轮 12 只（RAND:25 取 12 → +1 = 13）。
+  const rand = (n) => (n === 25 ? 12 : 0);
+
+  const plain = create_era_fixture();
+  plain.store.set('itemname:100', '史莱姆');
+  await plain
+    .load_module('system/dungeon/monster-summon')
+    .summon_monster(0, rand);
+  assert.equal(plain.store.get('item:100'), 65, '5 轮 × 13 只');
+
+  const princess = create_era_fixture();
+  princess.store.set('itemname:100', '史莱姆');
+  add_chara(princess, 35, '菲娅');
+  princess.store.set('talent:35:1254', 1); // 魔界公主（菲娅线结局写入的那一格）
+  await princess
+    .load_module('system/dungeon/monster-summon')
+    .summon_monster(0, rand);
+  assert.equal(princess.store.get('item:100'), 95, '13 → 19 只，5 轮共 95');
+
+  // 有素质但菲娅不在场：不加成（GETCHARA(35) <= 0 的分支）。
+  const absent = create_era_fixture();
+  absent.store.set('itemname:100', '史莱姆');
+  absent.store.set('talent:35:1254', 1);
+  await absent
+    .load_module('system/dungeon/monster-summon')
+    .summon_monster(0, rand);
+  assert.equal(absent.store.get('item:100'), 65, '不在场的角色不计');
+});
+
 test('怪物抽选跳过已满种类，仍有容量时重抽', () => {
   const fixture = create_era_fixture();
   fixture.store.set('item:100', 999);
