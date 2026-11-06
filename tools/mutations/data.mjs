@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 73; // #949 +3（M18250–M18252：33 号条目的删除、price 改错、name 非 snake_case——商店 32/33 号的道具表补齐与对账） // #876 +4：+2（M41/M42 从 train 分片移入——指令 0 的阶梯表搬进 ere/data/train-source-const.js），+2（M18100/M18101：取档口径的越档边界、未声明等级的默认档）；#883 -1（M16108：yml/E.yml 随战斗状态搬成普通对象撤除） // #884 +2（M16606/M16607：角色预设的预设模板值改错、PortCFlag 的字段条目被删）； #848 +2（M16254/M16255：GameBase 的【初始角色编号】改坏、给角色预设加上以 0 号为目标的相性）；#901 +13（M16100-M16112：变量表 name/type 的缺失、重名、非 snake_case、保留字、非法 type 与豁免名单失效）；#814 +9（M15850-M15858：角色预设在用的 cflag 序号与条目、mark/talent/cstr 的新登记、name/type 形状）；#822 +4（M15700/M15701：Abl 20/21 的 yml 名字；M15702/M15703：指令常量 54/89 的指令名——#836 把指令名搬进常量后跟着改挂，编号不变）；#746 +3（M14608-M14610：现种族 211 的名字声明、编号与名称）；#733 +1（M14540：通信回归场景漏载 Equip 名字表）；#731 +1（M14530：【最低支持版本】不得高于已发布的 0.1.0）；master 28（#640 +7：M12870-M12876 yml 装载覆盖与内容固定的行为检查）+ 4（#642：M12936-M12939 标题画面使用的 GameBase 信息改坏）
+export const COUNT = 74; // #949 +3（M18250–M18252：33 号条目的删除、price 改错、name 非 snake_case——商店 32/33 号的道具表补齐与对账）；#815 +1（M18301：Ex.yml 漏登记射精槽——exkeys 少一格，取消回合的 NOWEX:5 漏到下一回合）；#876 +4：+2（M41/M42 从 train 分片移入——指令 0 的阶梯表搬进 ere/data/train-source-const.js），+2（M18100/M18101：取档口径的越档边界、未声明等级的默认档）；#883 -1（M16108：yml/E.yml 随战斗状态搬成普通对象撤除） // #884 +2（M16606/M16607：角色预设的预设模板值改错、PortCFlag 的字段条目被删）； #848 +2（M16254/M16255：GameBase 的【初始角色编号】改坏、给角色预设加上以 0 号为目标的相性）；#901 +13（M16100-M16112：变量表 name/type 的缺失、重名、非 snake_case、保留字、非法 type 与豁免名单失效）；#814 +9（M15850-M15858：角色预设在用的 cflag 序号与条目、mark/talent/cstr 的新登记、name/type 形状）；#822 +4（M15700/M15701：Abl 20/21 的 yml 名字；M15702/M15703：指令常量 54/89 的指令名——#836 把指令名搬进常量后跟着改挂，编号不变）；#746 +3（M14608-M14610：现种族 211 的名字声明、编号与名称）；#733 +1（M14540：通信回归场景漏载 Equip 名字表）；#731 +1（M14530：【最低支持版本】不得高于已发布的 0.1.0）；master 28（#640 +7：M12870-M12876 yml 装载覆盖与内容固定的行为检查）+ 4（#642：M12936-M12939 标题画面使用的 GameBase 信息改坏）
 
 export default [
   {
@@ -648,7 +648,7 @@ export default [
     must_mention: 'yml/PortCFlag.yml 必须有「预设模板」条目',
   },
   {
-    desc: 'M18250 33 号（WG电池）条目整条删除（商店在售却无条目：ITEMPRICE 读 0，白拿且破资金不变量）',
+    desc: 'M18250 33 号（ＷＧ电池）条目整条删除（商店在售却无条目：ITEMPRICE 读 0，白拿且破资金不变量）',
     file: 'yml/Item.yml',
     find: '"ＷＧ电池":\n  id: 33\n  name: "wg_battery"\n  type: "number"\n  price: 100000\n',
     replace: '# 变异：33 号条目删除\n',
@@ -671,5 +671,13 @@ export default [
     replace: '  name: "WG电池"',
     tests: ['yml-name-type'],
     must_mention: '不是英文 snake_case',
+  },
+  {
+    desc: 'M18301 Ex.yml 漏登记射精槽 5（exkeys 少一格，取消回合的 NOWEX:5 漏到下一回合）（#815）',
+    file: 'yml/Ex.yml',
+    find: '"射精绝顶":\n  id: 5\n  name: "ejaculation_orgasm"\n  type: "number"\n',
+    replace: '',
+    tests: ['train-loop'],
+    must_mention: '取消回合写下的 NOWEX 必须被下一回合的清零抹掉',
   },
 ];
