@@ -151,7 +151,7 @@ async function run_sensation_offer({
   };
 }
 
-test('chara_ex：扩展口上编号取最后命中项并保留静态局部，名称只初始化一次', () => {
+test('chara_ex：扩展口上编号取最后命中项并保留静态局部，EX 素质名取自 yml 名字表', () => {
   const fixture = create_era_fixture();
   const ex = fixture.load_module('system/chara/chara-ex');
 
@@ -163,12 +163,12 @@ test('chara_ex：扩展口上编号取最后命中项并保留静态局部，名
   assert.equal(ex.get_ex_kojo_num(17), 1700, '扫描包含上界 800 并取最后命中');
   assert.equal(ex.get_ex_kojo_num(18), 1700);
 
-  ex.ex_talentname_init();
+  // 名字的唯一来源是 yml/Ex_Talent.yml（#834）：JS 侧没有名字表可初始化，
+  // 直接按 <表>name:<序号> 读；未登记的序号回落空串，不是 undefined
   assert.equal(ex.ex_talentname(0), '灵魂错位');
   assert.equal(ex.ex_talentname(104), '菲娅');
   assert.equal(ex.ex_talentname(904), '天神');
   assert.equal(ex.ex_talentname(999), '');
-  assert.equal(ex.ex_talentname_init(), false, '已有名称时整段早退');
 });
 
 test('add_chara_ex：16 被检查拦截，17 从精确下界进入分发', async () => {
@@ -186,52 +186,22 @@ test('add_chara_ex：16 被检查拦截，17 从精确下界进入分发', async
   assert.deepEqual(called, [17]);
 });
 
-test('chara_ex：名称表与八个写槽逐项对应', async () => {
+test('chara_ex：八个角色的 EX 素质改由角色预设套用，加入点不再写值', async () => {
   const fixture = create_era_fixture();
   const ex = fixture.load_module('system/chara/chara-ex');
-  assert.equal(ex.ex_talentname_init(), true);
-  assert.deepEqual(
-    [
-      0, 1, 2, 3, 4, 101, 102, 103, 104, 200, 223, 777, 801, 901, 902, 903, 904,
-    ].map((id) => [id, ex.ex_talentname(id)]),
-    [
-      [0, '灵魂错位'],
-      [1, '近卫'],
-      [2, '后代'],
-      [3, '魔王替身'],
-      [4, '狂王替身'],
-      [101, '琼'],
-      [102, '普林希斯'],
-      [103, '嘉德'],
-      [104, '菲娅'],
-      [200, '魔王'],
-      [223, '丽塔'],
-      [777, '卡拉'],
-      [801, '无双'],
-      [901, '一人军团'],
-      [902, '魔女'],
-      [903, '魔界公主'],
-      [904, '天神'],
-    ],
-  );
 
+  // 8 个原注册实现的写槽自 #834 起写在角色文件里（yml/Chara*.yml 的
+  // 「ex_talent」段），由引擎的 addCharacter 套用。加入点不再写：这里钉住
+  // 「调用返回缺省 0、一个 ex_talent 键都没落」——写回来即红。
+  // 预设本身逐键落库由 test/chara-preset-apply.test.js 用引擎真方法验证。
   for (const cid of [0, 31, 32, 33, 34, 35, 223, 777]) {
-    await ex.add_chara_ex(cid);
+    assert.equal(await ex.add_chara_ex(cid), 0, `角色 ${cid} 没有分发实现`);
   }
-  for (const key of [
-    'ex_talent:0:200',
-    'ex_talent:31:101',
-    'ex_talent:32:102',
-    'ex_talent:33:103',
-    'ex_talent:34:4',
-    'ex_talent:34:801',
-    'ex_talent:34:901',
-    'ex_talent:35:104',
-    'ex_talent:223:223',
-    'ex_talent:777:777',
-  ]) {
-    assert.equal(fixture.store.get(key), 1, key);
-  }
+  assert.deepEqual(
+    [...fixture.store.keys()].filter((key) => key.startsWith('ex_talent:')),
+    [],
+    '加入点不再手工写 EX 素质',
+  );
 });
 
 test('TATOO：只收集 10..19 的非空刺青，并排除狂王纹章', () => {

@@ -1,13 +1,20 @@
 /**
- * @file 角色专属初始化的分发注册表与 8 个实现（issue #21）。
+ * @file 角色专属初始化的分发入口、扩展口上编号与 EX 素质名的查询（issue #21、
+ * #834）。
  *
  * 分发语义（issue #21 定）：
  *     SIF NO:ARG >= 17 || NO:ARG == 0
  *     TRYCALLFORM CHARA_EX_{NO:ARG}
  * 条件为真（编号 ≥17 或 =0）才分发——编号 1-16 的角色从不分发，是设计
- * 而非遗漏。45 个角色只有 8 个实现，其余走「空间内缺失」路径（合法缺失，
- * 返回本调用点的 whenMissing 0，不报错）。ere 以角色 ID 直接寻址，
- * 「注册序换算为编号」的做法（读档钩子里的调用方式）不再需要。
+ * 而非遗漏。ere 以角色 ID 直接寻址，「注册序换算为编号」的做法（读档钩子里的
+ * 调用方式）不再需要。
+ *
+ * 原作的八个 CHARA_EX 实现只做一件事：把角色专属的 EX 素质写进刚加入的角色
+ * （魔王、琼、普林希斯、嘉德、狂王、菲娅、丽塔、卡拉）。这些值自 #834 起写在
+ * 角色文件（yml/Chara*.yml 的「ex_talent」段）里，由引擎在 addCharacter 时
+ * 套用，本文件的注册段随之删除——加入点不再手工赋值，分发族因此没有实现，
+ * `add_chara_ex` 恒返回 whenMissing 0。族本身与它的调用点留到「删除分发族」
+ * 一起处理，这里不提前拆（调用点是原作的移植锚点，拆法与其余族同批）。
  */
 
 const era = require('#/era-electron');
@@ -16,7 +23,7 @@ const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
 // 声明的编号空间：45 个角色编号（0-24、31-35、100、
 // 150、201-211、223、777），离线生成（#7 决议「索引全部离线生成」——运行时
 // 不能扫描文件，dev-guides/18-tools.md）。由枚举目录得来；角色表进 yml/ 后
-// 升级为 tools/ 校验脚本核对（数据管线票）。实现集 8 个：0、31-35、223、777。
+// 升级为 tools/ 校验脚本核对（数据管线票）。
 const DECLARED_CHARA_IDS = [
   0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
   22, 23, 24, 31, 32, 33, 34, 35, 100, 150, 201, 202, 203, 204, 205, 206, 207,
@@ -26,7 +33,6 @@ const DECLARED_CHARA_IDS = [
 const chara_ex = new DispatchFamily('CHARA_EX', DECLARED_CHARA_IDS);
 
 let get_ex_kojo_num_local = 0;
-const ex_talent_names = [];
 
 /**
  * get_ex_kojo_num：扫描 EX 素质 101..800，最后一格
@@ -45,86 +51,20 @@ function get_ex_kojo_num(cid) {
 }
 
 /**
- * ex_talentname_init：初始化非存档的 EX 素质名表。
- * @returns {boolean} 本次是否执行了初始化
+ * ex_talentname：EX 素质的显示名（名字的唯一来源是 yml/Ex_Talent.yml）。
+ *
+ * 未登记的序号必须在读名字前跳过：引擎的 `<表>name:<序号>` 地址在表在场而
+ * 序号没有名字时直接抛 TypeError（游戏卡死），而调用方会扫过成片的空位
+ * （素质列表的 801-899 段、日常类型的 101-199 段）。
+ * @param {number} id EX 素质序号
+ * @returns {string} 名字；未登记返回空串
  */
-function ex_talentname_init() {
-  if (
-    String(ex_talent_names[0] ?? '').length > 1 ||
-    String(ex_talent_names[1] ?? '').length > 1
-  ) {
-    return false;
-  }
-  Object.assign(ex_talent_names, {
-    0: '灵魂错位',
-    1: '近卫',
-    2: '后代',
-    3: '魔王替身',
-    4: '狂王替身',
-    101: '琼',
-    102: '普林希斯',
-    103: '嘉德',
-    104: '菲娅',
-    200: '魔王',
-    223: '丽塔',
-    777: '卡拉',
-    801: '无双',
-    901: '一人军团',
-    902: '魔女',
-    903: '魔界公主',
-    904: '天神',
-  });
-  return true;
-}
-
-/** @param {number} id EX 素质序号 */
 function ex_talentname(id) {
-  return ex_talent_names[id] ?? '';
+  if (!era.get('ex_talentkeys').includes(id)) {
+    return '';
+  }
+  return era.get(`ex_talentname:${id}`);
 }
-
-// 8 个实现：函数体即全部内容（各 1-3 行 EX_TALENT 赋值，
-// #11 已判定「数据不是代码」）。EX_TALENT 序号语义 = ex_talentname_init 的名称表，注释逐个标注。
-//
-// ex_talent 表已随 #138 实现（yml/Ex_Talent.yml + _fixed.json 登记
-// extendedCharaTables，存档角色扩展表，容量 1000 槽）：新档 resetData → fillData
-// 建顶层桶，addCharacter 为每个角色建 data.ex_talent[cid]，下方写入真正生效
-// （生效与未登记的反面均由 test/extalent-table.test.js 用引擎真方法断言）。
-// 名称表不是静态数据；上方在新游戏与读档钩子运行时初始化。
-chara_ex.register(0, (cid) => {
-  // EX_TALENT:200 = 魔王
-  era.set(`ex_talent:${cid}:200`, 1);
-});
-chara_ex.register(31, (cid) => {
-  // EX_TALENT:101 = 琼
-  era.set(`ex_talent:${cid}:101`, 1);
-});
-chara_ex.register(32, (cid) => {
-  // EX_TALENT:102 = 普林希斯
-  era.set(`ex_talent:${cid}:102`, 1);
-});
-chara_ex.register(33, (cid) => {
-  // EX_TALENT:103 = 嘉德
-  era.set(`ex_talent:${cid}:103`, 1);
-});
-chara_ex.register(34, (cid) => {
-  // EX_TALENT:4 = 狂王替身、801 = 无双、
-  // 901 = 一人军团
-  era.set(`ex_talent:${cid}:4`, 1);
-  era.set(`ex_talent:${cid}:801`, 1);
-  era.set(`ex_talent:${cid}:901`, 1);
-});
-chara_ex.register(35, (cid) => {
-  // EX_TALENT:104 = 菲娅
-  era.set(`ex_talent:${cid}:104`, 1);
-});
-chara_ex.register(223, (cid) => {
-  // EX_TALENT:223 = 丽塔
-  era.set(`ex_talent:${cid}:223`, 1);
-});
-chara_ex.register(777, (cid) => {
-  // EX_TALENT:777 = 卡拉
-  era.set(`ex_talent:${cid}:777`, 1);
-});
 
 /**
  * 角色专属初始化的分发入口（issue #21）。新游戏加入角色后逐个调用
@@ -149,6 +89,5 @@ module.exports = {
   chara_ex,
   DECLARED_CHARA_IDS,
   get_ex_kojo_num,
-  ex_talentname_init,
   ex_talentname,
 };

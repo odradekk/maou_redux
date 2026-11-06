@@ -1936,8 +1936,8 @@ function target_ejac_check() {
     chara(cid).train.阴茎污渍 |= 4;
 
     game.system.对象射精 = 1;
-    era.set(`nowex:${cid}:6`, (era.get(`nowex:${cid}:6`) || 0) + 1);
-    chara(cid).system.普通射精绝顶 += 1;
+    // 通常の射精不另记绝顶计数：调教状态画面的绝顶行只到 EX:5，6 号既没有
+    // 登记也没有读取方，写下去只会在结算时多算一次
   }
 }
 

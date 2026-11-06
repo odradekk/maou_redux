@@ -60,8 +60,14 @@ function make_world(
   fixture.store.set('flag:89', dragon_conquered); // FLAG:89 龙之山脉征服
   fixture.store.set('flag:90', heaven_invasion); // FLAG:90 天界侵攻度
   fixture.store.set('flag:91', heaven_conquered); // FLAG:91 天界征服
-  // 菲娅预设（Chara35.yml 的最小夹具形状）：addCharacter 检查放行的前提
-  fixture.seed_chara(35, { name: '菲娅', callname: '菲娅' });
+  // 菲娅预设（Chara35.yml 的最小夹具形状）：addCharacter 检查放行的前提。
+  // ex_talent:104 是菲娅的本人标记（#834 从 chara-ex.js 的手工赋值搬进角色
+  // 预设），加入时由引擎套用
+  fixture.seed_chara(35, {
+    name: '菲娅',
+    callname: '菲娅',
+    ex_talent: { 104: 1 },
+  });
 }
 
 async function run_check(fixture, ...inputs) {

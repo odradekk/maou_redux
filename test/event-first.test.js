@@ -309,11 +309,12 @@ test('端到端：新的猎物 → 初期奴隶选村娘 → 初始化 → 转�
 
   // 新游戏四件套（标题侧）+ 村娘（#50）：清档后已加入 [0, 17]
   assert.deepEqual(fixture.chara_no, [0, 17]);
+  // 角色 0 的专属初始化（魔王的高贵标识）自 #834 起由角色预设随
+  // addCharacter 套用，加入点不再经分发注册表写值：#602 先钉现状——这里
+  // 不该出现任何 ex_talent 的写入
   assert(
-    fixture.var_writes.some(
-      (w) => w.name === 'ex_talent:0:200' && w.value === 1,
-    ),
-    '角色 0 的专属初始化必须经分发注册表触发（issue #21）',
+    !fixture.var_writes.some((w) => w.name.startsWith('ex_talent:')),
+    '加入点不再手工写 EX 素质（角色预设负责）',
   );
 
   // 读键恰为各 PRINTW/WAIT 的次数，无多余等待（主菜单的 input 在取数
