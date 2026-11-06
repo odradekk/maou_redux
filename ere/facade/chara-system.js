@@ -103,6 +103,21 @@ class SystemFacade {
     era.set(`cflag:${this.cid}:108`, v);
   }
 
+  /**
+   * 特殊角色标记（cflag:cid:800）
+   * CFLAG:800 特殊角色标记（1 琼 2 普林希斯 3 嘉德 4 葵希罗 5 白告姬；4 是狂王——独行与不可诱惑的判据。800～805 复用为献祭满足度六项）
+   * @returns {number}
+   */
+  get 特殊角色标记() {
+    return era.get(`cflag:${this.cid}:800`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 特殊角色标记(v) {
+    era.set(`cflag:${this.cid}:800`, v);
+  }
+
   // —— cstr ——
   /**
    * 故事名（cstr:cid:99）

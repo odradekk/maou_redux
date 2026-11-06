@@ -267,7 +267,7 @@ async function cm_base(cid) {
   // 战士&骑士&魔物使持鼓舞（talent:118）
   if (tv(202) === 1 || tv(206) === 1) {
     era.set(`talent:${cid}:117`, 1);
-    era.set(`cflag:${cid}:152`, 20);
+    chara(cid).chara.信仰值 = 20;
   } else if (tv(200) === 1 || tv(205) === 1 || tv(212) === 1) {
     era.set(`talent:${cid}:118`, 1);
   }

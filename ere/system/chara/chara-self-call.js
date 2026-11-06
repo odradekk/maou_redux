@@ -63,6 +63,7 @@
 const era = require('#/era-electron');
 const { nid_get_type } = require('#/system/chara/chara-name');
 const { get_look_info } = require('#/system/chara/look-info');
+const { chara } = require('#/facade/chara');
 
 const { chara_callname } = require('#/utils/callname-utils');
 const { input_text } = require('#/utils/input-text');
@@ -533,7 +534,7 @@ function set_nick_selfcall(cid, start = -1, rand = default_rand) {
  */
 async function random_self_call(cid, rand = default_rand, mode = 0) {
   // 进入时读好的档位（mode 1 的空输入回落也沿用这个值）
-  let local = era.get(`cflag:${cid}:450`) || 0;
+  let local = chara(cid).chara.一人称档位;
 
   if (mode === 1) {
     // 只有 mode 1 进输入段
@@ -556,7 +557,7 @@ async function random_self_call(cid, rand = default_rand, mode = 0) {
     if (text !== '') {
       // 非空：写入并清档位
       era.set(`cstr:${cid}:60`, text);
-      era.set(`cflag:${cid}:450`, 0);
+      chara(cid).chara.一人称档位 = 0;
       return 0;
     }
     // 空输入 → 落随机路径（local 已在函数起手读好，等价于重读本档位）
@@ -573,7 +574,7 @@ async function random_self_call(cid, rand = default_rand, mode = 0) {
     const preset = preset_self_call(cid);
     if (preset) {
       era.set(`cstr:${cid}:60`, preset); // CSTR:x:60 一人称
-      era.set(`cflag:${cid}:450`, 0); // CFLAG:x:450 一人称档位
+      chara(cid).chara.一人称档位 = 0;
       return 0;
     }
   }
@@ -581,7 +582,7 @@ async function random_self_call(cid, rand = default_rand, mode = 0) {
   // 档位 < 9 → 一人称 = 我
   if (local < 9) {
     era.set(`cstr:${cid}:60`, '我');
-    era.set(`cflag:${cid}:450`, 9);
+    chara(cid).chara.一人称档位 = 9;
     return 9;
   }
 
@@ -589,7 +590,7 @@ async function random_self_call(cid, rand = default_rand, mode = 0) {
   if (local < 100) {
     const result = set_suit_selfcall(cid, local - 10, rand);
     if (result >= 0) {
-      era.set(`cflag:${cid}:450`, result + 10);
+      chara(cid).chara.一人称档位 = result + 10;
       return result + 10;
     }
     local = 99;
@@ -599,7 +600,7 @@ async function random_self_call(cid, rand = default_rand, mode = 0) {
   if (local < 200) {
     const result = set_nick_selfcall(cid, local - 100, rand);
     if (result >= 0) {
-      era.set(`cflag:${cid}:450`, result + 100);
+      chara(cid).chara.一人称档位 = result + 100;
       // 返回值不带 +100：与上面合适一人称表的返回值 +10 不对称，档位写入
       // 与返回值各自独立赋值，两行都保留
       return result;
@@ -607,7 +608,7 @@ async function random_self_call(cid, rand = default_rand, mode = 0) {
   }
 
   // 两张表均未命中：清空档位重试（递归不带 mode，恒走随机路径）
-  era.set(`cflag:${cid}:450`, -1);
+  chara(cid).chara.一人称档位 = -1;
   return random_self_call(cid, rand);
 }
 

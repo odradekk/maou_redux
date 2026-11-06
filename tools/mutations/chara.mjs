@@ -471,11 +471,11 @@ export default [
     desc: 'M7824 random_self_call 合适一人称表命中后的 CFLAG 偏移改错（#383）',
     file: 'ere/system/chara/chara-self-call.js',
     find: `    if (result >= 0) {
-      era.set(\`cflag:\${cid}:450\`, result + 10);
+      chara(cid).chara.一人称档位 = result + 10;
       return result + 10;
     }`,
     replace: `    if (result >= 0) {
-      era.set(\`cflag:\${cid}:450\`, result + 11);
+      chara(cid).chara.一人称档位 = result + 11;
       return result + 11;
     }`,
     tests: ['chara-self-call'],
@@ -779,7 +779,7 @@ export default [
   {
     desc: 'M11535 MODE 1 的档位清零漏写（CFLAG:450 = 0 被删——自定义后档位仍留旧值）',
     file: 'ere/system/chara/chara-self-call.js',
-    find: '      era.set(`cstr:${cid}:60`, text);\n      era.set(`cflag:${cid}:450`, 0);',
+    find: '      era.set(`cstr:${cid}:60`, text);\n      chara(cid).chara.一人称档位 = 0;',
     replace: '      era.set(`cstr:${cid}:60`, text);',
     tests: ['chara-self-call'],
     must_mention: 'MODE 1：自由文本',
@@ -803,8 +803,9 @@ export default [
   {
     desc: 'M11538 MODE 1 的自定义命中返回值改坏（return 0 改 return 1）',
     file: 'ere/system/chara/chara-self-call.js',
-    find: '      era.set(`cflag:${cid}:450`, 0);\n      return 0;',
-    replace: '      era.set(`cflag:${cid}:450`, 0);\n      return 1;',
+    find: '      era.set(`cstr:${cid}:60`, text);\n      chara(cid).chara.一人称档位 = 0;\n      return 0;',
+    replace:
+      '      era.set(`cstr:${cid}:60`, text);\n      chara(cid).chara.一人称档位 = 0;\n      return 1;',
     tests: ['chara-self-call'],
     must_mention: 'MODE 1：自由文本',
   },
