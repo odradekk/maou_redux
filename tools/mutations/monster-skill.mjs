@@ -1,6 +1,6 @@
 // 变异条目表切片：issue #345（阶段 5a L14）怪物技能与两处战斗接入。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 38; // #641 起 -2（M7175/M7177 名单复辟检查随存根名单机制移除）；#651 起 -1+1（M7154 破铠吐息反向钉子随缺陷修复删除；+1 M13160 文案实伤一致回归检查）
+export const COUNT = 43; // #641 起 -2（M7175/M7177 名单复辟检查随存根名单机制移除）；#651 起 -1+1（M7154 破铠吐息反向钉子随缺陷修复删除；+1 M13160 文案实伤一致回归检查）；#935 起 +5（M18428-M18432：精英改按 chara 域结算——等级、叫名、地形攻击、地形类型、类型 0 的增益闸门），M7171/M7174 两条反向钉随缺陷修复翻成正向
 
 export default [
   {
@@ -72,18 +72,18 @@ export default [
   {
     desc: 'M7148 透明防御增量改坏',
     file: 'ere/system/dungeon/monster-skill.js',
-    find: '  } else if (skill === 5) {\n    await print_battle_line(`${monster_name}变为透明了……（防御+2）`);\n    write(3, read(3) + 2);',
+    find: '  } else if (skill === 5) {\n    await print_battle_line(`${monster_name}变为透明了……（防御+2）`);\n    self.add_defense(2);',
     replace:
-      '  } else if (skill === 5) {\n    await print_battle_line(`${monster_name}变为透明了……（防御+2）`);\n    write(3, read(3) + 1); // 变异',
+      '  } else if (skill === 5) {\n    await print_battle_line(`${monster_name}变为透明了……（防御+2）`);\n    self.add_defense(1); // 变异',
     tests: ['monster-skill'],
     must_mention: '十八种技能逐项',
   },
   {
     desc: 'M7149 迷失的第二次随机判定改坏',
     file: 'ere/system/dungeon/monster-skill.js',
-    find: '    write(3, read(3) + 5);\n  } else if (skill === 8) {\n    if (rand(3) === 0) {\n      await print_battle_line(`${chara_callname(target)}迷失了！`);',
+    find: '    self.add_defense(5);\n  } else if (skill === 8) {\n    if (rand(3) === 0) {\n      await print_battle_line(`${chara_callname(target)}迷失了！`);',
     replace:
-      '    write(3, read(3) + 5);\n  } else if (skill === 8) {\n    if (rand(3) === 2) {\n      await print_battle_line(`${chara_callname(target)}迷失了！`);',
+      '    self.add_defense(5);\n  } else if (skill === 8) {\n    if (rand(3) === 2) {\n      await print_battle_line(`${chara_callname(target)}迷失了！`);',
     tests: ['monster-skill'],
     must_mention: '十八种技能逐项',
   },
@@ -125,9 +125,9 @@ export default [
   {
     desc: 'M7155 魔力吸取防御增量改坏',
     file: 'ere/system/dungeon/monster-skill.js',
-    find: '    target_view.dungeon.气力 -= drain;\n    write(3, read(3) + 4);',
+    find: '    target_view.dungeon.气力 -= drain;\n    self.add_defense(4);',
     replace:
-      '    target_view.dungeon.气力 -= drain;\n    write(3, read(3) + 3); // 变异',
+      '    target_view.dungeon.气力 -= drain;\n    self.add_defense(3); // 变异',
     tests: ['monster-skill'],
     must_mention: '十八种技能逐项',
   },
@@ -152,18 +152,18 @@ export default [
   {
     desc: 'M7158 商店街地形 HP 倍率改坏',
     file: 'ere/system/dungeon/monster-skill.js',
-    find: '    target_view.dungeon.体力 -= level * 2;\n    write(2, read(2) + 1);',
+    find: '    target_view.dungeon.体力 -= level * 2;\n    self.add_attack(1);',
     replace:
-      '    target_view.dungeon.体力 -= level; // 变异\n    write(2, read(2) + 1);',
+      '    target_view.dungeon.体力 -= level; // 变异\n    self.add_attack(1);',
     tests: ['monster-skill'],
     must_mention: '七种房间逐项',
   },
   {
     desc: 'M7159 沼地地形攻击增量改坏',
     file: 'ere/system/dungeon/monster-skill.js',
-    find: '    target_view.dungeon.气力 -= level * 2;\n    write(2, read(2) + 2);',
+    find: '    target_view.dungeon.气力 -= level * 2;\n    self.add_attack(2);',
     replace:
-      '    target_view.dungeon.气力 -= level * 2;\n    write(2, read(2) + 1); // 变异',
+      '    target_view.dungeon.气力 -= level * 2;\n    self.add_attack(1); // 变异',
     tests: ['monster-skill'],
     must_mention: '沼地攻击 +2',
   },
@@ -178,26 +178,26 @@ export default [
   {
     desc: 'M7161 冰室地形防御增量改坏',
     file: 'ere/system/dungeon/monster-skill.js',
-    find: '    write(2, read(2) + 2);\n    write(3, read(3) + 2);\n  } else if (room === 504)',
+    find: '    self.add_attack(2);\n    self.add_defense(2);\n  } else if (room === 504)',
     replace:
-      '    write(2, read(2) + 2);\n    write(3, read(3) + 1); // 变异\n  } else if (room === 504)',
+      '    self.add_attack(2);\n    self.add_defense(1); // 变异\n  } else if (room === 504)',
     tests: ['monster-skill'],
     must_mention: '冰室防御 +2',
   },
   {
     desc: 'M7162 热砂低防御检查改坏',
     file: 'ere/system/dungeon/monster-skill.js',
-    find: '    if (read(3) > 2) {',
-    replace: '    if (read(3) >= 2) { // 变异',
+    find: '    if (self.defense() > 2) {',
+    replace: '    if (self.defense() >= 2) { // 变异',
     tests: ['monster-skill'],
     must_mention: '不把低防御再减一',
   },
   {
     desc: 'M7163 迷宫地形防御增量改坏',
     file: 'ere/system/dungeon/monster-skill.js',
-    find: '  } else if (room === 505) {\n    await print_battle_line(`${monster_name}躲进了迷宫里。（防御+5）`);\n    write(3, read(3) + 5);',
+    find: '  } else if (room === 505) {\n    await print_battle_line(`${monster_name}躲进了迷宫里。（防御+5）`);\n    self.add_defense(5);',
     replace:
-      '  } else if (room === 505) {\n    await print_battle_line(`${monster_name}躲进了迷宫里。（防御+5）`);\n    write(3, read(3) + 4); // 变异',
+      '  } else if (room === 505) {\n    await print_battle_line(`${monster_name}躲进了迷宫里。（防御+5）`);\n    self.add_defense(4); // 变异',
     tests: ['monster-skill'],
     must_mention: '七种房间逐项',
   },
@@ -246,10 +246,10 @@ export default [
   {
     desc: 'M7169 use_monster_skill 不再覆盖传入等级',
     file: 'ere/system/dungeon/monster-skill.js',
-    find: '  dmg = read(1) + chara(0).chara.等级;',
+    find: '  dmg = self.level + chara(0).chara.等级;',
     replace: '  dmg += 0; // 变异：保留传入等级',
     tests: ['monster-skill'],
-    must_mention: '传入的精英等级会被列里的等级重算覆盖',
+    must_mention: '传入的精英等级会被自身等级重算覆盖',
   },
   {
     desc: 'M7170 use_monster_skill 参数下降除数改坏',
@@ -257,16 +257,16 @@ export default [
     find: '  const palam_down = Math.trunc(dmg / 3) + 1;',
     replace: '  const palam_down = Math.trunc(dmg / 5) + 1; // 变异',
     tests: ['monster-skill'],
-    must_mention: '精英版的数值差异',
+    must_mention: '按精英自身的等级与攻防结算',
   },
   {
-    desc: 'M7171 精英防御增益误写到 E 数组',
+    desc: 'M7171 精英防御增益写到自己的攻击力上（取错字段）',
     file: 'ere/system/dungeon/monster-skill.js',
-    find: '    } else if (user_type === 2) {\n      chara(user).dungeon.防御力 += value;\n    }',
+    find: '      add_defense: (value) => {\n        view.dungeon.防御力 += value;\n      },',
     replace:
-      '    } else if (user_type === 2) {\n      battle_column(user).defense += value; // 变异\n    }',
+      '      add_defense: (value) => {\n        view.dungeon.攻击力 += value; // 变异：取错字段\n      },',
     tests: ['monster-skill'],
-    must_mention: '精英版的数值差异与写入位置',
+    must_mention: '精英的攻防增益落在自己身上',
   },
   {
     desc: 'M7172 精英麻痹误用参数下降值',
@@ -275,7 +275,7 @@ export default [
     replace:
       '  } else if (skill === 10) {\n    await print_battle_line(`${user_name}喷出了麻痹气体！！（攻击-${dmg}）`);\n    target_view.dungeon.攻击力 -= palam_down; // 变异',
     tests: ['monster-skill'],
-    must_mention: '精英版的数值差异',
+    must_mention: '按精英自身的等级与攻防结算',
   },
   {
     desc: 'M7173 精英混乱误用普通怪物伤害',
@@ -284,16 +284,16 @@ export default [
     replace:
       '  } else if (skill === 12) {\n    const confusion = Math.trunc((dmg * 3) / 2); // 变异',
     tests: ['monster-skill'],
-    must_mention: '精英版的数值差异',
+    must_mention: '按精英自身的等级与攻防结算',
   },
   {
-    desc: 'M7174 精英肉铠被顺手改成按类型分流',
+    desc: 'M7174 精英肉铠写回战斗列（增益又落到别人的槽上）',
     file: 'ere/system/dungeon/monster-skill.js',
-    find: '    write(3, read(3) + 2);\n  }\n  return 0;\n}\n\nmodule.exports',
+    find: '    self.add_defense(2);\n  }\n  return 0;\n}\n\nmodule.exports',
     replace:
-      '    add_defence(2); // 变异：按类型分流\n  }\n  return 0;\n}\n\nmodule.exports',
+      '    battle_column(user).defense += 2; // 变异：写回战斗列\n  }\n  return 0;\n}\n\nmodule.exports',
     tests: ['monster-skill'],
-    must_mention: '精英版的数值差异与写入位置',
+    must_mention: '精英的攻防增益落在自己身上',
   },
   {
     desc: 'M7176 怪物战斗入口不再透传随机源',
@@ -329,5 +329,49 @@ export default [
       '`${monster_name}喷出了破坏铠甲的吐息！！（HP-${level * 2} 防御-${palam_down}）`, // 变异：文案回退（与实伤不一致）',
     tests: ['monster-skill'],
     must_mention: '文案与实伤一致',
+  },
+  // —— #935：精英（角色号）改按 chara 域结算，不再借战斗列 ——
+  {
+    desc: 'M18428 精英等级改读战斗列（角色号又当列号用）',
+    file: 'ere/system/dungeon/monster-skill.js',
+    find: '      level: view.chara.等级,',
+    replace: '      level: battle_column(user).level, // 变异：等级取错表',
+    tests: ['monster-skill'],
+    must_mention: '按精英自身的等级与攻防结算',
+  },
+  {
+    desc: 'M18429 精英显示名回退成从战斗列拼怪物名',
+    file: 'ere/system/dungeon/monster-skill.js',
+    find: '      name: user_name,',
+    replace:
+      '      name: monstername(battle_column(user).id), // 变异：名取错表',
+    tests: ['monster-skill'],
+    must_mention: '精英射击用叫名',
+  },
+  {
+    desc: 'M18430 精英的地形攻击增益写到防御力上（取错字段）',
+    file: 'ere/system/dungeon/monster-skill.js',
+    find: '      add_attack: (value) => {\n        view.dungeon.攻击力 += value;\n      },',
+    replace:
+      '      add_attack: (value) => {\n        view.dungeon.防御力 += value; // 变异：取错字段\n      },',
+    tests: ['monster-skill'],
+    must_mention: '精英路径的地形增益加到角色自己身上',
+  },
+  {
+    desc: 'M18431 精英的地形技能按列结算（角色号又当列号用）',
+    file: 'ere/system/dungeon/monster-skill.js',
+    find: '    await monster_room_skill(target, user, user_type, user_name);',
+    replace:
+      '    await monster_room_skill(target, user, 1, user_name); // 变异：精英按列结算',
+    tests: ['monster-skill'],
+    must_mention: '精英的攻防增益落在自己身上',
+  },
+  {
+    desc: 'M18432 未知使用者类型的防御增益也算数',
+    file: 'ere/system/dungeon/monster-skill.js',
+    find: '    if (user_type === 1 || user_type === 2) {',
+    replace: '    if (true) { // 变异：类型 0 也算增益',
+    tests: ['monster-skill'],
+    must_mention: '未知类型只演出不增益',
   },
 ];

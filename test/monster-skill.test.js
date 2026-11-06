@@ -4,6 +4,10 @@
  * 测试注入点 = ere/system/dungeon/monster-skill.js 的公开出口与
  * test/helpers/era-fixture.js。
  * RAND 经函数参数注入，所有行为用例都使用确定性 seq。
+ *
+ * 使用者有两类：普通怪物（列号 → 战斗状态的那一列）与精英部下（角色号 →
+ * chara 域）。精英的攻防与等级只认角色自己那一份，用例因此既断言增益落在
+ * 哪个单元，也断言战斗列一个槽都没动（#935）。
  */
 
 const assert = require('node:assert/strict');
@@ -210,30 +214,32 @@ test('monster_skill：战斗日志开启时等待输出，破铠吐息文案与�
   assert.equal(fixture.store.get('base:1:0'), 1933, '实际扣 67，文案同值');
 });
 
-test('use_monster_skill：十八种技能保留精英版的数值差异与写入位置', async () => {
+test('use_monster_skill：十八种技能按精英自身的等级与攻防结算', async () => {
+  // 精英（cid = 2）自身等级 5 + 魔王等级 10 = 15；参数下降 = 15/3+1 = 6。
   const cases = [
-    [1, 'base:1:1', 950],
-    [2, 'base:1:0', 1950],
-    [3, 'cflag:1:11', 63],
-    [4, 'cflag:1:12', 53],
+    [1, 'base:1:1', 985],
+    [2, 'base:1:0', 1985],
+    [3, 'cflag:1:11', 74],
+    [4, 'cflag:1:12', 64],
     [5, 'cflag:2:12', 22],
     [6, 'cflag:2:12', 23],
     [7, 'cflag:2:12', 25],
     [8, 'cflag:1:509', 1],
-    [9, 'base:1:0', 1925],
-    [10, 'cflag:1:11', 30],
+    [9, 'base:1:0', 1978],
+    [10, 'cflag:1:11', 65],
     [11, 'cflag:1:2', 14],
-    [12, 'base:1:1', 975],
-    [13, 'exp:1:80', 50],
-    [14, 'base:1:0', 1925],
+    [12, 'base:1:1', 991],
+    [13, 'exp:1:80', 85],
+    [14, 'base:1:0', 1978],
     [15, 'cflag:2:12', 24],
-    [16, 'base:1:0', 1950],
-    [17, 'base:1:1', 900],
-    [18, 'battle:DEFENSE_1:special', 2],
+    [16, 'base:1:0', 1985],
+    [17, 'base:1:1', 970],
+    [18, 'cflag:2:12', 22],
   ];
 
   for (const [skill, key, expected] of cases) {
     const fixture = setup();
+    fixture.store.set('cflag:2:9', 5);
     fixture.store.set('cflag:2:12', 20);
     fixture.store.set('cflag:1:501', 501);
     await load(fixture).use_monster_skill(1, skill, 2, 999, 2, '贝丝', seq(0));
@@ -241,15 +247,67 @@ test('use_monster_skill：十八种技能保留精英版的数值差异与写入
   }
 });
 
-test('use_monster_skill：传入的精英等级会被列里的等级重算覆盖', async () => {
+test('use_monster_skill：精英的攻防增益落在自己身上，战斗列的槽一个都不动', async () => {
+  // 第 0 列每个槽都给非零值：增益若落到列上，deepEqual 立刻红，且报出的是
+  // 具体哪个槽被写。
+  const cases = [
+    [18, 'cflag:2:12', 22],
+    [5, 'cflag:2:12', 22],
+    [6, 'cflag:2:12', 23],
+    [7, 'cflag:2:12', 25],
+    [15, 'cflag:2:12', 24],
+    [17, 'cflag:2:11', 2],
+  ];
+
+  for (const [skill, key, expected] of cases) {
+    const fixture = setup();
+    const column = fixture.battle('DEFENSE_1');
+    column.speed = 55;
+    column.special = 77;
+    column.magic = 88;
+    column.count = 9;
+    fixture.store.set('cflag:2:9', 5);
+    fixture.store.set('cflag:2:11', 0);
+    fixture.store.set('cflag:2:12', 20);
+    fixture.store.set('cflag:1:501', 501);
+
+    await load(fixture).use_monster_skill(1, skill, 2, 0, 2, '贝丝', seq(0));
+
+    assert.deepEqual(
+      { ...column },
+      {
+        id: 100,
+        level: 20,
+        attack: 30,
+        defense: 40,
+        speed: 55,
+        special: 77,
+        magic: 88,
+        rape_type: 0,
+        boss: 0,
+        status: 0,
+        resistance: 0,
+        count: 9,
+      },
+      `技能 ${skill} 不得改动第 0 列的任何槽`,
+    );
+    assert.equal(
+      read(fixture, key),
+      expected,
+      `技能 ${skill} 的增益落在 ${key}`,
+    );
+  }
+});
+
+test('use_monster_skill：传入的精英等级会被自身等级重算覆盖', async () => {
   const fixture = setup();
 
   await load(fixture).use_monster_skill(1, 1, 2, 999, 2, '贝丝', seq(0));
 
   assert.equal(
     fixture.store.get('base:1:1'),
-    950,
-    '使用 E:3 + CFLAG:0:9，而非 999',
+    990,
+    '使用精英等级 0 + CFLAG:0:9 = 10，而非 999',
   );
 });
 
@@ -262,7 +320,11 @@ test('slave_monster_skill：先判发动，再从 401–499 的素质池选技�
   assert.equal(fixture.store.get('base:1:1'), 1000, 'RAND:3 == 0 不发动');
 
   await slave_monster_skill(1, 2, seq(1));
-  assert.equal(fixture.store.get('base:1:1'), 950, '471 - 470 = 粘液捕获');
+  assert.equal(
+    fixture.store.get('base:1:1'),
+    990,
+    '471 - 470 = 粘液捕获；伤害 = 精英等级 0 + 魔王等级 10',
+  );
 });
 
 test('slave_monster_skill：随机选中 401–469 时减 470 为负并浪费行动', async () => {
@@ -284,24 +346,26 @@ test('slave_monster_skill：没有值严格为 1 的素质时不发动', async (
   assert.equal(fixture.store.get('base:1:1'), 1000);
 });
 
-test('slave_monster_skill：角色号 ≥ 12 的精英（cid = 31）照旧版数值结算，不出现 NaN', async () => {
-  // 守旧行为：精英路径把角色号当 E 表下标用，cid = 31 读的是 E:31 / E:32 ——
-  // 旧表一列 100 槽，这两格恒 0（没人命名、没人写）。于是
-  //   dmg = 0 + chara(0).等级 10 = 10 → 气力 1000 - 10 = 990。
-  // 过渡层若只覆盖十二个具名字段，offset 31 会落到 undefined，dmg 变 NaN、
-  // 气力变 undefined——这条用例就是那次回归的钉子。修「角色号当列号」那张
-  // 票时要把它翻面（改成按列号取），注释与标题一并改。
+test('slave_monster_skill：角色号 ≥ 12 的精英（cid = 31）按自身等级结算，不出现 NaN', async () => {
+  // 角色号 31 的等级 0 + 魔王等级 10 = 10 → 气力 1000 - 10 = 990。
+  // 角色号不是列号：第 0 列的任何槽都不该参与这条结算，也不该被这条路径写。
   const fixture = setup();
   fixture.seed_chara(31, { id: 31, name: '菲娅', callname: '菲娅' });
   fixture.era.addCharacter(31);
   fixture.store.set('callname:31:-1', '菲娅');
-  fixture.store.set('base:31:11', 0); // 精英自身攻防与列无关，留空
   fixture.store.set('talent:31:471', 1); // 粘液捕获
   fixture.store.set('flag:5', 32); // 打开战斗日志，顺带核对文案里没有 NaN
+  const column = fixture.battle('DEFENSE_1');
+  column.special = 77;
 
   await load(fixture).slave_monster_skill(1, 31, seq(1));
 
-  assert.equal(fixture.store.get('base:1:1'), 990, '旧版数值 1000 - 10');
+  assert.equal(
+    fixture.store.get('base:1:1'),
+    990,
+    '伤害只取精英自身等级与魔王等级，不读第 0 列的槽',
+  );
+  assert.equal(column.special, 77, '精英路径不得写第 0 列的槽');
   const lines = fixture.text_lines().join('\n');
   assert.doesNotMatch(lines, /NaN|undefined/, '文案里不得出现 NaN / undefined');
 });
@@ -316,9 +380,8 @@ test('use_monster_skill：怪物类型写列里的防御，未知类型只演出
   assert.equal(unknown.battle('DEFENSE_1').defense, 40);
 });
 
-test('use_monster_skill：精英射击沿用列里的怪物名而非传入名字', async () => {
-  // 精英路径把角色号 2 当 E 表下标用（既有怪癖）：怪物名取自 E:2 =
-  // 列 0 的攻击力槽，不是形参 user_name。
+test('use_monster_skill：精英射击用叫名，而不是列里攻击力槽拼出来的怪物名', async () => {
+  // 列 0 的攻击力槽（+2）是 30：把它当怪物识别号会读出「错位怪物名」。
   const fixture = setup();
   fixture.store.set('flag:5', 32);
   fixture.store.set('itemname:30', '错位怪物名');
@@ -326,7 +389,29 @@ test('use_monster_skill：精英射击沿用列里的怪物名而非传入名字
   await load(fixture).use_monster_skill(1, 16, 2, 0, 2, '贝丝', seq(0));
 
   const line = fixture.lines_history.find((item) => item.type === 'text');
-  assert.equal(line.text, '错位怪物名用弓箭发动了攻击！！（HP-50）');
+  assert.equal(line.text, '贝丝用弓箭发动了攻击！！（HP-10）');
+});
+
+test('monster_room_skill：精英路径的地形增益加到角色自己身上', async () => {
+  const fixture = setup();
+  fixture.store.set('cflag:2:11', 0);
+  fixture.store.set('cflag:2:12', 20);
+  fixture.store.set('cflag:1:501', 503); // 冰室：攻击 +2 防御 +2
+
+  await load(fixture).monster_room_skill(1, 2, 2, '贝丝');
+
+  assert.equal(
+    fixture.store.get('cflag:2:11'),
+    2,
+    '攻击加在精英自己的攻击力上',
+  );
+  assert.equal(
+    fixture.store.get('cflag:2:12'),
+    22,
+    '防御加在精英自己的防御力上',
+  );
+  assert.equal(fixture.battle('DEFENSE_1').attack, 30, '第 0 列的攻击槽不动');
+  assert.equal(fixture.battle('DEFENSE_1').defense, 40, '第 0 列的防御槽不动');
 });
 
 test('两套战斗入口调用怪物技能真身并透传确定性随机源', async () => {
