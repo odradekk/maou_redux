@@ -3085,12 +3085,14 @@ async function train_message_a_3() {
   const talent = (i) => era.get(`talent:${target}:${i}`);
   const abl17 = era.get(`abl:${target}:17`) || 0;
 
-  // A/B/C/D = UP:0/1/2/17，E = 四者合计
+  // A/B/C = UP:0/1/2，E = 三项合计。原实现另读一个 UP:17 记作 D，但本移植的
+  // 参数表只声明 0–15 与 100，17 既无声明也没有任何写入点，D 恒为 0——它从未
+  // 影响过分档。按 ADR-0008「从未生效的功能不恢复」删掉这个假读数，不补声明、
+  // 也不改读别的序号（换号会静默改变六档判定）。
   const a = era.get(`delta:${target}:0`) || 0;
   const b = era.get(`delta:${target}:1`) || 0;
   const c = era.get(`delta:${target}:2`) || 0;
-  const d = era.get(`delta:${target}:17`) || 0;
-  const e = a + b + c + d;
+  const e = a + b + c;
 
   // 男人/扶她使用撸系文案
   const male_side = talent(122) || talent(121);
