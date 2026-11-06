@@ -505,21 +505,6 @@ class SystemFacade {
   set 喷乳绝顶(v) {
     era.set(`ex:${this.cid}:5`, v);
   }
-
-  /**
-   * 普通射精绝顶（ex:cid:6）
-   * target_ejac_check 通常の射精
-   * @returns {number}
-   */
-  get 普通射精绝顶() {
-    return era.get(`ex:${this.cid}:6`) || 0;
-  }
-  /**
-   * @param {number} v
-   */
-  set 普通射精绝顶(v) {
-    era.set(`ex:${this.cid}:6`, v);
-  }
 }
 // GENERATED END
 

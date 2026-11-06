@@ -785,7 +785,6 @@ const ex = {
     '喷乳绝顶',
     'EX:5 射精·喷乳（com_ejac_player_milk 的 EX:PLAYER:5 += 1）',
   ),
-  6: named('普通射精绝顶', 'target_ejac_check 通常の射精'),
 };
 
 const stain = {

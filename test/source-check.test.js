@@ -1237,8 +1237,14 @@ test('TARGET_EJAC_CHECK：普通射精档（EJAC < BASE:2 ≤ EJAC*2），男人
   assert.equal(fixture.store.get('base:31:2'), 750); // 1750-1000=750，不再触发钳制
   assert.equal(fixture.store.get('stain:31:2'), 4);
   assert.equal(fixture.store.get('tflag:10'), 1);
-  assert.equal(fixture.store.get('nowex:31:6'), 1);
-  assert.equal(fixture.store.get('ex:31:6'), 1);
+  // 通常の射精不记绝顶计数：6 号既没在 Ex.yml 登记、也没有读取方，写下去
+  // 结算时会在 undefined 上加出 NaN，多算的那一次还看不出来
+  assert.equal(
+    fixture.store.has('nowex:31:6'),
+    false,
+    '通常の射精不得写 6 号 NOWEX',
+  );
+  assert.equal(fixture.store.has('ex:31:6'), false, '通常の射精不得写 6 号 EX');
 });
 
 test('TARGET_EJAC_CHECK：大量射精档（BASE:2 > EJAC*2），扶她非男人 → 异常经验+1', async () => {
