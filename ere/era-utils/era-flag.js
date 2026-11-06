@@ -1245,6 +1245,916 @@ const era_flag = {
   set adventurer_flags(v) {
     era.set('flag:8', v);
   },
+  /**
+   * 休息（flag:0）
+   * @returns {number}
+   */
+  get rest() {
+    return era.get('flag:0') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set rest(v) {
+    era.set('flag:0', v);
+  },
+  /**
+   * 上次调教对象（flag:1）
+   * @returns {number}
+   */
+  get last_train_target() {
+    return era.get('flag:1') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set last_train_target(v) {
+    era.set('flag:1', v);
+  },
+  /**
+   * 上次助手（flag:2）
+   * @returns {number}
+   */
+  get last_assistant() {
+    return era.get('flag:2') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set last_assistant(v) {
+    era.set('flag:2', v);
+  },
+  /**
+   * 游戏设定（flag:5）
+   * @returns {number}
+   */
+  get game_settings() {
+    return era.get('flag:5') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set game_settings(v) {
+    era.set('flag:5', v);
+  },
+  /**
+   * 调教文本省略（flag:6）
+   * @returns {number}
+   */
+  get train_text_omitted() {
+    return era.get('flag:6') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set train_text_omitted(v) {
+    era.set('flag:6', v);
+  },
+  /**
+   * 口上开关（flag:7）
+   * @returns {number}
+   */
+  get kojo_switch() {
+    return era.get('flag:7') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set kojo_switch(v) {
+    era.set('flag:7', v);
+  },
+  /**
+   * 录像开始状况（flag:22）
+   * @returns {number}
+   */
+  get video_start_state() {
+    return era.get('flag:22') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set video_start_state(v) {
+    era.set('flag:22', v);
+  },
+  /**
+   * 指令过滤（flag:25）
+   * @returns {number}
+   */
+  get order_filter() {
+    return era.get('flag:25') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set order_filter(v) {
+    era.set('flag:25', v);
+  },
+  /**
+   * 种族年龄设定_0（flag:26）
+   * @returns {number}
+   */
+  get race_age_setting_0() {
+    return era.get('flag:26') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set race_age_setting_0(v) {
+    era.set('flag:26', v);
+  },
+  /**
+   * 种族年龄设定_1（flag:27）
+   * @returns {number}
+   */
+  get race_age_setting_1() {
+    return era.get('flag:27') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set race_age_setting_1(v) {
+    era.set('flag:27', v);
+  },
+  /**
+   * 爱或淫乱人数（flag:30）
+   * @returns {number}
+   */
+  get love_or_lewd_count() {
+    return era.get('flag:30') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set love_or_lewd_count(v) {
+    era.set('flag:30', v);
+  },
+  /**
+   * 杀死人数（flag:31）
+   * @returns {number}
+   */
+  get kill_count() {
+    return era.get('flag:31') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set kill_count(v) {
+    era.set('flag:31', v);
+  },
+  /**
+   * 爱之奴隶所生（flag:32）
+   * @returns {number}
+   */
+  get born_of_love_slave() {
+    return era.get('flag:32') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set born_of_love_slave(v) {
+    era.set('flag:32', v);
+  },
+  /**
+   * 技巧素质道具数（flag:33）
+   * @returns {number}
+   */
+  get skill_talent_item_count() {
+    return era.get('flag:33') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set skill_talent_item_count(v) {
+    era.set('flag:33', v);
+  },
+  /**
+   * 自动购买设定（flag:34）
+   * @returns {number}
+   */
+  get auto_buying_settings() {
+    return era.get('flag:34') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set auto_buying_settings(v) {
+    era.set('flag:34', v);
+  },
+  /**
+   * 濒死自动结束调教（flag:35）
+   * @returns {number}
+   */
+  get auto_end_train_when_dying() {
+    return era.get('flag:35') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set auto_end_train_when_dying(v) {
+    era.set('flag:35', v);
+  },
+  /**
+   * 显示模式（flag:36）
+   * @returns {number}
+   */
+  get display_mode() {
+    return era.get('flag:36') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set display_mode(v) {
+    era.set('flag:36', v);
+  },
+  /**
+   * 着衣系统（flag:37）
+   * @returns {number}
+   */
+  get clothing_system() {
+    return era.get('flag:37') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set clothing_system(v) {
+    era.set('flag:37', v);
+  },
+  /**
+   * 设施追加人数（flag:40）
+   * @returns {number}
+   */
+  get facility_headcount() {
+    return era.get('flag:40') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set facility_headcount(v) {
+    era.set('flag:40', v);
+  },
+  /**
+   * 设施建造位（flag:48）
+   * @returns {number}
+   */
+  get facility_bitmap() {
+    return era.get('flag:48') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set facility_bitmap(v) {
+    era.set('flag:48', v);
+  },
+  /**
+   * 勇者基础等级修正（flag:60）
+   * @returns {number}
+   */
+  get hero_base_level_bonus() {
+    return era.get('flag:60') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set hero_base_level_bonus(v) {
+    era.set('flag:60', v);
+  },
+  /**
+   * 每日香料购买数（flag:61）
+   * @returns {number}
+   */
+  get daily_spice_purchase() {
+    return era.get('flag:61') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set daily_spice_purchase(v) {
+    era.set('flag:61', v);
+  },
+  /**
+   * 肉便器行动（flag:62）
+   * @returns {number}
+   */
+  get benki_behavior() {
+    return era.get('flag:62') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set benki_behavior(v) {
+    era.set('flag:62', v);
+  },
+  /**
+   * 肉便器常识改写（flag:63）
+   * @returns {number}
+   */
+  get benki_common_sense() {
+    return era.get('flag:63') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set benki_common_sense(v) {
+    era.set('flag:63', v);
+  },
+  /**
+   * 肉便器侍奉对象（flag:64）
+   * @returns {number}
+   */
+  get benki_service_target() {
+    return era.get('flag:64') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set benki_service_target(v) {
+    era.set('flag:64', v);
+  },
+  /**
+   * 失神机能关闭（flag:70）
+   * @returns {number}
+   */
+  get passout_disabled() {
+    return era.get('flag:70') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set passout_disabled(v) {
+    era.set('flag:70', v);
+  },
+  /**
+   * 自由调教跳转（flag:71）
+   * @returns {number}
+   */
+  get free_train_jump() {
+    return era.get('flag:71') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set free_train_jump(v) {
+    era.set('flag:71', v);
+  },
+  /**
+   * 精饮机能关闭（flag:72）
+   * @returns {number}
+   */
+  get semen_drink_disabled() {
+    return era.get('flag:72') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set semen_drink_disabled(v) {
+    era.set('flag:72', v);
+  },
+  /**
+   * 强化素质关闭（flag:73）
+   * @returns {number}
+   */
+  get super_talent_disabled() {
+    return era.get('flag:73') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set super_talent_disabled(v) {
+    era.set('flag:73', v);
+  },
+  /**
+   * 时常发情关闭（flag:75）
+   * @returns {number}
+   */
+  get always_aroused_disabled() {
+    return era.get('flag:75') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set always_aroused_disabled(v) {
+    era.set('flag:75', v);
+  },
+  /**
+   * 外来勇者等级上限（flag:76）
+   * @returns {number}
+   */
+  get foreign_hero_level_cap() {
+    return era.get('flag:76') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set foreign_hero_level_cap(v) {
+    era.set('flag:76', v);
+  },
+  /**
+   * 通信勇者登场压级（flag:77）
+   * @returns {number}
+   */
+  get communication_hero_level_one() {
+    return era.get('flag:77') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set communication_hero_level_one(v) {
+    era.set('flag:77', v);
+  },
+  /**
+   * 处刑勇者数（flag:80）
+   * @returns {number}
+   */
+  get executed_hero_count() {
+    return era.get('flag:80') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set executed_hero_count(v) {
+    era.set('flag:80', v);
+  },
+  /**
+   * 陷阱等级（flag:85）
+   * @returns {number}
+   */
+  get trap_level() {
+    return era.get('flag:85') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set trap_level(v) {
+    era.set('flag:85', v);
+  },
+  /**
+   * 口上存在_0（flag:100）
+   * @returns {number}
+   */
+  get kojo_exists_0() {
+    return era.get('flag:100') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set kojo_exists_0(v) {
+    era.set('flag:100', v);
+  },
+  /**
+   * 口上存在_1（flag:101）
+   * @returns {number}
+   */
+  get kojo_exists_1() {
+    return era.get('flag:101') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set kojo_exists_1(v) {
+    era.set('flag:101', v);
+  },
+  /**
+   * 口上存在_2（flag:102）
+   * @returns {number}
+   */
+  get kojo_exists_2() {
+    return era.get('flag:102') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set kojo_exists_2(v) {
+    era.set('flag:102', v);
+  },
+  /**
+   * 口上存在_3（flag:103）
+   * @returns {number}
+   */
+  get kojo_exists_3() {
+    return era.get('flag:103') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set kojo_exists_3(v) {
+    era.set('flag:103', v);
+  },
+  /**
+   * 口上存在_4（flag:104）
+   * @returns {number}
+   */
+  get kojo_exists_4() {
+    return era.get('flag:104') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set kojo_exists_4(v) {
+    era.set('flag:104', v);
+  },
+  /**
+   * 口上存在_5（flag:105）
+   * @returns {number}
+   */
+  get kojo_exists_5() {
+    return era.get('flag:105') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set kojo_exists_5(v) {
+    era.set('flag:105', v);
+  },
+  /**
+   * 口上存在_6（flag:106）
+   * @returns {number}
+   */
+  get kojo_exists_6() {
+    return era.get('flag:106') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set kojo_exists_6(v) {
+    era.set('flag:106', v);
+  },
+  /**
+   * 口上存在_7（flag:107）
+   * @returns {number}
+   */
+  get kojo_exists_7() {
+    return era.get('flag:107') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set kojo_exists_7(v) {
+    era.set('flag:107', v);
+  },
+  /**
+   * 口上存在_8（flag:108）
+   * @returns {number}
+   */
+  get kojo_exists_8() {
+    return era.get('flag:108') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set kojo_exists_8(v) {
+    era.set('flag:108', v);
+  },
+  /**
+   * 口上存在_9（flag:109）
+   * @returns {number}
+   */
+  get kojo_exists_9() {
+    return era.get('flag:109') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set kojo_exists_9(v) {
+    era.set('flag:109', v);
+  },
+  /**
+   * 口上存在_10（flag:110）
+   * @returns {number}
+   */
+  get kojo_exists_10() {
+    return era.get('flag:110') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set kojo_exists_10(v) {
+    era.set('flag:110', v);
+  },
+  /**
+   * 口上存在_11（flag:111）
+   * @returns {number}
+   */
+  get kojo_exists_11() {
+    return era.get('flag:111') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set kojo_exists_11(v) {
+    era.set('flag:111', v);
+  },
+  /**
+   * 口上存在_12（flag:112）
+   * @returns {number}
+   */
+  get kojo_exists_12() {
+    return era.get('flag:112') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set kojo_exists_12(v) {
+    era.set('flag:112', v);
+  },
+  /**
+   * 口上存在_13（flag:113）
+   * @returns {number}
+   */
+  get kojo_exists_13() {
+    return era.get('flag:113') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set kojo_exists_13(v) {
+    era.set('flag:113', v);
+  },
+  /**
+   * 口上存在_14（flag:114）
+   * @returns {number}
+   */
+  get kojo_exists_14() {
+    return era.get('flag:114') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set kojo_exists_14(v) {
+    era.set('flag:114', v);
+  },
+  /**
+   * 口上存在_15（flag:115）
+   * @returns {number}
+   */
+  get kojo_exists_15() {
+    return era.get('flag:115') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set kojo_exists_15(v) {
+    era.set('flag:115', v);
+  },
+  /**
+   * 口上存在_19（flag:119）
+   * @returns {number}
+   */
+  get kojo_exists_19() {
+    return era.get('flag:119') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set kojo_exists_19(v) {
+    era.set('flag:119', v);
+  },
+  /**
+   * 勇者入场_23（flag:223）
+   * @returns {number}
+   */
+  get hero_entry_23() {
+    return era.get('flag:223') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set hero_entry_23(v) {
+    era.set('flag:223', v);
+  },
+  /**
+   * 派遣奴隶标志（flag:402）
+   * @returns {number}
+   */
+  get dispatched_slave() {
+    return era.get('flag:402') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set dispatched_slave(v) {
+    era.set('flag:402', v);
+  },
+  /**
+   * 狂王性别（flag:500）
+   * @returns {number}
+   */
+  get crazylord_gender() {
+    return era.get('flag:500') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set crazylord_gender(v) {
+    era.set('flag:500', v);
+  },
+  /**
+   * 初期奴隶类型（flag:501）
+   * @returns {number}
+   */
+  get initial_slave_type() {
+    return era.get('flag:501') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set initial_slave_type(v) {
+    era.set('flag:501', v);
+  },
+  /**
+   * 指令菜单长度（flag:550）
+   * @returns {number}
+   */
+  get order_menu_length() {
+    return era.get('flag:550') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set order_menu_length(v) {
+    era.set('flag:550', v);
+  },
+  /**
+   * 石像数（flag:600）
+   * @returns {number}
+   */
+  get stone_statue_count() {
+    return era.get('flag:600') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set stone_statue_count(v) {
+    era.set('flag:600', v);
+  },
+  /**
+   * 剥制数（flag:601）
+   * @returns {number}
+   */
+  get taxidermy_count() {
+    return era.get('flag:601') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set taxidermy_count(v) {
+    era.set('flag:601', v);
+  },
+  /**
+   * 蜡像数（flag:602）
+   * @returns {number}
+   */
+  get wax_statue_count() {
+    return era.get('flag:602') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set wax_statue_count(v) {
+    era.set('flag:602', v);
+  },
+  /**
+   * 人偶数_服装（flag:603）
+   * @returns {number}
+   */
+  get doll_clothed_count() {
+    return era.get('flag:603') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set doll_clothed_count(v) {
+    era.set('flag:603', v);
+  },
+  /**
+   * 人偶数_球形关节（flag:604）
+   * @returns {number}
+   */
+  get doll_ball_joint_count() {
+    return era.get('flag:604') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set doll_ball_joint_count(v) {
+    era.set('flag:604', v);
+  },
+  /**
+   * 金属像数（flag:605）
+   * @returns {number}
+   */
+  get metal_statue_count() {
+    return era.get('flag:605') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set metal_statue_count(v) {
+    era.set('flag:605', v);
+  },
+  /**
+   * 冰像数（flag:606）
+   * @returns {number}
+   */
+  get ice_statue_count() {
+    return era.get('flag:606') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set ice_statue_count(v) {
+    era.set('flag:606', v);
+  },
+  /**
+   * 金属像数_2（flag:607）
+   * @returns {number}
+   */
+  get metal_statue_count_2() {
+    return era.get('flag:607') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set metal_statue_count_2(v) {
+    era.set('flag:607', v);
+  },
+  /**
+   * 家具数（flag:608）
+   * @returns {number}
+   */
+  get furniture_count() {
+    return era.get('flag:608') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set furniture_count(v) {
+    era.set('flag:608', v);
+  },
+  /**
+   * 绘画数（flag:609）
+   * @returns {number}
+   */
+  get painting_count() {
+    return era.get('flag:609') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set painting_count(v) {
+    era.set('flag:609', v);
+  },
+  /**
+   * 喷水像_石（flag:611）
+   * @returns {number}
+   */
+  get fountain_stone_count() {
+    return era.get('flag:611') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set fountain_stone_count(v) {
+    era.set('flag:611', v);
+  },
+  /**
+   * 喷水像_金属（flag:612）
+   * @returns {number}
+   */
+  get fountain_metal_count() {
+    return era.get('flag:612') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set fountain_metal_count(v) {
+    era.set('flag:612', v);
+  },
+  /**
+   * 人间牧场竿役（flag:613）
+   * @returns {number}
+   */
+  get ranch_stud() {
+    return era.get('flag:613') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set ranch_stud(v) {
+    era.set('flag:613', v);
+  },
+  /**
+   * 人类牧场设定（flag:614）
+   * @returns {number}
+   */
+  get ranch_display_settings() {
+    return era.get('flag:614') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set ranch_display_settings(v) {
+    era.set('flag:614', v);
+  },
 };
 // GENERATED END
 
@@ -1304,18 +2214,6 @@ Object.defineProperty(era_flag, 'last_save_no', {
   /** @param {number} v */
   set(v) {
     era.set('flag:10019', v);
-  },
-});
-
-Object.defineProperty(era_flag, 'communication_hero_level_one', {
-  configurable: true,
-  /** 通信勇者登场时是否压到 1 级（flag:77 的 bit 0）。 */
-  get() {
-    return era.get('flag:77') || 0;
-  },
-  /** @param {number} v */
-  set(v) {
-    era.set('flag:77', v);
   },
 });
 

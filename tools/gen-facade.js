@@ -46,16 +46,15 @@ const ONE_DIM_TABLES = ['flag', 'tflag', 'item', 'global'];
 // base 随 #114 进门面（回合结算的 HP/气力回复从 event/system 域跨域写 base，
 // ownership 属主 dungeon——无门面即无合法写径）；maxbase 只读、暂不进门面
 // （读侧不受限）。
-// cstr 随 #136 进门面（yml 空表、名字走 facade-names；首个字段 99 故事名，
-// 读写在存档界面）。
+// cstr 随 #136 进门面（名字走 facade-names；首个字段 99 故事名，读写在存档
+// 界面）。#830 起 CStr.yml 也登记了这批下标——名字仍以 facade-names 为准。
 // ex 随 #216（J6）进门面：绝顶计数（ex/nowex 共用名字表，引擎寻址层
-// case"nowex" → staticData.ex）；yml/Ex.yml 是空表（有意，同 tequip 的
-// 理由——登记名字表会让 initCharaTable 预置 0），名字走 facade-names，
-// 首个具名位 5 喷乳绝顶（COM_EJAC_PLAYER_MILK 的跨域写点）。
+// case"nowex" → staticData.ex）；yml/Ex.yml 自 #815 起登记了 0-5，
+// 名字走 facade-names，首个具名位 5 喷乳绝顶（COM_EJAC_PLAYER_MILK 的跨域写点）。
 // tequip 随 #215（J5）进门面：调教域表（桶随 beginTrain 建、endTrain 删），
-// yml/TEquip.yml 是空表（有意：登记名字表会令 initCharaTable 预置 0，见该
-// 文件头注），名字走 facade-names；跨域两段（22 属 system、35 属 event）的
-// train 侧写经门面（#71），四位检查位（45/55/89/90）一并
+// yml/TEquip.yml 自 #830 起登记这 15 个下标（登记的是「调教开始按声明集预置
+// 0」那批槽，见该文件头注），名字走 facade-names；跨域两段（22 属 system、
+// 35 属 event）的 train 侧写经门面（#71），四位检查位（45/55/89/90）一并
 // 具名供族票读写。
 const TWO_DIM_TABLES = [
   'cflag',

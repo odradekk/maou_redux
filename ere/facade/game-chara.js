@@ -67,6 +67,21 @@ class CharaGame {
   set 勇者入场_24(v) {
     era.set('flag:224', v);
   }
+
+  /**
+   * 派遣奴隶标志（flag:402）
+   * FLAG:402 = 1 时 chara-make 跳过「按 FLAG:60 逐级调等级」那一支（等级 1 生成），生成完归位
+   * @returns {number}
+   */
+  get 派遣奴隶标志() {
+    return era.get('flag:402') || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 派遣奴隶标志(v) {
+    era.set('flag:402', v);
+  }
 }
 const facade = new CharaGame();
 // GENERATED END

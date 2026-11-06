@@ -1,14 +1,486 @@
-# 本文件为人工产出：TFLAG 没有名字表（游戏侧一律用数字下标）。
+# 本文件为人工产出：TFLAG 的名字表（调教期的临时旗标，一维、非按角色）。
 #
-# 内容：调教中的临时旗标（一维，非按角色）。用满整个下标空间——0-30 每
-# 选一次指令清零一次、34 录像、50-58 珠结算的快照、59 上次指令、201 同指令
-# 连发抑制、402 死斗场收入、860 失神时的口上开关、899 失神。
+# 内容：一场调教里「这一回合发生过什么」的旗标与计数——射精与绝顶的种类、
+# 刻印变动、珠结算快照、失神补丁的相位与快照。中文键与 tools/facade-names.js
+# 逐条一致（全库 106 个下标都在那份命名表里，test/train-table-names.test.js
+# 守着「两源一致」与「源码用到的序号都在这里」两条）。
 #
-# 它的存在只有一个目的：让引擎装载循环建出 `staticData.tflag`。**二段寻址
-# 同样吃这张表**——引擎的 setVar 在表名属于内置表（embeddedTableNames 含
-# tflag）时走 `u = i(this.staticData[a][u], u)`，名字表缺位即抛错。这一条
-# 修正了 #13 的既有认知：二段寻址不是一律「静默创建」，`flag:*` 之所以静默
-# 通过，是因为 Flag.yml 在；`tflag:*` 缺表就是直接崩溃。
+# **这张表为什么非空**：空表只够让引擎建出 staticData.tflag——二段寻址在表名
+# 属于内置表（embeddedTableNames 含 tflag）时走 `u = i(this.staticData[a][u], u)`，
+# 名字表缺位即抛错。真正要登记的理由在 beginTrain：
 #
-# 空表即够用：下标是数字，引擎的 safeUndefinedCheck 在名字表查不到时原样
-# 回落到该数字。
+#   void 0 !== this.staticData.tflag &&
+#     Object.values(this.staticData.tflag).forEach(e => this.data.tflag[e] = 0)
+#
+# **登记的序号就是调教开始时预置 0 的集合**。表空时这些槽在第一次写之前是
+# undefined，而 setVar 的累加分支是 `this.data[a][u] += t`：`undefined + 1` 得
+# NaN 并静默写回，这一场调教里后来的读与写都在 NaN 上打转。TFLAG:30（主人
+# 经验，全库十四处 add）与 TFLAG:402（死斗场收入，八处 add）此前就靠「同一场
+# 里先有人 set 过同一格」才偶尔躲开 NaN；登记把这两处从 NaN 变成从 0 起算。
+#
+# 代价与边界：调教开始时 data.tflag 会多出这 106 格 0。tflag 由 beginTrain 建、
+# endTrain 整表删除，**不进存档**——旧档（含 0.1.0）没有需要补的键，登记前后
+# 存档形状不变。回合内唯一的可观察差异是上面那批 NaN 变成数值：读取侧一律
+# `|| 0` 或真假/大小判断，undefined 与 0 在这两种写法下同值。
+#
+# 序号不做区间压缩：相邻序号在不同补丁里含义不同（864-898 是失神快照的逐项
+# 记录，899 是失神本身），合并会丢掉「这一格是谁写的」。
+# —— 射精与绝顶的种类旗标（0-32）：本回合发生过什么，公共文案与口上
+#    按它分支；值多是「种类」或「次数/档位」，不是真假两态 ——
+"口中射精":
+  id: 0
+  name: "mouth_ejaculation"
+  type: "number"
+"手中射精":
+  id: 1
+  name: "hand_ejaculation"
+  type: "number"
+"性交射精":
+  id: 2
+  name: "vaginal_ejaculation"
+  type: "number"
+# 处女丧失（本回合破了处）
+"处女丧失":
+  id: 3
+  name: "virginity_lost"
+  type: "number"
+"接吻射精":
+  id: 4
+  name: "kiss_ejaculation"
+  type: "number"
+"舔阴射精":
+  id: 5
+  name: "cunnilingus_ejaculation"
+  type: "number"
+"助手射精":
+  id: 6
+  name: "assistant_ejaculation"
+  type: "number"
+"主人犯助手射精":
+  id: 7
+  name: "master_assistant_ejaculation"
+  type: "number"
+"口交射精后":
+  id: 8
+  name: "after_oral_ejaculation"
+  type: "number"
+"股间射精":
+  id: 9
+  name: "intercrural_ejaculation"
+  type: "number"
+"对象射精":
+  id: 10
+  name: "target_ejaculation"
+  type: "number"
+"对象喷乳":
+  id: 11
+  name: "target_lactation"
+  type: "number"
+"逆强奸射精":
+  id: 12
+  name: "reverse_rape_ejaculation"
+  type: "number"
+# 初吻发生时的自我口上事件码（6 = 成熟出售、13 = 整形…由写入方定）
+"初吻与自我口上":
+  id: 13
+  name: "first_kiss_event"
+  type: "number"
+# 近亲（父/母/兄/姐…）时的自我口上事件码
+"近亲与自我口上":
+  id: 14
+  name: "incest_event"
+  type: "number"
+"怪物射精或购入金":
+  id: 15
+  name: "monster_ejaculation"
+  type: "number"
+"犬射精或处刑口上":
+  id: 16
+  name: "dog_ejaculation"
+  type: "number"
+# 童贞丧失：原作标注「未使用」，移植版同样没有写点，留着占位
+"童贞丧失_未使用":
+  id: 17
+  name: "male_virginity_lost"
+  type: "number"
+"足交射精或处遇口上":
+  id: 18
+  name: "footjob_ejaculation"
+  type: "number"
+"伴V经验指令":
+  id: 19
+  name: "virgin_experience_order"
+  type: "number"
+"主人导致处女丧失":
+  id: 20
+  name: "master_virginity_lost"
+  type: "number"
+# 刻印变动（反抗 / 苦痛 / 快乐 / 屈服）：供口上报告
+"反抗刻印变动":
+  id: 21
+  name: "resistance_mark_change"
+  type: "number"
+"苦痛刻印变动":
+  id: 22
+  name: "pain_mark_change"
+  type: "number"
+"快乐刻印变动":
+  id: 23
+  name: "pleasure_mark_change"
+  type: "number"
+"屈服刻印变动":
+  id: 24
+  name: "submission_mark_change"
+  type: "number"
+"压抑抵抗消灭":
+  id: 25
+  name: "resistance_erased"
+  type: "number"
+"侍奉快乐经验":
+  id: 26
+  name: "service_pleasure_gain"
+  type: "number"
+"被虐快乐经验":
+  id: 27
+  name: "masochism_pleasure_gain"
+  type: "number"
+"A快乐经验":
+  id: 28
+  name: "anal_pleasure_gain"
+  type: "number"
+# 绝顶强度：本回合的绝顶次数 / 档位（文案分档、失禁与余韵段都读它）
+"绝顶强度":
+  id: 29
+  name: "orgasm_level"
+  type: "number"
+# 主人经验：主人这一侧做过的次数。**两处会累加到 NaN 的槽之一**——
+# com-caress / com-vaginasex / com-service 等十四处 era.add 直接累加，
+# 登记后由 beginTrain 预置 0 起算（见文件头）。
+"主人经验":
+  id: 30
+  name: "master_experience"
+  type: "number"
+# 本次调教处女丧失：2 = 连续插入中的临时态，公共尾部归一回 1
+"本次调教处女丧失":
+  id: 31
+  name: "current_train_virginity_lost"
+  type: "number"
+"录像内容":
+  id: 32
+  name: "video_content"
+  type: "number"
+# —— 三人PLAY、衣着、上次调教者（34-50）——
+# 34 死亡时在录像（录像收益结算判「死人片」）、35 榨乳中（搾乳器检查）
+"死亡时在录像":
+  id: 34
+  name: "died_on_video"
+  type: "number"
+"榨乳中":
+  id: 35
+  name: "milking"
+  type: "number"
+# 对象膣内射精（男 / 扶她目标）
+"对象膣内射精":
+  id: 38
+  name: "target_vaginal_ejaculation"
+  type: "number"
+"三人PLAY主人部位":
+  id: 40
+  name: "threesome_master_part"
+  type: "number"
+"三人PLAY助手部位":
+  id: 41
+  name: "threesome_assistant_part"
+  type: "number"
+"三人PLAY持续":
+  id: 42
+  name: "threesome_continues"
+  type: "number"
+# 下装穿不上（着衣系统判定后写）
+"下装穿不上":
+  id: 45
+  name: "bottoms_do_not_fit"
+  type: "number"
+# 上次调教者是助手：只手动路径写，回合结算读它调台词
+"上次调教者是助手":
+  id: 50
+  name: "last_target_was_assistant"
+  type: "number"
+# —— 珠结算快照（51-58）——
+# juel_check_main 把本回合得到的珠逐格记进 51-58，回合末由结算消费并归 0
+"珠结算_0":
+  id: 51
+  name: "juel_settle_0"
+  type: "number"
+"珠结算_1":
+  id: 52
+  name: "juel_settle_1"
+  type: "number"
+"珠结算_2":
+  id: 53
+  name: "juel_settle_2"
+  type: "number"
+"珠结算_3":
+  id: 54
+  name: "juel_settle_3"
+  type: "number"
+"珠结算_4":
+  id: 55
+  name: "juel_settle_4"
+  type: "number"
+"珠结算_5":
+  id: 56
+  name: "juel_settle_5"
+  type: "number"
+"珠结算_6":
+  id: 57
+  name: "juel_settle_6"
+  type: "number"
+"珠结算_7":
+  id: 58
+  name: "juel_settle_7"
+  type: "number"
+# 前前回指令（写的是旧的 SELECTCOM，不是当回），只手动路径写
+"前前回指令":
+  id: 59
+  name: "prev_prev_order"
+  type: "number"
+# 插着不拔：射精的抽出分支会把它清 0
+"插着不拔":
+  id: 60
+  name: "inserted_stays"
+  type: "number"
+# 录像次数（本场录像里的累计）
+"录像次数":
+  id: 70
+  name: "video_count"
+  type: "number"
+# —— 经验与召唤暂存（100-121）——
+# 100 快乐经验（本回合涨的量）、101/102 召唤时的种族两档与选中项、
+# 110 精爱味觉（精饮绝顶到阈值的获得旗）、120/121 私处 / 直肠产卵
+"快乐经验":
+  id: 100
+  name: "pleasure_experience"
+  type: "number"
+"召唤暂存_1":
+  id: 101
+  name: "summon_buffer_1"
+  type: "number"
+"召唤暂存_2":
+  id: 102
+  name: "summon_buffer_2"
+  type: "number"
+"精爱味觉":
+  id: 110
+  name: "semen_taste"
+  type: "number"
+"V虫产卵":
+  id: 120
+  name: "vaginal_worm_spawn"
+  type: "number"
+"A虫产卵":
+  id: 121
+  name: "anal_worm_spawn"
+  type: "number"
+# —— 刻印、当前指令、索求抑制（150-224）——
+"反抗刻印回避":
+  id: 150
+  name: "resistance_mark_avoid"
+  type: "number"
+"屈服刻印结算":
+  id: 200
+  name: "submission_mark_settle"
+  type: "number"
+# 当前选择的调教指令编号（本回合的临时保存；页面与口上读它）
+"当前选择的调教指令编号":
+  id: 204
+  name: "selected_order_no"
+  type: "number"
+"索求口上抑制":
+  id: 224
+  name: "begging_kojo_suppressed"
+  type: "number"
+# —— 死斗场（400-402）——
+"死斗场敌种":
+  id: 400
+  name: "colosseum_enemy_type"
+  type: "number"
+"死斗场陷落":
+  id: 401
+  name: "colosseum_lost"
+  type: "number"
+# 死斗场收入：com-colosseum 的八处 era.add 累加。**另一处会累加到 NaN
+# 的槽**——登记后由 beginTrain 预置 0 起算（见文件头）。
+"死斗场收入":
+  id: 402
+  name: "colosseum_income"
+  type: "number"
+# —— 口上开关（500-530）：博物馆 / 流放 / 公开处刑 / 猎奇处刑 ——
+"博物馆口上":
+  id: 500
+  name: "museum_kojo"
+  type: "number"
+"流放口上":
+  id: 510
+  name: "exile_kojo"
+  type: "number"
+"公开处刑口上":
+  id: 520
+  name: "public_execution_kojo"
+  type: "number"
+"猎奇处刑口上":
+  id: 530
+  name: "grotesque_execution_kojo"
+  type: "number"
+# —— 失神补丁（860-899）——
+# 860 是总开关；864-898 是失神快照的逐项记录（插入系 / 装具 / 媚药 / 情景 /
+# 触手的落位、相位与计数）；899 是失神本身（1 = 失神、> 1 = 失神次回，口上
+# 按它整体跳过或改口）。每格只是一个数字位，按序号一一登记，不合并。
+"失神口上开关":
+  id: 860
+  name: "passout_kojo_switch"
+  type: "number"
+"失神_864":
+  id: 864
+  name: "passout_snapshot_864"
+  type: "number"
+"失神_865":
+  id: 865
+  name: "passout_snapshot_865"
+  type: "number"
+"失神_866":
+  id: 866
+  name: "passout_snapshot_866"
+  type: "number"
+"失神_867":
+  id: 867
+  name: "passout_snapshot_867"
+  type: "number"
+"失神_868":
+  id: 868
+  name: "passout_snapshot_868"
+  type: "number"
+"失神_869":
+  id: 869
+  name: "passout_snapshot_869"
+  type: "number"
+"失神_870":
+  id: 870
+  name: "passout_snapshot_870"
+  type: "number"
+"失神_871":
+  id: 871
+  name: "passout_snapshot_871"
+  type: "number"
+"失神_872":
+  id: 872
+  name: "passout_snapshot_872"
+  type: "number"
+"失神_873":
+  id: 873
+  name: "passout_snapshot_873"
+  type: "number"
+"失神_874":
+  id: 874
+  name: "passout_snapshot_874"
+  type: "number"
+"失神_875":
+  id: 875
+  name: "passout_snapshot_875"
+  type: "number"
+"失神_876":
+  id: 876
+  name: "passout_snapshot_876"
+  type: "number"
+"失神_877":
+  id: 877
+  name: "passout_snapshot_877"
+  type: "number"
+"失神_878":
+  id: 878
+  name: "passout_snapshot_878"
+  type: "number"
+"失神_879":
+  id: 879
+  name: "passout_snapshot_879"
+  type: "number"
+"失神_880":
+  id: 880
+  name: "passout_snapshot_880"
+  type: "number"
+"失神_881":
+  id: 881
+  name: "passout_snapshot_881"
+  type: "number"
+"失神_882":
+  id: 882
+  name: "passout_snapshot_882"
+  type: "number"
+"失神_883":
+  id: 883
+  name: "passout_snapshot_883"
+  type: "number"
+"失神_884":
+  id: 884
+  name: "passout_snapshot_884"
+  type: "number"
+"失神_885":
+  id: 885
+  name: "passout_snapshot_885"
+  type: "number"
+"失神_886":
+  id: 886
+  name: "passout_snapshot_886"
+  type: "number"
+"失神_887":
+  id: 887
+  name: "passout_snapshot_887"
+  type: "number"
+"失神_888":
+  id: 888
+  name: "passout_snapshot_888"
+  type: "number"
+"失神_889":
+  id: 889
+  name: "passout_snapshot_889"
+  type: "number"
+"失神_890":
+  id: 890
+  name: "passout_snapshot_890"
+  type: "number"
+"失神_891":
+  id: 891
+  name: "passout_snapshot_891"
+  type: "number"
+"失神_892":
+  id: 892
+  name: "passout_snapshot_892"
+  type: "number"
+"失神_893":
+  id: 893
+  name: "passout_snapshot_893"
+  type: "number"
+"失神_894":
+  id: 894
+  name: "passout_snapshot_894"
+  type: "number"
+"失神_895":
+  id: 895
+  name: "passout_snapshot_895"
+  type: "number"
+"失神_896":
+  id: 896
+  name: "passout_snapshot_896"
+  type: "number"
+"失神_897":
+  id: 897
+  name: "passout_snapshot_897"
+  type: "number"
+"失神_898":
+  id: 898
+  name: "passout_snapshot_898"
+  type: "number"
+"失神":
+  id: 899
+  name: "passout"
+  type: "number"

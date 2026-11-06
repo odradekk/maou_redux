@@ -40,6 +40,11 @@ const TOP_LEVEL_KEY_RE = /^"([^"]+)":/;
  * - Flag.yml 的「第N层陷阱A/B/C」：迷宫布置区的槽名，代码一律数字下标寻址
  *   （`flag:` 家族），界面显示的是 Item.yml 里的陷阱名，这层名只做变量释文
  *   与开发套件标识符用。
+ * - TFlag.yml / TEquip.yml 里带 PLAY / A / V 的几条（#830 从 facade-names
+ *   登记过来的）：调教期表的键只是变量释文与开发套件标识符——全库没有
+ *   tflagname / tequipname / stainname / *keys 的读者，调教画面上的装具与
+ *   状态文案由页面与口上自己拼，玩家看不到这一层名字；改成全角就要连带改
+ *   门面访问器与上百处调用点，收益是零。
  */
 const EXEMPT_FILES = {
   'Flag.yml': {
@@ -71,6 +76,20 @@ const EXEMPT_FILES = {
       '第7层陷阱C',
       '第8层陷阱C',
       '第9层陷阱C',
+    ],
+  },
+  'TEquip.yml': {
+    names: ['野外PLAY', '羞耻PLAY', '浴室PLAY', '新妻PLAY'],
+  },
+  'TFlag.yml': {
+    names: [
+      '伴V经验指令',
+      'A快乐经验',
+      '三人PLAY主人部位',
+      '三人PLAY助手部位',
+      '三人PLAY持续',
+      'V虫产卵',
+      'A虫产卵',
     ],
   },
 };

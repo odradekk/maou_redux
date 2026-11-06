@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 79; // #834 +5（M18350-M18354：EX 素质名进 yml、八个注册实现搬进角色预设）；#949 +3（M18250–M18252：33 号条目的删除、price 改错、name 非 snake_case——商店 32/33 号的道具表补齐与对账）；#815 +1（M18301：Ex.yml 漏登记射精槽——exkeys 少一格，取消回合的 NOWEX:5 漏到下一回合）；#876 +4：+2（M41/M42 从 train 分片移入——指令 0 的阶梯表搬进 ere/data/train-source-const.js），+2（M18100/M18101：取档口径的越档边界、未声明等级的默认档）；#883 -1（M16108：yml/E.yml 随战斗状态搬成普通对象撤除） // #884 +2（M16606/M16607：角色预设的预设模板值改错、PortCFlag 的字段条目被删）； #848 +2（M16254/M16255：GameBase 的【初始角色编号】改坏、给角色预设加上以 0 号为目标的相性）；#901 +13（M16100-M16112：变量表 name/type 的缺失、重名、非 snake_case、保留字、非法 type 与豁免名单失效）；#814 +9（M15850-M15858：角色预设在用的 cflag 序号与条目、mark/talent/cstr 的新登记、name/type 形状）；#822 +4（M15700/M15701：Abl 20/21 的 yml 名字；M15702/M15703：指令常量 54/89 的指令名——#836 把指令名搬进常量后跟着改挂，编号不变）；#746 +3（M14608-M14610：现种族 211 的名字声明、编号与名称）；#733 +1（M14540：通信回归场景漏载 Equip 名字表）；#731 +1（M14530：【最低支持版本】不得高于已发布的 0.1.0）；master 28（#640 +7：M12870-M12876 yml 装载覆盖与内容固定的行为检查）+ 4（#642：M12936-M12939 标题画面使用的 GameBase 信息改坏）
+export const COUNT = 85; // #830 +6（M18400-M18405：TFlag/Flag/TEquip/CStr 的四类漏登记与名字分叉） // #834 +5（M18350-M18354：EX 素质名进 yml、八个注册实现搬进角色预设）；#949 +3（M18250–M18252：33 号条目的删除、price 改错、name 非 snake_case——商店 32/33 号的道具表补齐与对账）；#815 +1（M18301：Ex.yml 漏登记射精槽——exkeys 少一格，取消回合的 NOWEX:5 漏到下一回合）；#876 +4：+2（M41/M42 从 train 分片移入——指令 0 的阶梯表搬进 ere/data/train-source-const.js），+2（M18100/M18101：取档口径的越档边界、未声明等级的默认档）；#883 -1（M16108：yml/E.yml 随战斗状态搬成普通对象撤除） // #884 +2（M16606/M16607：角色预设的预设模板值改错、PortCFlag 的字段条目被删）； #848 +2（M16254/M16255：GameBase 的【初始角色编号】改坏、给角色预设加上以 0 号为目标的相性）；#901 +13（M16100-M16112：变量表 name/type 的缺失、重名、非 snake_case、保留字、非法 type 与豁免名单失效）；#814 +9（M15850-M15858：角色预设在用的 cflag 序号与条目、mark/talent/cstr 的新登记、name/type 形状）；#822 +4（M15700/M15701：Abl 20/21 的 yml 名字；M15702/M15703：指令常量 54/89 的指令名——#836 把指令名搬进常量后跟着改挂，编号不变）；#746 +3（M14608-M14610：现种族 211 的名字声明、编号与名称）；#733 +1（M14540：通信回归场景漏载 Equip 名字表）；#731 +1（M14530：【最低支持版本】不得高于已发布的 0.1.0）；master 28（#640 +7：M12870-M12876 yml 装载覆盖与内容固定的行为检查）+ 4（#642：M12936-M12939 标题画面使用的 GameBase 信息改坏）
 
 export default [
   {
@@ -316,12 +316,12 @@ export default [
   },
   {
     engine: true,
-    desc: 'Flag 侵略线 id 改坏（人间界侵攻度 81 改 80——ENDING_1 触发条件读错位，#113）',
+    desc: 'Flag 侵略线 id 改坏（人间界侵攻度 81 改 79——ENDING_1 触发条件读错位，#113）',
     file: 'yml/Flag.yml',
     find: `"人间界侵攻度":
   id: 81`,
     replace: `"人间界侵攻度":
-  id: 80`,
+  id: 79`,
     tests: ['exflag-chara35'],
     must_mention: '人间界侵攻度必须落在下标 81',
   },
@@ -729,5 +729,54 @@ export default [
     replace: '',
     tests: ['train-loop'],
     must_mention: '取消回合写下的 NOWEX 必须被下一回合的清零抹掉',
+  },
+  // —— #830 调教期表、flag、cstr 的未登记序号补名字 ——
+  {
+    desc: 'M18400 TFlag.yml 漏登记「主人经验」30（beginTrain 少预置一格，tflag:30 的十四处 add 累出 NaN）（#830）',
+    file: 'yml/TFlag.yml',
+    find: '"主人经验":\n  id: 30\n  name: "master_experience"\n  type: "number"\n',
+    replace: '',
+    tests: ['train-table-names'],
+    must_mention: 'tflag:30（TFlag.yml 无此序号',
+  },
+  {
+    desc: 'M18401 Flag.yml 漏登记「人类牧场设定」614（旧档读档后 614 仍是 undefined 而不是 0）（#830）',
+    file: 'yml/Flag.yml',
+    find: '"人类牧场设定":\n  id: 614\n  name: "ranch_display_settings"\n  type: "number"\n',
+    replace: '',
+    tests: ['train-table-names'],
+    must_mention: 'flag:614（Flag.yml 无此序号',
+  },
+  {
+    desc: 'M18402 Flag.yml 的「勇者基础等级修正」序号改成 62（flag 侧唯一的 add 落回未登记的 60，NaN 又回来）（#830）',
+    file: 'yml/Flag.yml',
+    find: '"勇者基础等级修正":\n  id: 60\n',
+    replace: '"勇者基础等级修正":\n  id: 62\n',
+    tests: ['train-table-names'],
+    must_mention: 'flag:60（Flag.yml 无此序号',
+  },
+  {
+    desc: 'M18403 TEquip.yml 漏登记「录像摄影」53（这一位不进预置集，tequip:53 从 undefined 起算）（#830）',
+    file: 'yml/TEquip.yml',
+    find: '"录像摄影":\n  id: 53\n  name: "video_recording"\n  type: "number"\n',
+    replace: '',
+    tests: ['train-table-names'],
+    must_mention: 'TEQUIP 的未建模位',
+  },
+  {
+    desc: 'M18404 CStr.yml 漏登记「自由调教内容」7（新角色拿不到这个空串槽）（#830）',
+    file: 'yml/CStr.yml',
+    find: '"自由调教内容":\n  id: 7\n  name: "free_train_content"\n  type: "string"\n',
+    replace: '',
+    tests: ['train-table-names'],
+    must_mention: 'CStr.yml 缺 cstr:7',
+  },
+  {
+    desc: 'M18405 TEquip.yml 的「口塞」中文键改坏（与 facade-names 的名字分叉）（#830）',
+    file: 'yml/TEquip.yml',
+    find: '"口塞":\n  id: 45\n',
+    replace: '"口塞X":\n  id: 45\n',
+    tests: ['train-table-names'],
+    must_mention: '与 facade-names「口塞」不一致',
   },
 ];

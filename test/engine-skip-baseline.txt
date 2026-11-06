@@ -136,7 +136,14 @@
 # train-static-tables/variable-yml 的逐字段比对用例）与新增 chara-load 的 8 个
 # 引擎门控用例对冲后，现为 70（6923 = 6853 过 + 70 跳过 + 0 挂，
 # ERE_ENGINE_ASAR=none 实测）。
-95
+101
+# #830（调教期表、flag、cstr 的未登记序号补名字）：+6（train-table-names.test.js
+# 的六个引擎门控用例——beginTrain 预置 tflag、add 的数字与 NaN 对照、
+# addCharacterForTrain 预置 tequip/stain、addCharacter 预置 cstr 空串、0.1.0
+# 旧档经真 loadData 读入后 flag 补 0、FLAG:60 的 NaN 不落存档），95 + 6 = 101。
+# 计数依据：ERE_ENGINE_ASAR=none npm test 实测（数字见 #830 的完成评论）。同文件
+# 另有三条只读 yml 与源码文本的用例（登记面扫描、tequip/stain 的无名位清单、
+# 中文键与 facade-names 逐条一致），任何环境都跑，不计入跳过。
 # #733：cross-save-sharing-engine 的完整旧共享档导入与恢复接收档用例 +1，70 + 1 = 71。
 # #643（R4 删除读旧资源目录的用例与该目录）复测：70 不变（6798 = 6728 过 + 70 跳过 + 0 挂，ERE_ENGINE_ASAR=none 实测）——删除的用例均无引擎门控，跳过数不动。
 # #734：kojo-palam-level-engine 的真实引擎爱抚回归用例 +1，71 + 1 = 72。
