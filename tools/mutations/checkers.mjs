@@ -691,7 +691,8 @@ export default [
     find: '    path.join(os.tmpdir(), `${COPY_PREFIX}${process.pid}-`),',
     replace: '    path.join(os.tmpdir(), COPY_PREFIX), // 变异：目录名不带 PID',
     tests: ['mutation-check'],
-    test_name: '并行副本目录名带所有者 PID：跑动中看得见，退出后删干净（#582）',
+    test_name:
+      '并行副本目录名带所有者 PID：跑动中看得见，退出后删干净，不认别人的副本（#582、#985）',
     must_mention: '副本目录名必须带创建者的 PID',
   },
   {
