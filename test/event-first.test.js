@@ -357,10 +357,6 @@ test('端到端：新的猎物 → 初期奴隶选村娘 → 初始化 → 转�
     [],
     '换屏不得抹掉未读输出（开场叙事的读键都在换屏之前）',
   );
-  assert(
-    fixture.var_reads.some((r) => r.name === 'namelistkeys'),
-    'EVENTFIRST 链必须真的调用了 chara_name_init',
-  );
   // 真身的可观察效果：NID 落 10000 + 17（特殊角色分支的「定义 NID」）
   assert.equal(fixture.store.get('cflag:17:6'), 10017);
   // #385 起 CHAR_BODY_GENERATE_WAPPED 是真身（ere/system/chara/chara-body.js）：
@@ -501,8 +497,7 @@ test('初始化写入（随机）：问答选 0 后开局直线赋值逐项一�
     '形象确认的 -2 贡品页不得打语尾占位（TARGET 临时换 + 未命中静默）',
   );
   // 收下播报（rand ≡ 0 → 非异国，无「异国的」前缀）与读键收尾。
-  // 名字来自命名链：rand ≡ 0 → 名字编号 0 = yml/NameList.yml 的「玛丽」
-  // （#821 起夹具按 yml 现算名字，此前读到空串才落到保底名「佳奈美」）
+  // 名字来自命名链：rand ≡ 0 → 名字编号 0 = 固定名常量表的「玛丽」
   assert(texts.includes('冒险者玛丽被囚禁在了地牢里！'));
   // FLAG:402 用过的标志归位、 TARGET = FLAG:1（开局 0）
   assert.equal(fixture.store.get('flag:402'), 0);

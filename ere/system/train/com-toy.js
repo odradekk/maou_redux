@@ -7,7 +7,8 @@
  *
  * - SOURCE/UP/LOSEBASE 分别落 source/delta/deltabase；后者以负值累计，结算由
  *   source-check 与回合循环消费。
- * - TEQUIP:11/13–19、STAIN、TFLAG:19、T:0 都属 train，可在本域直写。
+ * - TEQUIP:11/13–19、STAIN、TFLAG:19、触手回合计数（flag:10030）都属 train，
+ *   可在本域直写。
  * - EXP:0/1 属 dungeon，统一经 chara(cid).dungeon；EXP:40/41/54 属 train，
  *   经 chara(cid).train。TALENT:190/191 属 dungeon，经其门面写入。
  * - syokusyu_milk 真身在触手族（#227/J17 实现在
@@ -36,6 +37,7 @@ const { times } = require('#/utils/numeric');
 const { confirm_lost_virgin } = require('#/system/train/com-vaginasex');
 const { EXPLV } = require('#/data/exp-level-const');
 const { PALAMLV } = require('#/data/palam-level-const');
+const { NOITEM } = require('#/data/noitem-const');
 // syokusyu_milk 的真身在触手族文件（#227/J17 导出；#548 起调用点换真身）——
 // 族模块只能函数内延迟 require，见 equip_com16 的注释
 
@@ -50,15 +52,14 @@ const tal = (cid, i) => era.get(`talent:${cid}:${i}`) || 0;
 const palam = (cid, i) => era.get(`palam:${cid}:${i}`) || 0;
 const exp = (cid, i) => era.get(`exp:${cid}:${i}`) || 0;
 const add_lose = (cid, i, v) => era.add(`deltabase:${cid}:${i}`, -v);
-const noitem = () => era.get('noitem:0') || 0;
-const has_item = (i) => (era.get(`item:${i}`) || 0) > 0 || noitem() !== 0;
+const has_item = (i) => (era.get(`item:${i}`) || 0) > 0 || NOITEM.value !== 0;
 const target_name = () => chara_callname(era_flag.target);
 const player_name = () => chara_callname(era_flag.player);
 
-/** T:0 = 触手回合计数；本族切换装备后清零、持续效果中递增。 */
+/** 触手回合计数（旧 T:0，flag:10030）；本族切换装备后清零、持续效果中递增。 */
 function reset_tentacle_turn(cid) {
   if (tq(cid, 90)) {
-    era.set('t:0', 0);
+    era_flag.tentacle_round = 0;
   }
 }
 
@@ -652,7 +653,7 @@ async function equip_com11(rand = (n) => Math.floor(Math.random() * n)) {
   chara(target).dungeon.私处经验 += gain;
   era.print(`私处经验+${gain}`);
   if (tq(target, 90)) {
-    era.add('t:0', 1);
+    era_flag.tentacle_round += 1;
   }
   return 1;
 }
@@ -751,7 +752,7 @@ async function equip_com13(rand = (n) => Math.floor(Math.random() * n)) {
   chara(target).dungeon.肛门经验 += gain;
   era.print(`肛门经验+${gain}`);
   if (tq(target, 90)) {
-    era.add('t:0', 1);
+    era_flag.tentacle_round += 1;
   }
   return 1;
 }
@@ -773,7 +774,7 @@ async function equip_com14() {
   set_src(target, 11, src(target, 11) + 50);
   set_src(target, 12, src(target, 12) + 50);
   if (tq(target, 90)) {
-    era.add('t:0', 1);
+    era_flag.tentacle_round += 1;
   }
   return 1;
 }
@@ -789,7 +790,7 @@ async function equip_com15() {
   set_src(target, 12, src(target, 12) + 50);
   same_sex_exp(target, era_flag.player, 1);
   if (tq(target, 90)) {
-    era.add('t:0', 1);
+    era_flag.tentacle_round += 1;
   }
   return 1;
 }
@@ -844,7 +845,7 @@ async function equip_com16() {
   }
   same_sex_exp(target, era_flag.player, 1);
   if (tq(target, 90)) {
-    era.add('t:0', 1);
+    era_flag.tentacle_round += 1;
     // syokusyu_milk 的真身在触手族文件（#227/J17 导出）。**函数内延迟
     // require 是硬要求**：com-tentacle 属主启动图的装载责任（main-loop
     // 显式 require 的族模块），顶层引用会让它的注册变成间接装载——main-loop
@@ -866,7 +867,7 @@ async function equip_com17() {
   set_src(target, 12, src(target, 12) + 50);
   same_sex_exp(target, era_flag.player, 1);
   if (tq(target, 90)) {
-    era.add('t:0', 1);
+    era_flag.tentacle_round += 1;
   }
   return 1;
 }
@@ -981,7 +982,7 @@ async function equip_com19() {
   era.print('肛门经验＋１');
   same_sex_exp(target, era_flag.player, 1);
   if (tq(target, 90)) {
-    era.add('t:0', 1);
+    era_flag.tentacle_round += 1;
   }
   return 1;
 }

@@ -42,6 +42,7 @@ const {
 } = require('#/system/train/com-vaginasex');
 const { PALAMLV } = require('#/data/palam-level-const');
 const { EXPLV } = require('#/data/exp-level-const');
+const { NOITEM } = require('#/data/noitem-const');
 
 /** 本文件没有未实现的移植调用；口上由 source-check 的既有分发承载。 */
 
@@ -1400,7 +1401,7 @@ com_able_family.register(33, async () => {
     target_tequip(55)
   )
     return 0;
-  if (target_tequip(58) && !(era.get('item:13') || 0) && !era.get('noitem:0'))
+  if (target_tequip(58) && !(era.get('item:13') || 0) && NOITEM.value === 0)
     return 0;
   return costume_blocked(target, 17) ? 0 : 1;
 });
@@ -1421,7 +1422,7 @@ com_able_family.register(34, async () => {
   if (target_tequip(89) && target_abl(39) < 2) return 0;
   if (target_tequip(88) && !male_monster()) return 0;
   if (target_tequip(90) || target_tequip(55)) return 0;
-  if (target_tequip(58) && !(era.get('item:13') || 0) && !era.get('noitem:0'))
+  if (target_tequip(58) && !(era.get('item:13') || 0) && NOITEM.value === 0)
     return 0;
   if (costume_blocked(target, 17)) return 0;
   if (special(target) === 79 && worn(target) & 64 && clothes_on()) return 0;
@@ -1432,7 +1433,7 @@ com_able_family.register(35, async () => {
   const target = era_flag.target;
   if (era.get('tflag:899') > 0 || target_talent(151) || !target_tequip(58))
     return 0;
-  if (!(era.get('item:13') || 0) && !era.get('noitem:0')) return 0;
+  if (!(era.get('item:13') || 0) && NOITEM.value === 0) return 0;
   for (const id of [18, 11, 13, 14, 15, 43, 44, 45, 19, 46, 49])
     if (target_tequip(id)) return 0;
   if (worn(target) && clothes_on() && special(target) <= 70) return 0;
@@ -1448,7 +1449,7 @@ com_able_family.register(36, async () => {
   if (target_tequip(44) || target_tequip(90) || target_tequip(89)) return 0;
   if (target_tequip(88) && !male_monster()) return 0;
   if (target_tequip(55) || target_exp(1) < 10) return 0;
-  if (target_tequip(58) && !(era.get('item:13') || 0) && !era.get('noitem:0'))
+  if (target_tequip(58) && !(era.get('item:13') || 0) && NOITEM.value === 0)
     return 0;
   return costume_blocked(target, 17) ? 0 : 1;
 });

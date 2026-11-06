@@ -9,8 +9,8 @@
  * == 指令方格的两条渲染路径（#214 起，按 FLAG:5 位 34 分流） ==
  *
  *   - ON（FLAG:5 位 34 = 1）：show_commenu 的自定义菜单——标签先过
- *     get_adv_com 升格（TRAIN_NAME/trainalias 取名，64 合成分支读指令常量
- *     的静态名），编号印 L_IDX 紧凑序号。开局默认即 ON
+ *     get_adv_com 升格（升格号的名字由 read_train_name 现算，64 合成分支读
+ *     指令常量的静态名），编号印 L_IDX 紧凑序号。开局默认即 ON
  *     （开局置 FLAG:5 = 17179934119，位 34 = 1，见 event-first.js；
  *     golden 两份样本的方格样式（升格名）为此态）。设置页的
  *     [18]「显示高级调教指令的名称」（翻转 FLAG:5 位 34）是开关本体，
@@ -34,7 +34,7 @@
  * 不带 [编号] 前缀（PR #30 通则，引擎 showAcc 自动拼）。
  *
  * p_c（#212）：TSTR:90 承载上次的指令名，静态名优先、
- * 定制名（trainalias）只补空——见 p_c 的三级回落。
+ * 指令别名（read_train_name）只补空——见 p_c 的三级回落。
  *
  * SHOW_CHARA_INFO 与 STAIN_INFO 已随 #390 换真身。
  * USERCOM 各分支的 RETURN 1/0 均无效果（重绘回合画面是唯一效果），
@@ -82,7 +82,7 @@ function show_advanced_names() {
 
 /**
  * p_c：上次的调教指令名 → TSTR:90。
- * 三级回落：静态名（指令常量）→ TRAIN_NAME（trainalias 定制覆盖层）→
+ * 三级回落：静态名（指令常量）→ 指令别名（read_train_name）→
  * 全角空格。TSTR:90 的承载是 yml/TStr.yml 的扩展普通表（#5 建模项定论，
  * 引擎探针见 test/tstr-train-table.test.js）；进调教时的清空由
  * train-loop.js 初始化段手动完成。
@@ -91,7 +91,7 @@ function p_c() {
   const local = era_flag.prevcom;
   // TSTR:90 = 静态名。升格进入的高级指令号不在可直选表内，取到空串
   let name = train_command_name(local);
-  // 静态名空 → TRAIN_NAME:LOCAL（定制覆盖层，train_name_init 播种）
+  // 静态名空 → 指令别名（read_train_name 现算）
   if (name.length < 1) {
     name = read_train_name(local);
   }
@@ -105,7 +105,7 @@ function p_c() {
 /**
  * show_commenu 的方格标签：升格后的号取名字。
  * 64 的合成分支（RESULT == 64 且 L_I != 64）读静态名（两段拼接）；其余读
- * TRAIN_NAME（trainalias 覆盖层）。纯函数抽出便于断言。
+ * 升格号的名字（read_train_name）。纯函数抽出便于断言。
  *
  * @param {number} adv get_adv_com 的返回值（升格后的号；未升格 = 原号）
  * @param {number} id 当前指令号（L_I，升格前）
@@ -117,7 +117,7 @@ function command_button_label(adv, id) {
     // SHOW_STATUS 的射精行同款处置（lang-table 整串豁免，见 COMPOUND_SEP）
     return `${train_command_name(64)}${COMPOUND_SEP}${train_command_name(id)}`;
   }
-  // 升格后的号的 TRAIN_NAME（trainalias 覆盖层）
+  // 升格后的号的指令名
   return read_train_name(adv);
 }
 

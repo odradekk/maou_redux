@@ -136,14 +136,25 @@
 # train-static-tables/variable-yml 的逐字段比对用例）与新增 chara-load 的 8 个
 # 引擎门控用例对冲后，现为 70（6923 = 6853 过 + 70 跳过 + 0 挂，
 # ERE_ENGINE_ASAR=none 实测）。
-105
+102
+# #835（四张表移出静态数据）复测：−5（chara-name-list.test.js 的六个引擎门控
+# 用例里留 1 个）——固定的 3,264 条固定名搬成 ere/data/chara-name-const.js 的
+# 常量表后，「NameList.yml 装载零告警」「引擎真寻址读出真名字」「三种范围各
+# 取一例」「未注册 id 裸三段寻址崩溃」「namelistkeys 与 valid_ids() 同源」五条
+# 的主体（要装载的表、要崩的地址）都不再存在，随表删除；「逐角色分类只命中
+# Chara<数字>.yml」这条保留（它守的是 yml/ 的命名面，与哪张表无关）。
+# 同票又新增 +2（out-of-static-tables.test.js：0.1.0 盖戳带四桶残留的旧档经
+# 真 loadData 读入、新档载荷里没有这四个桶），净 −3。
 # #830（调教期表、flag、cstr 的未登记序号补名字）：+6（train-table-names.test.js
 # 的六个引擎门控用例——beginTrain 预置 tflag、add 的数字与 NaN 对照、
 # addCharacterForTrain 预置 tequip/stain、addCharacter 预置 cstr 空串、0.1.0
 # 旧档经真 loadData 读入后 flag 补 0、FLAG:60 的 NaN 不落存档），95 + 6 = 101。
-# 计数依据：ERE_ENGINE_ASAR=none npm test 实测（数字见 #830 的完成评论）。同文件
-# 另有三条只读 yml 与源码文本的用例（登记面扫描、tequip/stain 的无名位清单、
-# 中文键与 facade-names 逐条一致），任何环境都跑，不计入跳过。
+# #831（cflag 其余序号补名字）：+4（cflag-names.test.js 的四个引擎门控用例——
+# addCharacter 给每个角色建出全部登记序号、add 打在登记过的槽上不再是 NaN、
+# 0.1.0 旧档经真 loadData 读入后 cflag 补 0、严格比较的三个落点（500/504/650）
+# 读到数字 0），101 + 4 = 105。
+# 合并后算式：95（既有）+ 6（#830）+ 4（#831）− 3（#835 净）= 102。计数依据：
+# ERE_ENGINE_ASAR=none npm test 实测 7370 = 7268 过 + 102 跳过 + 0 挂。
 # #733：cross-save-sharing-engine 的完整旧共享档导入与恢复接收档用例 +1，70 + 1 = 71。
 # #643（R4 删除读旧资源目录的用例与该目录）复测：70 不变（6798 = 6728 过 + 70 跳过 + 0 挂，ERE_ENGINE_ASAR=none 实测）——删除的用例均无引擎门控，跳过数不动。
 # #734：kojo-palam-level-engine 的真实引擎爱抚回归用例 +1，71 + 1 = 72。
@@ -200,8 +211,10 @@
 # 读到数字 0），101 + 4 = 105。计数依据：ERE_ENGINE_ASAR=none npm test 实测
 # （7372 = 7267 过 + 105 跳过 + 0 挂）。同文件另有三条只读 yml 与源码文本的用例
 # （登记面扫描、条数、中文键与 facade-names 逐条一致），任何环境都跑，不计入跳过。
-# #982（cflag 剩下 43 个无名位的补名与 NaN 修复）：**105 不变**。该票把 add 的
-# 落点从 7 个扩到 13 个（22 / 600 / 661-665 进 ADD_IDS，666 因源码里没有 add
+# #982（cflag 剩下 43 个无名位的补名与 NaN 修复）：**102 不变**（基线自 #831 的
+# 105 降到 102 是 master 上别的票删了三个引擎门控用例，与本票无关）。本票把 add
+# 的落点从 7 个扩到 13 个（22 / 600 / 661-665 进 ADD_IDS，666 因源码里没有 add
 # 打到它而移出），但复用的仍是 #831 那四条引擎门控用例，没有新增 engine_test；
 # 新增的一条「每个 cflag 的 era.add 落点都已登记」只读 yml 与源码文本，任何环境
-# 都跑。计数依据：ERE_ENGINE_ASAR=none npm test 实测 7373 = 7268 过 + 105 跳过 + 0 挂。
+# 都跑。计数依据：ERE_ENGINE_ASAR=none npm test 实测 7372 = 7270 过 + 102 跳过 + 0 挂
+# （合入 83bab573 之后的 master，含 #978 / #984）。

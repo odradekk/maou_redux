@@ -435,11 +435,11 @@ test('com87：取下已穿的环恒自动成功（worn & p !== 0）、CFLAG:7 �
 test('com88：使役魔兽 PLAY 开关切换，共享变量 T 收尾清零', async () => {
   const world = seed_world();
   const { fixture } = world;
-  fixture.store.set('t:0', 5);
+  fixture.store.set('flag:10030', 5);
   let result = await run_com(world, 88);
   assert.equal(result, 1);
   assert.equal(fixture.store.get('tequip:31:88'), 1, '开');
-  assert.equal(fixture.store.get('t:0'), 0);
+  assert.equal(fixture.store.get('flag:10030'), 0);
 
   result = await run_com(world, 88);
   assert.equal(fixture.store.get('tequip:31:88'), 0, '再执行一次即关');
@@ -488,7 +488,7 @@ test('equip_com89：SOURCE 累加、EXP:56 随共享变量 T 收尾、返回 1',
   const result = await world.equip_com_family.call(89);
   assert.equal(result, 1, '尾段无条件返回 1');
   assert.ok(fixture.text_lines().includes('＜兽奸ＰＬＡＹ中＞'));
-  assert.equal(fixture.store.get('t:0'), 0, '尾段清零共享变量');
+  assert.equal(fixture.store.get('flag:10030'), 0, '尾段清零共享变量');
   assert.ok(fixture.store.get('exp:31:56') > 0, 'EXP:56 已随 T 收尾累加');
   assert.ok(fixture.store.get('source:31:8') > 0);
 });

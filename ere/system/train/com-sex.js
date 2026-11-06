@@ -40,6 +40,7 @@ const { chara_callname } = require('#/utils/callname-utils');
 const { times } = require('#/utils/numeric');
 const { PALAMLV } = require('#/data/palam-level-const');
 const { EXPLV } = require('#/data/exp-level-const');
+const { NOITEM } = require('#/data/noitem-const');
 // —— 读取与写入：未声明序号均按项目约定缺省为 0 ——
 const get = (name) => era.get(name) || 0;
 const set = (name, value) => era.set(name, value);
@@ -1099,7 +1100,7 @@ async function com29() {
 // —— able20–29：按 guard 顺序逐条保留 ——
 
 const has_pband = () => get('item:4') !== 0;
-const has_mat = () => get('item:13') !== 0 || get('noitem:0') !== 0;
+const has_mat = () => get('item:13') !== 0 || NOITEM.value !== 0;
 const male_monster = () =>
   [1, 7, 8, 10, 12].includes(battle_column(BATTLE_COLUMN.MINION_A).rape_type);
 const clothes = (cid) => get(`cflag:${cid}:40`);

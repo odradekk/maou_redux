@@ -173,9 +173,7 @@ test('子菜单的条件态分组复刻原版：[103] 与 [990] 之后硬收行'
 test('指令方格（自定义菜单路径）：按每行 3 列排布，末行不满仍与上面对齐', async () => {
   const fixture = create_era_fixture();
   seed_flag5(fixture, true);
-  const { train_name_init } = fixture.load_module('system/train/train-name');
   const { handle_show_usercom } = load_page(fixture);
-  train_name_init();
 
   await handle_show_usercom();
 
@@ -540,9 +538,7 @@ test('USERCOM：未定义编号（555）落到链尾，无输出无转场', asyn
 test('位 34 开（开局默认）：自定义菜单，标签取 TRAIN_NAME、编号印 L_IDX', async () => {
   const fixture = create_era_fixture();
   seed_flag5(fixture, true);
-  const { train_name_init } = fixture.load_module('system/train/train-name');
   const { handle_show_usercom } = load_page(fixture);
-  train_name_init();
 
   await handle_show_usercom();
 
@@ -563,13 +559,10 @@ test('位 34 开（开局默认）：自定义菜单，标签取 TRAIN_NAME、�
   assert.equal(last?.text, '媚药史莱姆', '末位 207→109（跳过子菜单号）');
 });
 
-test('位 34 关：内建渲染路径，标签取指令常量的静态名（不升格）', async () => {
+test('位 34 关：内建渲染路径，标签取指令常量的静态名', async () => {
   const fixture = create_era_fixture();
   seed_flag5(fixture, false);
   const { handle_show_usercom } = load_page(fixture);
-  // 定制层（trainalias）与静态名不同的槽：0 号播种成「定制爱抚」，两条
-  // 渲染路径据此区分取哪一层
-  fixture.store.set('trainalias:0', '定制爱抚');
 
   await handle_show_usercom([0]);
 
@@ -579,7 +572,7 @@ test('位 34 关：内建渲染路径，标签取指令常量的静态名（不�
   assert.deepEqual(
     buttons.map((b) => [b.accelerator, b.text]),
     [[0, '爱抚']],
-    'OFF 路径读指令常量的静态名（内建列表的等价移植），不吃 trainalias',
+    'OFF 路径读指令常量的静态名（内建列表的等价移植）',
   );
 });
 
@@ -602,10 +595,8 @@ test('位 34 开的自定义菜单对 COM_ABLE=0 的指令不渲染', async () =
 test('command_button_label：升格后的号取名字；64 合成分支读静态名', async () => {
   const fixture = create_era_fixture();
   const { command_button_label } = fixture.load_module('page/page-usercom');
-  const { train_name_init } = fixture.load_module('system/train/train-name');
-  train_name_init();
 
-  // 未升格（adv = id）：TRAIN_NAME（trainalias）的名字
+  // 未升格（adv = id）：指令名（read_train_name）
   assert.equal(command_button_label(0, 0), '爱抚');
   // 升格（8 → 84 刺激Ｇ点）：名字用升格后的号，编号仍用升格前的位次
   assert.equal(command_button_label(84, 8), '刺激Ｇ点');
@@ -619,11 +610,9 @@ test('command_button_label：升格后的号取名字；64 合成分支读静态
 test('自定义菜单的升格标签：标签换、编号不换（train-upgrade 实证样式）', async () => {
   const fixture = create_era_fixture();
   seed_flag5(fixture, true);
-  const { train_name_init } = fixture.load_module('system/train/train-name');
   const { adv_com_family } = fixture.load_module('system/train/com-adv');
   const era_flag = fixture.load_module('era-utils/era-flag');
   const { handle_show_usercom } = load_page(fixture);
-  train_name_init();
 
   // 测试内注册 CASE 8 形状的升格规则（#213 骨架态零生产规则；J9 实现真
   // 规则时本用例按新语义改读生产规则）
@@ -678,14 +667,8 @@ test('p_c 第一级：静态名命中 → TSTR:90 = 静态名', async () => {
   assert.equal(line, '＜上次的调教指令：振动杖＞');
 });
 
-/** 播种静态名表与 trainalias（进调教后的名字表状态） */
-function seed_train_names(fixture) {
-  fixture.load_module('system/train/train-name').train_name_init();
-}
-
-test('p_c 第二级：高级指令不在静态名表 → 不读 TRAINNAME，取 TRAIN_NAME 定制名（#739）', async () => {
+test('p_c 第二级：高级指令不在静态名表 → 不读 TRAINNAME，取指令别名的名字（#739）', async () => {
   const fixture = create_era_fixture();
-  seed_train_names(fixture);
   // 126 = 手搓口交：只能经升格进入，执行后 PREVCOM 即 126
   const { line, tstr } = await draw_with_prevcom(fixture, 126);
   assert.equal(tstr, '手搓口交');
@@ -698,7 +681,6 @@ test('p_c：每个高级指令号作 PREVCOM 都能画出「上次的调教指�
   );
   for (const id of ADVANCED_COM_IDS) {
     const fixture = create_era_fixture();
-    seed_train_names(fixture);
     const { line } = await draw_with_prevcom(fixture, id);
     assert.match(line, /^＜上次的调教指令：.+＞$/, `PREVCOM = ${id}`);
   }
@@ -706,17 +688,18 @@ test('p_c：每个高级指令号作 PREVCOM 都能画出「上次的调教指�
 
 test('p_c 第三级：两级皆空 → 全角空格占位（非空占位）', async () => {
   const fixture = create_era_fixture();
-  // 998 既不在静态名表，也没有 trainalias
+  // 998 既不在静态名表，也没有指令别名
   const { line, tstr } = await draw_with_prevcom(fixture, 998);
   assert.equal(tstr, '　', '第三级回落必须落全角空格占位（非空）');
   assert.equal(line, '＜上次的调教指令：　＞');
 });
 
-test('静态名优先于定制名（静态名 > TRAIN_NAME 的回落顺序不可倒置）', async () => {
+test('静态名优先于指令别名（静态名 > read_train_name 的回落顺序不可倒置）', async () => {
+  // 150 号两层都有值但不同：静态名「自由局部调教」、别名现算成「调教」。
+  // 只有这种两层值可辨的指令号才看得回落顺序。
   const fixture = create_era_fixture();
-  fixture.store.set('trainalias:12', '被覆盖的名字');
-  const { tstr } = await draw_with_prevcom(fixture, 12);
-  assert.equal(tstr, '振动杖', '静态名非空时不得读 TRAIN_NAME');
+  const { tstr } = await draw_with_prevcom(fixture, 150);
+  assert.equal(tstr, '自由局部调教', '静态名非空时不得读 TRAIN_NAME');
 });
 
 test('PREVCOM = -1（首轮）：无「上次的调教指令」行，也不写 TSTR:90', async () => {
@@ -754,8 +737,8 @@ engine_test(
       global: {},
       staticData: characters.static_data,
       fieldNames: variables.field_names,
-      // p_c 写 TSTR:90、读 TRAIN_NAME（trainalias），两张都是扩展普通表
-      extendedTables: { tstr: normal, trainalias: normal },
+      // p_c 只写 TSTR:90（扩展普通表 yml/TStr.yml）；指令名现算，不再有别名表
+      extendedTables: { tstr: normal },
       error: (message) => errors.push(message),
     });
     api.resetData();
@@ -763,7 +746,6 @@ engine_test(
     for (const name of ['get', 'set', 'add']) {
       fixture.era[name] = api[name].bind(api);
     }
-    fixture.load_module('system/train/train-name').train_name_init();
 
     const { line, tstr } = await draw_with_prevcom(fixture, 126);
     assert.equal(line, '＜上次的调教指令：手搓口交＞');

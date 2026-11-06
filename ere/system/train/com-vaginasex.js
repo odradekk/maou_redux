@@ -337,8 +337,9 @@ async function com_ejac_player_milk(b) {
     }
     era.add(`exp:${player}:54`, 2);
     era.set(`stain:${player}:5`, (era.get(`stain:${player}:5`) || 0) | 16); // Ｂ母乳
+    // 5 号与 0-4 号同一条路：只写 NOWEX，EX:5 由回合结算折入一次（直写会让
+    // 状态画面的次数翻倍）
     era.add(`nowex:${player}:5`, 1);
-    chara(player).system.喷乳绝顶 = chara(player).system.喷乳绝顶 + 1; // EX
   } else if (e === 1) {
     // 喷乳
     era.print(`${name_of(player)}的乳头流出了母乳。`);
@@ -350,7 +351,6 @@ async function com_ejac_player_milk(b) {
     era.add(`exp:${player}:54`, 1);
     era.set(`stain:${player}:5`, (era.get(`stain:${player}:5`) || 0) | 16);
     era.add(`nowex:${player}:5`, 1);
-    chara(player).system.喷乳绝顶 = chara(player).system.喷乳绝顶 + 1; // EX
   }
 }
 

@@ -51,6 +51,7 @@ const {
 } = require('#/system/train/train-message');
 const { PALAMLV } = require('#/data/palam-level-const');
 const { EXPLV } = require('#/data/exp-level-const');
+const { NOITEM } = require('#/data/noitem-const');
 
 const PBAND = 4;
 
@@ -61,7 +62,6 @@ const palam = (id, i) => era.get(`palam:${id}:${i}`) || 0;
 const exp = (id, i) => era.get(`exp:${id}:${i}`) || 0;
 const cflag = (id, i) => era.get(`cflag:${id}:${i}`) || 0;
 const item = (i) => era.get(`item:${i}`) || 0;
-const noitem = () => era.get('noitem:0') || 0;
 const flag = (i) => era.get(`flag:${i}`) || 0;
 
 const clothes_on = () => flag(37) !== 0;
@@ -84,7 +84,7 @@ function bra_worn(cid) {
   return (worn(cid) & 6) !== 0 && clothes_on();
 }
 function has_mat() {
-  return item(13) !== 0 || noitem() !== 0;
+  return item(13) !== 0 || NOITEM.value !== 0;
 }
 function has_pband() {
   return item(PBAND) !== 0;

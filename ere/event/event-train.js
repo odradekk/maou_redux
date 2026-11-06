@@ -9,7 +9,6 @@
 const era = require('#/era-electron');
 const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
-const { train_name_init } = require('#/system/train/train-name');
 const { pritrain_message } = require('#/event/event-beforetrain');
 const { EVENT } = require('#/data/event-name-const');
 
@@ -54,10 +53,6 @@ async function handle_train_pri() {
 
   // 死斗场の収入初期化：TFLAG:402 = 0（200 循环外，独立写入）
   era.set('tflag:402', 0);
-
-  // train_name_init（#212 真身：TRAIN_NAME 定制名表一次性播种，
-  // 幂等检查在内部——ere/system/train/train-name.js）
-  train_name_init();
 
   // pritrain_message（真身）
   await pritrain_message();

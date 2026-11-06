@@ -1,15 +1,18 @@
 /**
- * @file ere/system/chara/chara-name-list.js 与 yml/NameList.yml 的行为测试
- * （issue #388：chara_name_init 落表；#435：文件名被引擎误判为逐角色数据）。
+ * @file ere/system/chara/chara-name-list.js 与 ere/data/chara-name-const.js 的
+ * 行为测试（#388 建表；#435 文件名被引擎误判为逐角色数据；#835 移出静态数据
+ * 改成常量表）。
  *
  * 三层验证：
- *   - 夹具层（快，无需引擎）：get_fixed_chara_name 的防护判断与缓存行为；
- *   - 文件分类层（需引擎）：拿引擎自己的 staticFormatRegex 逐文件分类一遍，
- *     钉住「本表走的是普通表分支」（#435 的根因与修复方向）；
- *   - 引擎实证层（需引擎）：真解析器 + 真 setVar 驱动生产模块查表——表名由
- *     文件名派生（与引擎同款取法），生产代码的读取键必须与它一致；以及
- *     「未注册 id 直接崩溃」是真实风险（未经检查的裸三段寻址会撞上它，
- *     这正是 chara-name-list.js 的 valid_ids() 存在的理由）；
+ *   - 常量表层：条目数、编号域、抽查值——名字的唯一真身就是这张常量表；
+ *   - 行为层（夹具，无需引擎）：命中、缺口、越界的查表结果；
+ *   - 文件分类层（需引擎）：拿引擎自己的 staticFormatRegex 逐文件分类，
+ *     钉住 yml/ 下只有 Chara<数字>.yml 走逐角色分支。
+ *
+ * #835 之前这层查表还守着「引擎装载 yml 后经真 setVar 读出名字」与「未注册
+ * id 裸三段寻址直接崩溃」两组引擎用例。表搬成常量后这两组的对象都不存在了
+ * （没有表可装、没有地址可崩），删掉；神域边界改由 chara-name.test.js 的
+ * 声明尺寸用例守。
  */
 
 'use strict';
@@ -20,117 +23,76 @@ const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
-const {
-  create_variable_loader,
-  load_engine_bundle,
-} = require('./helpers/engine-bundle');
+const { load_engine_bundle } = require('./helpers/engine-bundle');
+
+const { LIST_CHARA_NAME } = require('../ere/data/chara-name-const');
 
 const engine = load_engine_bundle();
 const engine_test = engine ? test : test.skip;
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 const YML_DIR = path.join(REPO_ROOT, 'yml');
-// 文件名即表名（引擎 eraStart：去扩展名、小写）——本表必须不以 chara 开头，
-// 否则会被 /chara[^/]+\.yml/ 划进逐角色数据桶（#435，见 yml/NameList.yml 头注）
-const YML_NAME = 'NameList.yml';
-const TABLE = YML_NAME.replace(/\.yml$/, '').toLowerCase(); // = 'namelist'
-const YML_PATH = path.join(YML_DIR, YML_NAME);
-// —— 夹具层：valid_ids 防护判断与缓存 ——
 
-test('get_fixed_chara_name：已注册 id 查表返回名字', () => {
-  const fixture = create_era_fixture();
-  fixture.store.set('namelistkeys', [0, 17, 3610]);
-  fixture.store.set('namelistname:17', '雅儿贝德');
-  const { get_fixed_chara_name } = fixture.load_module(
-    'system/chara/chara-name-list',
-  );
+// —— 常量表层：表本身的形状 ——
 
+test('固定名常量表：3,264 条，编号唯一且在声明尺寸 5,500 之内', () => {
+  const ids = Object.keys(LIST_CHARA_NAME).map(Number);
+  assert.equal(ids.length, 3264, '条目数');
+  // 重复的编号在对象字面量里会互相覆盖：条数对得上就说明源码里的键没重号
+  assert.equal(new Set(ids).size, ids.length, '编号不得重复');
   assert.equal(
-    get_fixed_chara_name(17),
-    '雅儿贝德',
-    '已注册 id 必须查表返回名字',
+    Math.min(...ids),
+    0,
+    '编号从 0 起（0 号位是开局可抽到的固定名）',
+  );
+  assert.ok(
+    Math.max(...ids) < 5500,
+    `最大编号 ${Math.max(...ids)} 必须落在声明尺寸内——越界的条目永不可达`,
   );
 });
 
-test('get_fixed_chara_name：未注册 id（含合并丢弃的缺口）直接返回空串，不去读名字地址', () => {
+test('固定名常量表：抽查各名字范围与归一结果', () => {
+  // 西洋名、日式名、覆盖译名（そら→空）、同 id 二次赋值取最后一次
+  assert.equal(LIST_CHARA_NAME[0], '玛丽');
+  assert.equal(LIST_CHARA_NAME[1], '索菲亚');
+  assert.equal(LIST_CHARA_NAME[42], '塔巴莎');
+  assert.equal(LIST_CHARA_NAME[3003], '飒太');
+  assert.equal(LIST_CHARA_NAME[3610], '空');
+  assert.equal(LIST_CHARA_NAME[5288], '万庄', '表尾的最后一个编号');
+});
+
+// —— 行为层：查表 ——
+
+test('get_fixed_chara_name：表里的编号返回名字', () => {
   const fixture = create_era_fixture();
-  // 3030 不在 keys 里（模拟被重名合并丢弃），但故意仍在 store 里放一个陈旧值，
-  // 证明函数走的是 valid_ids 防护判断、不是「地址查到了就用」。
-  fixture.store.set('namelistkeys', [0, 17]);
-  fixture.store.set('namelistname:3030', '陈旧残留');
   const { get_fixed_chara_name } = fixture.load_module(
     'system/chara/chara-name-list',
   );
 
-  assert.equal(
-    get_fixed_chara_name(3030),
-    '',
-    '未注册 id 必须直接返回空串，不得读到陈旧的名字地址残留',
-  );
-  assert.equal(
-    get_fixed_chara_name(99999),
-    '',
-    '声明范围外的编号同样安全返回空串',
-  );
+  assert.equal(get_fixed_chara_name(42), '塔巴莎', '固定名按编号查出');
+  assert.equal(get_fixed_chara_name(0), '玛丽', '0 号编号同样是有效条目');
 });
 
-test('get_fixed_chara_name：已注册 id 的名字由夹具按 yml 现算（#821 起与 keys 同源）', () => {
+test('get_fixed_chara_name：表里没有的编号返回空串（含重名合并丢弃的缺口）', () => {
   const fixture = create_era_fixture();
-  fixture.store.set('namelistkeys', [42]);
-  // 只播种 keys：<表>name:<序号> 自 #821 起由夹具按 yml 现算（42 是「塔巴莎」）。
-  // 这条此前守的是「keys 里有、名字地址没播种 → `?? ''` 缺省」；两侧同源之后
-  // 该缺口在引擎与夹具里都不可能出现（未声明的序号直接抛 TypeError，#739），
-  // 于是改守「名字确实来自同一张 yml 名字表」。
   const { get_fixed_chara_name } = fixture.load_module(
     'system/chara/chara-name-list',
   );
 
-  assert.equal(get_fixed_chara_name(42), '塔巴莎');
+  // 3030 是被 65 组重名合并丢弃的编号之一，5499/99999 在声明范围内外各取一例
+  for (const gap of [3030, 5289, 5499, 99999]) {
+    assert.equal(get_fixed_chara_name(gap), '', `编号 ${gap} 必须返回空串`);
+  }
 });
 
-test('get_fixed_chara_name：valid_ids 缓存只建一次（重复查表不重复读 keys）', () => {
+test('get_fixed_chara_name：名字为空的条目返回空串（不是 undefined）', () => {
   const fixture = create_era_fixture();
-  fixture.store.set('namelistkeys', [1, 2]);
-  fixture.store.set('namelistname:1', '甲');
-  fixture.store.set('namelistname:2', '乙');
+  fixture.seed_fixed_name(777, '');
   const { get_fixed_chara_name } = fixture.load_module(
     'system/chara/chara-name-list',
   );
 
-  get_fixed_chara_name(1);
-  get_fixed_chara_name(2);
-  get_fixed_chara_name(999); // 未注册也只查缓存，不再读 keys
-
-  const keys_reads = fixture.var_reads.filter((r) => r.name === 'namelistkeys');
-  assert.equal(keys_reads.length, 1, 'namelistkeys 只应被读取一次（缓存生效）');
-});
-
-test('chara_name_init：调用点可观测（预热 valid_ids 缓存），不抛错', () => {
-  const fixture = create_era_fixture();
-  fixture.store.set('namelistkeys', [7]);
-  const { chara_name_init } = fixture.load_module(
-    'system/chara/chara-name-list',
-  );
-
-  assert.doesNotThrow(() => chara_name_init());
-  assert(
-    fixture.var_reads.some((r) => r.name === 'namelistkeys'),
-    'chara_name_init 必须读取 namelistkeys（否则调用点被删掉也测不出来）',
-  );
-});
-
-test('EVENTFIRST/EVENTLOAD 真的调用了 chara_name_init（读取 namelistkeys 可观测）', async () => {
-  const fixture = create_era_fixture();
-  fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
-  fixture.era.addCharacter(0);
-  const { handle_load } = fixture.load_module('event/event-load');
-
-  await handle_load();
-
-  assert(
-    fixture.var_reads.some((r) => r.name === 'namelistkeys'),
-    'EVENTLOAD 链必须真的调用 chara_name_init（不是只证明存在）',
-  );
+  assert.equal(get_fixed_chara_name(777), '');
 });
 
 // —— 文件分类层：引擎按文件名把静态表分成「逐角色」与「普通表」两条路 ——
@@ -142,7 +104,7 @@ function chara_file_regex() {
 }
 
 engine_test(
-  '引擎实证：逐角色分类只命中 Chara<数字>.yml，名字表走普通表分支（#435）',
+  '引擎实证：逐角色分类只命中 Chara<数字>.yml（#435 的根因面）',
   () => {
     const chara_re = chara_file_regex();
     // 引擎把**小写后的完整路径**过这条正则（eraStart 逐字）。这里用相对路径
@@ -166,133 +128,16 @@ engine_test(
       true,
       '引擎正则必须命中 Chara0.yml（否则本用例的判断条件本身失效）',
     );
-    // 根因留证：改名前那支文件正是被它命中的（#435）
+    // 根因留证：任何以 chara 开头的文件名都会被它划走（#435 的原形）
     assert.equal(
       chara_re.test('yml/charanamelist.yml'),
       true,
-      '引擎正则必须命中旧名 CharaNameList.yml——这正是 #435 的根因',
-    );
-    // 本表：不以 chara 开头，落在普通表分支
-    assert.equal(
-      chara_re.test(`yml/${YML_NAME}`.toLowerCase()),
-      false,
-      `yml/${YML_NAME} 不许被引擎当成逐角色数据（改回 chara 开头会让整表装不进 staticData.${TABLE}）`,
+      '引擎正则对 chara 开头的文件名一律命中——静态表命名不得以 chara 开头',
     );
     assert.deepEqual(
       classified,
       per_chara,
-      '被引擎划进逐角色桶的 yml 必须恰好是 Chara<数字>.yml 那批；多出任何文件（含名字表）都会让它在真实装载里走错分支',
+      '被引擎划进逐角色桶的 yml 必须恰好是 Chara<数字>.yml 那批；多出任何文件都会让它在真实装载里走错分支',
     );
-  },
-);
-
-// —— 引擎实证层：真解析 + 真 setVar 驱动生产模块 ——
-
-function load_real_table() {
-  const loader = create_variable_loader();
-  const text = fs.readFileSync(YML_PATH, 'utf8');
-  // 表名从文件名派生——与引擎 eraStart 的取法一致（去扩展名、小写）
-  loader.load_rows(engine.parse_data_file(text, 'yml', TABLE), TABLE);
-  return loader;
-}
-
-/** 引擎 setVar/getter 的最小假 this（与既有引擎用例同款字段清单） */
-function make_var_this(loader) {
-  return {
-    staticData: loader.static_data,
-    fieldNames: loader.field_names,
-    data: {},
-    global: {},
-    extendedTables: {},
-    era: { error: () => {} },
-  };
-}
-
-engine_test(
-  '引擎实证：NameList.yml 装载零告警、零重号（去重前已手工消解）',
-  () => {
-    const loader = load_real_table();
-    assert.deepEqual(loader.warnings, []);
-  },
-);
-
-engine_test(
-  '引擎实证：生产模块经引擎真寻址查出真名字（表名来自文件名，读取键必须一致）',
-  () => {
-    const fixture = create_era_fixture();
-    const loader = load_real_table();
-    const fake = make_var_this(loader);
-    // 把夹具的 era.get 接到引擎自己的寻址层上（真 staticData + 真 setVar）。
-    // 这一条是 #435 的要害：表名由**文件名**派生，生产代码的读取键写死。
-    // 两者一旦脱节（文件改名没跟、键改名没跟），引擎对缺表的寻址静默返回
-    // undefined → 查表恒空，而夹具播 store 的用例照样绿。所以这里不播 store。
-    fixture.era.get = (var_name) => {
-      const value = engine.set_var.call(fake, var_name);
-      fixture.var_reads.push({ name: var_name, value });
-      return value;
-    };
-    const { chara_name_init, get_fixed_chara_name } = fixture.load_module(
-      'system/chara/chara-name-list',
-    );
-
-    chara_name_init();
-    assert.equal(
-      get_fixed_chara_name(0),
-      '玛丽',
-      `生产模块读的必须是 staticData.${TABLE}（引擎按 yml/${YML_NAME} 的文件名建表）`,
-    );
-    assert.equal(get_fixed_chara_name(3610), '空', 'そら 覆盖后的名字');
-    // 未注册 id：valid_ids 检查挡住，不去撞引擎那条 `.n` 读在 undefined 上的崩溃
-    assert.equal(
-      get_fixed_chara_name(3030),
-      '',
-      '未注册 id 必须走 valid_ids 检查返回空串',
-    );
-    assert(
-      fixture.var_reads.some((r) => r.name === `${TABLE}keys`),
-      `生产模块必须读 ${TABLE}keys（引擎真寻址里它就是 staticData.${TABLE} 的值集）`,
-    );
-  },
-);
-
-engine_test(
-  '引擎实证：注册 id 经 namelistname 三种范围各取一例读出正确名字',
-  () => {
-    const loader = load_real_table();
-    const fake = make_var_this(loader);
-    const cases = [
-      [0, '玛丽'], // 洋名
-      [3610, '空'], // 男性和名，そら 覆盖
-      [3003, '飒太'], // 男性和名，同 id 二次赋值取最后一次 + 归一
-    ];
-    for (const [id, expected] of cases) {
-      assert.equal(engine.set_var.call(fake, `${TABLE}name:${id}`), expected);
-    }
-  },
-);
-
-engine_test(
-  '引擎实证：未注册 id（含被合并丢弃的 3030）裸三段寻址直接崩溃',
-  () => {
-    const loader = load_real_table();
-    const fake = make_var_this(loader);
-    for (const gap_id of [3030, 5289, 99999]) {
-      assert.throws(
-        () => engine.set_var.call(fake, `${TABLE}name:${gap_id}`),
-        /Cannot read properties of undefined/,
-        `id ${gap_id} 应当撞上未注册崩溃（chara-name-list.js 的 valid_ids 检查正是防这个）`,
-      );
-    }
-  },
-);
-
-engine_test(
-  '引擎实证：namelistkeys 与 valid_ids() 读的是同一份 id 集合',
-  () => {
-    const loader = load_real_table();
-    const fake = make_var_this(loader);
-    const keys = engine.set_var.call(fake, `${TABLE}keys`);
-    assert.equal(keys.length, Object.keys(loader.static_data[TABLE]).length);
-    assert(keys.includes(0) && keys.includes(3610) && !keys.includes(3030));
   },
 );

@@ -45,6 +45,7 @@ const { chara_callname } = require('#/utils/callname-utils');
 const { default_rand, idiv, times } = require('#/utils/numeric');
 const { EXPLV } = require('#/data/exp-level-const');
 const { PALAMLV } = require('#/data/palam-level-const');
+const { NOITEM } = require('#/data/noitem-const');
 
 const tal = (id, i) => era.get(`talent:${id}:${i}`) || 0;
 const abl = (id, i) => Math.floor(era.get(`abl:${id}:${i}`) || 0);
@@ -55,8 +56,7 @@ const add_src = (cid, i, v) => era.add(`source:${cid}:${i}`, v);
 const set_src = (cid, i, v) => era.set(`source:${cid}:${i}`, v);
 const src = (cid, i) => era.get(`source:${cid}:${i}`) || 0;
 const name_of = (table, id) => era.get(`${table}:${id}`) ?? '';
-const has_item = (i) =>
-  (era.get(`item:${i}`) || 0) > 0 || (era.get('noitem:0') || 0) !== 0;
+const has_item = (i) => (era.get(`item:${i}`) || 0) > 0 || NOITEM.value !== 0;
 const zooko_worn = (cid) =>
   (era.get(`cflag:${cid}:42`) || 0) === 11 &&
   ((era.get(`cflag:${cid}:40`) || 0) & 64) !== 0 &&
@@ -273,7 +273,7 @@ async function com100() {
     era.add(`delta:${target}:10`, a * 20); // UP:10
     add_src(target, 14, a * 5); // SOURCE:14
   }
-  era.set('t:0', 0);
+  era_flag.tentacle_round = 0;
   return 1;
 }
 
@@ -321,7 +321,7 @@ async function com108() {
     era.set(`tequip:${target}:98`, 1);
     era.set(`stain:${target}:0`, (era.get(`stain:${target}:0`) || 0) | 2 | 4);
   }
-  era.set('t:0', 0);
+  era_flag.tentacle_round = 0;
   chara(target).dungeon.口交经验 += 1; // EXP:22
   era.print('口交经验＋１');
   return 1;
@@ -500,13 +500,13 @@ async function equip_com100() {
       chara(target).dungeon.精液经验 += 3; // EXP:20
       era.print('触手大量射精');
       era.print('精液经验＋３');
-      era.add('t:0', 1);
+      era_flag.tentacle_round += 1;
       if (tequip(target, 11)) game.train.对象膣内射精 = 2; // TFLAG:38
     } else if (e === 1) {
       chara(target).dungeon.精液经验 += 1;
       era.print('触手射精');
       era.print('精液经验＋１');
-      era.add('t:0', 1);
+      era_flag.tentacle_round += 1;
       if (tequip(target, 11)) game.train.对象膣内射精 = 1;
     }
     game.train.怪物射精或购入金 = e; // TFLAG:15
@@ -516,11 +516,11 @@ async function equip_com100() {
     chara(target).dungeon.异常经验 += 1; // EXP:50
     era.print('异常经验＋1');
   }
-  era.add('t:0', 1);
-  const t_final = era.get('t:0') || 0;
+  era_flag.tentacle_round += 1;
+  const t_final = era_flag.tentacle_round;
   era.print(`触手经验＋${t_final}`); // PRINT + PRINTVL
   chara(target).dungeon.触手经验 += t_final; // EXP:55
-  era.set('t:0', 0);
+  era_flag.tentacle_round = 0;
   return 1;
 }
 
@@ -537,7 +537,7 @@ async function equip_com108() {
   apply_serve_and_skill(target);
   chara(target).dungeon.口交经验 += 1;
   era.print('口交经验＋１');
-  era.add('t:0', 1);
+  era_flag.tentacle_round += 1;
   return 1;
 }
 
