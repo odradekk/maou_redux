@@ -143,8 +143,8 @@ test('CHECK 分支：非绝顶中（TFLAG:29 = 0）静默', async () => {
 
 test('CHECK：阈值表——基础 P = 50（count = 50 达阈、49 不达）', async () => {
   for (const [seed, want] of [
-    [48, undefined], // count = 49 < 50
-    [10, undefined],
+    [48, 0], // count = 49 < 50：不写旗标，停在预置的 0
+    [10, 0],
   ]) {
     const { fixture, seiin } = seed_world();
     fixture.store.set('tflag:0', 1);
@@ -168,7 +168,7 @@ test('CHECK：戒备森严（27）+5 抬阈——P = 55 时 count 50 不达阈',
   fixture.store.set('talent:31:27', 1);
   fixture.store.set('cflag:31:600', 49); // count = 50 < 55
   await seiin.seiin_start();
-  assert.equal(fixture.store.get('tflag:110'), undefined);
+  assert.equal(fixture.store.get('tflag:110'), 0, '不达阈：预置的 0 保持');
 });
 
 test('达阈值：获得旗 TFLAG:110 = 1、精液中毒直抬 LV3、SOURCE:5 = 1000', async () => {

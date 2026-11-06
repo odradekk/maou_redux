@@ -220,7 +220,12 @@ test('com122：实行值不足则取消回合', async () => {
   const result = await run_com(world, 122);
   assert.equal(result, 0);
   assert.equal(world.era_flag.selectcom, 122);
-  assert.equal(world.fixture.store.get('source:31:12'), undefined);
+  // 源值由 addCharacterForTrain 按 Source.yml 的声明集预置 0；取消的回合不写它
+  assert.equal(
+    world.fixture.store.get('source:31:12'),
+    0,
+    '取消的回合不动源值',
+  );
 });
 
 test('com122：默认档 SOURCE / TFLAG', async () => {
@@ -281,7 +286,12 @@ test('com123：实行值不足则取消回合', async () => {
   const result = await world.com_family.call(123);
   assert.equal(result, 0);
   assert.equal(world.era_flag.selectcom, 123);
-  assert.equal(world.fixture.store.get('source:31:13'), undefined);
+  // 源值由 addCharacterForTrain 按 Source.yml 的声明集预置 0；取消的回合不写它
+  assert.equal(
+    world.fixture.store.get('source:31:13'),
+    0,
+    '取消的回合不动源值',
+  );
 });
 
 test('com123 B/A：乳夹侍奉行与口中倾泻', async () => {
@@ -330,7 +340,12 @@ test('com124：实行值不足则取消回合', async () => {
   const result = await world.com_family.call(124);
   assert.equal(result, 0);
   assert.equal(world.era_flag.selectcom, 124);
-  assert.equal(world.fixture.store.get('source:31:13'), undefined);
+  // 源值由 addCharacterForTrain 按 Source.yml 的声明集预置 0；取消的回合不写它
+  assert.equal(
+    world.fixture.store.get('source:31:13'),
+    0,
+    '取消的回合不动源值',
+  );
 });
 
 test('com124 B/A：喉咙最深处与抓住头射出', async () => {
@@ -386,7 +401,12 @@ test('com125：实行值不足则取消回合', async () => {
   const result = await world.com_family.call(125);
   assert.equal(result, 0);
   assert.equal(world.era_flag.selectcom, 125);
-  assert.equal(world.fixture.store.get('source:31:13'), undefined);
+  // 源值由 addCharacterForTrain 按 Source.yml 的声明集预置 0；取消的回合不写它
+  assert.equal(
+    world.fixture.store.get('source:31:13'),
+    0,
+    '取消的回合不动源值',
+  );
 });
 
 test('com125 B/A：吸啜自慰行与口中注入', async () => {
@@ -439,7 +459,12 @@ test('com135：实行值不足则取消回合', async () => {
   const world = seed_world();
   const result = await run_com(world, 135);
   assert.equal(result, 0);
-  assert.equal(world.fixture.store.get('source:31:14'), undefined);
+  // 源值由 addCharacterForTrain 按 Source.yml 的声明集预置 0；取消的回合不写它
+  assert.equal(
+    world.fixture.store.get('source:31:14'),
+    0,
+    '取消的回合不动源值',
+  );
 });
 
 test('com135 B：拿下头舔阴部', async () => {
@@ -478,7 +503,12 @@ test('com126：实行值不足则取消回合', async () => {
   const result = await world.com_family.call(126);
   assert.equal(result, 0);
   assert.equal(world.era_flag.selectcom, 126);
-  assert.equal(world.fixture.store.get('source:31:13'), undefined);
+  // 源值由 addCharacterForTrain 按 Source.yml 的声明集预置 0；取消的回合不写它
+  assert.equal(
+    world.fixture.store.get('source:31:13'),
+    0,
+    '取消的回合不动源值',
+  );
 });
 
 test('com126 B/A：吸啜按摩行与口中注入', async () => {
@@ -522,7 +552,12 @@ test('com127：实行值不足则取消回合', async () => {
   const result = await world.com_family.call(127);
   assert.equal(result, 0);
   assert.equal(world.era_flag.selectcom, 127);
-  assert.equal(world.fixture.store.get('source:31:13'), undefined);
+  // 源值由 addCharacterForTrain 按 Source.yml 的声明集预置 0；取消的回合不写它
+  assert.equal(
+    world.fixture.store.get('source:31:13'),
+    0,
+    '取消的回合不动源值',
+  );
 });
 
 test('com127 B/A：吮吸行与口中开放精关', async () => {

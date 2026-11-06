@@ -583,7 +583,8 @@ test('com57：单行条件只约束下一条语句，开启与持续的无素质
   assert.equal(opening.fixture.store.get('source:31:12'), 450);
   assert.equal(opening.fixture.store.get('source:31:14'), 1720);
   assert.equal(opening.fixture.store.get('source:31:16'), 725);
-  assert.equal(opening.fixture.store.get('source:31:3'), undefined);
+  // 该支不算 SOURCE:3：由声明集预置的 0 保持
+  assert.equal(opening.fixture.store.get('source:31:3'), 0);
 
   const ongoing = seed_world();
   ongoing.fixture.store.set('abl:31:10', 3);
@@ -591,7 +592,7 @@ test('com57：单行条件只约束下一条语句，开启与持续的无素质
   assert.equal(ongoing.fixture.store.get('source:31:12'), 247);
   assert.equal(ongoing.fixture.store.get('source:31:14'), 1720);
   assert.equal(ongoing.fixture.store.get('source:31:16'), 623);
-  assert.equal(ongoing.fixture.store.get('source:31:3'), undefined);
+  assert.equal(ongoing.fixture.store.get('source:31:3'), 0);
 });
 
 test('com57：开关、爱情经验与持续效果', async () => {

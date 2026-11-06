@@ -209,7 +209,8 @@ test('戴套射精：文案无部位前缀，不置膣内射精旗', async () =>
   await vs.com_ejac_player_sex(() => 9);
   assert.ok(fixture.text_lines().includes('大量射精'));
   assert.ok(!fixture.text_lines().some((t) => t.includes('膣内')));
-  assert.equal(fixture.store.get('tflag:38'), undefined);
+  // TFLAG:38 由 beginTrain 按声明集预置 0：戴套射精不置膣内旗标
+  assert.equal(fixture.store.get('tflag:38'), 0);
 });
 
 test('部位文案：CFLAG:113 = 3（肛）/ 4（口）的追加句', async () => {
@@ -296,9 +297,9 @@ test('MILK：E = 2 大量喷乳 → 文案、喷奶经验、STAIN:5 |= 16、EX/N
     '一次大量喷乳只记 1 次 NOWEX:5',
   );
   assert.equal(
-    fixture.store.has('ex:0:5'),
-    false,
-    'EX:5 由回合结算折入一次，回合内不得直写（直写会让画面次数翻倍）',
+    fixture.store.get('ex:0:5'),
+    0,
+    'EX:5 由回合结算折入一次，回合内不得直写（直写会让画面次数翻倍）（Ex.yml 的声明集预置 0，这一支不该动它）',
   );
   assert.equal(fixture.era.get('base:0:3'), 100, '大量喷乳保留封顶前的余量');
 });

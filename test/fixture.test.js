@@ -722,15 +722,18 @@ test('跨调教场不残留（#152）：endTrain 删表、下一场 beginTrain �
   fixture.era.set('source:31:0', 5);
   fixture.era.endTrain();
 
-  // 场 2：整表重建后读不到上一场的值。夹具残留可读 = 掩盖「忘清
-  // tflag/palam」类真缺陷（夹具读旧值、引擎读 0——#152 的逃逸形式，
-  // 消费点如 event-end.js 的 tflag:860 / palam:3·5 结算读）
+  // 场 2：整表重建后读不到上一场的值——声明过的序号回到预置的 0，没有
+  // 声明集的格仍是 undefined。夹具残留可读 = 掩盖「忘清 tflag/palam」类
+  // 真缺陷（夹具读旧值、引擎读 0——#152 的逃逸形式，消费点如 event-end.js
+  // 的 tflag:860 / palam:3·5 结算读）
   fixture.era.beginTrain(0, 31);
   assert.equal(
     fixture.era.get('tflag:860'),
-    undefined,
-    '下一场调教读不到上一场的 tflag（endTrain 删表 + beginTrain 整表重建）',
+    0,
+    '下一场调教读到的是重建时按声明集补的 0，不是上一场的 1',
   );
+  // palam 没有预置段（夹具把它的缺省交给 nextTurnInTrain 的结算，#874），
+  // 所以这一格的「无残留」仍只能以 undefined 判定
   assert.equal(
     fixture.era.get('palam:31:3'),
     undefined,
@@ -738,18 +741,18 @@ test('跨调教场不残留（#152）：endTrain 删表、下一场 beginTrain �
   );
   assert.equal(
     fixture.era.get('ex:31:0'),
-    undefined,
-    '下一场调教读不到上一场的 ex',
+    0,
+    '下一场调教读到的是预置的 0，不是上一场的 1',
   );
   assert.equal(
     fixture.era.get('stain:31:2'),
-    undefined,
-    '下一场调教读不到上一场的 stain',
+    0,
+    '下一场调教读到的是预置的 0，不是上一场的 2',
   );
   assert.equal(
     fixture.era.get('source:31:0'),
-    undefined,
-    '下一场调教读不到上一场的 source（endTrain 删除列表含 source）',
+    0,
+    'source 也没了上一场的 5（endTrain 删除列表含 source）',
   );
 });
 
@@ -785,8 +788,8 @@ test('resetData 清调教态（#152，D4 登记的分歧闭合）：列表清空
   fixture.era.beginTrain(0, 31);
   assert.equal(
     fixture.era.get('tflag:860'),
-    undefined,
-    'resetData 后新开调教读不到残留（表随 data 整份重建消失）',
+    0,
+    'resetData 后新开调教读到的是重建时的 0，不是残留的 1',
   );
 });
 

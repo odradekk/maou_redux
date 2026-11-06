@@ -762,7 +762,8 @@ test('202/206 号指令 999 暂时放过 → 一律 RETURN 0（整条指令作�
   );
   // 作废即不收射精检查：TFLAG:15 不写、SELECTCOM 停在 206
   assert.equal(sixth.era_flag.selectcom, 206);
-  assert.equal(sixth.fixture.store.get('tflag:15'), undefined, '射精旗标不写');
+  // TFLAG:15 由 beginTrain 预置 0：作废即不收射精检查，旗标停在 0
+  assert.equal(sixth.fixture.store.get('tflag:15'), 0, '射精旗标不写');
 });
 
 test('204 号指令的陷落行与其余四体一致：PRINTW（等键）', async () => {
@@ -912,8 +913,8 @@ test('MAXBASE:MASTER:4 == 0（无射精槽）→ 射精检查整段跳过', asyn
   assert.equal(await com_family.call(202), 1);
   assert.equal(
     fixture.store.get('tflag:15'),
-    undefined,
-    '整段跳过（含 TFLAG:15）',
+    0,
+    '整段跳过（含 TFLAG:15，停在预置的 0）',
   );
   assert.equal(fixture.store.get('exp:31:20'), undefined);
 });

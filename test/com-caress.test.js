@@ -287,7 +287,8 @@ test('com1：源计算的分档与污垢移动；调教者初吻记录 301', asy
   assert.equal(fixture.store.get('source:31:12'), 220);
   assert.equal(fixture.store.get('source:31:14'), 50);
   // 舌头加成不在（TALENT:0:52 未种）→ SOURCE:16 无加成
-  assert.equal(fixture.store.get('source:31:16'), undefined);
+  // 舌头加成不在（TALENT:0:52 未种）→ SOURCE:16 停在声明集预置的 0
+  assert.equal(fixture.store.get('source:31:16'), 0);
   assert.equal(fixture.store.get('deltabase:31:0'), -5);
   // V ⇔ 口 双向（beginTrain 不种初污——那是 run_train 的补偿段：undef|4=4）
   assert.equal(fixture.store.get('stain:31:3'), 4);
@@ -379,7 +380,11 @@ test('com3 判定不过（A < V）：RETURN 0 且不进 B 文（返回先于 B �
     !fixture.text_lines().some((l) => l.includes('开始了自慰')),
     '拒绝路径不进 B 文',
   );
-  assert.equal(fixture.store.get('source:31:14'), undefined, '拒绝后无源计算');
+  assert.equal(
+    fixture.store.get('source:31:14'),
+    0,
+    '拒绝后无源计算（声明集预置的 0 保持）',
+  );
 });
 
 test('com3 A ≥ 80：完全驯服的牝奴/牡奴表情行（LOCALS 随性别）', async () => {
@@ -1321,7 +1326,11 @@ test('com8：CONFIRM 选 1 → RETURN 0 → 回合取消（cancelled，非 missi
   // 指令返回 0（#228 的回合取消语义：副作用保留但不结算）；
   // COM_MISSING（missing 字段）是未移植指令的语义，两者分立
   assert.equal(result, 0);
-  assert.equal(fixture.store.get('tflag:19'), undefined, '确认拒绝不置 V 旗标');
+  assert.equal(
+    fixture.store.get('tflag:19'),
+    0,
+    '确认拒绝不置 V 旗标（预置的 0 保持）',
+  );
   assert(!fixture.text_lines().some((l) => l === '插入手指'), '指令行不输出');
 });
 

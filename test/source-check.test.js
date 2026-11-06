@@ -1284,9 +1284,9 @@ test('TARGET_EJAC_CHECK：大量射精档（BASE:2 > EJAC*2），扶她非男人
     '一次大量射精只在 NOWEX:5 记 1 次',
   );
   assert.equal(
-    fixture.store.has('ex:31:5'),
-    false,
-    'EX:5 交给结算折入一次，回合内不得直写（直写会让画面次数翻倍）',
+    fixture.store.get('ex:31:5'),
+    0,
+    'EX:5 交给结算折入一次，回合内不得直写（直写会让画面次数翻倍）（Ex.yml 的声明集预置 0，这一支不该动它）',
   );
   assert.equal(fixture.store.get('base:31:2'), 999); // 3500-2000=1500≥1000 → 钳制 EJAC-1
 });
@@ -1523,9 +1523,9 @@ test('TARGET_MILK_CHECK：普通档（EJAC < BASE:3 ≤ EJAC*2），EXP:54 非 0
     '一次喷乳只在 NOWEX:5 记 1 次',
   );
   assert.equal(
-    fixture.store.has('ex:31:5'),
-    false,
-    'EX:5 交给结算折入一次，回合内不得直写（直写会让画面次数翻倍）',
+    fixture.store.get('ex:31:5'),
+    0,
+    'EX:5 交给结算折入一次，回合内不得直写（直写会让画面次数翻倍）（Ex.yml 的声明集预置 0，这一支不该动它）',
   );
 });
 
@@ -1558,9 +1558,9 @@ test('TARGET_MILK_CHECK：大量档（BASE:3 > EJAC*2）', async () => {
     '一次大量喷乳只在 NOWEX:5 记 1 次（档位大小不改变事件次数）',
   );
   assert.equal(
-    fixture.store.has('ex:31:5'),
-    false,
-    'EX:5 交给结算折入一次，回合内不得直写（直写会让画面次数翻倍）',
+    fixture.store.get('ex:31:5'),
+    0,
+    'EX:5 交给结算折入一次，回合内不得直写（直写会让画面次数翻倍）（Ex.yml 的声明集预置 0，这一支不该动它）',
   );
   assert.equal(fixture.store.get('base:31:3'), 750); // 2750-2000=750，不再触发钳制
 });
@@ -1720,9 +1720,9 @@ test('EX:5 同回合两次事件：NOWEX:5 累加到 2，结算折入后恰为 2
     '同回合两次事件各记 1 次：NOWEX:5 是累加量',
   );
   assert.equal(
-    fixture.store.has('ex:31:5'),
-    false,
-    'EX:5 不直写：直写会让两次事件在画面上显示成 4 次',
+    fixture.store.get('ex:31:5'),
+    0,
+    'EX:5 不直写：直写会让两次事件在画面上显示成 4 次（Ex.yml 的声明集预置 0，这一支不该动它）',
   );
 });
 
@@ -3277,13 +3277,13 @@ test('SOURCE_CHECK_AUTO：走自动调教那条序列（无读键、无损耗条
   assert.equal(fixture.waits.length, 0, '自动调教全程不读键');
   assert.equal(
     fixture.store.get('tflag:59'),
-    undefined,
-    'TFLAG:59（旧 PREVCOM）只在手动路径写',
+    0,
+    'TFLAG:59（旧 PREVCOM）只在手动路径写：预置的 0 保持',
   );
   assert.equal(
     fixture.store.get('tflag:50'),
-    undefined,
-    'TFLAG:50（上次调教者是助手）只在手动路径写',
+    0,
+    'TFLAG:50（上次调教者是助手）只在手动路径写：预置的 0 保持',
   );
 });
 

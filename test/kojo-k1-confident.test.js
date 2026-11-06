@@ -876,3 +876,80 @@ test('DOG_KOJO_1 SC30 手淫：侍奉精神Lv3以上档不再要求爱慕（#688
   assert.deepEqual(fixture.text_lines(), ['「我做……我做就好了吧……」']);
   assert.equal(fixture.store.get(`cflag:${CID}:331`), 3, 'CFLAG:331 推进到 3');
 });
+
+// —— #977：登记即预置之后首次真正命中的 `tequip:45 / 89 / 90 === 0` 分支 ——
+//
+// 夹具在 beginTrain / addCharacterForTrain 时按 TEquip.yml 的声明集把这三格
+// 预置成 0（引擎同款）。此前读到的是 undefined，`=== 0` 恒假，这三支在测试
+// 里从未走到；真机上（引擎预置 0）它们一直是活的——这一节把「真机会走的那
+// 一支」钉住，免得夹具与引擎再次分叉时测试仍然全绿。
+
+test('首次接吻（COM 6）：TEQUIP:89/90 都是 0 时走淫乱初吻那一支', async () => {
+  const fixture = await setup_k1((f) => {
+    f.load_module('era-utils/era-flag').selectcom = 6;
+    f.store.set(`talent:${CID}:76`, 1); // 淫乱
+    f.store.set('tflag:13', 1); // 初吻与自我口上
+    f.store.set(`cflag:${CID}:307`, 0); // 还没接过吻
+  });
+  await speak_k1(fixture);
+  const joined = fixture.text_lines().join('\n');
+  assert.ok(
+    joined.includes('接吻是这么舒服呢'),
+    'TEQUIP:89/90 预置 0 → 淫乱初吻台词（`=== 0` 的两侧都命中）',
+  );
+  assert.ok(!joined.includes('这样的…讨厌'), '不是普通初吻那一支');
+  assert.equal(fixture.store.get(`cflag:${CID}:307`), 1, '接吻计数推进');
+});
+
+test('首次接吻（COM 6）：TEQUIP:90 装着时被头部检查挡下，不出初吻台词', async () => {
+  const fixture = await setup_k1((f) => {
+    f.load_module('era-utils/era-flag').selectcom = 6;
+    f.store.set(`talent:${CID}:76`, 1);
+    f.store.set('tflag:13', 1);
+    f.store.set(`cflag:${CID}:307`, 0);
+    f.store.set(`tequip:${CID}:90`, 1); // 触手调教中
+  });
+  await speak_k1(fixture);
+  const joined = fixture.text_lines().join('\n');
+  assert.ok(!joined.includes('接吻是这么舒服呢'), '触手中不出淫乱初吻台词');
+  assert.equal(
+    fixture.store.get(`cflag:${CID}:307`),
+    0,
+    '整段没走到，接吻计数不动（预置的 0）',
+  );
+});
+
+test('口塞脱着（COM 45 且 TEQUIP:45 = 0）走脱着那一支——`=== 0` 首次命中', async () => {
+  const fixture = await setup_k1((f) => {
+    f.load_module('era-utils/era-flag').selectcom = 45;
+    f.store.set(`talent:${CID}:76`, 1); // 淫乱档
+  });
+  await speak_k1(fixture);
+  assert.ok(
+    fixture.text_lines().includes('「噗哈…哈…哈…哈…」'),
+    '脱着台词（TEQUIP:45 由声明集预置 0）',
+  );
+  assert.equal(
+    fixture.store.get(`cflag:${CID}:386`),
+    3,
+    'CFLAG:386 脱着推进到 3',
+  );
+});
+
+test('口塞装着（COM 45 且 TEQUIP:45 = 1）走装着那一支，与脱着背靠背', async () => {
+  const fixture = await setup_k1((f) => {
+    f.load_module('era-utils/era-flag').selectcom = 45;
+    f.store.set(`talent:${CID}:76`, 1);
+    f.store.set(`tequip:${CID}:45`, 1); // 已装着
+  });
+  await speak_k1(fixture);
+  assert.ok(
+    fixture.text_lines().some((line) => line.includes('呜咕…啊哈…呜嗯')),
+    '装着台词（CFLAG:346 由 0 起算推进到 1）',
+  );
+  assert.equal(
+    fixture.store.get(`cflag:${CID}:346`),
+    1,
+    'CFLAG:346 装着推进到 1',
+  );
+});

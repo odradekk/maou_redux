@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 107; // #834 +2（M18356/M18357：夹具不抄 ex_talent 预设、<表>keys 地址不认下划线表名） // #875 +2（M17563/M17564：夹具的 nextTurnInTrain 不结算 deltabase→base、endTrain 不结算 gotjuel→juel） // #874 +1（M17406：夹具 nextTurnInTrain 的 delta→palam 镜像） // #902 +17（M16300–M16316：夹具 raw() 的数据层视图——
+export const COUNT = 115; // #977 +8（M18420–M18427：夹具按 yml 声明集预置调教域表——tflag / tequip·tcvar·source·stain / ex·nowex / cstr 空串 / fillData 的 flag 补 0（resetData 与 loadData 各一条）/ 重复入训不重建 / 无 yml 的表不预置）；#834 +2（M18356/M18357：夹具不抄 ex_talent 预设、<表>keys 地址不认下划线表名） // #834 +2（M18356/M18357：夹具不抄 ex_talent 预设、<表>keys 地址不认下划线表名） // #875 +2（M17563/M17564：夹具的 nextTurnInTrain 不结算 deltabase→base、endTrain 不结算 gotjuel→juel） // #874 +1（M17406：夹具 nextTurnInTrain 的 delta→palam 镜像） // #902 +17（M16300–M16316：夹具 raw() 的数据层视图——
 // 写不落库/自动建行/行不随加入/调教表恒在/source 不随 endTrain 消失/item 骨架缺子表/
 // bought 初值/盖章常量取错/no 返回副本/no 写不落数组/get 不认盖章缺省/行与列不进枚举/
 // 视图不读平表/扩展角色表不建桶或不建行）；#848 +3（M16251–M16253：resetData 按
@@ -485,11 +485,9 @@ export default [
     find: `    if (!train_open) {
       // 引擎检查逐字：只在 tequip 表不存在时重建——同场重复 beginTrain
       // 不清 tflag（train-loop 的 beginTrain 幂等语义依赖它）
-      delete_train_table_keys();
-    }
-    train_open = true;`,
-    replace: `    delete_train_table_keys(); // 变异：检查被拆，每次 beginTrain 都重建
-    train_open = true;`,
+      delete_train_table_keys();`,
+    replace: `    if (true) {
+      delete_train_table_keys(); // 变异：检查被拆，每次 beginTrain 都重建`,
     tests: ['fixture'],
     must_mention: '表已存在时重复 beginTrain 不重建（引擎 tequip 检查逐字）',
   },
@@ -1256,5 +1254,96 @@ export default [
     replace: '    // 变异：不结算 gotjuel→juel',
     tests: ['train-engine-settle'],
     must_mention: '2279 + 1200',
+  },
+  {
+    // #977：夹具按 yml 声明集预置的八条。判据是「解析出至少一条条目」，
+    // 所以每条的 find 都锚在预置调用本身；写成「文件存在就补」或「不补」
+    // 都是现实里的错法。
+    desc: 'M18420 beginTrain 不按 TFlag.yml 补 tflag（真机读 0、夹具读 undefined）',
+    file: 'test/helpers/era-fixture.js',
+    find: `      for (const field of declared_ids('tflag') ?? []) {
+        store.set(\`tflag:\${field}\`, 0);
+      }`,
+    replace: '      // 变异：重建时不补 tflag',
+    tests: ['fixture-train-preset'],
+    must_mention: 'tflag:0 预置 0',
+  },
+  {
+    desc: 'M18421 addCharacterForTrain 不补 tequip/tcvar/source/stain（逐角色缺省值丢失）',
+    file: 'test/helpers/era-fixture.js',
+    find: `    for (const table of ['tequip', 'tcvar', 'source', 'stain']) {
+      for (const field of declared_ids(table) ?? []) {
+        store.set(\`\${table}:\${id}:\${field}\`, 0);
+      }
+    }`,
+    replace: '    // 变异：不补 tequip/tcvar/source/stain',
+    tests: ['fixture-train-preset'],
+    must_mention: 'tequip:31:45 预置 0',
+  },
+  {
+    desc: 'M18422 addCharacterForTrain 不补 ex/nowex（Ex.yml 的声明集被跳过）',
+    file: 'test/helpers/era-fixture.js',
+    find: `    for (const field of declared_ids('ex') ?? []) {
+      store.set(\`ex:\${id}:\${field}\`, 0);
+      store.set(\`nowex:\${id}:\${field}\`, 0);
+    }`,
+    replace: '    // 变异：不补 ex/nowex',
+    tests: ['fixture-train-preset'],
+    must_mention: 'ex:31:0 预置 0',
+  },
+  {
+    desc: 'M18423 cstr 预置成 0 而不是空串（字符串表被当成数字表）',
+    file: 'test/helpers/era-fixture.js',
+    find: `        store.set(\`cstr:\${target}:\${field}\`, preset.cstr?.[field] ?? '');`,
+    replace: `        store.set(\`cstr:\${target}:\${field}\`, preset.cstr?.[field] ?? 0); // 变异：空串写成 0`,
+    tests: ['fixture-train-preset'],
+    must_mention: 'cstr:31:60 预置空串',
+  },
+  {
+    desc: 'M18424 loadData 之后不跑 fillData（旧档缺登记序号时仍是 undefined）',
+    file: 'test/helpers/era-fixture.js',
+    find: `      restore_store(record.snapshot);
+      // 引擎 \`this.era.data = r, this.fillData()\`：读进来的档缺登记序号时
+      // 由 fillData 补缺省，老档因此也能读到 0 而不是 undefined
+      fill_data();`,
+    replace: `      restore_store(record.snapshot);
+      // 变异：读档后不补声明集`,
+    tests: ['fixture-train-preset'],
+    must_mention: '档里没有的登记序号由 fillData 补 0',
+  },
+  {
+    desc: 'M18425 fillData 无条件覆盖已写过的 flag（`?? 0` 写成 `= 0`）',
+    file: 'test/helpers/era-fixture.js',
+    find: `      if (!store.has(\`flag:\${id}\`)) {
+        store.set(\`flag:\${id}\`, 0);
+      }`,
+    replace: `      store.set(\`flag:\${id}\`, 0); // 变异：覆盖已写值`,
+    tests: ['fixture-train-preset'],
+    must_mention: 'fillData 的 `??=` 只补缺值',
+  },
+  {
+    desc: 'M18426 重复 addCharacterForTrain 重建调教行（漏引擎的 `!data.tequip[e]` 过滤）',
+    file: 'test/helpers/era-fixture.js',
+    find: `    if (chars_in_train.has(id)) {
+      return;
+    }
+    chars_in_train.add(id);`,
+    replace: `    // 变异：已在训的角色也重建行`,
+    tests: ['fixture-train-preset'],
+    must_mention: '已在训的角色不再重建行',
+  },
+  {
+    // 「一个人会怎么写错」：读到「没有这张表就跳过」就以为「跳过 = 当成
+    // 声明了 0 号」，于是 tcvar 这类没有 yml 的表凭空多出一格 0。判据是
+    // 「yml 解析出至少一条条目」，不是「文件在不在」——两件事都不成立时
+    // 一格都不该预置（#970 的分界）。
+    desc: 'M18427 声明集判据丢掉「没有这张 yml」的一侧（空表被当成「声明了 0 号」）',
+    file: 'test/helpers/era-fixture.js',
+    find: `    const ids = yml_declared_ids(table);
+    return ids === undefined || ids.size === 0 ? undefined : [...ids];`,
+    replace: `    const ids = yml_declared_ids(table);
+    return ids === undefined || ids.size === 0 ? [0] : [...ids]; // 变异：空表补 0 号`,
+    tests: ['fixture-train-preset'],
+    must_mention: '没有声明集就没有预置（引擎的 staticData.tcvar 同样不存在）',
   },
 ];
