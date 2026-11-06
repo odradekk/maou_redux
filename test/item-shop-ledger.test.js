@@ -33,7 +33,7 @@ const ITEM_YML = path.resolve(__dirname, '..', 'yml', 'Item.yml');
  */
 function item_prices() {
   const text = fs.readFileSync(ITEM_YML, 'utf8');
-  const prices = new Map();
+  const by_id = new Map();
   for (const match of text.matchAll(
     /^"([^"]+)":\r?\n((?: {2}[^\r\n]*\r?\n)*)/gm,
   )) {
@@ -42,9 +42,9 @@ function item_prices() {
       continue;
     }
     const price = /^ {2}price: (\d+)$/m.exec(match[2]);
-    prices.set(Number(id[1]), price === null ? undefined : Number(price[1]));
+    by_id.set(Number(id[1]), price === null ? undefined : Number(price[1]));
   }
-  return prices;
+  return by_id;
 }
 
 /** 只装一次：yml 在本进程里不会变 */
@@ -78,7 +78,7 @@ test('三张记账表的每条都与 yml/Item.yml 的 price 同值（两份真�
       const price = item_price_of(Number(id));
       if (price === undefined) {
         offenders.push(
-          `${table}[${id}] 在 Item.yml 里没有条目（记账额 ${amount}）`,
+          `${table}[${id}] 在 Item.yml 里没有条目或没有 price（记账额 ${amount}）`,
         );
         continue;
       }
