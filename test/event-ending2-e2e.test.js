@@ -141,11 +141,11 @@ test('端到端：新档从标题走到 ENDING_2（回标题 + 演出齐全 + �
     fixture.store.set(`base:${id}:1`, wp);
     fixture.store.set(`maxbase:${id}:1`, wp);
   }
-  // 固定名表（区间与依据见 NAME_NIDS 的注释）：命名链读的就是这张表，
-  // 必须在任何角色生成之前种好，种晚了仍会落缺省名
-  fixture.store.set('namelistkeys', NAME_NIDS);
+  // 固定名表（区间与依据见 NAME_NIDS 的注释）：命名链读的就是这张常量表
+  // （fixture.seed_fixed_name 直接改表），必须在任何角色生成之前种好，
+  // 种晚了仍会落缺省名
   for (const nid of NAME_NIDS) {
-    fixture.store.set(`namelistname:${nid}`, seeded_name(nid));
+    fixture.seed_fixed_name(nid, seeded_name(nid));
   }
   // 魔王与村娘的 base/maxbase（阶段 1 e2e 同款：出兵耗气力、结算循环的
   // 回复段读上限）

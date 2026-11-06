@@ -83,6 +83,7 @@ const summon_mod = require('#/system/dungeon/monster-summon');
 const room_day_mod = require('#/system/dungeon/dungeon-room');
 const { default_rand, times } = require('#/utils/numeric');
 const { PALAMLV } = require('#/data/palam-level-const');
+const { NOITEM } = require('#/data/noitem-const');
 
 /** 素质名（%TALENTNAME:n%）的读数源：引擎素质名表 */
 function talent_name(n) {
@@ -328,7 +329,7 @@ function fellatio_aptitude(cid) {
  * @returns {boolean}
  */
 function has_item(i) {
-  return (era.get(`item:${i}`) || 0) > 0 || (era.get('noitem:0') || 0) !== 0;
+  return (era.get(`item:${i}`) || 0) > 0 || NOITEM.value !== 0;
 }
 
 /**

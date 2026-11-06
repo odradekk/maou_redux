@@ -1724,7 +1724,7 @@ test('遛狗（DOG_WALK）：没有【野良犬】道具时整场早退', async 
   // NOITEM 非 0（道具持有检查的共形放宽支）时照走
   const with_noitem = setup_chara_events();
   seed_dog_walk_candidate(with_noitem, 31, '温妮');
-  with_noitem.store.set('noitem:0', 1);
+  with_noitem.seed_noitem(1);
   const mod = with_noitem.load_module('event/event-nextday');
 
   await mod.dog_walk(() => 0);

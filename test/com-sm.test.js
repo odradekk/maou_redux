@@ -87,11 +87,11 @@ test('41/42 号可用性检查：要持鞭/针；NOITEM 非零时免持；助手
   assert.equal(await com_able_family.call(41), 1);
   assert.equal(await com_able_family.call(42), 1);
 
-  // NOITEM ≠ 0（道具无视模式）——yml/NOITEM.yml 建桶后的读路径
+  // NOITEM ≠ 0（道具无视模式）——noitem-const 的开关被拨起来时免持
   fixture.store.set('item:10', 0);
-  fixture.store.set('noitem:0', 1);
+  fixture.seed_noitem(1);
   assert.equal(await com_able_family.call(41), 1, 'NOITEM 放行持有检查');
-  fixture.store.set('noitem:0', 0);
+  fixture.seed_noitem(0);
   assert.equal(await com_able_family.call(41), 0);
 
   // 助手条件：41/42 是 ABL:ASSI:20 < 3
@@ -454,15 +454,15 @@ test('com44：S10 = 800×链、S6/13/14 直填、触手支清 t:0、装上后爱
   assert.equal(fixture.store.get('source:31:13'), 500);
   assert.equal(fixture.store.get('source:31:14'), 500);
   assert.equal(fixture.store.get('tequip:31:44'), 1, '绳子装上');
-  assert.equal(fixture.store.get('t:0'), 0, '触手紧缚清计数');
+  assert.equal(fixture.store.get('flag:10030'), 0, '触手紧缚清计数');
   assert.equal(fixture.store.get('exp:31:51'), 5);
   assert.ok(fixture.text_lines().includes('触手紧缚'), '触手支的指令名');
 
   // t:0 预置 3 → 再绑仍清 0
-  fixture.store.set('t:0', 3);
+  fixture.store.set('flag:10030', 3);
   fixture.store.set('tequip:31:44', 0);
   await run_com(world, 44);
-  assert.equal(fixture.store.get('t:0'), 0);
+  assert.equal(fixture.store.get('flag:10030'), 0);
 });
 
 // —— COM45/46：口塞位与灌肠 ——
@@ -564,7 +564,7 @@ test('com46：插入回合 + 触手 → STAIN:4 |= 6；解除回合 + 着衣 →
   w1.fixture.store.set('stain:31:4', 1);
   await run_com(w1, 46);
   assert.equal(w1.fixture.store.get('stain:31:4'), 1 | 2 | 4);
-  assert.equal(w1.fixture.store.get('t:0'), 0, '触手灌肠清计数');
+  assert.equal(w1.fixture.store.get('flag:10030'), 0, '触手灌肠清计数');
 
   // 解除 + 着衣设定 + 内裤位 → soiling_cloth_no2 真身（#215）：TFLAG:45 置位
   const w2 = seed_world();
@@ -743,7 +743,7 @@ test('equip_com44：抖M 档 A × 倒错 × 欲情，四格累加，触手 T:0 +
   w2.era_flag.selectcom = 44;
   w2.fixture.store.set('tequip:31:90', 1);
   await w2.equip_com_family.call(44);
-  assert.equal(w2.fixture.store.get('t:0'), 1);
+  assert.equal(w2.fixture.store.get('flag:10030'), 1);
 });
 
 test('equip_com45：整阈值紧缚减免（<20/<50）+ 四格累加', async () => {

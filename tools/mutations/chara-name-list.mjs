@@ -1,85 +1,42 @@
 // 变异条目表分片：chara-name-list（issue #388，CHARA_NAME_INIT 落表；
-// #435 文件名被引擎误判为逐角色数据、表名与读取键随改名同步）。
-// 目标文件：ere/system/chara/chara-name-list.js、event-first.js／event-load.js 的接入点、
-// yml/NameList.yml 数据本身。对应测试见 test/chara-name-list.test.js。
+// #435 文件名被引擎误判为逐角色数据；#835 整张表移出静态数据成
+// ere/data/chara-name-const.js 的常量表）。
+// 目标文件：ere/system/chara/chara-name-list.js、ere/data/chara-name-const.js。
+// 对应测试见 test/chara-name-list.test.js 与 test/chara-name.test.js。
 
-export const COUNT = 9;
+export const COUNT = 4;
 
 export default [
   {
-    desc: 'M7968 get_fixed_chara_name 的未注册检查被恒假绕过，缺口 id 也去读裸地址',
+    desc: 'M7968 get_fixed_chara_name 的空串缺省被删（表里没有的编号回 undefined）',
     file: 'ere/system/chara/chara-name-list.js',
-    find: '  if (!valid_ids().has(nid)) {',
-    replace: '  if (false) {',
+    find: "  return LIST_CHARA_NAME[nid] ?? '';",
+    replace: '  return LIST_CHARA_NAME[nid];',
     tests: ['chara-name-list'],
-    must_mention: '未注册 id 必须直接返回空串，不得读到陈旧的名字地址残留',
+    must_mention: '必须返回空串',
   },
   {
-    desc: 'M7969 get_fixed_chara_name 的检查被恒真短路，已注册 id 也查不到名字',
+    desc: 'M7969 查表编号偏一位（名字整体错位）',
     file: 'ere/system/chara/chara-name-list.js',
-    find: '  if (!valid_ids().has(nid)) {',
-    replace: '  if (true) {',
+    find: '  return LIST_CHARA_NAME[nid] ?? ',
+    replace: '  return LIST_CHARA_NAME[nid + 1] ?? ',
     tests: ['chara-name-list'],
-    must_mention: '已注册 id 必须查表返回名字',
+    must_mention: '固定名按编号查出',
   },
   {
-    desc: 'M7970 valid_ids 缓存的惰性初始化被改成每次都重建，keys 被重复读取',
-    file: 'ere/system/chara/chara-name-list.js',
-    find: "  valid_ids_cache ??= new Set(era.get('namelistkeys'));",
-    replace: "  valid_ids_cache = new Set(era.get('namelistkeys'));",
+    desc: 'M7970 常量表的 0 号条目名字被改错（开局可抽到的固定名）',
+    file: 'ere/data/chara-name-const.js',
+    find: "  0: '玛丽',",
+    replace: "  0: '玛丽娜',",
     tests: ['chara-name-list'],
-    must_mention: 'namelistkeys 只应被读取一次（缓存生效）',
+    must_mention: '0 号编号同样是有效条目',
   },
   {
-    desc: 'M7972 chara_name_init 的调用点被清空，valid_ids 缓存不再预热',
-    file: 'ere/system/chara/chara-name-list.js',
-    find: 'function chara_name_init() {\n  valid_ids();\n}',
-    replace: 'function chara_name_init() {}',
-    tests: ['chara-name-list', 'event-first', 'event-load'],
-    must_mention: 'chara_name_init 必须读取 namelistkeys',
-  },
-  {
-    desc: 'M7973 event-first.js 里 CHARA_NAME_INIT 的接入调用被删掉',
-    file: 'ere/event/event-first.js',
-    find: 'chara_name_init();',
-    replace: '',
-    tests: ['event-first'],
-    must_mention: 'EVENTFIRST 链必须真的调用了 chara_name_init',
-  },
-  {
-    desc: 'M7974 event-load.js 里 CHARA_NAME_INIT 的接入调用被删掉',
-    file: 'ere/event/event-load.js',
-    find: 'chara_name_init();',
-    replace: '',
+    desc: 'M7971 表尾条目越出声明尺寸（永不可达的编号）',
+    file: 'ere/data/chara-name-const.js',
+    find: "  5288: '万庄',",
+    replace: "  5500: '万庄',",
     tests: ['chara-name-list'],
-    must_mention: 'EVENTLOAD 链必须真的调用 chara_name_init',
-  },
-  {
-    desc: 'M7975 NameList.yml 里一条数据的 id 被改错（玛丽 0 改 5——引擎实证查名断言红，#640 起由行为断言守）',
-    file: 'yml/NameList.yml',
-    find: '"玛丽":\n  id: 0',
-    replace: '"玛丽":\n  id: 5',
-    engine: true,
-    tests: ['chara-name-list'],
-    must_mention: '玛丽',
-  },
-  // —— #435：文件名（→ 表名）、读取键三处必须同步。文件改名本身没法用
-  // find/replace 表达，这里钉的是它的两个读取键——键与表名一旦脱节，引擎对
-  // 缺表的寻址静默返回 undefined，查表恒空而夹具播 store 的用例照样绿。
-  {
-    desc: 'M9473 名字读取键与表名脱节（namelistname → namelistnam），查表恒空',
-    file: 'ere/system/chara/chara-name-list.js',
-    find: '`namelistname:${nid}`',
-    replace: '`namelistnam:${nid}`',
-    tests: ['chara-name-list'],
-    must_mention: '已注册 id 必须查表返回名字',
-  },
-  {
-    desc: 'M9474 valid_ids 的 keys 读取被摘成空集，未注册检查恒判定未登录',
-    file: 'ere/system/chara/chara-name-list.js',
-    find: "new Set(era.get('namelistkeys'))",
-    replace: 'new Set([])',
-    tests: ['chara-name-list'],
-    must_mention: '已注册 id 必须查表返回名字',
+    must_mention: '必须落在声明尺寸内',
   },
 ];

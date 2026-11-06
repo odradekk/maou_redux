@@ -82,6 +82,7 @@ const {
 } = require('#/utils/clothtype-utils');
 const { PALAMLV } = require('#/data/palam-level-const');
 const { EXPLV } = require('#/data/exp-level-const');
+const { NOITEM } = require('#/data/noitem-const');
 
 // —— 共享读取助手（#13：未声明下标读值得 undefined，一律 || 0 取默认值） ——
 const tal = (id, i) => era.get(`talent:${id}:${i}`) || 0;
@@ -121,8 +122,7 @@ function stain_exchange(cid_a, idx_a, cid_b, idx_b) {
 }
 
 /** 持有检查（COMABLE 各段的「ITEM:x == 0 && NOITEM == 0」共形） */
-const has_item = (i) =>
-  (era.get(`item:${i}`) || 0) > 0 || (era.get('noitem:0') || 0) !== 0;
+const has_item = (i) => (era.get(`item:${i}`) || 0) > 0 || NOITEM.value !== 0;
 
 /** ズーコの着ぐるみ判定（CFLAG:42==11 && (CFLAG:40&64) && FLAG:37，多处共形） */
 const zooko_worn = (cid) =>
@@ -1345,7 +1345,7 @@ async function com85() {
   }
 
   if (tequip(target, 90)) {
-    era.add('t:0', 1);
+    era_flag.tentacle_round += 1;
   }
 
   await soiling_cloth_no1(target);
@@ -1697,7 +1697,7 @@ async function com88() {
   } else {
     era.set(`tequip:${target}:88`, 1);
   }
-  era.set('t:0', 0);
+  era_flag.tentacle_round = 0;
   return 1;
 }
 
@@ -1712,7 +1712,7 @@ async function com89() {
   } else {
     era.set(`tequip:${target}:89`, 1);
   }
-  era.set('t:0', 0);
+  era_flag.tentacle_round = 0;
   return 1;
 }
 
@@ -1723,7 +1723,7 @@ async function com89() {
 async function equip_com89() {
   const target = era_flag.target;
   era.print('＜兽奸ＰＬＡＹ中＞');
-  era.set('t:0', 1); // T = 1（本轮兽奸经验累加起点，随后 T+=N 累加、EXP:56 += T 收尾）
+  era_flag.tentacle_round = 1; // 计数 = 1（本轮兽奸经验累加起点，随后 +=N 累加、EXP:56 收尾）
 
   let a;
   let b;
@@ -1850,22 +1850,22 @@ async function equip_com89() {
 
     if (com === 6) {
       ejacb = 0;
-      era.add('t:0', 2);
+      era_flag.tentacle_round += 2;
     } else if (com === 21) {
       ejacb *= 1.0;
-      era.add('t:0', 2);
+      era_flag.tentacle_round += 2;
     } else if (com === 27) {
       ejacb *= 1.5;
-      era.add('t:0', 2);
+      era_flag.tentacle_round += 2;
     } else if (com === 30) {
       ejacb *= 0.8;
-      era.add('t:0', 1);
+      era_flag.tentacle_round += 1;
     } else if (com === 31) {
       ejacb *= 1.2;
-      era.add('t:0', 2);
+      era_flag.tentacle_round += 2;
     } else if (com === 34) {
       ejacb *= 1.5;
-      era.add('t:0', 3);
+      era_flag.tentacle_round += 3;
     } else {
       ejacb = 0;
     }
@@ -1905,13 +1905,13 @@ async function equip_com89() {
       chara(target).dungeon.精液经验 += 3;
       era.print('兽奸大量射精');
       era.print('精液经验＋３');
-      era.add('t:0', 5);
+      era_flag.tentacle_round += 5;
       if (com === 21 || com === 34) era.set('tflag:38', 2);
     } else if (e === 1) {
       chara(target).dungeon.精液经验 += 1;
       era.print('兽奸射精');
       era.print('精液经验＋１');
-      era.add('t:0', 2);
+      era_flag.tentacle_round += 2;
       if (com === 21 || com === 34) era.set('tflag:38', 1);
     }
 
@@ -1943,10 +1943,10 @@ async function equip_com89() {
     era.set(`stain:${target}:0`, (era.get(`stain:${target}:0`) || 0) | 4);
 
   game.event.犬射精或处刑口上 = e;
-  const t_final = era.get('t:0') || 0;
+  const t_final = era_flag.tentacle_round;
   era.print(`兽奸经验＋${t_final}`);
   chara(target).dungeon.兽奸经验 += t_final;
-  era.set('t:0', 0);
+  era_flag.tentacle_round = 0;
 
   if (tal(target, 0) && (era.get('tflag:19') || 0) && !tal(target, 124)) {
     chara(target).dungeon.异常经验 += 2;

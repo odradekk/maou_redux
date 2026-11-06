@@ -657,10 +657,11 @@ export default [
     must_mention: '缺一项就只能退化成「表名+序号」',
   },
   {
-    desc: 'M16112 豁免名单指向不存在的表（NameList 被删后没人清这条豁免）',
+    desc: 'M16112 豁免名单指向不存在的表（过期豁免没人清）',
     file: 'test/yml-name-type.test.js',
-    find: "'NameList.yml': '固定人名常量表",
-    replace: "'NameListTable.yml': '固定人名常量表",
+    find: 'const EXEMPT_FILES = {};',
+    replace:
+      "const EXEMPT_FILES = {\n  'NameListTable.yml': '固定人名常量表',\n};",
     tests: ['yml-name-type'],
     must_mention: '已不存在——从 EXEMPT_FILES 移除这条豁免',
   },

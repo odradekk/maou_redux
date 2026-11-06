@@ -1,6 +1,6 @@
 /**
  * @file 工单 #212 的引擎比对探针：TSTR 建模（#5 三个遗留建模项之一
- * 「TSTR 对应 ere 哪个调教期表」的定论）与 TRAIN_NAME 表名结论。
+ * 「TSTR 对应 ere 哪个调教期表」的定论）与自定义表的命名结论。
  *
  * 验证路线与 test/exflag-chara35.test.js（#113/#179 先例）同构：不用夹具
  * （记录层证明不了「引擎接受」），不自写镜像（会不一致），全部经
@@ -16,7 +16,7 @@
  *      **持久**桶（beginTrain/endTrain 不碰它）→ tstr:90 可写可读（情形三）；
  *      旧引擎的「BEGIN TRAIN 整族清空」由 train-loop.js 手动镜像；
  *   4. 表名不能叫 trainname：setVar 二段分支对 *name 后缀有只读拦截，
- *      登记 normal + 建桶照样 key error（情形四）——TrainAlias.yml 得名。
+ *      登记 normal + 建桶照样 key error（情形四）——自定义表命名的一般结论。
  *
  * 引擎不在场（无 app.asar）时整文件 skip 并留警告——见 helper 文件头。
  */
@@ -154,7 +154,8 @@ engine_test(
 
 // 情形四：表名结论——trainname 撞 setVar 的 *name 只读拦截。即使名字表、
 // 桶、normal 登记三者在场，二段分支照样把它截去 name 后缀去查
-// fieldNames.train（不存在），落 key error。TrainAlias.yml 得名的依据。
+// fieldNames.train（不存在），落 key error。这条约束对任何自定义表名都成立，
+// 不随某张具体表的去留改变。
 engine_test(
   '引擎 setVar：表名 trainname 撞 *name 只读拦截——登记 normal + 建桶也 key error',
   () => {
@@ -174,18 +175,18 @@ engine_test(
     };
     engine.set_var.call(fake, 'trainname:0', '爱抚');
     assert.deepEqual(errors, ['key error in getter/setter! key (trainname:0)']);
-    // 对照：trainalias 同一套登记下可写——选名的正面验证
-    const fake_alias = {
-      staticData: { trainalias: {} },
+    // 对照：不以 name 结尾的表名，同一套登记下可写——表名是唯一变量
+    const fake_plain = {
+      staticData: { aliascheck: {} },
       fieldNames: {},
-      data: { trainalias: {} },
+      data: { aliascheck: {} },
       global: {},
-      extendedTables: { trainalias: tableType.normal },
+      extendedTables: { aliascheck: tableType.normal },
     };
     assert.equal(
-      engine.set_var.call(fake_alias, 'trainalias:0', '爱抚'),
+      engine.set_var.call(fake_plain, 'aliascheck:0', '爱抚'),
       '爱抚',
     );
-    assert.equal(fake_alias.data.trainalias[0], '爱抚');
+    assert.equal(fake_plain.data.aliascheck[0], '爱抚');
   },
 );

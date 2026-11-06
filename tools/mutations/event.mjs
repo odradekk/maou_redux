@@ -2312,7 +2312,7 @@ export default [
   {
     desc: 'M8615 DOG_WALK：持有检查丢掉 NOITEM 支（只认 ITEM:22）',
     file: 'ere/event/event-nextday.js',
-    find: `  return (era.get(\`item:\${i}\`) || 0) > 0 || (era.get('noitem:0') || 0) !== 0;`,
+    find: `  return (era.get(\`item:\${i}\`) || 0) > 0 || NOITEM.value !== 0;`,
     replace: `  return (era.get(\`item:\${i}\`) || 0) > 0;`,
     tests: ['event-nextday'],
     must_mention: 'NOITEM 非 0 时不再早退',

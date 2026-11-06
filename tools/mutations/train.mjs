@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 1169; // #980 +4（M18306-M18309：5 号只写 NOWEX、EX:5 由结算折入——两处直写回潮、com-vaginasex 直写回潮、NOWEX 改成覆盖） // #973 +1（M18304：通常の射精不写 6 号 NOWEX——未登记序号在结算时加出 NaN） // #815 +3（M18300/M18302/M18303：回合开始的 NOWEX 清零——固定清 0 号、改读 Exp 名字表、指令之后重复清零） // #923 +9（M18200-M18208：com-caress 删掉 D 段后，自慰文案的 E 只由 A/B/C 合计——漏加 UP:2、五道档位边界、把 UP:17 / PALAM:17 加回来、UP:2 读错序号） // #876 净 +4：+6（M18102-M18107：自动调教复用手动调教——情爱漏加 B 档增量、取错列、取错表、AUTO_NUM_CHECK 不执行、自动路径退回手动全序、共用处理器默认开关），-2（M41/M42 改挂 ere/data/train-source-const.js，随表移入 data 分片）；#959 +2（M17956/M17957：相殺抽池的候选集、缺省随机源的折算基准） // #853 +3（M17810-M17812：直接调用的三个钩子调用点） // #875 净 +10：+11（M17550-M17560：结算交还引擎——当场写 base、损耗条读裸 base、AUTO 当场结算、当场加 juel、抵消写 juel、抵消行取错增量、窗口内外写错珠表、否定减半读裸 juel、结算表两处读裸 juel），-1（M24 删：结算尾部不再清零 gotjuel，双重结算由 M17553 守；M23 改指 GOTJUEL:3 死存储的写入守卫，M28/M29/M30 与 M9662/M9669/M13871/M9786 随代码改写重锚，条数不变）；#874 +6（M17400-M17403/M17405/M17407：结算交还引擎——当场写 palam、DOWN 折进 delta（完整版与静默版）、欲情快照、时常发情蓄积、参数状态短语）；#906 +2（M16200/M16204：调教结束前的欲情快照、快照名单按参与调教的角色）；#904 -1（M995 删：它守的是「CFLAG:44 经 stronghold 门面写」这条域检查要求，域检查已随 ADR-0010 删除，门面写与裸写落点相同，com-cloth 的落点断言两边都过）；#822 +4（M15706/M15707/M15710/M15711：指令名与能力名的显示文案、旧档别名迁移；M15705 随 #836 删——别名播种表改由指令常量派生，播种表不再另存一份名字）；#836：删 M15124（单一来源后跨表一致性不复存在）、增 7 条指令常量守护（M15650-M15656）、M703/M775 改挂常量写法；界面流程缺陷 +4（M15306–M15309：紧凑序号跳过调教画面子菜单号），M740/M741 改挂新写法，M1044 改由可用性表拦截；数据地址缺陷修复 +3（M15418-M15420：初体验对象改用角色 ID）；#792 净 -2（M1112/M1409 随 times 实现移到 ere/utils/numeric.js，改挂 numeric 分片）；#789 追补 +2（M13706/M13707：编号空间的守卫）；#789 +1（M13703：GET 版特别服装名的未知编号哨兵）；收尾生命周期收拢：新增 2 条登记冲账守护（M15100 重锚为 settle 形状、M15103；M15104 随入口清残留删除）；#782：新增 3 条调教死亡收尾守护（M15100-M15102）；#777：新增 12 条助手射精经验守护（M15047-M15058）；此前沿革见 git 历史。
+export const COUNT = 1170; // #835 净 -1：+2（M18310/M18311：触手回合计数读到/写到退役槽 10029）、-1（M15711 旧档别名迁移随表删除）； #980 +4（M18306-M18309：5 号只写 NOWEX、EX:5 由结算折入——两处直写回潮、com-vaginasex 直写回潮、NOWEX 改成覆盖） // #973 +1（M18304：通常の射精不写 6 号 NOWEX——未登记序号在结算时加出 NaN） // #815 +3（M18300/M18302/M18303：回合开始的 NOWEX 清零——固定清 0 号、改读 Exp 名字表、指令之后重复清零） // #923 +9（M18200-M18208：com-caress 删掉 D 段后，自慰文案的 E 只由 A/B/C 合计——漏加 UP:2、五道档位边界、把 UP:17 / PALAM:17 加回来、UP:2 读错序号） // #876 净 +4：+6（M18102-M18107：自动调教复用手动调教——情爱漏加 B 档增量、取错列、取错表、AUTO_NUM_CHECK 不执行、自动路径退回手动全序、共用处理器默认开关），-2（M41/M42 改挂 ere/data/train-source-const.js，随表移入 data 分片）；#959 +2（M17956/M17957：相殺抽池的候选集、缺省随机源的折算基准） // #853 +3（M17810-M17812：直接调用的三个钩子调用点） // #875 净 +10：+11（M17550-M17560：结算交还引擎——当场写 base、损耗条读裸 base、AUTO 当场结算、当场加 juel、抵消写 juel、抵消行取错增量、窗口内外写错珠表、否定减半读裸 juel、结算表两处读裸 juel），-1（M24 删：结算尾部不再清零 gotjuel，双重结算由 M17553 守；M23 改指 GOTJUEL:3 死存储的写入守卫，M28/M29/M30 与 M9662/M9669/M13871/M9786 随代码改写重锚，条数不变）；#874 +6（M17400-M17403/M17405/M17407：结算交还引擎——当场写 palam、DOWN 折进 delta（完整版与静默版）、欲情快照、时常发情蓄积、参数状态短语）；#906 +2（M16200/M16204：调教结束前的欲情快照、快照名单按参与调教的角色）；#904 -1（M995 删：它守的是「CFLAG:44 经 stronghold 门面写」这条域检查要求，域检查已随 ADR-0010 删除，门面写与裸写落点相同，com-cloth 的落点断言两边都过）；#822 +4（M15706/M15707/M15710/M15711：指令名与能力名的显示文案、旧档别名迁移；M15705 随 #836 删——别名播种表改由指令常量派生，播种表不再另存一份名字）；#836：删 M15124（单一来源后跨表一致性不复存在）、增 7 条指令常量守护（M15650-M15656）、M703/M775 改挂常量写法；界面流程缺陷 +4（M15306–M15309：紧凑序号跳过调教画面子菜单号），M740/M741 改挂新写法，M1044 改由可用性表拦截；数据地址缺陷修复 +3（M15418-M15420：初体验对象改用角色 ID）；#792 净 -2（M1112/M1409 随 times 实现移到 ere/utils/numeric.js，改挂 numeric 分片）；#789 追补 +2（M13706/M13707：编号空间的守卫）；#789 +1（M13703：GET 版特别服装名的未知编号哨兵）；收尾生命周期收拢：新增 2 条登记冲账守护（M15100 重锚为 settle 形状、M15103；M15104 随入口清残留删除）；#782：新增 3 条调教死亡收尾守护（M15100-M15102）；#777：新增 12 条助手射精经验守护（M15047-M15058）；此前沿革见 git 历史。
 
 export default [
   {
@@ -105,7 +105,7 @@ export default [
     replace:
       '    TRAIN_NAME_TABLE[id] = name.toLowerCase(); // 变异：别名层也转小写',
     tests: ['train-name'],
-    must_mention: '野外PLAY',
+    must_mention: '全角拉丁维持原字',
   },
   // —— #565 已实现函数的存根调用点接入 ——
   {
@@ -417,32 +417,26 @@ export default [
     must_mention: 'BEGIN TRAIN 必须清 TSTR:90',
   },
   {
-    desc: 'M702 train_name_init 检查删（每次 EVENTTRAIN 重播种）',
+    desc: 'M702 150 号动态槽的分支删（150 号槽落到名字表的空值上）',
     file: 'ere/system/train/train-name.js',
-    find: `  if ((era.get('trainalias:0') ?? '').length > 0) {
-    migrate_legacy_names();
-    return;
-  }`,
-    replace: `  // 变异：检查删`,
+    find: '  if (id === TRAIN_ALIAS_DYNAMIC_SLOT) {',
+    replace: '  if (false) { // 变异：动态槽分支删',
     tests: ['train-name'],
-    must_mention: '检查命中后不得有任何写入',
+    must_mention: '150 号槽按目标的 CSTR:7 现算',
   },
   {
-    desc: 'M703 train_name_init 的字符串内插删（播种时求值丢失）',
+    desc: 'M703 150 号槽的字符串内插删（癖好名不进别名）',
     file: 'ere/system/train/train-name.js',
-    find: `  era.set(
-    \`trainalias:\${TRAIN_ALIAS_DYNAMIC_SLOT}\`,
-    \`\${era.get(\`cstr:\${era_flag.target}:7\`) ?? ''}调教\`,
-  );`,
-    replace: `  era.set(\`trainalias:150\`, '调教');`,
+    find: "    return `${era.get(`cstr:${era_flag.target}:7`) ?? ''}调教`;",
+    replace: "    return '调教';",
     tests: ['train-name'],
     must_mention: '尾巴调教',
   },
   {
-    desc: 'M704 read_train_name 的空串缺省删（未播种槽回 undefined）',
+    desc: 'M704 read_train_name 的空串缺省删（名字表里没有的指令号回 undefined）',
     file: 'ere/system/train/train-name.js',
-    find: `  return era.get(\`trainalias:\${id}\`) ?? '';`,
-    replace: `  return era.get(\`trainalias:\${id}\`);`,
+    find: "  return TRAIN_NAME_TABLE[id] ?? '';",
+    replace: '  return TRAIN_NAME_TABLE[id];',
     tests: ['train-name'],
     must_mention: 'read_train_name',
   },
@@ -611,7 +605,7 @@ export default [
     must_mention: '自定义菜单，标签取 TRAIN_NAME',
   },
   {
-    desc: 'M762 位测试分流恒 ON（内建分支删除——OFF 态吃 trainalias 不吃静态名）',
+    desc: 'M762 位测试分流恒 ON（内建分支删除——OFF 态走内建列表，不吃升格名）',
     file: 'ere/page/page-usercom.js',
     find: `  if (show_advanced_names()) {
     await show_commenu();
@@ -2074,7 +2068,7 @@ export default [
     file: 'ere/system/train/com-sm.js',
     find: `  set_tq(target, 44, 1 - tq(target, 44));
   if (tq(target, 90)) {
-    era.set('t:0', 0);
+    era_flag.tentacle_round = 0;
   }`,
     replace: `  set_tq(target, 44, 1 - tq(target, 44));`,
     tests: [`com-sm`],
@@ -3374,7 +3368,7 @@ export default [
   {
     desc: 'M1243 equip_com89 尾段 T 收尾清零删除，跨回合残留（#226）',
     file: 'ere/system/train/com-hardcore.js',
-    find: "  chara(target).dungeon.兽奸经验 += t_final;\n  era.set('t:0', 0);",
+    find: '  chara(target).dungeon.兽奸经验 += t_final;\n  era_flag.tentacle_round = 0;',
     replace:
       '  chara(target).dungeon.兽奸经验 += t_final; // 变异：T 收尾清零删除',
     tests: ['com-hardcore'],
@@ -3392,9 +3386,9 @@ export default [
   {
     desc: 'M1245 equip_com89 射精路径误跳过 TFLAG:16 尾段写入（#226）',
     file: 'ere/system/train/com-hardcore.js',
-    find: "  game.event.犬射精或处刑口上 = e;\n  const t_final = era.get('t:0') || 0;",
+    find: '  game.event.犬射精或处刑口上 = e;\n  const t_final = era_flag.tentacle_round;',
     replace:
-      "  if ((era.get(`maxbase:${player_master}:4`) || 0) !== 0)\n    game.event.犬射精或处刑口上 = e; // 变异：GOTO 命中时误跳过\n  const t_final = era.get('t:0') || 0;",
+      '  if ((era.get(`maxbase:${player_master}:4`) || 0) !== 0)\n    game.event.犬射精或处刑口上 = e; // 变异：GOTO 命中时误跳过\n  const t_final = era_flag.tentacle_round;',
     tests: ['com-hardcore'],
     must_mention: 'E 默认值 0',
   },
@@ -3772,11 +3766,11 @@ export default [
   {
     desc: 'M1110 com34/36 骑乘位衣物判定把目标号漏传（#222）',
     file: 'ere/system/train/com-service.js',
-    find: `  if (target_tequip(58) && !(era.get('item:13') || 0) && !era.get('noitem:0'))
+    find: `  if (target_tequip(58) && !(era.get('item:13') || 0) && NOITEM.value === 0)
     return 0;
   if (costume_blocked(target, 17)) return 0;
   if (special(target) === 79 && worn(target) & 64 && clothes_on()) return 0;`,
-    replace: `  if (target_tequip(58) && !(era.get('item:13') || 0) && !era.get('noitem:0'))
+    replace: `  if (target_tequip(58) && !(era.get('item:13') || 0) && NOITEM.value === 0)
     return 0;
   if (costume_blocked(17)) return 0; // 变异：误把位掩码当目标号
   if (special(target) === 79 && worn(target) & 64 && clothes_on()) return 0;`,
@@ -4535,11 +4529,28 @@ export default [
   {
     desc: 'M1358 equip_com108 尾段误清 T（#227）',
     file: 'ere/system/train/com-tentacle.js',
-    find: "  era.add('t:0', 1);\n  return 1;",
+    find: '  era_flag.tentacle_round += 1;\n  return 1;',
     replace:
-      "  era.add('t:0', 1);\n  era.set('t:0', 0); // 变异：误清 T\n  return 1;",
+      '  era_flag.tentacle_round += 1;\n  era_flag.tentacle_round = 0; // 变异：误清 T\n  return 1;',
     tests: ['com-tentacle'],
     must_mention: '只累加 T，不清零',
+  },
+  {
+    // 10029 是退役的购入品指针（v0.1.0–v0.1.5 在写），复用会让旧档读出陈旧值
+    desc: 'M18310 触手回合计数读到退役槽 10029（旧购入品指针的残留值被当成回合计数）',
+    file: 'ere/era-utils/era-flag.js',
+    find: "    return era.get('flag:10030') || 0;",
+    replace: "    return era.get('flag:10029') || 0; // 变异：读退役槽",
+    tests: ['com-tentacle'],
+    must_mention: '读侧同样钉在 10030',
+  },
+  {
+    desc: 'M18311 触手回合计数写到退役槽 10029（新计数污染旧档的购入品指针）',
+    file: 'ere/era-utils/era-flag.js',
+    find: "    era.set('flag:10030', v);",
+    replace: "    era.set('flag:10029', v); // 变异：写退役槽",
+    tests: ['com-tentacle'],
+    must_mention: '触手回合计数落在 flag:10030',
   },
   {
     desc: 'M1359 train_message_b100 zooko 前缀改走「将身体」（#227）',
@@ -4609,7 +4620,7 @@ export default [
   {
     desc: 'M1367 com100 尾段 T = 0 删（#227）',
     file: 'ere/system/train/com-tentacle.js',
-    find: "  }\n  era.set('t:0', 0);\n  return 1;",
+    find: '  }\n  era_flag.tentacle_round = 0;\n  return 1;',
     replace: '  }\n  // 变异：尾段 T = 0 删\n  return 1;',
     tests: ['com-tentacle'],
     must_mention: '尾段 T = 0',
@@ -11453,20 +11464,12 @@ export default [
     must_mention: '抖Ｓ气质(10)＋抖Ｍ气质(10)上限为20',
   },
   {
-    desc: 'M15710 旧档别名迁移不再比对新旧值（玩家自定义的指令名被播种值覆盖）',
+    desc: 'M15710 名字表按指令号取到偏一位的值（别名整体错位）',
     file: 'ere/system/train/train-name.js',
-    find: '    if (era.get(`trainalias:${id}`) === legacy) {',
-    replace: '    if (true) { // 变异：不比对新旧值',
+    find: '  return TRAIN_NAME_TABLE[id] ?? ',
+    replace: '  return TRAIN_NAME_TABLE[id + 1] ?? ',
     tests: ['train-name'],
-    must_mention: '玩家的自定义别名不动',
-  },
-  {
-    desc: 'M15711 旧档别名迁移的调用删除（旧档继续显示半角指令名）',
-    file: 'ere/system/train/train-name.js',
-    find: '    migrate_legacy_names();\n    return;',
-    replace: '    return;',
-    tests: ['train-name'],
-    must_mention: '旧档的 54 号半角别名改写成全角',
+    must_mention: 'read_train_name：静态名按指令号取值',
   },
   // —— #906：调教结束前的欲情快照（次日「献出初次」评分的两档欲情加分）——
   {

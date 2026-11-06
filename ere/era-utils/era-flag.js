@@ -2155,6 +2155,19 @@ const era_flag = {
   set ranch_display_settings(v) {
     era.set('flag:614', v);
   },
+  /**
+   * 触手回合计数（flag:10030）
+   * @returns {number}
+   */
+  get tentacle_round() {
+    return era.get('flag:10030') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set tentacle_round(v) {
+    era.set('flag:10030', v);
+  },
 };
 // GENERATED END
 

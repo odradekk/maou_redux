@@ -13,8 +13,6 @@
  *     它），不镜像」，前提是 global 表变量改完都立即 SAVEGLOBAL（当时的
  *     标题画面开关确实如此）；#547 的 global:3（冒險者性別）改完不即时保存，前提失效，
  *     改为在本链首行镜像 `await era.loadGlobal()`（副作用核对见下）；
- *   - chara_name_init——真身在 chara-name-list.js（#388）：数据已在
- *     yml/NameList.yml，读档后调用是空操作，仅保留调用点可检索；
  *   - 待机档归一（#814）与预设模板补填（#884）——两处都是「旧存档里没有
  *     新字段」的初始化：前者把引擎按预设补进来的 1 归成移植版的状态 0，
  *     后者给没有预设的后代补上旧编码反推出的预设号。两者都幂等，读档链
@@ -48,7 +46,6 @@ const { begin, is_state, STATE } = require('#/system/flow/game-state');
 const era_flag = require('#/era-utils/era-flag');
 const { normalize_idle_status } = require('#/system/chara/chara-init');
 const { backfill_chara_templates } = require('#/system/chara/chara-pregnancy');
-const { chara_name_init } = require('#/system/chara/chara-name-list');
 
 /**
  * EVENTLOAD：读档成功后的固定钩子。
@@ -67,8 +64,6 @@ async function handle_load() {
   // SAVEGLOBAL」的前提被 global:3 打破）。副作用核对过引擎源码：随后
   // listSaveFiles 重扫备注、saveGlobal 写回同值，不动刚读入的存档数据
   await era.loadGlobal();
-  // 角色名初始化，真身见 chara-name-list.js（#388）
-  chara_name_init();
 
   // 待机档归一（#814）：引擎读档时会把角色文件里的状态预设补进旧存档里
   // 从未写过的槽，而那些预设是原版的 1 = 待機——移植版没有这一档（四个

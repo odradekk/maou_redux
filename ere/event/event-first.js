@@ -30,7 +30,6 @@ const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const era_global = require('#/era-utils/era-global');
 const { add_chara_ex } = require('#/system/chara/chara-ex');
-const { chara_name_init } = require('#/system/chara/chara-name-list');
 const { chara_name_define } = require('#/system/chara/chara-name'); // #565 起接入
 const { char_body_generate_wapped } = require('#/system/chara/chara-body'); // #385 起真身
 const { rand_chara_make } = require('#/system/chara/chara-make'); // #565 起接入
@@ -159,9 +158,6 @@ async function handle_first() {
       }
     }
   }
-
-  // chara_name_init —— 角色名初始化（#388）
-  chara_name_init();
 
   // 开场叙事：居中七行（含一个两空格空行）→ 左对齐 → 等待 →
   // 分隔线。ere 的 print 自成一行，换行直接映射。

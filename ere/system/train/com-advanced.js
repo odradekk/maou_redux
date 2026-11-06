@@ -41,6 +41,7 @@ const { chara_callname, chara_nickname } = require('#/utils/callname-utils');
 const { times } = require('#/utils/numeric');
 const { EXPLV } = require('#/data/exp-level-const');
 const { PALAMLV } = require('#/data/palam-level-const');
+const { NOITEM } = require('#/data/noitem-const');
 
 const tal = (id, i) => era.get(`talent:${id}:${i}`) || 0;
 const abl = (id, i) => Math.floor(era.get(`abl:${id}:${i}`) || 0);
@@ -60,8 +61,7 @@ const player_name = () => chara_callname(era_flag.player);
 const player_nickname = () => chara_nickname(era_flag.player);
 const name_of = (table, id) => era.get(`${table}:${id}`) ?? '';
 const has_pband = () => (era.get('item:4') || 0) !== 0;
-const has_mat = () =>
-  (era.get('item:13') || 0) !== 0 || (era.get('noitem:0') || 0) !== 0;
+const has_mat = () => (era.get('item:13') || 0) !== 0 || NOITEM.value !== 0;
 
 const clothing_guard = (cid) => (worn(cid) & 17) !== 0 && clothes_on();
 // A 120-135 的射精文本都属 train_message_a 的公共段（#402 合并到
