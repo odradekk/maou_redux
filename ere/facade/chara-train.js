@@ -104,6 +104,21 @@ class TrainFacade {
   }
 
   /**
+   * 调教者的经验（cflag:cid:22）
+   * CFLAG:22 = 調教者の経験（口交一次 +1）
+   * @returns {number}
+   */
+  get 调教者的经验() {
+    return era.get(`cflag:${this.cid}:22`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 调教者的经验(v) {
+    era.set(`cflag:${this.cid}:22`, v);
+  }
+
+  /**
    * 媚药禁断症状（cflag:cid:32）
    * CFLAG:32 媚薬中毒の禁断症状判定
    * @returns {number}
@@ -239,6 +254,21 @@ class TrainFacade {
   }
 
   /**
+   * 颜射体位（cflag:cid:74）
+   * CFLAG:74 ぶっかけ位（1/2 口内、3/5 肛内、4/6/7 素股）
+   * @returns {number}
+   */
+  get 颜射体位() {
+    return era.get(`cflag:${this.cid}:74`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 颜射体位(v) {
+    era.set(`cflag:${this.cid}:74`, v);
+  }
+
+  /**
    * 蓄积润滑（cflag:cid:81）
    * CFLAG:81 = 蓄積潤滑
    * @returns {number}
@@ -311,6 +341,21 @@ class TrainFacade {
    */
   set 水晶球充能次数(v) {
     era.set(`cflag:${this.cid}:499`, v);
+  }
+
+  /**
+   * 强制精饮计数（cflag:cid:600）
+   * CFLAG:600 强制精饮绝顶的累计次数（达阈值获得「喜欢精液」）
+   * @returns {number}
+   */
+  get 强制精饮计数() {
+    return era.get(`cflag:${this.cid}:600`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 强制精饮计数(v) {
+    era.set(`cflag:${this.cid}:600`, v);
   }
 
   /**

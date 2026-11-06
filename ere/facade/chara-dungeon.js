@@ -224,6 +224,216 @@ class DungeonFacade {
   }
 
   /**
+   * 迷失状态（cflag:cid:509）
+   * CFLAG:509 迷惑状態（1 = 迷路，移動量 0）
+   * @returns {number}
+   */
+  get 迷失状态() {
+    return era.get(`cflag:${this.cid}:509`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 迷失状态(v) {
+    era.set(`cflag:${this.cid}:509`, v);
+  }
+
+  /**
+   * 陷阱回避补正（cflag:cid:512）
+   * CFLAG:512 同一陷阱连发的回避补正
+   * @returns {number}
+   */
+  get 陷阱回避补正() {
+    return era.get(`cflag:${this.cid}:512`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 陷阱回避补正(v) {
+    era.set(`cflag:${this.cid}:512`, v);
+  }
+
+  /**
+   * 上次陷阱编号（cflag:cid:513）
+   * CFLAG:513 前回発動した罠の番号
+   * @returns {number}
+   */
+  get 上次陷阱编号() {
+    return era.get(`cflag:${this.cid}:513`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 上次陷阱编号(v) {
+    era.set(`cflag:${this.cid}:513`, v);
+  }
+
+  /**
+   * 阶层滞留计数（cflag:cid:514）
+   * CFLAG:514 階層滞在カウント（> 15 で迎撃奴隷が帰還）
+   * @returns {number}
+   */
+  get 阶层滞留计数() {
+    return era.get(`cflag:${this.cid}:514`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 阶层滞留计数(v) {
+    era.set(`cflag:${this.cid}:514`, v);
+  }
+
+  /**
+   * 行动完了（cflag:cid:530）
+   * CFLAG:530 行動終了フラグ（仲間はこれで隊長に追従）
+   * @returns {number}
+   */
+  get 行动完了() {
+    return era.get(`cflag:${this.cid}:530`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 行动完了(v) {
+    era.set(`cflag:${this.cid}:530`, v);
+  }
+
+  /**
+   * 同伴_0（cflag:cid:531）
+   * CFLAG:531 仲間A（同伴角色号，0 = 空）
+   * @returns {number}
+   */
+  get 同伴_0() {
+    return era.get(`cflag:${this.cid}:531`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 同伴_0(v) {
+    era.set(`cflag:${this.cid}:531`, v);
+  }
+
+  /**
+   * 同伴_1（cflag:cid:532）
+   * CFLAG:532 仲間B（同伴角色号，0 = 空）
+   * @returns {number}
+   */
+  get 同伴_1() {
+    return era.get(`cflag:${this.cid}:532`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 同伴_1(v) {
+    era.set(`cflag:${this.cid}:532`, v);
+  }
+
+  /**
+   * 队长记忆（cflag:cid:533）
+   * CFLAG:533 リーダー記憶（隊長のキャラ番号）
+   * @returns {number}
+   */
+  get 队长记忆() {
+    return era.get(`cflag:${this.cid}:533`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 队长记忆(v) {
+    era.set(`cflag:${this.cid}:533`, v);
+  }
+
+  /**
+   * 任务报酬类型（cflag:cid:535）
+   * CFLAG:535 クエスト報酬（1 資金 / 2 道德 / 3 道具）
+   * @returns {number}
+   */
+  get 任务报酬类型() {
+    return era.get(`cflag:${this.cid}:535`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 任务报酬类型(v) {
+    era.set(`cflag:${this.cid}:535`, v);
+  }
+
+  /**
+   * 任务障碍位图（cflag:cid:536）
+   * CFLAG:536 クエスト障害ビット（bit0 BOSS … bit5 偽依頼）
+   * @returns {number}
+   */
+  get 任务障碍位图() {
+    return era.get(`cflag:${this.cid}:536`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 任务障碍位图(v) {
+    era.set(`cflag:${this.cid}:536`, v);
+  }
+
+  /**
+   * 任务类型（cflag:cid:537）
+   * CFLAG:537 クエストの類型（1-3）
+   * @returns {number}
+   */
+  get 任务类型() {
+    return era.get(`cflag:${this.cid}:537`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 任务类型(v) {
+    era.set(`cflag:${this.cid}:537`, v);
+  }
+
+  /**
+   * 讨伐对象（cflag:cid:538）
+   * CFLAG:538 討伐対象のモンスター ID
+   * @returns {number}
+   */
+  get 讨伐对象() {
+    return era.get(`cflag:${this.cid}:538`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 讨伐对象(v) {
+    era.set(`cflag:${this.cid}:538`, v);
+  }
+
+  /**
+   * 任务受注计数（cflag:cid:539）
+   * CFLAG:539 受注カウンタ（回合；耗尽判失败）
+   * @returns {number}
+   */
+  get 任务受注计数() {
+    return era.get(`cflag:${this.cid}:539`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 任务受注计数(v) {
+    era.set(`cflag:${this.cid}:539`, v);
+  }
+
+  /**
+   * 任务人称变体（cflag:cid:540）
+   * CFLAG:540 クエスト人称变体（0-4）
+   * @returns {number}
+   */
+  get 任务人称变体() {
+    return era.get(`cflag:${this.cid}:540`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 任务人称变体(v) {
+    era.set(`cflag:${this.cid}:540`, v);
+  }
+
+  /**
    * 弹药（cflag:cid:571）
    * CFLAG:ATKER/DEFER:571 = 15（对人决斗弹药补充；对人格斗一族的弾薬消耗同族字段见 550-552 装备枠）
    * @returns {number}
@@ -251,6 +461,36 @@ class DungeonFacade {
    */
   set 所持金(v) {
     era.set(`cflag:${this.cid}:580`, v);
+  }
+
+  /**
+   * 战利品换金（cflag:cid:581）
+   * CFLAG:581 战利品换金槽（回城时并入所持金并清零）
+   * @returns {number}
+   */
+  get 战利品换金() {
+    return era.get(`cflag:${this.cid}:581`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 战利品换金(v) {
+    era.set(`cflag:${this.cid}:581`, v);
+  }
+
+  /**
+   * 结婚对象状态（cflag:cid:603）
+   * CFLAG:603 結婚相手の状態（0 普通 1 浮気 2 私通 3 私通妊娠）
+   * @returns {number}
+   */
+  get 结婚对象状态() {
+    return era.get(`cflag:${this.cid}:603`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 结婚对象状态(v) {
+    era.set(`cflag:${this.cid}:603`, v);
   }
 
   /**
@@ -311,6 +551,51 @@ class DungeonFacade {
    */
   set 恋人ID(v) {
     era.set(`cflag:${this.cid}:610`, v);
+  }
+
+  /**
+   * 防御弱化率（cflag:cid:680）
+   * CFLAG:680 防御弱化（受到的伤害放大；每回合衰减）
+   * @returns {number}
+   */
+  get 防御弱化率() {
+    return era.get(`cflag:${this.cid}:680`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 防御弱化率(v) {
+    era.set(`cflag:${this.cid}:680`, v);
+  }
+
+  /**
+   * 攻击弱化率（cflag:cid:681）
+   * CFLAG:681 攻击弱化（打出的伤害缩小；每回合衰减）
+   * @returns {number}
+   */
+  get 攻击弱化率() {
+    return era.get(`cflag:${this.cid}:681`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 攻击弱化率(v) {
+    era.set(`cflag:${this.cid}:681`, v);
+  }
+
+  /**
+   * 魔法伤害上升率（cflag:cid:682）
+   * CFLAG:682 受魔法伤害上升（每回合衰减）
+   * @returns {number}
+   */
+  get 魔法伤害上升率() {
+    return era.get(`cflag:${this.cid}:682`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 魔法伤害上升率(v) {
+    era.set(`cflag:${this.cid}:682`, v);
   }
 
   // —— base ——

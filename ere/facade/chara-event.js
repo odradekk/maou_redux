@@ -89,6 +89,36 @@ class EventFacade {
   }
 
   /**
+   * 处女献上已拒绝（cflag:cid:62）
+   * CFLAG:62 一次限定的処女献上を断った
+   * @returns {number}
+   */
+  get 处女献上已拒绝() {
+    return era.get(`cflag:${this.cid}:62`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 处女献上已拒绝(v) {
+    era.set(`cflag:${this.cid}:62`, v);
+  }
+
+  /**
+   * 贞操让步已认定（cflag:cid:100）
+   * CFLAG:100 处女保有者的肛门让步已认定（一次性）
+   * @returns {number}
+   */
+  get 贞操让步已认定() {
+    return era.get(`cflag:${this.cid}:100`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 贞操让步已认定(v) {
+    era.set(`cflag:${this.cid}:100`, v);
+  }
+
+  /**
    * 预产日（cflag:cid:110）
    * CFLAG:110 = 出産予定日
    * @returns {number}
@@ -161,6 +191,81 @@ class EventFacade {
    */
   set Y坐标(v) {
     era.set(`cflag:${this.cid}:511`, v);
+  }
+
+  /**
+   * 示众台正字_肉穴（cflag:cid:661）
+   * CFLAG:661 示众台の正字・肉穴（COUNT_V の累計）
+   * @returns {number}
+   */
+  get 示众台正字_肉穴() {
+    return era.get(`cflag:${this.cid}:661`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 示众台正字_肉穴(v) {
+    era.set(`cflag:${this.cid}:661`, v);
+  }
+
+  /**
+   * 示众台正字_肛门（cflag:cid:662）
+   * CFLAG:662 示众台の正字・肛门（COUNT_A の累計）
+   * @returns {number}
+   */
+  get 示众台正字_肛门() {
+    return era.get(`cflag:${this.cid}:662`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 示众台正字_肛门(v) {
+    era.set(`cflag:${this.cid}:662`, v);
+  }
+
+  /**
+   * 示众台正字_口（cflag:cid:663）
+   * CFLAG:663 示众台の正字・口（COUNT_F の累計）
+   * @returns {number}
+   */
+  get 示众台正字_口() {
+    return era.get(`cflag:${this.cid}:663`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 示众台正字_口(v) {
+    era.set(`cflag:${this.cid}:663`, v);
+  }
+
+  /**
+   * 示众台正字_胸（cflag:cid:664）
+   * CFLAG:664 示众台の正字・胸（COUNT_B の累計）
+   * @returns {number}
+   */
+  get 示众台正字_胸() {
+    return era.get(`cflag:${this.cid}:664`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 示众台正字_胸(v) {
+    era.set(`cflag:${this.cid}:664`, v);
+  }
+
+  /**
+   * 示众台正字_其他（cflag:cid:665）
+   * CFLAG:665 示众台の正字・其余部位（COUNT_S - V/A/F/B）
+   * @returns {number}
+   */
+  get 示众台正字_其他() {
+    return era.get(`cflag:${this.cid}:665`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 示众台正字_其他(v) {
+    era.set(`cflag:${this.cid}:665`, v);
   }
 
   /**
