@@ -357,7 +357,7 @@ async function chara_info_job_change(arg) {
     // 神官と巫女は治癒を持つ／戦士と騎士魔物使いは鼓舞を持つ
     if (talent(arg, 202) === 1 || talent(arg, 206) === 1) {
       era.set(`talent:${arg}:${T_HEAL}`, 1);
-      era.set(`cflag:${arg}:152`, HIGH_FAITH); // 高い信仰値を持つ
+      chara(arg).chara.信仰值 = HIGH_FAITH; // 高い信仰値を持つ
     } else if (
       talent(arg, 200) === 1 ||
       talent(arg, 205) === 1 ||

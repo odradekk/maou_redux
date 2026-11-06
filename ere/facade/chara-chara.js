@@ -164,6 +164,21 @@ class CharaFacade {
   }
 
   /**
+   * 信仰值（cflag:cid:152）
+   * CFLAG:152 信仰值（0～100；神官/巫女的职业判定与安息日门槛读它，低于 30 时每日衰减）
+   * @returns {number}
+   */
+  get 信仰值() {
+    return era.get(`cflag:${this.cid}:152`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 信仰值(v) {
+    era.set(`cflag:${this.cid}:152`, v);
+  }
+
+  /**
    * 命名检查（cflag:cid:420）
    * CFLAG:420 = 命名チェック(フラグON時はユーザー設定ネーム)
    * @returns {number}
@@ -176,6 +191,21 @@ class CharaFacade {
    */
   set 命名检查(v) {
     era.set(`cflag:${this.cid}:420`, v);
+  }
+
+  /**
+   * 一人称档位（cflag:cid:450）
+   * CFLAG:450 一人称の档位（< 0 或 >= 200 走角色预设；[0,9) 直设「我」；[9,100) 合适表；[100,200) 绰号表；改名页按 >= 99 判定重设）
+   * @returns {number}
+   */
+  get 一人称档位() {
+    return era.get(`cflag:${this.cid}:450`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 一人称档位(v) {
+    era.set(`cflag:${this.cid}:450`, v);
   }
 
   /**

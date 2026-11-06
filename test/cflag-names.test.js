@@ -1,5 +1,5 @@
 /**
- * @file cflag 名字登记面与 add 落点（issue #831、#982）。
+ * @file cflag 名字登记面与 add 落点（issue #831、#982、#983）。
  *
  * cflag 用到 256 个序号：#814 登记了角色预设在用的 34 个，#831 把源码在用的
  * 其余 179 个补进 yml/CFlag.yml（共 213），#982 又从读写点建模补了 41 个
@@ -57,13 +57,10 @@ const YML_DIR = path.join(REPO_ROOT, 'yml');
  *     备份到魔王与配偶的 621 上，全库没有任何读点。
  *
  * 清单是显式的：新出现一个无名字的下标当场红，而不是悄悄停在「读 undefined、
- * 写 NaN」。152 / 450 / 800 不在此列（它们已经有名字、也已登记；缺的只是
- * facade-names 那一侧的条目，因此没有门面访问器）。
+ * 写 NaN」。152 / 450 / 800 不在此列——它们有名字、已登记，缺的只是门面
+ * 那一侧的条目，#983 补齐后「yml 有名字、facade-names 没有」的清单归零。
  */
 const UNNAMED_IDS = [77, 621];
-
-/** 已登记但只在 yml 有名字的三条（#814 起就在，facade-names 没有条目） */
-const YML_ONLY_IDS = [152, 450, 800];
 
 /** #831 与 #982 两次补登的条数（34 + 179 + 41；yml 里的实证条数） */
 const NEW_IDS_COUNT = 220;
@@ -255,7 +252,7 @@ test('CFlag.yml 的条数与两次补登的面对得上（#831 / #982）', () =>
   );
 });
 
-test('中文键与 tools/facade-names.js 逐条一致，只在 yml 有名字的只有那三条（#831）', () => {
+test('中文键与 tools/facade-names.js 逐条一致，双向上都没有缺口（#831 / #983）', () => {
   const declared = declared_ids();
   const manual = new Map(
     Object.entries(NAMES.cflag).map(([index, entry]) => [
@@ -266,9 +263,7 @@ test('中文键与 tools/facade-names.js 逐条一致，只在 yml 有名字的�
   const problems = [];
   for (const [index, key] of declared) {
     if (!manual.has(index)) {
-      if (!YML_ONLY_IDS.includes(index)) {
-        problems.push(`CFlag.yml 多出 facade-names 没有的 ${index}「${key}」`);
-      }
+      problems.push(`CFlag.yml 多出 facade-names 没有的 ${index}「${key}」`);
       continue;
     }
     if (manual.get(index) !== key) {
