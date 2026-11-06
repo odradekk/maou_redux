@@ -22,7 +22,11 @@ const { EVENT } = require('#/data/event-name-const');
 
 /**
  * 全部入列角色的 NOWEX 清零（循环步骤 10）。
- * 枚举经引擎寻址的 'exkeys'（Exp 名字表的全部序号），NOWEX 与 EX 同构。
+ *
+ * 枚举的是 Ex.yml 声明的全部序号（'exkeys'）——EX 与 NOWEX 共用同一张名字
+ * 表，引擎寻址层 case"nowex" → staticData.ex。表里没登记就枚举不到任何一格：
+ * 正常回合的 NOWEX 由引擎的 nextTurnInTrain 结算时清掉，看不出差异；取消的
+ * 回合不结算，本函数是它留下的 NOWEX 唯一的清零点。
  */
 function clear_nowex_all() {
   const ex_keys = era.get('exkeys') || [];
