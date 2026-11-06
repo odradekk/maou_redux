@@ -198,11 +198,13 @@ const ENGINE_WARN_MARKER = '[engine-bundle] 未找到 ere-5.0.0 的 app.asar';
  * 的数据目录——docs/、ownership/ 等——一律自动入副本；漏带会
  * 表现为对照运行红，而不是变异被误判拦截）。引擎目录与 node_modules
  * 体积大且测试不依赖（测试零第三方依赖，引擎比对走三址回落）。
+ *
+ * `.claude` 与 `.agents` **不能**进这张表：`test/agent-skills-sync.test.js`
+ * 逐字节比对两处技能副本，缺任一侧对照运行就会红（原件各约 0.12 MB，
+ * 带上它们的代价可以忽略）。
  */
 const COPY_DENY = new Set([
   '.git',
-  '.claude',
-  '.agents',
   'node_modules',
   'ere-5.0.0-win-x64',
   'sav',
