@@ -3,7 +3,7 @@
 // 分配，只作引用基准点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 2765; // #865 +8（M16750-M16757：语尾文字搬进 ere/data/gobi-koujo-const.js 后的取值规则——表外编号、档位下标、默认支随机序、单支不掷、%SELF_CALL% 替换、表行与注册一一对应）；#865 另有 30 条既有语尾条目的 find 改挂常量表（编号不变） // 数据地址缺陷修复 +15（M15403-M15417：K10 自慰次数交接与处女丧失增量门槛、K7 录像自我介绍八支、K1 助手 17 号判断）； // #797 +8（M7690-M7697：成熟出售真身调用丢失的原 sell-maturo-k0 分片条目改住本分片，条目内容不变） // #734 +7（M14550–M14556：四类首次口上阈值、真实引擎爱抚与非法阈值地址检查）；#710 净 -1（M12155 改写成 M14254：卖春积极性行随 show_button_bich_level 删除、改指等级网格退回纯文本，条数不变；删 M402：SET_BICH_LEVEL 输入上限随按钮化不可观察）；#711 起 +2（M14310/M14311：K15 暗器菜单的选项按钮化——退回纯文本与按钮后夹等键两条）；#643 -5…沿革见 git 历史；#654（F8）：删反向变异与 k902 条目 67 条、新增 M13300-M13349 与 M13549，#655（F9）-8+5 后合并计数；#688 +35
+export const COUNT = 2770; // #934 +5（M18423-M18427：凌辱畏怖扫描退回列头值、无记忆哨兵退回 0、不同怪物也改写记忆、累加增量、首次不清零）；#865 +8（M16750-M16757：语尾文字搬进 ere/data/gobi-koujo-const.js 后的取值规则——表外编号、档位下标、默认支随机序、单支不掷、%SELF_CALL% 替换、表行与注册一一对应）；#865 另有 30 条既有语尾条目的 find 改挂常量表（编号不变） // 数据地址缺陷修复 +15（M15403-M15417：K10 自慰次数交接与处女丧失增量门槛、K7 录像自我介绍八支、K1 助手 17 号判断）； // #797 +8（M7690-M7697：成熟出售真身调用丢失的原 sell-maturo-k0 分片条目改住本分片，条目内容不变） // #734 +7（M14550–M14556：四类首次口上阈值、真实引擎爱抚与非法阈值地址检查）；#710 净 -1（M12155 改写成 M14254：卖春积极性行随 show_button_bich_level 删除、改指等级网格退回纯文本，条数不变；删 M402：SET_BICH_LEVEL 输入上限随按钮化不可观察）；#711 起 +2（M14310/M14311：K15 暗器菜单的选项按钮化——退回纯文本与按钮后夹等键两条）；#643 -5…沿革见 git 历史；#654（F8）：删反向变异与 k902 条目 67 条、新增 M13300-M13349 与 M13549，#655（F9）-8+5 后合并计数；#688 +35
 
 export default [
   {
@@ -25983,5 +25983,50 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     replace: '',
     tests: ['gobi-koujo-const'],
     must_mention: '有语尾真身的编号必须与表行一一对应',
+  },
+  {
+    // #934：第一轮扫描退回列头值 —— 与主循环的怪物号成两套量纲，
+    // 「同一怪物再来」只剩怪物号恰为 100 时命中
+    desc: 'M18423 凌辱畏怖扫描：MON_FEAR 退回列头值（列头与怪物号比较，累加恒不成立）',
+    file: 'ere/kojo/kojo-dungeon-ravish.js',
+    find: '        mon_fear = local_1; // 记忆中的怪物号',
+    replace: '        mon_fear = mon_count * 100; // 变异：退回列头值',
+    tests: ['kojo-dungeon-ravish'],
+    must_mention: '同一怪物再来，畏怖计数递增到 3',
+  },
+  {
+    // #934：哨兵退回 0 ——「没有记忆」与「记忆落在第 1 列」又撞在同一个值上
+    desc: 'M18424 凌辱畏怖哨兵：无记忆的初值退回 0（与记忆落在第 1 列同值）',
+    file: 'ere/kojo/kojo-dungeon-ravish.js',
+    find: '  let mon_fear = -1;',
+    replace: '  let mon_fear = 0; // 变异：哨兵退回 0',
+    tests: ['kojo-dungeon-ravish'],
+    must_mention: '凌辱畏怖记忆推进：CFLAG:130 = 怪物号',
+  },
+  {
+    // #934：不同怪物分支也改写记忆（先出场的怪物会顶掉记忆里的那只）
+    desc: 'M18425 凌辱畏怖分支：不同怪物也改写 CFLAG:130',
+    file: 'ere/kojo/kojo-dungeon-ravish.js',
+    find: '    } else if (row.rape_type > 0) {\n      // 不同怪物：只打台词，不动记忆\n      await era.printAndWait(`${monstername(local_1)}的凌辱开始了。`);',
+    replace:
+      '    } else if (row.rape_type > 0) {\n      // 变异：不同怪物也改写记忆\n      chara(arg).dungeon.凌辱畏怖记忆_怪物 = local_1;\n      await era.printAndWait(`${monstername(local_1)}的凌辱开始了。`);',
+    tests: ['kojo-dungeon-ravish'],
+    must_mention: '记忆仍是兽人——先出场的狗头人不得改写它',
+  },
+  {
+    desc: 'M18426 凌辱畏怖计数：同一怪物再来的增量写错（+1 改 +2）',
+    file: 'ere/kojo/kojo-dungeon-ravish.js',
+    find: 'chara(arg).dungeon.凌辱畏怖计数 += 1; // CFLAG:131++',
+    replace: 'chara(arg).dungeon.凌辱畏怖计数 += 2; // 变异：增量 +2',
+    tests: ['kojo-dungeon-ravish'],
+    must_mention: '畏怖计数递增到 3',
+  },
+  {
+    desc: 'M18427 凌辱畏怖首次记忆：畏怖计数不清零（写 1）',
+    file: 'ere/kojo/kojo-dungeon-ravish.js',
+    find: '      chara(arg).dungeon.凌辱畏怖计数 = 0; // CFLAG:131',
+    replace: '      chara(arg).dungeon.凌辱畏怖计数 = 1; // 变异：首次不清零',
+    tests: ['kojo-dungeon-ravish'],
+    must_mention: '第 1 场：首次记忆，计数 0',
   },
 ];
