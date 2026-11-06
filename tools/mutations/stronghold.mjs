@@ -289,10 +289,10 @@ export default [
     must_mention: '录像书架：备份写首个空位',
   },
   {
-    desc: 'M6676 SELL_VIDEO 末项指令基础价值不一致',
+    desc: 'M6676 SELL_VIDEO 末项指令基础价值不一致（1500 → 1502：被摄技能固定 ×0.5 之后 750 与 751 仍可分辨）',
     file: 'ere/system/stronghold/sell-video.js',
     find: '[134, 1500, 30, { 2: 3 }, { 3: 3 }],',
-    replace: '[134, 1501, 30, { 2: 3 }, { 3: 3 }],',
+    replace: '[134, 1502, 30, { 2: 3 }, { 3: 3 }],',
     tests: ['sell-video'],
     must_mention: '指令 134 的基础价值',
   },
