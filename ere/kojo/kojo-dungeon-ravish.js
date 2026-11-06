@@ -273,19 +273,17 @@ async function ryouzyoku(arg, rand) {
   }
 
   // —— 凌辱畏怖記憶があるか ——
-  // MON_COUNT / MON_FEAR 是函数局部变量（#DIM）；MON_COUNT 现在是列号
+  // MON_COUNT / MON_FEAR 是函数局部变量（#DIM）；MON_COUNT 现在是列号。
   let mon_count = 0;
-  let mon_fear = 0;
-  // 第一轮扫描：找哪一列有怪物、且 CFLAG:130（上次凌辱怪物 ID）
-  // 命中该列 → MON_FEAR = 该列的「列头值」（列号 × 100）。
+  // -1 = 没有记忆。怪物号是 100 起的三、四位数，0 撞不上任何真实怪物，但
+  // 「0 = 没有记忆」会让「记忆落在第 1 列」与「压根没有记忆」在读处同值；
+  // 用一个怪物号取不到的值当哨兵，两种情形才分得开。
+  let mon_fear = -1;
+  // 第一轮扫描：哪一列有怪物、且它的怪物号 = CFLAG:130（上次凌辱的怪物）
+  // → 记住这个**怪物号**，主循环才拿同一个量纲与各列的怪物号比。
   //
-  // 这里存的是**列头值而不是怪物号**，与主循环的 `mon_fear === 该列怪物号`
-  // 比较是两套量纲：只有怪物号恰为 0/100/200 时才会命中「同一怪物再来」
-  // 分支。这是移植进来的既有对照（原脚本的 MON_COUNT 就是列头，主循环却
-  // 拿它与 LOCAL:1 的怪物号比），看起来是缺陷；但改它会让「凌辱畏怖计数」
-  // CFLAG:131 从「几乎不累加」变成「按记忆累加」，而 CFLAG:131 是战斗伤害
-  // 与男版台词的分档键——那是战斗平衡改动，不并入「战斗状态换个容器」这张
-  // 票。修它另开工单，届时把这里换成怪物号、用例跟着翻面。
+  // 记的是怪物号而不是列位置：记忆中的怪物未必是本场第一列出场的怪物，
+  // 前面几列必须只打台词、不能把记忆改写成先出场的那只。
   while (mon_count < 3) {
     const row = battle_column(mon_count);
     // 数量 <= 0 时清掉凌辱类型槽
@@ -295,7 +293,7 @@ async function ryouzyoku(arg, rand) {
     if (row.rape_type > 0) {
       const local_1 = row.id; // 怪物号
       if ((era.get(`cflag:${arg}:130`) || 0) === local_1) {
-        mon_fear = mon_count * 100; // 旧写法的列头值（= 原 MON_COUNT）
+        mon_fear = local_1; // 记忆中的怪物号
       }
     }
     mon_count += 1;
@@ -311,7 +309,7 @@ async function ryouzyoku(arg, rand) {
   while (mon_count < 3) {
     const row = battle_column(mon_count);
     const local_1 = row.id; // 怪物号
-    if (row.rape_type > 0 && mon_fear === 0) {
+    if (row.rape_type > 0 && mon_fear < 0) {
       // 首次遇到凌辱怪物：记畏怖记忆
       await era.printAndWait(`${monstername(local_1)}的凌辱开始了。`);
       chara(arg).dungeon.凌辱畏怖记忆_怪物 = local_1; // CFLAG:130
@@ -321,7 +319,7 @@ async function ryouzyoku(arg, rand) {
       // 同一怪物再来：畏怖计数++
       await era.printAndWait(`${monstername(local_1)}的凌辱开始了。`);
       chara(arg).dungeon.凌辱畏怖计数 += 1; // CFLAG:131++
-    } else if (row.rape_type > 0 && mon_fear !== local_1) {
+    } else if (row.rape_type > 0) {
       // 不同怪物：只打台词，不动记忆
       await era.printAndWait(`${monstername(local_1)}的凌辱开始了。`);
     }
