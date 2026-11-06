@@ -16,7 +16,7 @@
  * 定案（#875，与 #874 的 palam/delta 同型）：珠的加算与清零归引擎。本模块
  * 只写 gotjuel——梯子的收益、否定抵消与能力提升的消费都落在这张表上（抵消
  * 与消费是负值）——渲染与判定读「结算后的值」＝ juel + gotjuel
- * （era-utils/train-settle.js 的 juel_settled）。引擎 endTrain 的加算是唯一
+ * （utils/train-settle.js 的 juel_settled）。引擎 endTrain 的加算是唯一
  * 结算点；本模块不再当场写 juel，也不再清零 gotjuel。手工再做一次就是
  * 双重累加。#461 漏清 delta 时出过同性质的问题。
  *
@@ -78,7 +78,7 @@ const {
   show_juel,
 } = require('#/system/train/ablup-screen');
 const era_flag = require('#/era-utils/era-flag');
-const { juel_settled } = require('#/era-utils/train-settle');
+const { juel_settled } = require('#/utils/train-settle');
 const { NBSP, pad_left } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 
 /**

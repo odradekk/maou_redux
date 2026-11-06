@@ -18,7 +18,7 @@
 
 const era = require('#/era-electron');
 const { decide_ablup } = require('#/system/train/ablup');
-const { juel_settled } = require('#/era-utils/train-settle');
+const { juel_settled } = require('#/utils/train-settle');
 const { print_button_grid } = require('#/utils/button-grid');
 const {
   CELLS_PER_ITEM,
@@ -52,7 +52,7 @@ const JUEL_PER_ROW = 4;
  * 结构见 utils/text-grid.js；24 列 = 4 × (3 + 2 + 1)）。数值右对齐交给渲染层
  * 的 text-align，不再用补位函数把字符串凑成定宽。
  *
- * 数值读「结算后的值」（juel + gotjuel，见 era-utils/train-settle.js）：
+ * 数值读「结算后的值」（juel + gotjuel，见 utils/train-settle.js）：
  * 能力值提高画面在引擎 endTrain 之前反复重绘，只读 juel 会把本次调教刚获得
  * 的珠显示成旧值（#875）。
  *

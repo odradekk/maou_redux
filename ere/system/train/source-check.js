@@ -59,7 +59,7 @@ const era_flag = require('#/era-utils/era-flag');
 const { NBSP } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 const { MASTER } = require('#/utils/master');
 const { idiv, times } = require('#/utils/numeric');
-const { base_settled } = require('#/era-utils/train-settle');
+const { base_settled } = require('#/utils/train-settle');
 const { train_message_a } = require('#/system/train/train-message');
 const {
   passout_check,
