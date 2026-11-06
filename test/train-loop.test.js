@@ -119,8 +119,9 @@ test('回合循环的回调顺序：逐条钉死（探针固定）', async () =>
     probe.push('eventcomend');
   });
 
-  // 上一回合结算（nextTurnInTrain）夹具记录在 calls，顺序看探针
-  fixture.store.set('exkeys', [0, 1]);
+  // 上一回合结算（nextTurnInTrain）夹具记录在 calls，顺序看探针。exkeys 不在
+  // 这里播种：夹具按 yml/Ex.yml 现算（#821），清零要清的正是游戏真实会写的
+  // 那几格（#815 前这条用例自己塞 [0, 1]，把「Ex.yml 空表 → 什么都没清」盖住了）
   fixture.store.set('nowex:31:0', 7); // 待清零的 NOWEX
   fixture.set_inputs(0, 999);
   const { run_train } = fixture.load_module('system/train/train-loop');
@@ -151,6 +152,69 @@ test('回合循环的回调顺序：逐条钉死（探针固定）', async () =>
   assert.equal(
     fixture.calls.filter((c) => c.api === 'nextTurnInTrain').length,
     1,
+  );
+});
+
+test('回合开始的 NOWEX 清零真生效：取消回合写下的值不带到下一回合（#815）', async () => {
+  const fixture = create_era_fixture();
+  seed_world(fixture);
+  const { com_family } = fixture.load_module('system/train/com-family');
+
+  // 第一回合：写满全部绝顶槽后返回 0（回合取消——不结算，引擎的
+  // nextTurnInTrain 不会跑，这一步是这段唯一的清零点）
+  com_family.register(0, async () => {
+    for (let index = 0; index <= 5; index += 1) {
+      fixture.era.set(`nowex:31:${index}`, index + 1);
+    }
+    return 0;
+  });
+  // 第二回合：在指令处理器里读上一回合留下的值（处理器排在清零之后，
+  // 读到的是清零后的 NOWEX）
+  const seen = [];
+  com_family.register(1, async () => {
+    for (let index = 0; index <= 5; index += 1) {
+      seen.push(fixture.era.get(`nowex:31:${index}`));
+    }
+  });
+
+  fixture.set_inputs(0, 1, 999);
+  const { run_train } = fixture.load_module('system/train/train-loop');
+  assert.equal(await run_train(), 'AFTERTRAIN');
+
+  assert.deepEqual(
+    seen,
+    [0, 0, 0, 0, 0, 0],
+    '取消回合写下的 NOWEX 必须被下一回合的清零抹掉（Ex.yml 登记 0-5 才能枚举到）',
+  );
+});
+
+test('正常回合的 NOWEX 只清一次：本回合写的值留到 nextTurnInTrain 结算（#815）', async () => {
+  const fixture = create_era_fixture();
+  seed_world(fixture);
+  const { com_family } = fixture.load_module('system/train/com-family');
+  // 指令写下本回合的绝顶计数（回合内的真实写点，同 com-vaginasex 的 NOWEX:5）
+  com_family.register(0, async () => {
+    fixture.era.add('nowex:31:5', 1);
+  });
+  // 结算点快照：引擎的 nextTurnInTrain 是 NOWEX→EX 的唯一换算点兼清零点，
+  // 它看到的 NOWEX 必须还是本回合写的值——清零只发生在指令之前
+  const real_next_turn = fixture.era.nextTurnInTrain;
+  let at_settle;
+  fixture.era.nextTurnInTrain = () => {
+    at_settle = fixture.era.get('nowex:31:5');
+    return real_next_turn();
+  };
+  // 上一回合的残留：清零该抹掉的是它，不是本回合的写
+  fixture.store.set('nowex:31:5', 7);
+
+  fixture.set_inputs(0, 999);
+  const { run_train } = fixture.load_module('system/train/train-loop');
+  assert.equal(await run_train(), 'AFTERTRAIN');
+
+  assert.equal(
+    at_settle,
+    1,
+    '本回合写的 NOWEX 必须活到结算（清零排在指令之前，不得二次清零）',
   );
 });
 
@@ -383,6 +447,23 @@ test('999 → USERCOM → AFTERTRAIN：run_aftertrain 跑 EVENTEND 并收尾 end
   // JUEL_CHECK 结算已是真身（#47）：结算表在 EVENTEND 链内实现（gotjuel 的
   // 读写都要求火车表仍在，endTrain 在其后收尾——上一条 tflag 断言同构）
   assert(fixture.text_lines().includes('以上的点数变化了。'));
+});
+
+test('Ex / NOWEX 表随 endTrain 整表删除：登记名字不改变生命周期（#815）', () => {
+  const fixture = create_era_fixture();
+  seed_world(fixture);
+  fixture.era.beginTrain(0, 31);
+  fixture.era.set('ex:31:0', 4);
+  fixture.era.set('nowex:31:0', 2);
+  assert.equal(fixture.era.raw().data.ex[31][0], 4);
+  assert.equal(fixture.era.raw().data.nowex[31][0], 2);
+
+  fixture.era.endTrain();
+
+  // 登记名字只影响「可寻址、可枚举」，表本身仍在收尾时消失（引擎 endTrain
+  // 的 delete 清单）：存档序列化的就是 data，两表不在其中，所以本票不影响存档
+  assert.equal(fixture.era.raw().data.ex, undefined);
+  assert.equal(fixture.era.raw().data.nowex, undefined);
 });
 
 test('端到端：主菜单输入 100 → 选目标 → 调教画面 → 999 → 回主菜单（一条用例）', async () => {

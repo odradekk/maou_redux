@@ -1,17 +1,48 @@
-# 本文件为人工产出：EX / NOWEX 没有名字表（游戏侧一律用数字下标）。
+# 本文件为人工产出：EX / NOWEX 的名字表（nowex 也查本表——引擎寻址层
+# case"nowex" → staticData.ex）。
 #
-# 内容：绝顶计数。**nowex 也查本表**（引擎寻址层：case"nowex" → staticData.ex）。下标全是数字（SHOW_STATUS 用 EX:0 阴蒂·阴茎 / 1 私处 / 2 肛门 / 3 乳房 / 4 %CSTR:7% / 5 射精·喷乳）。
+# 内容：绝顶计数。0–5 与调教状态画面上那一行方括号一一对应（page-train.js
+# 的 print_ex_counters）：0 阴蒂（男/扶她体型显示成「阴茎绝顶」，同一个
+# 计数器）/ 1 私处 / 2 肛门 / 3 乳房 / 4 癖好（显示名取 CSTR:7）/ 5 射精。
 #
-# 它的存在只有一个目的：让引擎装载循环建出 `staticData.ex`。引擎的
-# 三段寻址在 `data[表][角色]` 存在、而 `staticData[表]` 缺位时**直接抛错**
-# （app.asar 的 setVar 回落分支 `u = i(this.staticData[a][u], u)`，无检查）——
-# 调教域的表由 beginTrain（addCharacterForTrain）按角色开桶，所以桶一定在、
-# 崩就崩在名字表这一侧。实机撞见：调教开始时写 `stain:31:2` 报
-# `Cannot read properties of undefined (reading '2')`。
+# 这张名字表还兼着一件结构上的事：引擎的三段寻址在 `data[表][角色]` 存在、
+# 而 `staticData[表]` 缺位时**直接抛错**（app.asar 的 setVar 回落分支
+# `u = i(this.staticData[a][u], u)`，无检查）——调教域的表由 beginTrain
+# （addCharacterForTrain）按角色开桶，所以桶一定在、崩就崩在名字表这一侧。
+# 实机撞见的是 stain 的同类崩溃（见 yml/Stain.yml）。
 #
-# 空表即够用：下标是数字，引擎的 safeUndefinedCheck 在名字表查不到时原样
-# 回落到该数字。将来若要按名寻址，在此补「名称: 序号」条目即可——但注意
-# 本表不在 initCharaTable（abl / talent / cflag / equip / mark / exp / juel）
-# 里，登记的序号由 beginTrain 的 addCharacterForTrain 按 0 预置进每个调教
-# 角色的 ex 与 nowex 桶（nowex 查的就是本表），槽从 undefined 变成 0，行为
-# 随之改变，补之前先确认那是想要的。
+# 更要紧的是：本表登记的序号集就是 'exkeys'，而调教回合开始要按它把入列
+# 角色的 NOWEX 逐格清零（ere/system/train/command-round.js 的
+# clear_nowex_all）。表空时那个循环拿到的 exkeys 是 []，什么也不清——正常
+# 回合的 NOWEX 由引擎的 nextTurnInTrain 结算时清掉，看不出来；**取消的回合**
+# （指令返回 0，不结算也不进 nextTurnInTrain）写下的值会漏到下一回合。
+#
+# 登记的序号会被 beginTrain 按 0 预置进每个调教角色的 ex 与 nowex 桶（槽从
+# undefined 变成 0），与上面那个清零的方向一致。ex 与 nowex 两张表在 endTrain
+# 时整表删除、不进存档，登记与否都不影响旧存档。
+"阴蒂绝顶":
+  id: 0
+  name: "clitoris_orgasm"
+  type: "number"
+"私处绝顶":
+  id: 1
+  name: "vagina_orgasm"
+  type: "number"
+"肛门绝顶":
+  id: 2
+  name: "anal_orgasm"
+  type: "number"
+"乳房绝顶":
+  id: 3
+  name: "breast_orgasm"
+  type: "number"
+# 显示名取 CSTR:7（自由调教内容），没写时是空串
+"癖好绝顶":
+  id: 4
+  name: "fetish_orgasm"
+  type: "number"
+# 喷乳（target_milk_check）与大量射精（target_ejac_check）共用这一个计数器
+"射精绝顶":
+  id: 5
+  name: "ejaculation_orgasm"
+  type: "number"
