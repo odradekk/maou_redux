@@ -190,3 +190,990 @@
   # 狂王（4）：chara-temptation.js 的不可诱惑判定、dungeon-party.js 的独行判定。
   # 800～805 另被角色信息页当作献祭满足度的六个分项（种族/性格/契机/生い立ち/
   # 发色/瞳色）——两处用途复用同六个下标，但只有上面五个人带预设。
+
+# —— 补登：源码在用但未登记的序号（issue #831）——
+#
+# 本段每一行都是「源码按字面量下标读写、CFlag.yml 没有条目」的序号（#814 登记
+# 的是角色预设在用的那批）。名字取自 tools/facade-names.js，中文键与那份命名表
+# 逐条一致，test/cflag-names.test.js 守着「两处一致」与「源码用到的序号都在
+# 这里或在那份无名清单里」两条。
+#
+# **登记改变了引擎行为**：fillData（resetData / loadData 共用）与 addCharacter
+# 都只处理名字表里登记的下标——登记后，每个已加入角色（含旧档读出来的）都会
+# 多出这些槽，值取角色预设、没有预设则 0。因此：
+#
+#   1. 存档会变大：一个角色多 179 格键（实测数字见 #831 的 PR 正文）；
+#      saveCompressedData 为 false，进档的是明文 JSON。
+#   2. add 类写入从 NaN 变成数字：undefined 加 n 得 NaN，登记后从 0 起算。
+#      本批里受影响的写点是 cflag:31 / 81 / 82 / 106 / 107 / 666（逐条见各段）。
+#   3. 读取侧绝大多数是「|| 0」「?? 0」（1272 处）或门面 getter 的「|| 0」
+#      （210 处），undefined 与 0 在这两种写法下同值；真值判断、与 0 以外常量
+#      比较、位运算同样与 0 同结论。严格比较里「!== 0」「!= 0」一处都没有；
+#      「=== 0」有六处，逐条核对见 #831 的 PR 正文——其中 504（两处）与
+#      650（一处）由「恒假」变成「可命中」，这正是原作 CFLAG 全表预置 0 时
+#      该走的那一支。
+#
+# 不登记的一批（43 个序号）见文件末的「无名位」说明。
+
+# 3 公開オナニー 経験（0 = 未经历，公开程度按次数累加）
+"公开自慰经验":
+  id: 3
+  name: "public_masturbation_exp"
+  type: "number"
+# 4 浣腸経験（1 = 経験済み、2 = ビデオ撮影済み）
+"灌肠经验":
+  id: 4
+  name: "enema_exp"
+  type: "number"
+# 5 野外露出経験
+"野外露出经验":
+  id: 5
+  name: "outdoor_exposure_exp"
+  type: "number"
+# 6 RAND:80 抽出的随机名编号（勇者登场时决定名字）
+"随机名编号":
+  id: 6
+  name: "random_name_index"
+  type: "number"
+# 7 ピアスの装着状況（&1 乳首 &2 脐 &4 阴唇 &8 阴蒂 &16 舌 &32 唇 &64 鼻），
+#   位掩码：读 → 按位或 → 写回，初值必须是 0 才能按位累加
+"穿环状态":
+  id: 7
+  name: "piercing_state"
+  type: "number"
+
+# 10 調教回数（每次调教开始 +1）
+"调教回数":
+  id: 10
+  name: "train_count"
+  type: "number"
+
+# 21〜25 肉親関係（父・母・兄弟・姉妹・子）
+"肉亲_0":
+  id: 21
+  name: "blood_relation_0"
+  type: "number"
+
+# 31 体内媚薬残留度（每周 -1、饮下 +1；登记前第一次累加是 NaN）
+"媚药残留度":
+  id: 31
+  name: "aphrodisiac_residue"
+  type: "number"
+# 32 媚薬中毒の禁断症状判定
+"媚药禁断症状":
+  id: 32
+  name: "aphrodisiac_withdrawal"
+  type: "number"
+
+# 40 着衣の状態（位掩码：&2 上衣脱落、&8 露出、&16/&17/&64 各段）
+"着衣状态":
+  id: 40
+  name: "clothing_state"
+  type: "number"
+
+# 43 パンツの状態（-3 被撕破 -2 沾污 -1 没收 0 通常 1 以上洗涤中）
+"内裤状态":
+  id: 43
+  name: "panties_state"
+  type: "number"
+# 44 ブラジャーの状態（同上符号约定）
+"胸罩状态":
+  id: 44
+  name: "bra_state"
+  type: "number"
+# 45 上着上の状態（同上符号约定）
+"上衣上状态":
+  id: 45
+  name: "tops_upper_state"
+  type: "number"
+
+# 47 特別コスチュームの状態（同上符号约定）
+"特别服装状态":
+  id: 47
+  name: "special_costume_state"
+  type: "number"
+# 48 現在のパンツを穿き続けている期間（日数）
+"内裤穿着期间":
+  id: 48
+  name: "panties_wear_days"
+  type: "number"
+# 49 貞操帯のカギを捨てた（1 = 已丢弃；次日流程按它决定拿不拿得回）
+"贞操带钥匙已丢弃":
+  id: 49
+  name: "chastity_key_discarded"
+  type: "number"
+# 50 貞操帯のカギをダンジョンで見つけた
+"贞操带钥匙":
+  id: 50
+  name: "chastity_key_found"
+  type: "number"
+
+# 61 逆レイプ（自检口上用 `if` 真值判断，0 与 undefined 同结论）
+"逆强暴":
+  id: 61
+  name: "reverse_rape"
+  type: "number"
+
+# 70 性転換済（0 = NO、1 = YES；实验室改造写 1）
+"已性转":
+  id: 70
+  name: "sex_changed"
+  type: "number"
+# 71 処女膜再生済（再生过就不能再复原，按 >= 1 判断）
+"处女膜已再生":
+  id: 71
+  name: "hymen_restored"
+  type: "number"
+
+# 81 蓄積潤滑（调教结束时 PALAM:3 每满 10000 累加一格；登记前是 NaN）
+"蓄积润滑":
+  id: 81
+  name: "accumulated_lubrication"
+  type: "number"
+# 82 蓄積欲情（同上，PALAM:5）
+"蓄积欲情":
+  id: 82
+  name: "accumulated_desire"
+  type: "number"
+
+# 101 マスターによる膣内射精カウント
+"主人膣内射精":
+  id: 101
+  name: "master_vaginal_ejaculation"
+  type: "number"
+# 102 誰に妊娠させられたか（1 主人 / 2 助手 / 3 奴隶 / 4 客 / 5 犬 / 6 怪物 / 7 狂王）
+"妊娠相手":
+  id: 102
+  name: "pregnancy_partner"
+  type: "number"
+# 103 助手から奴隷への膣内射精カウント
+"助手膣内射精":
+  id: 103
+  name: "assistant_vaginal_ejaculation"
+  type: "number"
+# 104 奴隷から助手への膣内射精カウント
+"对象膣内射精":
+  id: 104
+  name: "slave_vaginal_ejaculation"
+  type: "number"
+# 105 娼館などの客からの膣内射精カウント
+"客膣内射精":
+  id: 105
+  name: "customer_vaginal_ejaculation"
+  type: "number"
+# 106 ノラ犬からの膣内射精カウント（兽奸结算累加；登记前是 NaN）
+"犬膣内射精":
+  id: 106
+  name: "dog_vaginal_ejaculation"
+  type: "number"
+# 107 モンスター・触手からの膣内射精カウント（同上）
+"怪物膣内射精":
+  id: 107
+  name: "monster_vaginal_ejaculation"
+  type: "number"
+# 108 狂王からの膣内射精カウント
+"狂王膣内射精":
+  id: 108
+  name: "crazylord_vaginal_ejaculation"
+  type: "number"
+# 109 排卵促進剤の使用の有無（日程推进的效果消去写 0；怀孕判定按真值分支）
+"排卵诱发剂":
+  id: 109
+  name: "ovulation_drug_used"
+  type: "number"
+# 110 出産予定日（按天数比较，与 0 同结论）
+"预产日":
+  id: 110
+  name: "due_date"
+  type: "number"
+# 111 父親のキャラ番号（-1 娼館の客 / -2 ノラ犬 / -3 モンスター / -4 狂王）
+"孩子父亲":
+  id: 111
+  name: "child_father"
+  type: "number"
+# 112 怀孕中的怪物编号
+"胎儿怪物编号":
+  id: 112
+  name: "fetus_monster_index"
+  type: "number"
+# 113 异常妊娠部位（-1 阴道 / 3 肛门 等）
+"异常妊娠部位":
+  id: 113
+  name: "abnormal_pregnancy_site"
+  type: "number"
+
+# 130 被凌辱モンスターの ID 記憶（LOCAL:1 的持久副本）
+"凌辱畏怖记忆_怪物":
+  id: 130
+  name: "ravish_fear_monster"
+  type: "number"
+# 131 凌辱畏怖記憶の回数（战斗按 > 0/3/5 分档做伤害增减）
+"凌辱畏怖计数":
+  id: 131
+  name: "ravish_fear_count"
+  type: "number"
+
+# 190 通信勇者的唯一性标记（跨存档共享导入时防重）
+"通信勇者唯一标记":
+  id: 190
+  name: "cross_save_hero_mark"
+  type: "number"
+
+# 201 初調教（第一次调教的口上分派位）
+"初调教":
+  id: 201
+  name: "first_train"
+  type: "number"
+# 202〜210 簡易助手の口上スロット（202/203/204 三个已具名，其余见无名位清单）
+"简易助手_0":
+  id: 202
+  name: "simple_assistant_0"
+  type: "number"
+# 203 同上
+"简易助手_1":
+  id: 203
+  name: "simple_assistant_1"
+  type: "number"
+# 204 同上
+"简易助手_2":
+  id: 204
+  name: "simple_assistant_2"
+  type: "number"
+
+# 214 初めて C 絶頂（K14 贵公子口上单独用的那一格，与 225 同义）
+"首次C绝顶_K14":
+  id: 214
+  name: "first_clitoral_orgasm_k14"
+  type: "number"
+
+# 221〜260 参数变动时的一次性旗标：221 首次润滑 Lv2
+"首次润滑Lv2":
+  id: 221
+  name: "first_lubrication_lv2"
+  type: "number"
+# 222 首次欲情 Lv2
+"首次欲情Lv2":
+  id: 222
+  name: "first_desire_lv2"
+  type: "number"
+# 223 首次耻情 Lv2
+"首次耻情Lv2":
+  id: 223
+  name: "first_shame_lv2"
+  type: "number"
+# 224 首次恐怖 Lv2
+"首次恐怖Lv2":
+  id: 224
+  name: "first_fear_lv2"
+  type: "number"
+# 225 首次 C 绝顶
+"首次C绝顶":
+  id: 225
+  name: "first_clitoral_orgasm"
+  type: "number"
+# 226 首次 V 绝顶
+"首次V绝顶":
+  id: 226
+  name: "first_vaginal_orgasm"
+  type: "number"
+# 227 首次 A 绝顶
+"首次A绝顶":
+  id: 227
+  name: "first_anal_orgasm"
+  type: "number"
+# 228 首次 B 绝顶
+"首次B绝顶":
+  id: 228
+  name: "first_breast_orgasm"
+  type: "number"
+# 229 処女喪失
+"处女丧失":
+  id: 229
+  name: "virginity_lost"
+  type: "number"
+# 230 寄生（触手產卵判定）
+"寄生":
+  id: 230
+  name: "parasitism"
+  type: "number"
+
+# 261 調教後オナニー 的口上触发位
+"调教后自慰":
+  id: 261
+  name: "after_train_masturbation"
+  type: "number"
+# 262 レズプレイ
+"百合PLAY":
+  id: 262
+  name: "lesbian_play"
+  type: "number"
+# 263 朝フェラ
+"朝口交":
+  id: 263
+  name: "morning_fellatio"
+  type: "number"
+# 264 調教後性交
+"调教后性交":
+  id: 264
+  name: "after_train_sex"
+  type: "number"
+# 265 夜這い
+"夜袭":
+  id: 265
+  name: "night_attack"
+  type: "number"
+
+# 271 妊娠発覚
+"妊娠发觉":
+  id: 271
+  name: "pregnancy_noticed"
+  type: "number"
+# 272 出産
+"生产":
+  id: 272
+  name: "childbirth"
+  type: "number"
+# 273 育児室（护理中的角色不进调教候选）
+"育儿室":
+  id: 273
+  name: "nursery"
+  type: "number"
+# 274 親離れ
+"亲离":
+  id: 274
+  name: "parent_separation"
+  type: "number"
+
+# 297〜300 刻印 Lv3 取得时的口上位：297 苦痛
+"苦痛刻印Lv3":
+  id: 297
+  name: "pain_brand_lv3"
+  type: "number"
+# 298 快乐
+"快乐刻印Lv3":
+  id: 298
+  name: "pleasure_brand_lv3"
+  type: "number"
+# 299 屈服
+"屈服刻印Lv3":
+  id: 299
+  name: "submission_brand_lv3"
+  type: "number"
+# 300 反抗
+"反抗刻印Lv3":
+  id: 300
+  name: "resistance_brand_lv3"
+  type: "number"
+# —— 调教指令的口上触发位（301-348 基础指令、356-391 高级指令）——
+# 每格记「这条指令做过几次」，口上按次数分派初次 / 第二次以后；
+# 与指令编号不是 301+N 的映射（穿环是 348、淋浴 18 号不在此段）。
+# 301 爱抚
+"爱抚":
+  id: 301
+  name: "cmd_caress"
+  type: "number"
+# 302 舔阴
+"舔阴":
+  id: 302
+  name: "cmd_cunnilingus"
+  type: "number"
+# 303 肛门爱抚
+"肛门爱抚":
+  id: 303
+  name: "cmd_anal_caress"
+  type: "number"
+# 304 自慰
+"自慰":
+  id: 304
+  name: "cmd_masturbation"
+  type: "number"
+# 305 口交（主人侧，指令 4）
+"口交_主":
+  id: 305
+  name: "cmd_fellatio_master"
+  type: "number"
+# 306 胸爱抚
+"胸爱抚":
+  id: 306
+  name: "cmd_breast_caress"
+  type: "number"
+# 307 接吻
+"接吻":
+  id: 307
+  name: "cmd_kiss"
+  type: "number"
+# 308 自己扒开
+"自己扒开":
+  id: 308
+  name: "cmd_spread_self"
+  type: "number"
+# 309 插入手指
+"插入手指":
+  id: 309
+  name: "cmd_insert_finger"
+  type: "number"
+# 310 舔肛
+"舔肛":
+  id: 310
+  name: "cmd_anilingus"
+  type: "number"
+# 311 振动宝石
+"振动宝石":
+  id: 311
+  name: "cmd_vibration_gem"
+  type: "number"
+# 312 壶虫
+"壶虫":
+  id: 312
+  name: "cmd_pot_worm"
+  type: "number"
+# 313 振动杖
+"振动杖":
+  id: 313
+  name: "cmd_vibration_rod"
+  type: "number"
+# 314 肛门虫
+"肛门虫":
+  id: 314
+  name: "cmd_anal_worm"
+  type: "number"
+# 315 阴蒂夹
+"阴蒂夹":
+  id: 315
+  name: "cmd_clitoris_clamp"
+  type: "number"
+# 316 乳头夹
+"乳头夹":
+  id: 316
+  name: "cmd_nipple_clamp"
+  type: "number"
+# 317 榨乳器
+"榨乳器":
+  id: 317
+  name: "cmd_milking_machine"
+  type: "number"
+# 318 飞机杯
+"飞机杯":
+  id: 318
+  name: "cmd_onahole"
+  type: "number"
+
+# 320 肛珠（319 未使用）
+"肛珠":
+  id: 320
+  name: "cmd_anal_beads"
+  type: "number"
+# 321 正常位
+"正常位":
+  id: 321
+  name: "cmd_missionary"
+  type: "number"
+# 322 背后位
+"背后位":
+  id: 322
+  name: "cmd_doggy_style"
+  type: "number"
+# 323 对面座位
+"对面座位":
+  id: 323
+  name: "cmd_facing_seat"
+  type: "number"
+# 324 背面座位
+"背面座位":
+  id: 324
+  name: "cmd_reverse_seat"
+  type: "number"
+# 325 逆强奸（指令 24）
+"逆强奸":
+  id: 325
+  name: "cmd_reverse_rape"
+  type: "number"
+# 326 逆肛门强奸
+"逆肛门强奸":
+  id: 326
+  name: "cmd_reverse_anal_rape"
+  type: "number"
+# 327 正常位肛交
+"正常位肛交":
+  id: 327
+  name: "cmd_missionary_anal"
+  type: "number"
+# 328 背后位肛交
+"背后位肛交":
+  id: 328
+  name: "cmd_doggy_anal"
+  type: "number"
+# 329 对面座位肛交
+"对面座位肛交":
+  id: 329
+  name: "cmd_facing_seat_anal"
+  type: "number"
+# 330 背面座位肛交
+"背面座位肛交":
+  id: 330
+  name: "cmd_reverse_seat_anal"
+  type: "number"
+# 331 手淫
+"手淫":
+  id: 331
+  name: "cmd_handjob"
+  type: "number"
+# 332 口交（奴隶侧）
+"口交_奴":
+  id: 332
+  name: "cmd_fellatio_slave"
+  type: "number"
+# 333 乳交
+"乳交":
+  id: 333
+  name: "cmd_titjob"
+  type: "number"
+# 334 股间性交
+"股间性交":
+  id: 334
+  name: "cmd_thigh_sex"
+  type: "number"
+# 335 骑乘位
+"骑乘位":
+  id: 335
+  name: "cmd_cowgirl"
+  type: "number"
+# 336 全身擦洗
+"全身擦洗":
+  id: 336
+  name: "cmd_body_wash"
+  type: "number"
+# 337 骑乘位肛交
+"骑乘位肛交":
+  id: 337
+  name: "cmd_cowgirl_anal"
+  type: "number"
+# 338 肛门侍奉
+"肛门侍奉":
+  id: 338
+  name: "cmd_anal_service"
+  type: "number"
+# 339 足交（指令 38）
+"足交":
+  id: 339
+  name: "cmd_footjob"
+  type: "number"
+
+# 341 打屁股（340 未使用）
+"打屁股":
+  id: 341
+  name: "cmd_spanking"
+  type: "number"
+# 342 鞭
+"鞭":
+  id: 342
+  name: "cmd_whip"
+  type: "number"
+# 343 针
+"针":
+  id: 343
+  name: "cmd_needle"
+  type: "number"
+# 344 眼罩
+"眼罩":
+  id: 344
+  name: "cmd_blindfold"
+  type: "number"
+# 345 绳子
+"绳子":
+  id: 345
+  name: "cmd_rope"
+  type: "number"
+# 346 口塞
+"口塞":
+  id: 346
+  name: "cmd_gag"
+  type: "number"
+# 347 灌肠肛塞
+"灌肠肛塞":
+  id: 347
+  name: "cmd_enema_plug"
+  type: "number"
+# 348 穿环
+"穿环":
+  id: 348
+  name: "cmd_piercing"
+  type: "number"
+
+# 356 放置 PLAY（何もしない）
+"放置PLAY":
+  id: 356
+  name: "cmd_ignore"
+  type: "number"
+# 357 交谈
+"交谈":
+  id: 357
+  name: "cmd_talk"
+  type: "number"
+
+# 360 乳夹口交
+"乳夹口交":
+  id: 360
+  name: "cmd_fellatio_with_nipple_clamp"
+  type: "number"
+# 361 口交时自慰
+"口交时自慰":
+  id: 361
+  name: "cmd_masturbation_during_fellatio"
+  type: "number"
+# 362 手搓口交
+"手搓口交":
+  id: 362
+  name: "cmd_handjob_fellatio"
+  type: "number"
+# 363 真空口交
+"真空口交":
+  id: 363
+  name: "cmd_vacuum_fellatio"
+  type: "number"
+# 364 六九式
+"六九式":
+  id: 364
+  name: "cmd_sixty_nine"
+  type: "number"
+# 365 深喉
+"深喉":
+  id: 365
+  name: "cmd_deep_throat"
+  type: "number"
+# 366 助手を犯させる
+"侵犯助手":
+  id: 366
+  name: "cmd_violate_assistant"
+  type: "number"
+# 367 二本フェラ
+"双人口交":
+  id: 367
+  name: "cmd_double_fellatio"
+  type: "number"
+
+# 369 ダブルフェラ（368 未使用）
+"双人侍奉口交":
+  id: 369
+  name: "cmd_double_service_fellatio"
+  type: "number"
+# 370 魔族化
+"魔族化":
+  id: 370
+  name: "demonization"
+  type: "number"
+
+# 372 壶虫的装着位（312 是指令计数，372 是当前是否装着）
+"壶虫着脱":
+  id: 372
+  name: "attached_pot_worm"
+  type: "number"
+
+# 374 肛门虫装着位
+"肛门虫着脱":
+  id: 374
+  name: "attached_anal_worm"
+  type: "number"
+# 375 阴蒂夹装着位
+"阴蒂夹着脱":
+  id: 375
+  name: "attached_clitoris_clamp"
+  type: "number"
+# 376 乳头夹装着位
+"乳头夹着脱":
+  id: 376
+  name: "attached_nipple_clamp"
+  type: "number"
+# 377 榨乳器装着位
+"榨乳器着脱":
+  id: 377
+  name: "attached_milking_machine"
+  type: "number"
+# 378 飞机杯装着位
+"飞机杯着脱":
+  id: 378
+  name: "attached_onahole"
+  type: "number"
+# 379 肛珠装着位
+"肛珠着脱":
+  id: 379
+  name: "attached_anal_beads"
+  type: "number"
+# 380 眼罩装着位
+"眼罩着脱":
+  id: 380
+  name: "attached_blindfold"
+  type: "number"
+# 381 强制口交
+"强制口交":
+  id: 381
+  name: "cmd_forced_fellatio"
+  type: "number"
+
+# 385 绳子装着位
+"绳子着脱":
+  id: 385
+  name: "attached_rope"
+  type: "number"
+# 386 口塞装着位
+"口塞着脱":
+  id: 386
+  name: "attached_gag"
+  type: "number"
+# 387 灌肠肛塞装着位
+"灌肠肛塞着脱":
+  id: 387
+  name: "attached_enema_plug"
+  type: "number"
+
+# 391 3P
+"三人PLAY":
+  id: 391
+  name: "threesome_play"
+  type: "number"
+
+# 400 魔族化（K11 知的 口上单独用的那一格，与 370 同义）
+"魔族化_K11":
+  id: 400
+  name: "demonization_k11"
+  type: "number"
+
+# 444 獣姦アイマスク（兽奸时戴的眼罩）
+"兽奸眼罩":
+  id: 444
+  name: "bestiality_blindfold"
+  type: "number"
+
+# 491 撮影時間
+"录像时间":
+  id: 491
+  name: "video_duration"
+  type: "number"
+
+# 493 評価
+"录像价值":
+  id: 493
+  name: "video_value"
+  type: "number"
+
+# 495 閲覧者数
+"录像浏览数":
+  id: 495
+  name: "video_views"
+  type: "number"
+# 496 粉丝信（FAV）累积
+"录像粉丝信数":
+  id: 496
+  name: "video_fan_letters"
+  type: "number"
+
+# 498 属性（1 = 清純、-1 = 不純）
+"录像属性":
+  id: 498
+  name: "video_attribute"
+  type: "number"
+# 499 水晶球充能回数
+"水晶球充能次数":
+  id: 499
+  name: "crystal_ball_charges"
+  type: "number"
+# 500 ダンジョン内行動（0 内职 / 1 卖春 / 2 陷阱补充 / 3 设施扩张 / 4 潜入 / 5 迎击训练）
+"迷宫内行动":
+  id: 500
+  name: "dungeon_action"
+  type: "number"
+
+# 502 侵攻度
+"侵攻度":
+  id: 502
+  name: "invasion_progress"
+  type: "number"
+# 503 フラグ（回合结算的休憩判定消费，按位 &1）
+"休憩":
+  id: 503
+  name: "rest_flag"
+  type: "number"
+# 504 要求したご褒美（0 金币 / 1-3 兽奸 / 4 接吻 / 5 性交 / 6 精液 / 7 乱交 / 8 尿 / 9 处女）
+"要求奖赏":
+  id: 504
+  name: "requested_reward"
+  type: "number"
+# 505 勇者撃破数
+"勇者击破数":
+  id: 505
+  name: "heroes_defeated"
+  type: "number"
+# 506 新人フラグ
+"新人":
+  id: 506
+  name: "newcomer"
+  type: "number"
+# 507 街まで帰還フラグ
+"回城标志":
+  id: 507
+  name: "returned_to_town"
+  type: "number"
+
+# 510 X 座標（2D 地下城的格子位置）
+"X坐标":
+  id: 510
+  name: "grid_x"
+  type: "number"
+# 511 Y 座標
+"Y坐标":
+  id: 511
+  name: "grid_y"
+  type: "number"
+
+# 521 セーブポイント（2015 补丁起兼作挫折阶层记忆）
+"存档点":
+  id: 521
+  name: "save_point"
+  type: "number"
+
+# 534 受注クエスト
+"已接任务":
+  id: 534
+  name: "accepted_quest"
+  type: "number"
+
+# 570 従属モンスター（使役パートナーの番号）
+"从属怪物":
+  id: 570
+  name: "subjugated_monster"
+  type: "number"
+# 571 对人决斗的弹药（默认 15，消耗到 0 不能再参加）
+"弹药":
+  id: 571
+  name: "ammunition"
+  type: "number"
+
+# 582 現在の借金（マイナス值；低于 -10000 会触发强制卖春）
+"借款":
+  id: 582
+  name: "debt"
+  type: "number"
+
+# 601 結婚相手
+"结婚对象":
+  id: 601
+  name: "spouse"
+  type: "number"
+# 602 結婚愛情
+"结婚爱情":
+  id: 602
+  name: "spousal_love"
+  type: "number"
+
+# 606 恋人的角色号
+"恋人":
+  id: 606
+  name: "lover"
+  type: "number"
+# 607 恋人愛情
+"恋人爱情":
+  id: 607
+  name: "lover_love"
+  type: "number"
+# 608 恋人の名前
+"恋人名字":
+  id: 608
+  name: "lover_name"
+  type: "number"
+
+# 610 恋人の ID（相手がキャラのときのみ）
+"恋人ID":
+  id: 610
+  name: "lover_id"
+  type: "number"
+
+# 650〜660 NTR 旗标：650 NTR 再捕获（0 = 未发生；登记后 `=== 0` 首次可命中）
+"NTR再捕获":
+  id: 650
+  name: "ntr_recapture"
+  type: "number"
+# 651 NTR 旗标第 2 格（按事件种类置 1）
+"NTR_651":
+  id: 651
+  name: "ntr_651"
+  type: "number"
+# 652 NTR 旗标第 3 格
+"NTR_652":
+  id: 652
+  name: "ntr_652"
+  type: "number"
+# 653 NTR 旗标第 4 格
+"NTR_653":
+  id: 653
+  name: "ntr_653"
+  type: "number"
+# 654 NTR 旗标第 5 格
+"NTR_654":
+  id: 654
+  name: "ntr_654"
+  type: "number"
+# 655 NTR 旗标第 6 格
+"NTR_655":
+  id: 655
+  name: "ntr_655"
+  type: "number"
+# 656 NTR 旗标第 7 格
+"NTR_656":
+  id: 656
+  name: "ntr_656"
+  type: "number"
+# 657 NTR 旗标第 8 格（K10 会按 (值 || 0) - 1 递减）
+"NTR_657":
+  id: 657
+  name: "ntr_657"
+  type: "number"
+
+# 666 自動調教（指令模式，非 0 表示本轮在自动跑）
+"自动调教":
+  id: 666
+  name: "auto_train"
+  type: "number"
+# 667 自動調教回数（每轮 += 666 的值；登记前第一次累加是 NaN）
+"自动调教回数":
+  id: 667
+  name: "auto_train_count"
+  type: "number"
+
+# 700 お気に入りフラグ（角色信息页的收藏星标）
+"收藏":
+  id: 700
+  name: "favorite"
+  type: "number"
+
+# 777 待处刑标签
+"待处刑标签":
+  id: 777
+  name: "pending_execution_tag"
+  type: "number"
+
+# 820 影の寿命（献祭完成分支置满 666666）
+"寿命":
+  id: 820
+  name: "shadow_lifespan"
+  type: "number"
+
+# 999 异界勇者召唤的成交标记（只写不读）
+"异界召唤标记":
+  id: 999
+  name: "otherworld_summon_mark"
+  type: "number"
+
+# —— 无名位清单（本票不登记，等你这一族的票按语义补名）——
+#
+# 下 43 个序号源码在读写，但 tools/facade-names.js 与 yml 两处都没有名字。
+# 不凭空造中文名（#830 对 tequip / stain 同款处理）：没有名字就没有语义依据，
+# 登记会让引擎在每个角色上多建一格含义不明的槽。清单钉在
+# test/cflag-names.test.js 里，新出现一个无名下标会当场红。
+#
+#   22 24 25 62 74 77 90 99 100 458 459 494 497 509 512 513 514 515
+#   530 531 532 533 535 536 537 538 539 540 581 600 603 604 605 609 621
+#   661 662 663 664 665 680 681 682
+#
+# 另有三条（152 信仰值 / 450 一人称档位 / 800 特殊角色标记）已经登记、也有
+# 中文名，名字只在 yml 这一侧（tools/facade-names.js 没有对应条目，因此没有
+# 门面访问器）——它们不在这份缺口里，test/cflag-names.test.js 单独登记。
