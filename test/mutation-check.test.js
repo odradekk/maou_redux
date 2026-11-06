@@ -2322,6 +2322,28 @@ function make_copy_dir(tmp, name, age_ms) {
   return dir;
 }
 
+/**
+ * 沙箱里「本次运行开始之后才出现」的副本目录（#985）。
+ *
+ * 观测只认本次运行自己建的副本：同机并发的另一个 mutation-check、被强杀的上
+ * 一次运行都会在临时目录里留下 mutation-copy-*。把「目录里第一个副本」当成
+ * 自己的去比 PID，或者要求「退出后目录为空」，判的就成了别人的目录——那是
+ * 与本次运行无关的失败。跑起来之前先记下已有什么（before），后出现的才算
+ * 本次运行的账。
+ */
+function new_copies(tmp, before) {
+  let names;
+  try {
+    names = fs.readdirSync(tmp);
+  } catch (e) {
+    // Windows 上目录正被写入时 readdir 偶发 EPERM/EBUSY：观测不该被这种瞬态
+    // 打断，25ms 后再看一次；真消失（ENOENT）仍然照抛，那是另一回事。
+    if (e?.code === 'EPERM' || e?.code === 'EBUSY') return [];
+    throw e;
+  }
+  return names.filter((n) => n.startsWith('mutation-copy-') && !before.has(n));
+}
+
 const HOUR_MS = 60 * 60 * 1000;
 
 test('变异写入遇瞬态占用时重试到成功：注入前两次失败仍全拦且目标文件逐字节还原（#582）', () => {
@@ -2573,10 +2595,16 @@ test('启动清理陈旧并行副本：超龄且所有者不在才删，活副�
   }
 });
 
-test('并行副本目录名带所有者 PID：跑动中看得见，退出后删干净（#582）', async () => {
+test('并行副本目录名带所有者 PID：跑动中看得见，退出后删干净，不认别人的副本（#582、#985）', async () => {
   // 清理的「所有者」判断全部依赖目录名里的 PID（make_copy 与 clean_stale_copies
   // 各占一半），只有跑起来才看得出这一半有没有写进去。夹具的测试体放慢，
   // 副本从对照运行之前一直活到进程退出，观察窗口足够宽。
+  //
+  // 观测只认本次运行自己建的副本（#985）：沙箱里先摆一份「别人留下的」副本
+  // 目录（同机并发的另一个 mutation-check、被强杀的上一次运行），用「跑起来
+  // 之前已有什么」把它排除在外。不排除的话两条观测都会被它污染——按目录
+  // 顺序撞上外来的名字就会拿别人的副本去比本进程的 PID，要求「退出后目录
+  // 为空」则因为它还在而判失败，两种都与本次运行无关。
   const root = make_jobs_fixture([
     {
       ...GOOD_ENTRY,
@@ -2584,6 +2612,11 @@ test('并行副本目录名带所有者 PID：跑动中看得见，退出后删�
     },
   ]);
   const tmp = make_tmp_sandbox();
+  // 别人的副本：所有者已退出（dead_pid）但刚被动过（不是陈旧副本），清理
+  // 既不会删它，本次运行也不该认它——两个方向都由下面的断言钉住。
+  const foreign = path.join(tmp, `mutation-copy-${dead_pid()}-other-run`);
+  fs.mkdirSync(foreign);
+  const before = new Set(fs.readdirSync(tmp));
   fs.writeFileSync(
     path.join(root, 'test', 'calc.test.js'),
     [
@@ -2634,15 +2667,14 @@ test('并行副本目录名带所有者 PID：跑动中看得见，退出后删�
     let observed = null;
     const deadline = Date.now() + 30_000;
     while (Date.now() < deadline && observed === null) {
-      observed =
-        fs.readdirSync(tmp).find((n) => n.startsWith('mutation-copy-')) ?? null;
+      observed = new_copies(tmp, before)[0] ?? null;
       if (observed === null) {
         await new Promise((resolve) => setTimeout(resolve, 25));
       }
     }
     if (observed === null) {
       child.kill();
-      assert.fail(`30 秒没等到副本目录（子进程日志）：\n${output}`);
+      assert.fail(`30 秒没等到本次运行的副本目录（子进程日志）：\n${output}`);
     }
     assert.ok(
       observed.startsWith(`mutation-copy-${child.pid}-`),
@@ -2651,9 +2683,13 @@ test('并行副本目录名带所有者 PID：跑动中看得见，退出后删�
     const code = await closed;
     assert.equal(code, 0, `跑动中的副本不该被清理、条目应被拦下：\n${output}`);
     assert.deepEqual(
-      fs.readdirSync(tmp),
+      new_copies(tmp, before),
       [],
-      '工具退出时副本要删干净（正常路径的 finally 仍然生效）',
+      '本次运行建的副本要删干净（正常路径的 finally 仍然生效）',
+    );
+    assert.ok(
+      fs.existsSync(foreign),
+      '别人留下的副本目录不在本次运行的账上：既不该认它，也不该删它',
     );
   } finally {
     if (child !== undefined && child.exitCode === null) {
