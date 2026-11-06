@@ -10,7 +10,7 @@
  * 变量语义：TALENT:47 = 喜欢精液；CFLAG:600 = 强制精饮绝顶累计回数；
  * TFLAG:110 = 喜欢精液获得旗（属主 event——写经 game.event 门面）；
  * EXP:8 = 精饮绝顶经验（属主 dungeon——写经 chara(cid).dungeon 门面）；
- * EX:13 = 精饮绝顶计数（ex 表，属主 train 直写）；ABL:32 = 精液中毒；
+ * ABL:32 = 精液中毒；
  * SOURCE:5/10/11/13 = 快乐否定 / 屈从 / 饮精 / 中毒源。
  *
  * 强制精饮绝顶句的代词取对象角色 she(cid)——按对象的性别显示他/她。
@@ -115,8 +115,9 @@ async function seiin_check() {
  */
 async function seiin_orgasm() {
   const cid = era_flag.target;
-  // 计数：EX:13（train 直写）与 EXP:8（dungeon 门面）
-  era.add(`ex:${cid}:13`, 1);
+  // 精饮绝顶只记 EXP:8 这一个计数：ex 表登记的是状态画面绝顶行那六个
+  // （0-5），13 号从未登记、全库也没有读点，add 打在未声明的槽上是
+  // undefined + 1 = NaN，调教期存下的存档里会落成 null
   chara(cid).dungeon.精饮绝顶经验 = chara(cid).dungeon.精饮绝顶经验 + 1;
 
   // 文案（TFLAG:0 == 2 = 连续两发）
