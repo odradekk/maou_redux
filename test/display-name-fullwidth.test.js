@@ -45,6 +45,12 @@ const TOP_LEVEL_KEY_RE = /^"([^"]+)":/;
  *   tflagname / tequipname / stainname / *keys 的读者，调教画面上的装具与
  *   状态文案由页面与口上自己拼，玩家看不到这一层名字；改成全角就要连带改
  *   门面访问器与上百处调用点，收益是零。
+ * - CFlag.yml 里带 C / V / A / B / Lv / PLAY / NTR / K11 / K14 / X / Y / ID
+ *   的二十八条（#831 把源码在用的 cflag 序号从 facade-names 登记过来）：
+ *   同样只是变量释文与开发套件标识符——全库没有 cflagname / cflagkeys 的
+ *   读者，角色信息页与口上要显示的数值自己拼文案；这些键必须与
+ *   tools/facade-names.js 的中文访问器名逐字相同（test/cflag-names.test.js
+ *   守着），改成全角就等于把门面访问器与几百处调用点一起改名，收益是零。
  */
 const EXEMPT_FILES = {
   'Flag.yml': {
@@ -80,6 +86,38 @@ const EXEMPT_FILES = {
   },
   'TEquip.yml': {
     names: ['野外PLAY', '羞耻PLAY', '浴室PLAY', '新妻PLAY'],
+  },
+  'CFlag.yml': {
+    names: [
+      '首次C绝顶_K14',
+      '首次润滑Lv2',
+      '首次欲情Lv2',
+      '首次耻情Lv2',
+      '首次恐怖Lv2',
+      '首次C绝顶',
+      '首次V绝顶',
+      '首次A绝顶',
+      '首次B绝顶',
+      '百合PLAY',
+      '苦痛刻印Lv3',
+      '快乐刻印Lv3',
+      '屈服刻印Lv3',
+      '反抗刻印Lv3',
+      '放置PLAY',
+      '三人PLAY',
+      '魔族化_K11',
+      'X坐标',
+      'Y坐标',
+      '恋人ID',
+      'NTR再捕获',
+      'NTR_651',
+      'NTR_652',
+      'NTR_653',
+      'NTR_654',
+      'NTR_655',
+      'NTR_656',
+      'NTR_657',
+    ],
   },
   'TFlag.yml': {
     names: [
