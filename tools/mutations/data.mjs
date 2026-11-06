@@ -266,12 +266,12 @@ export default [
   },
   {
     engine: true,
-    desc: 'Flag 侵略线 id 改坏（人间界侵攻度 81 改 80——ENDING_1 触发条件读错位，#113）',
+    desc: 'Flag 侵略线 id 改坏（人间界侵攻度 81 改 79——ENDING_1 触发条件读错位，#113）',
     file: 'yml/Flag.yml',
     find: `"人间界侵攻度":
   id: 81`,
     replace: `"人间界侵攻度":
-  id: 80`,
+  id: 79`,
     tests: ['exflag-chara35'],
     must_mention: '人间界侵攻度必须落在下标 81',
   },
