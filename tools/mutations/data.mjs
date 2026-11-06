@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 85; // #830 +6（M18400-M18405：TFlag/Flag/TEquip/CStr 的四类漏登记与名字分叉） // #834 +5（M18350-M18354：EX 素质名进 yml、八个注册实现搬进角色预设）；#949 +3（M18250–M18252：33 号条目的删除、price 改错、name 非 snake_case——商店 32/33 号的道具表补齐与对账）；#815 +1（M18301：Ex.yml 漏登记射精槽——exkeys 少一格，取消回合的 NOWEX:5 漏到下一回合）；#876 +4：+2（M41/M42 从 train 分片移入——指令 0 的阶梯表搬进 ere/data/train-source-const.js），+2（M18100/M18101：取档口径的越档边界、未声明等级的默认档）；#883 -1（M16108：yml/E.yml 随战斗状态搬成普通对象撤除） // #884 +2（M16606/M16607：角色预设的预设模板值改错、PortCFlag 的字段条目被删）； #848 +2（M16254/M16255：GameBase 的【初始角色编号】改坏、给角色预设加上以 0 号为目标的相性）；#901 +13（M16100-M16112：变量表 name/type 的缺失、重名、非 snake_case、保留字、非法 type 与豁免名单失效）；#814 +9（M15850-M15858：角色预设在用的 cflag 序号与条目、mark/talent/cstr 的新登记、name/type 形状）；#822 +4（M15700/M15701：Abl 20/21 的 yml 名字；M15702/M15703：指令常量 54/89 的指令名——#836 把指令名搬进常量后跟着改挂，编号不变）；#746 +3（M14608-M14610：现种族 211 的名字声明、编号与名称）；#733 +1（M14540：通信回归场景漏载 Equip 名字表）；#731 +1（M14530：【最低支持版本】不得高于已发布的 0.1.0）；master 28（#640 +7：M12870-M12876 yml 装载覆盖与内容固定的行为检查）+ 4（#642：M12936-M12939 标题画面使用的 GameBase 信息改坏）
+export const COUNT = 91; // #831 +6（M18406-M18411：cflag 补登面的漏登记、名字分叉、name 重复、序号写错，以及 add / 旧档补 0 两条行为锁） // #830 +6（M18400-M18405：TFlag/Flag/TEquip/CStr 的四类漏登记与名字分叉） // #834 +5（M18350-M18354：EX 素质名进 yml、八个注册实现搬进角色预设）；#949 +3（M18250–M18252：33 号条目的删除、price 改错、name 非 snake_case——商店 32/33 号的道具表补齐与对账）；#815 +1（M18301：Ex.yml 漏登记射精槽——exkeys 少一格，取消回合的 NOWEX:5 漏到下一回合）；#876 +4：+2（M41/M42 从 train 分片移入——指令 0 的阶梯表搬进 ere/data/train-source-const.js），+2（M18100/M18101：取档口径的越档边界、未声明等级的默认档）；#883 -1（M16108：yml/E.yml 随战斗状态搬成普通对象撤除） // #884 +2（M16606/M16607：角色预设的预设模板值改错、PortCFlag 的字段条目被删）； #848 +2（M16254/M16255：GameBase 的【初始角色编号】改坏、给角色预设加上以 0 号为目标的相性）；#901 +13（M16100-M16112：变量表 name/type 的缺失、重名、非 snake_case、保留字、非法 type 与豁免名单失效）；#814 +9（M15850-M15858：角色预设在用的 cflag 序号与条目、mark/talent/cstr 的新登记、name/type 形状）；#822 +4（M15700/M15701：Abl 20/21 的 yml 名字；M15702/M15703：指令常量 54/89 的指令名——#836 把指令名搬进常量后跟着改挂，编号不变）；#746 +3（M14608-M14610：现种族 211 的名字声明、编号与名称）；#733 +1（M14540：通信回归场景漏载 Equip 名字表）；#731 +1（M14530：【最低支持版本】不得高于已发布的 0.1.0）；master 28（#640 +7：M12870-M12876 yml 装载覆盖与内容固定的行为检查）+ 4（#642：M12936-M12939 标题画面使用的 GameBase 信息改坏）
 
 export default [
   {
@@ -778,5 +778,54 @@ export default [
     replace: '"口塞X":\n  id: 45\n',
     tests: ['train-table-names'],
     must_mention: '与 facade-names「口塞」不一致',
+  },
+  // —— #831 cflag 其余序号补名字 ——
+  {
+    desc: 'M18406 CFlag.yml 漏登记「要求奖赏」504（口上的「=== 0」分支退回恒假，补登面缺一格）（#831）',
+    file: 'yml/CFlag.yml',
+    find: '"要求奖赏":\n  id: 504\n  name: "requested_reward"\n  type: "number"\n',
+    replace: '',
+    tests: ['cflag-names'],
+    must_mention: 'CFlag.yml 缺 504「要求奖赏」',
+  },
+  {
+    desc: 'M18407 CFlag.yml 的「要求奖赏」中文键改坏（与 facade-names 的名字分叉）（#831）',
+    file: 'yml/CFlag.yml',
+    find: '"要求奖赏":\n  id: 504\n',
+    replace: '"要求奖赏X":\n  id: 504\n',
+    tests: ['cflag-names'],
+    must_mention: '与 facade-names「要求奖赏」不一致',
+  },
+  {
+    desc: 'M18408 CFlag.yml 的「怪物膣内射精」name 抄成犬那一格的（同表 name 重复，访问器互相覆盖）（#831）',
+    file: 'yml/CFlag.yml',
+    find: '"怪物膣内射精":\n  id: 107\n  name: "monster_vaginal_ejaculation"\n',
+    replace: '"怪物膣内射精":\n  id: 107\n  name: "dog_vaginal_ejaculation"\n',
+    tests: ['yml-name-type'],
+    must_mention: 'CFlag.yml 的 name「dog_vaginal_ejaculation」同时用在',
+  },
+  {
+    desc: 'M18409 CFlag.yml 的「迷宫内行动」序号写成 5000（500 退回 undefined，口上读不到 0）（#831）',
+    file: 'yml/CFlag.yml',
+    find: '"迷宫内行动":\n  id: 500\n',
+    replace: '"迷宫内行动":\n  id: 5000\n',
+    tests: ['cflag-names'],
+    must_mention: 'cflag:31:500 必须是 0',
+  },
+  {
+    desc: 'M18410 CFlag.yml 漏登记「犬膣内射精」106（兽奸结算的 add 又回到 NaN）（#831）',
+    file: 'yml/CFlag.yml',
+    find: '"犬膣内射精":\n  id: 106\n  name: "dog_vaginal_ejaculation"\n  type: "number"\n',
+    replace: '',
+    tests: ['cflag-names'],
+    must_mention: 'cflag:31:106 的 add 必须从 0 起算',
+  },
+  {
+    desc: 'M18411 CFlag.yml 漏登记「自动调教」666（0.1.0 旧档读档后 666 仍是 undefined）（#831）',
+    file: 'yml/CFlag.yml',
+    find: '"自动调教":\n  id: 666\n  name: "auto_train"\n  type: "number"\n',
+    replace: '',
+    tests: ['cflag-names'],
+    must_mention: 'cflag:666 自动调教',
   },
 ];

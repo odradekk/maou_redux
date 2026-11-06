@@ -104,7 +104,11 @@ function old_tables() {
       }
     }
   };
-  drop('cflag', [...NEW_CFLAG_IDS, ...CODE_OWNED_CFLAG_IDS]);
+  // cflag 在 #814 之前是空表：#831 把源码在用的序号也登记进来之后，
+  // 「只删 #814 那一批」已经不足以表达「一格都没有」——那批名字还在表里，
+  // addCharacter 会给每个角色建出它们（值 0）。所以整张表清空。
+  tables.static_data.cflag = {};
+  tables.field_names.cflag = {};
   drop('cstr', NEW_CSTR_IDS);
   drop('mark', [4]);
   drop('talent', [2]);
@@ -337,11 +341,17 @@ function parse_entries(file) {
 
 test('CFlag.yml 登记了角色预设用到的全部下标，每条带英文 snake_case 的 name 与 type', () => {
   const entries = parse_entries('CFlag.yml');
-  const ids = entries.map((entry) => entry.id).sort((a, b) => a - b);
+  const ids = new Set(entries.map((entry) => entry.id));
+  // #831 起这张表还登记了源码在用的其余序号（见 yml/CFlag.yml 的补登段），
+  // 所以这里只钉「预设在用的必须有」；全集与无名缺口由
+  // test/cflag-names.test.js 对着源码与 facade-names 逐条核对。
+  const missing = [...NEW_CFLAG_IDS, ...CODE_OWNED_CFLAG_IDS].filter(
+    (id) => !ids.has(id),
+  );
   assert.deepEqual(
-    ids,
-    [...NEW_CFLAG_IDS, ...CODE_OWNED_CFLAG_IDS].sort((a, b) => a - b),
-    'CFlag.yml 的下标集合必须正好是角色预设在用的那 33 个，加上 #906 的代码自有槽',
+    missing,
+    [],
+    'CFlag.yml 缺角色预设在用的下标或 #906 的代码自有槽——预设值会被整行丢弃',
   );
   for (const entry of entries) {
     assert.match(
