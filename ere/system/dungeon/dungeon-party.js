@@ -110,8 +110,8 @@ function search_free(floor, caller) {
     if (floor !== (era.get(`cflag:${charid}:501`) || 0)) {
       continue;
     }
-    // 狂王独行（CFLAG:800 == 4）
-    if ((era.get(`cflag:${charid}:800`) || 0) === 4) {
+    // 狂王独行（特殊角色标记 = 4）
+    if (chara(charid).system.特殊角色标记 === 4) {
       continue;
     }
     // 仲間A/B を見る——已有同伴的不入队
@@ -198,8 +198,8 @@ async function party_join() {
     if (place !== 2 && place !== 12) {
       continue;
     }
-    // 狂王独行（CFLAG:800 == 4）
-    if ((era.get(`cflag:${charid}:800`) || 0) === 4) {
+    // 狂王独行（特殊角色标记 = 4）
+    if (chara(charid).system.特殊角色标记 === 4) {
       continue;
     }
     // 階層（CFLAG:501 侵攻阶层）

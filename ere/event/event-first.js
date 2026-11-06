@@ -25,6 +25,7 @@
 const era = require('#/era-electron');
 const { begin, STATE } = require('#/system/flow/game-state');
 const { first_setting } = require('#/page/page-first-setting');
+const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
@@ -239,7 +240,7 @@ async function handle_first() {
     era.set('cflag:17:13', 15);
     era.set('cflag:17:14', 15);
     era.set('cflag:17:16', -1);
-    era.set('cflag:17:450', 31);
+    chara(17).chara.一人称档位 = 31;
 
     // char_body_generate_wapped —— 角色身体生成（#385 起真身；
     // FLAG:26/27 种族年龄表的消费者，闸门在函数的 FLAG:5 位 12/15 检查里）

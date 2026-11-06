@@ -1588,7 +1588,7 @@ async function run_event_nextday() {
       era.get(`talent:${cid}:206`)
     ) {
       faith(cid, 1);
-    } else if ((era.get(`cflag:${cid}:152`) || 0) < 30) {
+    } else if (chara(cid).chara.信仰值 < 30) {
       faith(cid, -1);
     } else if (default_rand(4) === 0) {
       faith(cid, 1);

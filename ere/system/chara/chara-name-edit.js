@@ -23,8 +23,9 @@
  *     全角一字算 1）。长度阈值是 16 个码点；报错话术里的「全角八字」是
  *     提示措辞，不与判断条件联动。
  *
- *   - **一人称重设的检查 `cflag:arg:450 >= 99`**：450 是一人称档位（档位
- *     语义见 chara-self-call.js 的 random_self_call）。
+ *   - **一人称重设的检查 `一人称档位 >= 99`**：450 是一人称档位（门面
+ *     `chara(cid).chara.一人称档位`；档位语义见 chara-self-call.js 的
+ *     random_self_call）。
  *
  *   - **返回 NAME_EDIT_HERO 的防御分支保留**：那是「侵攻中的勇者不该看到
  *     按钮、但输入仍能到达」的分支，返回值被调用点忽略。
@@ -37,6 +38,7 @@
 const era = require('#/era-electron');
 const { chara_name_reset } = require('#/system/chara/chara-name');
 const { random_self_call } = require('#/system/chara/chara-self-call');
+const { chara } = require('#/facade/chara');
 const { confirm_output_since } = require('#/utils/screen-change');
 const { input_text } = require('#/utils/input-text');
 
@@ -133,7 +135,7 @@ async function chara_info_name_edit(arg, reset = 0) {
     // 还原名字
     chara_name_reset(arg);
     era.print(`${era.get(`callname:${arg}:-2`) ?? ''}恢复了原来的名字……`);
-    if ((era.get(`cflag:${arg}:450`) || 0) >= 99) {
+    if (chara(arg).chara.一人称档位 >= 99) {
       await random_self_call(arg); // 一人称設定
     }
     // 还原名的播报在回名册前经按键确认（ADR-0009）
@@ -165,7 +167,7 @@ async function chara_info_name_edit(arg, reset = 0) {
     break;
   }
 
-  if ((era.get(`cflag:${arg}:450`) || 0) >= 99) {
+  if (chara(arg).chara.一人称档位 >= 99) {
     await random_self_call(arg); // 一人称設定
   }
   // 改名播报与一人称设定的输出在回名册前经按键确认（名册循环换屏会清掉
