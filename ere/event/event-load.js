@@ -15,8 +15,6 @@
  *     改为在本链首行镜像 `await era.loadGlobal()`（副作用核对见下）；
  *   - chara_name_init——真身在 chara-name-list.js（#388）：数据已在
  *     yml/NameList.yml，读档后调用是空操作，仅保留调用点可检索；
- *   - ex_talentname_init——非存档的 EX 素质名表初始化，真身在
- *     chara-ex.js；读档后重放，重复调用按检查早退；
  *   - 待机档归一（#814）与预设模板补填（#884）——两处都是「旧存档里没有
  *     新字段」的初始化：前者把引擎按预设补进来的 1 归成移植版的状态 0，
  *     后者给没有预设的后代补上旧编码反推出的预设号。两者都幂等，读档链
@@ -33,7 +31,8 @@
  *     另行安置」，#137 判定依据见下）在本链内等价实现：
  *       1. `A == MASTER → EX_TALENT:A:200 = 1`（魔王高贵标识）——**归
  *          钩子**：历史补丁的唯一调用点就是读档钩子（读档后重放）；新档
- *          对应写点在 chara-ex.js（#138 已落 ex_talent:0:200），双路径同构。
+ *          对应来源是 0 号角色文件里的 EX_TALENT 预设（引擎在 addCharacter
+ *          与读档的 fillData 两处套用），双路径同构。
  *       2. `MAXBASE:A:0 < 600 → 600`、3. `MAXBASE:A:1 < 100 → 100`
  *          （「正太魔王被榨干之后的修正」）——**归钩子**：运行期压低
  *          MAXBASE 的写点（event-addict.js、source-check.js）都自带
@@ -47,7 +46,6 @@
 const era = require('#/era-electron');
 const { begin, is_state, STATE } = require('#/system/flow/game-state');
 const era_flag = require('#/era-utils/era-flag');
-const { ex_talentname_init } = require('#/system/chara/chara-ex');
 const { normalize_idle_status } = require('#/system/chara/chara-init');
 const { backfill_chara_templates } = require('#/system/chara/chara-pregnancy');
 const { chara_name_init } = require('#/system/chara/chara-name-list');
@@ -71,8 +69,6 @@ async function handle_load() {
   await era.loadGlobal();
   // 角色名初始化，真身见 chara-name-list.js（#388）
   chara_name_init();
-  // EX素质名初始化（非存档表，读档后重放；重复调用按检查早退）
-  ex_talentname_init();
 
   // 待机档归一（#814）：引擎读档时会把角色文件里的状态预设补进旧存档里
   // 从未写过的槽，而那些预设是原版的 1 = 待機——移植版没有这一档（四个
@@ -110,7 +106,8 @@ async function handle_load() {
   // FOR A,0,CHARANUM 对全部已加入角色（含 0 号位）
   for (const cid of era.getAddedCharacters()) {
     // A == MASTER → EX_TALENT:A:200 = 1（历史补丁行，判定依据见文件头）。
-    // MASTER 恒 0（魔王，本作无换主机制）；ex_talent 表随 #138 实现
+    // MASTER 恒 0（魔王，本作无换主机制）。引擎的读档补齐已经按 0 号角色
+    // 预设把这一格填成 1（#834），这一行是同一结果的保底重放
     if (cid === 0) {
       // EX_TALENT:200 = 魔王（高贵标识）
       era.set('ex_talent:0:200', 1);

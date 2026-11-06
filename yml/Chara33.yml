@@ -80,5 +80,9 @@
   "317": 9
 "CSTR":
   "60": "本宫"
+# 角色专属标记（EX_TALENT:103 = 嘉德）：#834 起写在预设里，由引擎在
+# addCharacter 时套用，加入点不再手工赋值。序号语义见 yml/Ex_Talent.yml。
+"ex_talent":
+  "103": 1
 "portcflag":
   "预设模板": 33

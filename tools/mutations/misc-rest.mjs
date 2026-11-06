@@ -8,7 +8,8 @@ const make = (id, desc, file, find, replace, must_mention) => ({
   must_mention,
 });
 
-const ex = 'chara_ex：扩展口上编号取最后命中项并保留静态局部';
+const ex =
+  'chara_ex：扩展口上编号取最后命中项并保留静态局部，EX 素质名取自 yml 名字表';
 const tatoo = 'TATOO：只收集 10..19 的非空刺青';
 const draw = 'DRAW_EXT_COMM：两种彩条保留填充宽度';
 const menu_button = 'MENU_BUTTON：前缀、快捷键与明暗参数原样交给引擎';
@@ -30,7 +31,9 @@ const transport = 'MAOUNET：INPORT_B 按字段格式写入通信记录';
 const menu = 'MAOUNET：菜单可切换通信勇者等级规则并清空公共记录';
 const hooks = 'MAOUNET：据点 888 接入真身';
 const chara_boundary = 'add_chara_ex：16 被检查拦截，17 从精确下界进入分发';
-const chara_table = 'chara_ex：名称表与八个写槽逐项对应';
+// 族形状与「加入点不再写值」两条用例的标题（#834 后八个实现搬进角色预设）
+const chara_shape = 'CHARA_EX 族静态形状';
+const chara_table = 'chara_ex：八个角色的 EX 素质改由角色预设套用';
 const tattoo_show = 'DUNGEON_SPY：刺青炫耀只在有可选图案时输出';
 const gradient = 'PRINT_COLORBAR2：临界值、空格颜色与 1/32 步长可观测';
 const colors = 'BARCOLORSET：十种命名色与默认色逐项对应';
@@ -48,7 +51,7 @@ const export_select_100 =
   'MAOUNET：导出菜单里 100 号角色能被选中、取消照常可用（预设 100 × [100] 取消，#593）';
 
 /** 本分片条数（门 1）：增删条目必须同步改它。 */
-export const COUNT = 180; // #593 +4（M11980-M11982、M11987：导出菜单的取消/决定键不再落进预设 ID 段，全由 100 号角色那条用例盯住）
+export const COUNT = 168; // #834 -13（7224/7225/7527-7537：EX 名字表与八个注册实现的赋值随 #834 搬进 yml/Ex_Talent.yml 与角色预设，目标代码不存在了）+1（M18358：加入点重新手工写值）；#593 +4（M11980-M11982、M11987：导出菜单的取消/决定键不再落进预设 ID 段，全由 100 号角色那条用例盯住）
 
 export default [
   make(
@@ -81,22 +84,6 @@ export default [
     'ere/system/chara/chara-ex.js',
     'function get_ex_kojo_num(cid) {',
     'function get_ex_kojo_num(cid) {\n  get_ex_kojo_num_local = 0;',
-    ex,
-  ),
-  make(
-    7224,
-    'EX 名表重复初始化检查失效',
-    'ere/system/chara/chara-ex.js',
-    '    return false;\n  }\n  Object.assign(ex_talent_names, {',
-    '    void 0;\n  }\n  Object.assign(ex_talent_names, {',
-    ex,
-  ),
-  make(
-    7225,
-    'EX 名表天神名称损坏',
-    'ere/system/chara/chara-ex.js',
-    "    904: '天神',",
-    "    904: '损坏',",
     ex,
   ),
 
@@ -1230,108 +1217,29 @@ export default [
     'chara_id >= 16',
     chara_boundary,
   ),
+  // 声明空间由 dispatch-family 的族形状用例盯着（777 是编号空间的后沿）
+  {
+    desc: 'M7538 chara_ex 声明空间丢失 777',
+    file: 'ere/system/chara/chara-ex.js',
+    find: '  208, 209, 210, 211, 223, 777,',
+    replace: '  208, 209, 210, 211, 223,',
+    tests: ['dispatch-family'],
+    must_mention: chara_shape,
+  },
   make(
-    7527,
-    'add_chara_ex 丢失魔王编号特例',
+    18358,
+    '加入点重新手工写 EX 素质（把 #834 搬进角色预设的赋值写回来）',
     'ere/system/chara/chara-ex.js',
-    'chara_id >= 17 || chara_id === 0',
-    'chara_id >= 17',
-    chara_table,
-  ),
-  make(
-    7528,
-    'EX 名称表普林希斯损坏',
-    'ere/system/chara/chara-ex.js',
-    "    102: '普林希斯',",
-    "    102: '损坏',",
-    chara_table,
-  ),
-  make(
-    7529,
-    'EX 名称表琼损坏',
-    'ere/system/chara/chara-ex.js',
-    "    101: '琼',",
-    "    101: '损坏',",
-    chara_table,
-  ),
-  make(
-    7530,
-    'EX 名称表丽塔损坏',
-    'ere/system/chara/chara-ex.js',
-    "    223: '丽塔',",
-    "    223: '损坏',",
-    chara_table,
-  ),
-  make(
-    7531,
-    'EX 注册 32 写槽改错',
-    'ere/system/chara/chara-ex.js',
-    'era.set(`ex_talent:${cid}:102`, 1);',
-    'era.set(`ex_talent:${cid}:101`, 1);',
-    chara_table,
-  ),
-  make(
-    7532,
-    'EX 注册 33 写槽改错',
-    'ere/system/chara/chara-ex.js',
-    'era.set(`ex_talent:${cid}:103`, 1);',
-    'era.set(`ex_talent:${cid}:101`, 1);',
-    chara_table,
-  ),
-  make(
-    7533,
-    'EX 注册 35 写槽改错',
-    'ere/system/chara/chara-ex.js',
-    'era.set(`ex_talent:${cid}:104`, 1);',
-    'era.set(`ex_talent:${cid}:101`, 1);',
-    chara_table,
-  ),
-  make(
-    7534,
-    'EX 注册 223 写槽改错',
-    'ere/system/chara/chara-ex.js',
-    'era.set(`ex_talent:${cid}:223`, 1);',
-    'era.set(`ex_talent:${cid}:101`, 1);',
-    chara_table,
-  ),
-  make(
-    7535,
-    'EX 注册 777 写槽改错',
-    'ere/system/chara/chara-ex.js',
-    'era.set(`ex_talent:${cid}:777`, 1);',
-    'era.set(`ex_talent:${cid}:101`, 1);',
-    chara_table,
-  ),
-  make(
-    7536,
-    'EX 注册 34 丢失无双写入',
-    'ere/system/chara/chara-ex.js',
-    '  era.set(`ex_talent:${cid}:801`, 1);',
-    '  void cid;',
-    chara_table,
-  ),
-  make(
-    7537,
-    'EX 注册 34 丢失一人军团写入',
-    'ere/system/chara/chara-ex.js',
-    '  era.set(`ex_talent:${cid}:901`, 1);',
-    '  void cid;',
-    chara_table,
-  ),
-  make(
-    7538,
-    'chara_ex 声明空间丢失 777',
-    'ere/system/chara/chara-ex.js',
-    '  208, 209, 210, 211, 223, 777,',
-    '  208, 209, 210, 211, 223,',
+    "const chara_ex = new DispatchFamily('CHARA_EX', DECLARED_CHARA_IDS);",
+    "const chara_ex = new DispatchFamily('CHARA_EX', DECLARED_CHARA_IDS);\nchara_ex.register(0, (cid) => era.set(`ex_talent:${cid}:200`, 1));",
     chara_table,
   ),
   make(
     7539,
-    'EX 素质未知名称不再回落空串',
+    'EX 素质名不再跳过未登记的序号（引擎抛 TypeError，#739）',
     'ere/system/chara/chara-ex.js',
-    "return ex_talent_names[id] ?? '';",
-    "return ex_talent_names[id] ?? '损坏';",
+    "  if (!era.get('ex_talentkeys').includes(id)) {\n    return '';\n  }\n",
+    '  void 0;\n',
     ex,
   ),
   make(

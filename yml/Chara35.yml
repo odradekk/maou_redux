@@ -68,5 +68,9 @@
   "21": 3
 "CSTR":
   "60": "菲娅"
+# 角色专属标记（EX_TALENT:104 = 菲娅）：#834 起写在预设里，由引擎在
+# addCharacter 时套用，加入点不再手工赋值。序号语义见 yml/Ex_Talent.yml。
+"ex_talent":
+  "104": 1
 "portcflag":
   "预设模板": 35

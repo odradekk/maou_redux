@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 74; // #949 +3（M18250–M18252：33 号条目的删除、price 改错、name 非 snake_case——商店 32/33 号的道具表补齐与对账）；#815 +1（M18301：Ex.yml 漏登记射精槽——exkeys 少一格，取消回合的 NOWEX:5 漏到下一回合）；#876 +4：+2（M41/M42 从 train 分片移入——指令 0 的阶梯表搬进 ere/data/train-source-const.js），+2（M18100/M18101：取档口径的越档边界、未声明等级的默认档）；#883 -1（M16108：yml/E.yml 随战斗状态搬成普通对象撤除） // #884 +2（M16606/M16607：角色预设的预设模板值改错、PortCFlag 的字段条目被删）； #848 +2（M16254/M16255：GameBase 的【初始角色编号】改坏、给角色预设加上以 0 号为目标的相性）；#901 +13（M16100-M16112：变量表 name/type 的缺失、重名、非 snake_case、保留字、非法 type 与豁免名单失效）；#814 +9（M15850-M15858：角色预设在用的 cflag 序号与条目、mark/talent/cstr 的新登记、name/type 形状）；#822 +4（M15700/M15701：Abl 20/21 的 yml 名字；M15702/M15703：指令常量 54/89 的指令名——#836 把指令名搬进常量后跟着改挂，编号不变）；#746 +3（M14608-M14610：现种族 211 的名字声明、编号与名称）；#733 +1（M14540：通信回归场景漏载 Equip 名字表）；#731 +1（M14530：【最低支持版本】不得高于已发布的 0.1.0）；master 28（#640 +7：M12870-M12876 yml 装载覆盖与内容固定的行为检查）+ 4（#642：M12936-M12939 标题画面使用的 GameBase 信息改坏）
+export const COUNT = 79; // #834 +5（M18350-M18354：EX 素质名进 yml、八个注册实现搬进角色预设）；#949 +3（M18250–M18252：33 号条目的删除、price 改错、name 非 snake_case——商店 32/33 号的道具表补齐与对账）；#815 +1（M18301：Ex.yml 漏登记射精槽——exkeys 少一格，取消回合的 NOWEX:5 漏到下一回合）；#876 +4：+2（M41/M42 从 train 分片移入——指令 0 的阶梯表搬进 ere/data/train-source-const.js），+2（M18100/M18101：取档口径的越档边界、未声明等级的默认档）；#883 -1（M16108：yml/E.yml 随战斗状态搬成普通对象撤除） // #884 +2（M16606/M16607：角色预设的预设模板值改错、PortCFlag 的字段条目被删）； #848 +2（M16254/M16255：GameBase 的【初始角色编号】改坏、给角色预设加上以 0 号为目标的相性）；#901 +13（M16100-M16112：变量表 name/type 的缺失、重名、非 snake_case、保留字、非法 type 与豁免名单失效）；#814 +9（M15850-M15858：角色预设在用的 cflag 序号与条目、mark/talent/cstr 的新登记、name/type 形状）；#822 +4（M15700/M15701：Abl 20/21 的 yml 名字；M15702/M15703：指令常量 54/89 的指令名——#836 把指令名搬进常量后跟着改挂，编号不变）；#746 +3（M14608-M14610：现种族 211 的名字声明、编号与名称）；#733 +1（M14540：通信回归场景漏载 Equip 名字表）；#731 +1（M14530：【最低支持版本】不得高于已发布的 0.1.0）；master 28（#640 +7：M12870-M12876 yml 装载覆盖与内容固定的行为检查）+ 4（#642：M12936-M12939 标题画面使用的 GameBase 信息改坏）
 
 export default [
   {
@@ -108,6 +108,56 @@ export default [
     ],`,
     tests: ['portcflag-table', 'extalent-table'],
     must_mention: '没有对应名字表',
+  },
+  // —— #834：EX 素质的名字搬进 yml/Ex_Talent.yml，八个注册实现搬进角色预设 ——
+  {
+    desc: 'M18350 Chara0 的 ex_talent 魔王标记改成 0（预设与逐键对照都必须红，#834）',
+    file: 'yml/Chara0.yml',
+    find: `"ex_talent":
+  "200": 1`,
+    replace: `"ex_talent":
+  "200": 0`,
+    tests: ['extalent-table'],
+    must_mention: 'Chara0.yml 的 ex_talent 预设',
+  },
+  {
+    desc: 'M18351 Chara34 的 ex_talent 丢 801（狂王的无双消失——逐项固定用例必须红，#834）',
+    file: 'yml/Chara34.yml',
+    find: `  "4": 1
+  "801": 1
+  "901": 1`,
+    replace: `  "4": 1
+  "901": 1`,
+    tests: ['extalent-table'],
+    must_mention: 'Chara34.yml 的 ex_talent 预设',
+  },
+  {
+    desc: 'M18352 Ex_Talent.yml 的「无双」序号改错（801 改 800——登记集与角色预设对不上，#834）',
+    file: 'yml/Ex_Talent.yml',
+    find: `"无双":
+  id: 801`,
+    replace: `"无双":
+  id: 800`,
+    tests: ['extalent-table'],
+    must_mention: '登记集必须是全库实际用到的 17 个序号',
+  },
+  {
+    desc: 'M18353 Ex_Talent.yml 出现非 snake_case 的 name（天神改 Deity——名字即访问器名，#834）',
+    file: 'yml/Ex_Talent.yml',
+    find: '  name: "deity"',
+    replace: '  name: "Deity"',
+    tests: ['extalent-table'],
+    must_mention: '的 name 必须是英文 snake_case',
+  },
+  {
+    desc: 'M18354 Chara35 的 ex_talent 写到未登记的序号（104 改 105——预设整行被丢弃，#834）',
+    file: 'yml/Chara35.yml',
+    find: `"ex_talent":
+  "104": 1`,
+    replace: `"ex_talent":
+  "105": 1`,
+    tests: ['extalent-table'],
+    must_mention: 'Chara35.yml 的 ex_talent 预设',
   },
   {
     engine: true,
@@ -283,7 +333,7 @@ export default [
     replace: '"基礎":\n  "0": 1000\n  "1": 10000\n  "2": 10000',
     tests: ['chara-load'],
     must_mention:
-      '角色 0 的预设内容（基礎全满、素質 1/122、portcflag 预设模板）',
+      '角色 0 的预设内容（基礎全满、素質 1/122、ex_talent 魔王、portcflag 预设模板）',
   },
   {
     engine: true,
