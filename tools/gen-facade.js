@@ -48,9 +48,10 @@ const ONE_DIM_TABLES = ['flag', 'tflag', 'item', 'global'];
 // （读侧不受限）。
 // cstr 随 #136 进门面（名字走 facade-names；首个字段 99 故事名，读写在存档
 // 界面）。#830 起 CStr.yml 也登记了这批下标——名字仍以 facade-names 为准。
-// ex 随 #216（J6）进门面：绝顶计数（ex/nowex 共用名字表，引擎寻址层
-// case"nowex" → staticData.ex）；yml/Ex.yml 自 #815 起登记了 0-5，
-// 名字走 facade-names，首个具名位 5 喷乳绝顶（COM_EJAC_PLAYER_MILK 的跨域写点）。
+// ex 是绝顶计数（ex/nowex 共用名字表，引擎寻址层 case"nowex" →
+// staticData.ex），yml/Ex.yml 自 #815 起登记了 0-5。它仍在属主表里，但 0-5
+// 全部只有 NOWEX 写点（5 号自 #980 起与 0-4 号同路），名字在 facade-names
+// 里留空——没有跨域写点就没有门面的理由。
 // tequip 随 #215（J5）进门面：调教域表（桶随 beginTrain 建、endTrain 删），
 // yml/TEquip.yml 自 #830 起登记这 15 个下标（登记的是「调教开始按声明集预置
 // 0」那批槽，见该文件头注），名字走 facade-names；跨域两段（22 属 system、

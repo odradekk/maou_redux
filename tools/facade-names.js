@@ -775,17 +775,10 @@ const tequip = {
   90: named_tail('触手', 'TEQUIP:90 触手調教'),
 };
 
-// —— EX：绝顶计数（#216 J6 进门面；ex/nowex 共用一张名字表——引擎寻址层
-//    case"nowex" → staticData.ex；#815 起 yml/Ex.yml 登记了 0-5，本表只留
-//    那批之外的一个名字）。只名一个：EX:5 射精·喷乳（com_ejac_player_milk
-//    的 EX:PLAYER:5 += 1，属主 system——train 侧写它必须走门面）。
-//    其余下标随各自工单补名（#71 结论三：未命名不进门面）。 ——
-const ex = {
-  5: named(
-    '喷乳绝顶',
-    'EX:5 射精·喷乳（com_ejac_player_milk 的 EX:PLAYER:5 += 1）',
-  ),
-};
+// —— EX：绝顶计数。ex/nowex 共用一张名字表（引擎寻址层 case"nowex" →
+//    staticData.ex），0-5 全部登记在 yml/Ex.yml；本表不给 ex 补名——0-4 号
+//    一直只有 NOWEX 写点，5 号自 #980 起同路（EX 只由回合结算折入一次），
+//    没有跨域写点，门面里就不该有它。 ——
 
 const stain = {
   2: named('阴茎污渍', 'STAIN:2 = ペニス'),
@@ -812,7 +805,6 @@ const PORT_TABLE_OWNERS = {
 
 const NAMES = {
   cflag,
-  ex,
   flag,
   tflag,
   item,

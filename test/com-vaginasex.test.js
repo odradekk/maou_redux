@@ -11,7 +11,7 @@
  *     ゲージ复位钳位；
  *   - com_ejac_player_milk：非母乳体质早退、乘率串（克制减半等）、
  *     半衰蓄积、E 判定（蓄积 S 越过上限即喷乳，与性交/肛交喷射精同构）、
- *     EX:5/NOWEX:5（门面 + 直写）；
+ *     EX:5/NOWEX:5（只写 NOWEX，EX:5 由回合结算折入）；
  *   - com_after_vagina_sex：私处经验分档、处女异常经验（此时 TALENT:0
  *     未清——丧失在 source-check 后半）、RAND:2 清 CFLAG:113、百合 +4、
  *     爱情经验表、RELATION 助手分支、童贞丧失（CFLAG:PLAYER:15 与近亲
@@ -290,8 +290,16 @@ test('MILK：E = 2 大量喷乳 → 文案、喷奶经验、STAIN:5 |= 16、EX/N
   assert.equal(fixture.store.get('exp:0:54'), 2);
   assert.equal(fixture.store.get('exp:0:50'), 1);
   assert.equal(fixture.store.get('stain:0:5'), 16);
-  assert.equal(fixture.store.get('ex:0:5'), 1, 'EX:PLAYER:5（门面）');
-  assert.equal(fixture.store.get('nowex:0:5'), 1);
+  assert.equal(
+    fixture.store.get('nowex:0:5'),
+    1,
+    '一次大量喷乳只记 1 次 NOWEX:5',
+  );
+  assert.equal(
+    fixture.store.has('ex:0:5'),
+    false,
+    'EX:5 由回合结算折入一次，回合内不得直写（直写会让画面次数翻倍）',
+  );
   assert.equal(fixture.era.get('base:0:3'), 100, '大量喷乳保留封顶前的余量');
 });
 
@@ -333,8 +341,16 @@ for (const [name, initial, amount, grade, remaining] of [
     await vs.com_ejac_player_milk(amount);
     assert.equal(fixture.era.get('base:0:3'), remaining);
     assert.equal(fixture.era.get('exp:0:54') || 0, grade);
-    assert.equal(fixture.era.get('nowex:0:5') || 0, grade ? 1 : 0);
-    assert.equal(fixture.era.get('ex:0:5') || 0, grade ? 1 : 0);
+    assert.equal(
+      fixture.era.get('nowex:0:5') || 0,
+      grade ? 1 : 0,
+      grade ? '一档只记 1 次：NOWEX:5 收本回合增量' : '未成档不写 NOWEX:5',
+    );
+    assert.equal(
+      fixture.era.get('ex:0:5') || 0,
+      0,
+      'EX:5 不直写，由回合结算折入（直写 + 折入 = 画面次数翻倍）',
+    );
     assert.equal(fixture.era.get('stain:0:5'), grade ? 20 : 4);
   });
 }
