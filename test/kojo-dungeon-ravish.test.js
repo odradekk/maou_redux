@@ -200,11 +200,10 @@ test('RYOUZYOKU 主框架：同一怪物再来 → CFLAG:131 递增（畏怖计�
   const fixture = await setup_ravish((f) => {
     f.store.set('base:31:0', 500);
     f.store.set('base:31:1', 500);
-    f.store.set('cflag:31:130', 100); // 上次凌辱过狗头人（第 2 列）
+    f.store.set('cflag:31:130', 100); // 上次凌辱过狗头人（ID 100）
     f.store.set('cflag:31:131', 2);
-    // 狗头人（ID 100）放第 2 列（列头 100）——扫描记 MON_FEAR = 100（列头），
-    // 主循环 LOCAL:1 = 100（怪物号）→ MON_FEAR == LOCAL:1 → CFLAG:131++
-    // （列头/怪物号近似判定）
+    // 狗头人放第 2 列：第一轮扫描把记忆里的**怪物号**存进 MON_FEAR，
+    // 主循环拿它与该列的怪物号比 → 同一怪物 → CFLAG:131++
     f.battle('DEFENSE_2').id = 100;
     f.battle('DEFENSE_2').rape_type = 1;
     f.battle('DEFENSE_2').count = 5;
@@ -213,19 +212,17 @@ test('RYOUZYOKU 主框架：同一怪物再来 → CFLAG:131 递增（畏怖计�
   fixture.era.input = async () => 0;
   await mod.ryouzyoku(31, seq_rand(0));
   // 同一怪物（MON_FEAR == LOCAL:1）→ CFLAG:131++
-  assert.equal(fixture.store.get('cflag:31:131'), 3);
+  assert.equal(fixture.store.get('cflag:31:131'), 3, '畏怖计数递增到 3');
 });
 
-test('RYOUZYOKU 主框架：记忆的怪物不在列头量纲上对不上怪物号 → 计数不增（既有缺陷的把手）', async () => {
+test('RYOUZYOKU 主框架：记忆的怪物号不在任何列头值上，也照样累加（#934）', async () => {
   const fixture = await setup_ravish((f) => {
     f.store.set('base:31:0', 500);
     f.store.set('base:31:1', 500);
     f.store.set('cflag:31:130', 110); // 上次凌辱过兽人（ID 110）
     f.store.set('cflag:31:131', 2);
-    // 兽人（ID 110）放第 2 列：第一轮扫描记下的 MON_FEAR 是列头 100，
-    // 与这个怪物号对不上，于是落「不同怪物」分支——CFLAG:131 不动。
-    // 这条与上一条一起把「列头/怪物号两套量纲」的现状钉住；单开一票修它时
-    // 两条都要翻面（改为按怪物号累加）。
+    // 兽人（ID 110）放第 2 列。列头基数是 0/100/200，与怪物号是两套量纲；
+    // 记忆存的是怪物号，所以「同一怪物再来」与它落在第几列无关。
     f.battle('DEFENSE_2').id = 110;
     f.battle('DEFENSE_2').rape_type = 1;
     f.battle('DEFENSE_2').count = 5;
@@ -233,7 +230,91 @@ test('RYOUZYOKU 主框架：记忆的怪物不在列头量纲上对不上怪物�
   const mod = fixture_module(fixture);
   fixture.era.input = async () => 0;
   await mod.ryouzyoku(31, seq_rand(0));
-  assert.equal(fixture.store.get('cflag:31:131'), 2, '计数不增');
+  assert.equal(
+    fixture.store.get('cflag:31:131'),
+    3,
+    '同一怪物再来，畏怖计数递增到 3',
+  );
+});
+
+test('RYOUZYOKU 主框架：记忆的怪物落在第 1 列，计数递增而不是被当成「没有记忆」清零', async () => {
+  const fixture = await setup_ravish((f) => {
+    f.store.set('base:31:0', 500);
+    f.store.set('base:31:1', 500);
+    f.store.set('cflag:31:130', 120); // 上次凌辱过史莱姆（ID 120）
+    f.store.set('cflag:31:131', 4);
+    // 第 1 列的列头基数是 0——「记忆在这一列」曾经与「压根没有记忆」同值，
+    // 于是这个分支把计数清成 0。记忆里存的是怪物号，两者不再相撞。
+    f.battle('DEFENSE_1').id = 120;
+    f.battle('DEFENSE_1').rape_type = 2;
+    f.battle('DEFENSE_1').count = 5;
+  });
+  const mod = fixture_module(fixture);
+  fixture.era.input = async () => 0;
+  await mod.ryouzyoku(31, seq_rand(0));
+  assert.equal(
+    fixture.store.get('cflag:31:131'),
+    5,
+    '第 1 列的记忆也走递增，计数 4 → 5',
+  );
+});
+
+test('RYOUZYOKU 主框架：本场先出场的是别的怪物 → 记忆不被改写，轮到记忆中的怪物才递增', async () => {
+  const fixture = await setup_ravish((f) => {
+    f.store.set('base:31:0', 500);
+    f.store.set('base:31:1', 500);
+    f.store.set('cflag:31:130', 110); // 记忆 = 兽人
+    f.store.set('cflag:31:131', 2);
+    // 第 1 列狗头人（100）先出场，第 2 列才是记忆中的兽人（110）
+    f.battle('DEFENSE_1').id = 100;
+    f.battle('DEFENSE_1').rape_type = 1;
+    f.battle('DEFENSE_1').count = 5;
+    f.battle('DEFENSE_2').id = 110;
+    f.battle('DEFENSE_2').rape_type = 1;
+    f.battle('DEFENSE_2').count = 5;
+  });
+  const mod = fixture_module(fixture);
+  fixture.era.input = async () => 0;
+  await mod.ryouzyoku(31, seq_rand(0));
+  assert.equal(
+    fixture.store.get('cflag:31:130'),
+    110,
+    '记忆仍是兽人——先出场的狗头人不得改写它',
+  );
+  assert.equal(
+    fixture.store.get('cflag:31:131'),
+    3,
+    '轮到记忆中的怪物才递增：2 → 3',
+  );
+});
+
+test('RYOUZYOKU 主框架：同一怪物连打 3 场 → 畏怖计数逐场累加', async () => {
+  const fixture = await setup_ravish((f) => {
+    f.store.set('base:31:0', 500);
+    f.store.set('base:31:1', 500);
+    f.battle('DEFENSE_2').id = 110;
+    f.battle('DEFENSE_2').rape_type = 1;
+    f.battle('DEFENSE_2').count = 5;
+  });
+  const mod = fixture_module(fixture);
+  fixture.era.input = async () => 0;
+  await mod.ryouzyoku(31, seq_rand(0));
+  assert.equal(
+    fixture.store.get('cflag:31:131'),
+    0,
+    '第 1 场：首次记忆，计数 0',
+  );
+  // 第 2、3 场沿用上一场留下的记忆与计数（同一份世界底座）
+  for (const expected of [1, 2]) {
+    fixture.store.set('base:31:0', 500);
+    fixture.store.set('base:31:1', 500);
+    await mod.ryouzyoku(31, seq_rand(0));
+    assert.equal(
+      fixture.store.get('cflag:31:131'),
+      expected,
+      `同一怪物第 ${expected + 1} 场：计数 ${expected}`,
+    );
+  }
 });
 
 test('RYOUZYOKU 主框架：男人（TALENT:122）→ 分派到 H14 男版（*_ryou_man）', async () => {
