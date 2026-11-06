@@ -1892,8 +1892,9 @@ function target_ejac_check() {
     chara(cid).train.阴茎污渍 |= 4;
 
     game.system.对象射精 = 2;
+    // 5 号与 0-4 号走同一条路：只写 NOWEX，EX:5 由回合结算折入一次。回合内
+    // 同时直写 EX 会让结算再加一遍，「射精·喷乳绝顶」的次数就成了事件数的两倍
     era.set(`nowex:${cid}:5`, (era.get(`nowex:${cid}:5`) || 0) + 1);
-    chara(cid).system.喷乳绝顶 += 1; // EX:5（与 TARGET_MILK_CHECK 共用同一计数器）
   } else {
     add_lose(1, 40);
     if (exp3 < EXPLV[1]) {
@@ -1948,8 +1949,8 @@ function target_ejac_check() {
 // 点。乘算级联（克制/接受快感/淫乱化/否定快感/乳房敏感/媚药/利尿剂/调教者
 // 幼儿退行/调教者幼稚/贫乳/绝壁）后按 BASE:3/MAXBASE:3 比值分大量/普通两
 // 档，SOURCE:12/13 分档表与 target_ejac_check 完全相同（两函数同一张表）；
-// EXP:54、STAIN:5、TFLAG:11/35、NOWEX:5/EX:5（两档共用同一计数器，与
-// target_ejac_check 大量射精档的 chara(cid).system.喷乳绝顶 是同一属性）。
+// EXP:54、STAIN:5、TFLAG:11/35、NOWEX:5（两档共用同一计数器，与
+// target_ejac_check 大量射精档同一格；EX:5 由回合结算折入一次）。
 function target_milk_check() {
   if (!chara(cid).chara.母乳体质) {
     return;
@@ -2060,7 +2061,6 @@ function target_milk_check() {
     }
 
     era.set(`nowex:${cid}:5`, (era.get(`nowex:${cid}:5`) || 0) + 1);
-    chara(cid).system.喷乳绝顶 += 1;
   } else {
     add_lose(1, 40);
     if (exp54 < EXPLV[1]) {
@@ -2098,7 +2098,6 @@ function target_milk_check() {
     }
 
     era.set(`nowex:${cid}:5`, (era.get(`nowex:${cid}:5`) || 0) + 1);
-    chara(cid).system.喷乳绝顶 += 1;
   }
 }
 
