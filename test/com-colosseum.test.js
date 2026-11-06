@@ -762,8 +762,12 @@ test('202/206 号指令 999 暂时放过 → 一律 RETURN 0（整条指令作�
   );
   // 作废即不收射精检查：TFLAG:15 不写、SELECTCOM 停在 206
   assert.equal(sixth.era_flag.selectcom, 206);
-  // TFLAG:15 由 beginTrain 预置 0：作废即不收射精检查，旗标停在 0
+  // TFLAG:15 由 beginTrain 预置 0：作废即不收射精检查，一笔都不该写
   assert.equal(sixth.fixture.store.get('tflag:15'), 0, '射精旗标不写');
+  assert.ok(
+    !sixth.fixture.var_writes.some((w) => w.name === 'tflag:15'),
+    '作废的指令不写射精旗标',
+  );
 });
 
 test('204 号指令的陷落行与其余四体一致：PRINTW（等键）', async () => {
@@ -833,6 +837,11 @@ test('射精量分档：技巧/顺从/欲情/体位倍率逐档相乘（SELECTCO
     '射精量 = 技巧档 × 顺从 × 欲情 × 体位（1600×1.00×1.2×1.5）',
   );
   assert.equal(fixture.store.get('tflag:15'), 0, '2880 < 10000 → E = 0');
+  // 旗标值是 0，但**写这一笔**发生了（预置也是 0，读值分不出写没写）
+  assert.ok(
+    fixture.var_writes.some((w) => w.name === 'tflag:15'),
+    'E = 0 也要把 TFLAG:15 写下来（写 0 ≠ 不写）',
+  );
 });
 
 test('通常射精（E = 1）：精液经验 +1、槽扣减、射精旗标与污垢', async () => {
@@ -915,6 +924,11 @@ test('MAXBASE:MASTER:4 == 0（无射精槽）→ 射精检查整段跳过', asyn
     fixture.store.get('tflag:15'),
     0,
     '整段跳过（含 TFLAG:15，停在预置的 0）',
+  );
+  // 读值是 0 与「没写」同形：判据落在写入清单上
+  assert.ok(
+    !fixture.var_writes.some((w) => w.name === 'tflag:15'),
+    '整段跳过：这一笔写入不该发生',
   );
   assert.equal(fixture.store.get('exp:31:20'), undefined);
 });

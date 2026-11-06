@@ -2730,7 +2730,7 @@ export default [
     find: "  era.set('tflag:15', e); // 死斗场怪物が射精フラグ（source-check/A 头消费）",
     replace: '  // 变异：TFLAG:15 写删',
     tests: ['com-colosseum'],
-    must_mention: '2880 < 10000 → E = 0',
+    must_mention: 'E = 0 也要把 TFLAG:15 写下来（写 0 ≠ 不写）',
   },
   {
     desc: 'M1038 com207 的 JUMP com51 尾调用改不设 SELECTCOM',
