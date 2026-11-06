@@ -14,8 +14,10 @@
  * 六张表的名字以 `yml/` 列名（引擎名字表，#43 转出、#60 归一简体）为唯一
  * 真相，生成器直接读 yml——本文件对这六张表**只收 yml 没有的缺口**（如
  * mark:4）或名字一致时的更精注释；同一下标两源名字不一致，生成器报错，
- * 宁可红也不静默择一。cflag/tflag/item/global 的 yml 表是空表（引擎建桶
- * 用、无列名），名字仍全部来自本文件。
+ * 宁可红也不静默择一。cflag/item/global 的 yml 表是空表（引擎建桶用、
+ * 无列名），名字仍全部来自本文件。tflag/tequip/stain/cstr 自 #830 起在 yml 里
+ * 也有一份（中文键就是这里的名字，供引擎装载与开发套件用），两处由
+ * test/train-table-names.test.js 保持逐条一致。
  *
  * 移植自建表（delta/deltabase）没有 yml 表也没有 ownership/ 产物（ere
  * 自建变量族，测不出属主），名字与属主都在本文件声明，见
@@ -503,6 +505,53 @@ const flag = {
   611: named('喷水像_石', 'FLAG:611'),
   612: named('喷水像_金属', 'FLAG:612'),
   613: named('人间牧场竿役', 'FLAG:613'),
+  // —— #830：源码在用、两处都没有名字的十一个下标（yml/Flag.yml 的补登段
+  //    同批登记）。语义按读点写：设定位皆是原作设定项的开关，
+  //    全库零写点、恒开 ——
+  6: named_tail(
+    '调教文本省略',
+    'FLAG:6 ビット演算（&1 = 調教テキスト省略）；event-beforetrain 与 train-message 的两处早退读它',
+  ),
+  34: named_tail(
+    '自动购买设定',
+    'FLAG:34 ビット演算（&1 润滑液 / &2 水晶球魔力源 / &8 安全套十连）；auto_buying 是唯一读点，原作标注「未稼働」',
+  ),
+  40: named_tail(
+    '设施追加人数',
+    'FLAG:40 = running_cost 里「建造位 & 64」那一支的每人数（每人 $500）',
+  ),
+  48: named_tail(
+    '设施建造位',
+    'FLAG:48 ビット演算（個室 / ＳＭグッズ / 護衛 / 浴室 / 多目的ホール / マイク）；running_cost 的维持费位掩码',
+  ),
+  70: named_tail(
+    '失神机能关闭',
+    'FLAG:70 = 1 时 passout_check 早退（原作设定项，全库零写点、恒开）',
+  ),
+  72: named_tail(
+    '精饮机能关闭',
+    'FLAG:72 = 1 时 seiin_start 早退（原作设定项，全库零写点、恒开）',
+  ),
+  73: named_tail(
+    '强化素质关闭',
+    'FLAG:73 > 0 时素质一览页不出「四枚强化素质」那一组（原作设定项，零写点）',
+  ),
+  75: named_tail(
+    '时常发情关闭',
+    'FLAG:75 > 0 时素质一览页不出「时常发情」行；autotrain 与 event-end 也读它（原作设定项，零写点）',
+  ),
+  77: named_tail(
+    '通信勇者登场压级',
+    'FLAG:77 ビット演算（&1 = 通信勇者を 1 級で登場）',
+  ),
+  402: named_tail(
+    '派遣奴隶标志',
+    'FLAG:402 = 1 时 chara-make 跳过「按 FLAG:60 逐级调等级」那一支（等级 1 生成），生成完归位',
+  ),
+  614: named_tail(
+    '人类牧场设定',
+    'FLAG:614 ビット演算（&1 隐藏记录 / &2 出售产出的孩子）；据点设施页写、地城牧场读',
+  ),
 };
 
 // —— TFLAG：一维按域重切（ownership 248 个下标）——
@@ -619,21 +668,21 @@ const mark = {
 const cstr = {
   // 故事名：仅存档界面读写（ere/page/page-save-load.js 的 set_story_name
   // 与 build_save_info），属主 system（ownership/cstr-ownership.yml "99"）。
-  // **不得**随本表同步进 yml/CStr.yml——登记进引擎名字表的下标会被
-  // addCharacter 的 initCharaTable 预置 0，行为随之改变（#136 简报事实 3）；
-  // 门面命名是代码层动作，不碰 yml。
+  // #830 起随本表同步进 yml/CStr.yml：登记后 addCharacter 给新角色把这个槽
+  // 预置成空串（cstr 是字符串表，引擎那一支用 `?? ""`），旧档里已加入的角色
+  // 读到 undefined——两边都按 `|| ''` 与真假判断用，行为不变。
   99: named('故事名', 'set_story_name 读写（32 字符上限）'),
   // 加入时名字：角色加入即把预设名抄进 CSTR:1 是各加入路径的固定做法（ADDCHARA 后
   // CSTR:1 = %NAME:A%），#171 H2 的 k_11_lily/k_34_crazylord 沿用；
-  // 不进 yml/CStr.yml 的理由同上（预置 0 会顶掉字符串空值语义）
+  // 登记进 yml 的口径见上一条。
   1: named_tail('加入时名字', 'CSTR:A:1 = %NAME:A%'),
   2: named_tail('孩子父亲名字', 'CSTR:2 = 孩子父亲的名字'),
   // 初体验对象名：破处时把对象名抄进 CSTR:3（经验一览页读它显示）。属主
-  // train（ownership/cstr-ownership.yml "3-4"）；不进 yml/CStr.yml 的理由同上。
+  // train（ownership/cstr-ownership.yml "3-4"）。
   3: named_tail('初体验对象名', 'CSTR:(ARG:1):3 = %SAVESTR:(ARG:0)%'),
   // 初吻对象名：口上里把对象名抄进 CSTR:4（如 K8 简易助手三人关系初吻
   // 分支；ere/system/train/info-exp-screen.js 读它显示）。属主 train
-  // （ownership/cstr-ownership.yml "3-4"）；不进 yml/CStr.yml 的理由同上。
+  // （ownership/cstr-ownership.yml "3-4"）。
   4: named_tail('初吻对象名', 'CSTR:TARGET:4 = %SAVESTR:ASSI%'),
   // 家人末路：售出成熟角色后，把结局称号与角色名写给检索到的家人。
   // 属主 event（ownership/cstr-ownership.yml "5"）；stronghold 必须经门面写。
@@ -688,12 +737,13 @@ const deltabase = {
 };
 
 // —— TEQUIP：调教中的装备位（#215 J5 建模；属主见
-//    ownership/tequip-ownership.yml 的 12 个区间）。TEquip.yml 保持空表
-//    （引擎建桶用；登记名字表会让 initCharaTable 预置 0，见该文件头注），
-//    名字只进本表。只名七个：跨域三段（22 属 system、35 属 event、36 属
-//    train——各自的跨域调用点写它都必须走门面，#461 补 36）与 #213 口上
-//    头部检查消费的四位（45/55/89/90，train 域内——该族工单写它时可直写
-//    也可走门面，具名是给可读性）。
+//    ownership/tequip-ownership.yml 的 12 个区间）。#830 起这 15 个下标记
+//    进 yml/TEquip.yml（中文键即本表的名字），登记的是「调教开始时按声明集
+//    给每个入列角色预置 0」的那批槽；桶仍随 beginTrain 建、endTrain 删，
+//    不进存档，见该文件头注。只名这些：跨域三段（22 属 system、35 属
+//    event、36 属 train——各自的跨域调用点写它都必须走门面，#461 补 36）
+//    与 #213 口上头部检查消费的四位（45/55/89/90，train 域内——该族工单写
+//    它时可直写也可走门面，具名是给可读性），加 #215 建模的其余装具位。
 //    其余属主下标随各自族工单补名（#71 结论三：未命名不进门面）。——
 const tequip = {
   18: named_tail('淋浴中', 'TEQUIP:18 シャワー使用中'),
@@ -726,9 +776,9 @@ const tequip = {
 };
 
 // —— EX：绝顶计数（#216 J6 进门面；ex/nowex 共用一张名字表——引擎寻址层
-//    case"nowex" → staticData.ex，yml/Ex.yml 空表故名字走本表，同 tequip
-//    先例）。只名一个：EX:5 射精·喷乳（com_ejac_player_milk 的
-//    EX:PLAYER:5 += 1，属主 system——train 侧写它必须走门面）。
+//    case"nowex" → staticData.ex；#815 起 yml/Ex.yml 登记了 0-5，本表只留
+//    那批之外的一个名字）。只名一个：EX:5 射精·喷乳（com_ejac_player_milk
+//    的 EX:PLAYER:5 += 1，属主 system——train 侧写它必须走门面）。
 //    其余下标随各自工单补名（#71 结论三：未命名不进门面）。 ——
 const ex = {
   5: named(

@@ -103,7 +103,7 @@
 # 狂王替身（葵希罗替身，角色号 34）登场済标志：k_34_crazylord 的防重复
 # 触发判断条件（SIF FLAG:224 == 1 RETURN），登场即置 1。属主 chara（ownership/flag-ownership.yml "224"），
 # 写经本表生成的包装层（era_flag.crazylord_entered）；同函数族的
-# FLAG:223（莉莉登场済）属主 event、域内裸写，不进表
+# FLAG:223（莉莉登场済，属主 event）在 #830 的补登段
 "狂王替身登场":
   id: 224
   name: "crazylord_entered"
@@ -468,4 +468,370 @@
 "勇者相关杂项开关":
   id: 8
   name: "adventurer_flags"
+  type: "number"
+
+# —— 补登：源码在用但未登记的序号（issue #830）——
+#
+# 本段每一行都是「源码按字面量下标读写、Flag.yml 没有条目」的序号。名字来自
+# tools/facade-names.js；其中 6 / 34 / 40 / 48 / 70 / 72 / 73 / 75 / 77 / 402 /
+# 614 十一个原本两处都没有名字，随本票补进那份命名表（语义依据写在各自条目
+# 上方的注释里）。中文键与命名表逐条一致，test/train-table-names.test.js 守着
+# 「源码用到的 flag 序号都在这里」。
+#
+# 登记会改变引擎行为：fillData（resetData 与 loadData 共用）对**已声明**的
+# 序号赋 0——`this.data.flag[e] ?? (this.data.flag[e] = 0)`——未声明的一直是
+# undefined。可观察的差异有两类：
+#
+#   1. add：`undefined + n` = NaN。flag 侧全库唯一的 add 是 FLAG:60（勇者基础
+#      等级修正，enter-enemy 给勇者调等级前先加一），登记前第一次累加就是
+#      NaN 并写进存档（JSON 里序列化成 null），此后每次读都拿到 NaN；
+#   2. 其余读取点一律 `|| 0`（含 game.<域> 门面 getter）或真假 / 大小 / 位掩码
+#      判断，undefined 与 0 在这两种写法下同值。逐序号的读取点核对见 #830 的
+#      PR 正文（70 个序号、486 个读点逐类统计）。严格比较只有一处会变：
+#      FLAG:62 的 `=== 0`（kojo-k0-tender 的肉便器口上分派）——而 FLAG:62 在同一
+#      流程里、读取之前必被写 -1 或 0-12（benki.js 的 run_benki 与
+#      choose_benki_dispatch），实机的分支归属不变。
+#
+# 旧档：0.1.0 的存档里这些键一格都没有，loadData → fillData 会把它们补成 0，
+# 上面两类读取行为随之不变；已写过的序号保留存档里的值。存档形状会多出这些
+# 键，但读旧档不丢信息，按 ADR-0006 不需要抬【版本】。
+# 0 休息：回合结算尾把休息标志复位成 0（event-turnend）。置位方（EVENTSHOP
+# 的「休息」）尚未移植，当前全库只有这一处写、只有门面一处读
+"休息":
+  id: 0
+  name: "rest"
+  type: "number"
+# 1/2 上次调教对象与上次助手：选目标时写、调教收尾按它复位成 -1，
+# 勇者登场与据点结算读它
+"上次调教对象":
+  id: 1
+  name: "last_train_target"
+  type: "number"
+"上次助手":
+  id: 2
+  name: "last_assistant"
+  type: "number"
+# 5 游戏设定：位打包的开关组（战斗日志显示等），新档在 event-first 置
+# 17179934119，全库三十六处读点按位判断
+"游戏设定":
+  id: 5
+  name: "game_settings"
+  type: "number"
+# 6 调教文本省略：bit0 置位即跳过调教文案（event-beforetrain 与
+# train-message 的两处早退读它）；原作设定项，ere 侧没有写点
+"调教文本省略":
+  id: 6
+  name: "train_text_omitted"
+  type: "number"
+# 7 口上开关：显示 / 频率总开关，口上分发与自我口上读它
+"口上开关":
+  id: 7
+  name: "kojo_switch"
+  type: "number"
+# 22 录像开始状况：录像开始时的状态快照槽；当前只有门面的读写，没有其它
+# 读者（原作在录像结算里用）
+"录像开始状况":
+  id: 22
+  name: "video_start_state"
+  type: "number"
+# 25 指令过滤：按指令过滤点选（页面写、com-* 的十处读）
+"指令过滤":
+  id: 25
+  name: "order_filter"
+  type: "number"
+# 26/27 种族年龄设定两档（月替的年龄加算按它选表）
+"种族年龄设定_0":
+  id: 26
+  name: "race_age_setting_0"
+  type: "number"
+"种族年龄设定_1":
+  id: 27
+  name: "race_age_setting_1"
+  type: "number"
+# 30/31/32 诱惑成功率的三项加成：爱或淫乱人数、杀死人数、爱之奴隶所生
+# （chara-temptation 的 prepare_temptation 逐项加算）；30 同时是技巧道具的
+# 上限基数（page-item-shop）
+"爱或淫乱人数":
+  id: 30
+  name: "love_or_lewd_count"
+  type: "number"
+"杀死人数":
+  id: 31
+  name: "kill_count"
+  type: "number"
+"爱之奴隶所生":
+  id: 32
+  name: "born_of_love_slave"
+  type: "number"
+# 33 技巧素质道具数：技巧升级的「已投入件数」，凑齐 F 件时升级
+"技巧素质道具数":
+  id: 33
+  name: "skill_talent_item_count"
+  type: "number"
+# 34 自动购买设定：位掩码（&1 润滑液 / &2 水晶球魔力源 / &8 安全套十连）。
+# auto_buying 是全库唯一读点，没有写点也没有设置项（原作标注「未稼働」）
+"自动购买设定":
+  id: 34
+  name: "auto_buying_settings"
+  type: "number"
+# 35 濒死自动结束调教：置位后调教中濒死即收尾（event-aftertrain /
+# event-comend 读它）
+"濒死自动结束调教":
+  id: 35
+  name: "auto_end_train_when_dying"
+  type: "number"
+# 36 显示模式：命名表里叫「显示模式」，实际是主菜单信息面板的选择
+# （0 物品 / 技能、1 持有陷阱、4 地城概况、5 地城日常），四个切换钮写它。
+# 37 着衣系统：0 = 不着衣模式，着衣判定（cloth 的 soiling_cloth_no1 等）
+# 与二十余处读点按它分支
+"显示模式":
+  id: 36
+  name: "display_mode"
+  type: "number"
+"着衣系统":
+  id: 37
+  name: "clothing_system"
+  type: "number"
+# 40 设施追加人数：running_cost 里「建造位 & 64」那一支的每人数（每人 ¥500）
+"设施追加人数":
+  id: 40
+  name: "facility_headcount"
+  type: "number"
+# 48 设施建造位：娼馆维持费的位掩码（个室 / ＳＭグッズ / 护卫 / 浴室 /
+# 多目的ホール / マイク，见 event-nextday 的 RUNNING_COST_FACILITIES）
+"设施建造位":
+  id: 48
+  name: "facility_bitmap"
+  type: "number"
+# 60 勇者基础等级修正：勇者登场时的遗传等级，主菜单与入侵线读它算初期等级。
+# **全库 flag 侧唯一的 add 写点**（enter-enemy：调等级前先 +1）——登记前
+# 从 undefined 起累加，得到 NaN 并写进存档
+"勇者基础等级修正":
+  id: 60
+  name: "hero_base_level_bonus"
+  type: "number"
+# 61 每日香料购买数（据点每日购买，单价与上限读它）
+"每日香料购买数":
+  id: 61
+  name: "daily_spice_purchase"
+  type: "number"
+# 62/63/64 肉便器三件：行动档、常识改写、侍奉对象（benki 写、口上按档读）
+"肉便器行动":
+  id: 62
+  name: "benki_behavior"
+  type: "number"
+"肉便器常识改写":
+  id: 63
+  name: "benki_common_sense"
+  type: "number"
+"肉便器侍奉对象":
+  id: 64
+  name: "benki_service_target"
+  type: "number"
+# 70 失神机能关闭：passout_check 的早退条件（== 1 时不判失神）。
+# 原作设定项，全库零写点、恒开
+"失神机能关闭":
+  id: 70
+  name: "passout_disabled"
+  type: "number"
+# 71 自由调教跳转：调教画面直跳自由调教的开关
+"自由调教跳转":
+  id: 71
+  name: "free_train_jump"
+  type: "number"
+# 72 精饮机能关闭：seiin_start 的早退条件（== 1 时不判精饮）。
+# 原作设定项，全库零写点、恒开
+"精饮机能关闭":
+  id: 72
+  name: "semen_drink_disabled"
+  type: "number"
+# 73 强化素质关闭 / 75 时常发情关闭：素质一览页的条件
+# （> 0 时不出这两组行）；75 同时是 autotrain 与 event-end 的读点。
+# 原作设定项，全库零写点、恒开
+"强化素质关闭":
+  id: 73
+  name: "super_talent_disabled"
+  type: "number"
+"时常发情关闭":
+  id: 75
+  name: "always_aroused_disabled"
+  type: "number"
+# 76 外来勇者等级上限：异国勇者登场时的等级帽
+"外来勇者等级上限":
+  id: 76
+  name: "foreign_hero_level_cap"
+  type: "number"
+# 77 通信勇者登场压级：bit0 置位时通信勇者按 1 级登场。
+# 生成区的 era_flag.communication_hero_level_one 就是它——手写区原先那条同名
+# 覆写与生成结果逐字相同，登记后随本票删除
+"通信勇者登场压级":
+  id: 77
+  name: "communication_hero_level_one"
+  type: "number"
+# 80 处刑勇者数：处刑累计（结局与据点读）
+"处刑勇者数":
+  id: 80
+  name: "executed_hero_count"
+  type: "number"
+# 85 陷阱等级：迷宫陷阱的等级（主菜单与陷阱房读）
+"陷阱等级":
+  id: 85
+  name: "trap_level"
+  type: "number"
+# 100-115、119 口上存在判定：口上文件按角色 / 补丁号置位，口上分发读它决定
+# 是否追加段落（119 是补丁号 19 的那一格）
+"口上存在_0":
+  id: 100
+  name: "kojo_exists_0"
+  type: "number"
+"口上存在_1":
+  id: 101
+  name: "kojo_exists_1"
+  type: "number"
+"口上存在_2":
+  id: 102
+  name: "kojo_exists_2"
+  type: "number"
+"口上存在_3":
+  id: 103
+  name: "kojo_exists_3"
+  type: "number"
+"口上存在_4":
+  id: 104
+  name: "kojo_exists_4"
+  type: "number"
+"口上存在_5":
+  id: 105
+  name: "kojo_exists_5"
+  type: "number"
+"口上存在_6":
+  id: 106
+  name: "kojo_exists_6"
+  type: "number"
+"口上存在_7":
+  id: 107
+  name: "kojo_exists_7"
+  type: "number"
+"口上存在_8":
+  id: 108
+  name: "kojo_exists_8"
+  type: "number"
+"口上存在_9":
+  id: 109
+  name: "kojo_exists_9"
+  type: "number"
+"口上存在_10":
+  id: 110
+  name: "kojo_exists_10"
+  type: "number"
+"口上存在_11":
+  id: 111
+  name: "kojo_exists_11"
+  type: "number"
+"口上存在_12":
+  id: 112
+  name: "kojo_exists_12"
+  type: "number"
+"口上存在_13":
+  id: 113
+  name: "kojo_exists_13"
+  type: "number"
+"口上存在_14":
+  id: 114
+  name: "kojo_exists_14"
+  type: "number"
+"口上存在_15":
+  id: 115
+  name: "kojo_exists_15"
+  type: "number"
+"口上存在_19":
+  id: 119
+  name: "kojo_exists_19"
+  type: "number"
+# 223 勇者入场_23：莉莉登场済（event 域，enter-enemy 写、口上与勇者来袭读）
+"勇者入场_23":
+  id: 223
+  name: "hero_entry_23"
+  type: "number"
+# 402 派遣奴隶标志：等级 1 生成时置 1、生成完归位（chara-make）；
+# chara-make 的 cm_st 读它跳过「按 FLAG:60 逐级调等级」那一支
+"派遣奴隶标志":
+  id: 402
+  name: "dispatched_slave"
+  type: "number"
+# 500 狂王性别（event-first 置 2，勇者登场与画像读）/ 501 初期奴隶类型
+# （开局设定页写，== 1 走村娘分支）
+"狂王性别":
+  id: 500
+  name: "crazylord_gender"
+  type: "number"
+"初期奴隶类型":
+  id: 501
+  name: "initial_slave_type"
+  type: "number"
+# 550 指令菜单长度：调教指令菜单显示几行
+"指令菜单长度":
+  id: 550
+  name: "order_menu_length"
+  type: "number"
+# 600-613 收藏与展品的分类计数：主菜单 [111] 设施·设备的可用性判断与地城
+# 概况统计行按它读数（桩/剥制/蜡像/人偶两型/金属像/冰像/家具/绘画/喷水像两型），
+# 613 是人类牧场竿役（角色编号），不是计数
+"石像数":
+  id: 600
+  name: "stone_statue_count"
+  type: "number"
+"剥制数":
+  id: 601
+  name: "taxidermy_count"
+  type: "number"
+"蜡像数":
+  id: 602
+  name: "wax_statue_count"
+  type: "number"
+"人偶数_服装":
+  id: 603
+  name: "doll_clothed_count"
+  type: "number"
+"人偶数_球形关节":
+  id: 604
+  name: "doll_ball_joint_count"
+  type: "number"
+"金属像数":
+  id: 605
+  name: "metal_statue_count"
+  type: "number"
+"冰像数":
+  id: 606
+  name: "ice_statue_count"
+  type: "number"
+"金属像数_2":
+  id: 607
+  name: "metal_statue_count_2"
+  type: "number"
+"家具数":
+  id: 608
+  name: "furniture_count"
+  type: "number"
+"绘画数":
+  id: 609
+  name: "painting_count"
+  type: "number"
+"喷水像_石":
+  id: 611
+  name: "fountain_stone_count"
+  type: "number"
+"喷水像_金属":
+  id: 612
+  name: "fountain_metal_count"
+  type: "number"
+"人间牧场竿役":
+  id: 613
+  name: "ranch_stud"
+  type: "number"
+# 614 人类牧场设定：位掩码（&1 隐藏记录 / &2 出售产出的孩子），
+# 据点设施页写、地城牧场读
+"人类牧场设定":
+  id: 614
+  name: "ranch_display_settings"
   type: "number"
