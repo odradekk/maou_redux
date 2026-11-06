@@ -415,9 +415,8 @@ test('train-settle：base_settled 的钳制与无增量时原样返回', () => {
   const fixture = create_era_fixture();
   join_slave_chara(fixture, 31, '温妮');
   fixture.era.beginTrain(31); // deltabase/gotjuel 只在调教窗口内可寻址
-  const { base_settled, juel_settled } = fixture.load_module(
-    'era-utils/train-settle',
-  );
+  const { base_settled, juel_settled } =
+    fixture.load_module('utils/train-settle');
 
   fixture.store.set('base:31:0', 1999);
   fixture.store.set('maxbase:31:0', 2000);

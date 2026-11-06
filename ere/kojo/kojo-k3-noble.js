@@ -42,7 +42,7 @@ const benki_mod = require('#/system/train/benki');
 const { sell_maturo_k0 } = require('#/system/stronghold/sell-maturo-k0');
 const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
-const { base_settled } = require('#/era-utils/train-settle');
+const { base_settled } = require('#/utils/train-settle');
 const {
   kojo_message_com_family,
   self_kojo_family,

@@ -173,7 +173,7 @@ export default [
   },
   {
     desc: 'M17561 juel_settled 漏加 gotjuel（珠的「结算后的值」退回旧值）',
-    file: 'ere/era-utils/train-settle.js',
+    file: 'ere/utils/train-settle.js',
     find: `    (era.get(\`juel:\${cid}:\${index}\`) || 0) +
     (era.get(\`gotjuel:\${cid}:\${index}\`) || 0)`,
     replace: `    (era.get(\`juel:\${cid}:\${index}\`) || 0) + 0 // 变异：漏加 gotjuel`,
@@ -182,7 +182,7 @@ export default [
   },
   {
     desc: 'M17562 base_settled 不按 maxbase 钳制（损耗条显示越过上限的值）',
-    file: 'ere/era-utils/train-settle.js',
+    file: 'ere/utils/train-settle.js',
     find: '  return max > 0 ? Math.max(Math.min(next, max), 0) : next;',
     replace: '  return next; // 变异：不钳制',
     tests: ['train-engine-settle'],

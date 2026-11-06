@@ -17,7 +17,7 @@
 const era = require('#/era-electron');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
-const { in_train_window, juel_settled } = require('#/era-utils/train-settle');
+const { in_train_window, juel_settled } = require('#/utils/train-settle');
 
 /**
  * 欲情检查：欲望（ABL:11）≥3 时清除压抑/抵抗，否定点数减半。
