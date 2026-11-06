@@ -38,7 +38,7 @@ const HEADER_INDEX = 0;
 const FOOTER_INDEX = 14;
 
 /**
- * 结算后的珠（juel + gotjuel）：调教窗口内的读法（era-utils/train-settle.js
+ * 结算后的珠（juel + gotjuel）：调教窗口内的读法（utils/train-settle.js
  * 的 juel_settled）。#875 起 juel_check_main 只写 gotjuel，juel 要到引擎
  * endTrain 才加算，所以「本次调教之后的珠」在窗口内必须两表相加。
  * @param {object} fixture 夹具

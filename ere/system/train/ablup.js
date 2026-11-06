@@ -56,7 +56,7 @@ const HANDLER_QUIET = 'quiet';
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const era_modsave = require('#/era-utils/era-modsave');
-const { in_train_window, juel_settled } = require('#/era-utils/train-settle');
+const { in_train_window, juel_settled } = require('#/utils/train-settle');
 // userablup 要调的两个检查（#462 实现，同域）
 const {
   jujun_up_check,
