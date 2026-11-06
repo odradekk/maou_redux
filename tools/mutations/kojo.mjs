@@ -25988,7 +25988,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     // 「一个人会怎么写错」：读到 `TEQUIP:N === 0` 就把 0 当成「没装」之外的东西，
     // 把判等写反——尚未预置时代（夹具读 undefined）两种写法在测试里都恒假，
     // 预置后只有 `=== 0` 才命中真机的脱着一支（#977）。
-    desc: 'M18428 K1 口塞脱着判等写反（`TEQUIP:45 === 0` 改 `!== 0`——真机的脱着支不再命中）',
+    desc: 'M18448 K1 口塞脱着判等写反（`TEQUIP:45 === 0` 改 `!== 0`——真机的脱着支不再命中）',
     file: 'ere/kojo/kojo-k1-confident.js',
     find: `    era_flag.selectcom === 45 &&
     era.get(\`tequip:\${target}:45\`) === 0`,
@@ -26000,7 +26000,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   {
     // 同上：初吻那一支的 89/90 两格。夹着 talent:76 的上下文取唯一匹配
     // （同函数里还有一处结构相同的 85 分支）。
-    desc: 'M18429 K1 淫乱初吻的 TEQUIP:89/90 判等写反（`=== 0` 改 `!== 0`）',
+    desc: 'M18449 K1 淫乱初吻的 TEQUIP:89/90 判等写反（`=== 0` 改 `!== 0`）',
     file: 'ere/kojo/kojo-k1-confident.js',
     find: `        era.get(\`talent:\${target}:76\`) === 1 &&
         era_flag.assiplay === 0 &&
