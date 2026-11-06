@@ -1,30 +1,117 @@
-# EX_TALENT 名字表（issue #138）：魔改版从原版 TALENT 移出的独有素质
-# （`#DIM SAVEDATA CHARADATA EX_TALENT,1000`，按角色、1000 槽，全库用量
-# 163 次——#105 决议第三节）。
-#
-# 本文件为人工产出（CFlag.yml 同款先例）：EX_TALENT 没有名称表。
-# 它落的是 #105 决议「扩展角色表只加 EX_TALENT」——EX_CFLAG
-# 全库用量仅 10，不值得为此再开一张扩展表，不加。
+# EX_TALENT 名字表（issue #138 建表，issue #834 补名字）：魔改版从原版 TALENT
+# 移出的独有素质（`#DIM SAVEDATA CHARADATA EX_TALENT,1000`，按角色、1000 槽，
+# 全库用量 163 次——#105 决议第三节）。本文件为人工产出（CFlag.yml 同款先例）。
 #
 # 二维生效靠登记：yml/_fixed.json 的 system.extendedCharaTables 含
-# "ex_talent"（注意下划线——文件名小写即表名，寻址 `ex_talent:角色:序号`，
-# ere/system/chara/chara-ex.js 的九处写入用的就是这个前缀）。登记与表在场的双向
-# 契约由 test/extalent-table.test.js 钉住（portcflag 的同款实害：登记了
-# 没表 → addCharacter 建顶层桶时直接崩；有表没登记 → 引擎按一维自动生效，
-# 角色桶永不建、写入静默丢弃）。
+# "ex_talent"（注意下划线——文件名小写即表名，寻址 `ex_talent:角色:序号`）。
+# 登记与表在场的双向契约由 test/extalent-table.test.js 钉住（portcflag 的同款
+# 实害：登记了没表 → addCharacter 建顶层桶时直接崩；有表没登记 → 引擎按一维
+# 自动生效，角色桶永不建、写入静默丢弃）。
 #
-# 空表即够用：现有消费者（add_chara_ex 分发的八个实现，#21）一律用数字
-# 下标寻址（200 魔王 / 101 琼 / 102 普林希斯 / 103 嘉德 / 104 菲娅 / 4+801+901
-# 狂王替身 / 223 丽塔 / 777 卡拉），引擎 safeUndefinedCheck 在名字表查不到
-# 时原样回落数字。名称条目（ex_talentname_init 的运行时初始化表）
-# 随读档钩子票实现时在此补「名称: id」——补之前先看 yml/CStr.yml 头注的
-# 警告：登记进名字表的序号会在角色加入与读档时被预置成 0，初值语义随之
-# 改变。
+# 字段形状与引擎自带转换器的产出一致（同 CFlag.yml / PortCFlag.yml 先例）：
+#   键    = 中文显示名（素质列表、日常类型等显示点的文案来源）
+#   name  = 英文 snake_case 标识符（JS 侧访问器名，#820 的结论）
+#   id    = 数字下标，沿用原版序号（底层寻址一律用它）
+#   type  = 值类型（本表全是整数）
 #
-# 读档补齐（引擎 5.0.0）：fillData 为每个已加入角色重建扩展角色表的桶，名字表
-# 声明的字段按角色预设补、没有预设补 0，所以「表晚于存档出现」的旧档读进来
-# 也能写入。4.8.0 的重建条件写成拿表名字符串的下标去比 tableType（恒假），
-# 那一版旧档缺的表补不上、写入静默丢弃——#13 当时据此把 GameBase 抬到 0.0.1
-# 废旧档，这条判定随 5.0.0 的修复失效（ADR-0006「引擎升级到 5.0.0」一节：
-# 判定表第四行改判「否」）。行为由 test/extalent-table.test.js 用引擎自己的
-# fillData 钉住（portcflag-table.test.js 的同款用例）。
+# 条目有两个作用，缺一不可：
+#   1. 显示名：`ex_talentname:序号` 由引擎从这份名单取值，JS 侧不再有运行时
+#      名字表（chara-ex.js 的 ex_talentname 只判未登记，名字转查引擎）；
+#   2. 角色预设：角色文件（yml/Chara*.yml）的「ex_talent」段要落进 data，下标
+#      必须在名字表内——addCharacter 与读档后的 fillData 都只处理名字表登记的
+#      序号，没登记的预设行整行丢弃（引擎 initCharaTable 的分支外没有第二条路）。
+#
+# **登记会改变初值语义**（yml/CStr.yml 头注的同一件事）：登记过的序号在角色
+# 加入与读档时被预置成「角色预设值，没有预设补 0」。所以登记集取「全库实际
+# 用到的 17 个」，不是「101-800 全段」——空位保持未声明，`era.get` 继续返回
+# undefined，而所有消费者的判定都是真值判断，0 与 undefined 同结论。序号一旦
+# 登记就不要删：删了旧档里那批槽会停在原值（CFlag.yml 头注的同款约定）。
+#
+# 读档补齐（引擎 5.0.0）：fillData 对每个已加入角色重建扩展角色表的桶，**已有
+# 值不覆盖**（`桶[序号] ??= 预设`），缺的键按角色预设补、没有预设补 0。「表晚于
+# 存档出现」的旧档读进来也能写入。4.8.0 的重建条件写成拿表名字符串的下标去比
+# tableType（恒假），那一版旧档缺的表补不上、写入静默丢弃——#13 当时据此把
+# GameBase 抬到 0.0.1 废旧档，这条判定随 5.0.0 的修复失效（ADR-0006「引擎升级
+# 到 5.0.0」一节：判定表第四行改判「否」）。两条行为都由
+# test/extalent-table.test.js 用引擎自己的 addCharacter / fillData 钉住
+# （portcflag-table.test.js 的同款用例）。
+
+# 0-4：剧情标记（近卫、后代、替身一类）
+"灵魂错位":
+  id: 0
+  name: "soul_misplaced"
+  type: "number"
+  # 值 = 错位等级（0 = 未错位），chara-soul-transfer.js 读写
+"近卫":
+  id: 1
+  name: "royal_guard"
+  type: "number"
+  # 勇者的近卫血统标记，chara-pregnancy.js 写
+"后代":
+  id: 2
+  name: "offspring"
+  type: "number"
+  # 同族的后代标记，角色生成与日常类型显示都读它
+"魔王替身":
+  id: 3
+  name: "demon_king_double"
+  type: "number"
+  # 魔王替身素质，事件链按它挑替身候选
+"狂王替身":
+  id: 4
+  name: "mad_king_double"
+  type: "number"
+  # 狂王（34）的身份标记，写在它自己的角色预设里
+# 101-104：四位性格角色的「本人标记」，扩展口上编号由它推出
+"琼":
+  id: 101
+  name: "qiong"
+  type: "number"
+"普林希斯":
+  id: 102
+  name: "priscilla"
+  type: "number"
+"嘉德":
+  id: 103
+  name: "garde"
+  type: "number"
+"菲娅":
+  id: 104
+  name: "fia"
+  type: "number"
+# 200、223、777：魔王与两位据点角色
+"魔王":
+  id: 200
+  name: "demon_king"
+  type: "number"
+  # 魔王的高贵标识；读档钩子另有保底重放（event-load.js）
+"丽塔":
+  id: 223
+  name: "rita"
+  type: "number"
+"卡拉":
+  id: 777
+  name: "kara"
+  type: "number"
+# 801、901-904：战斗与职业侧的扩展素质
+"无双":
+  id: 801
+  name: "peerless"
+  type: "number"
+  # 狂王（34）的预设标记；素质列表把它归进「战斗 801-899」段
+"一人军团":
+  id: 901
+  name: "one_man_army"
+  type: "number"
+"魔女":
+  id: 902
+  name: "witch"
+  type: "number"
+"魔界公主":
+  id: 903
+  name: "demon_princess"
+  type: "number"
+"天神":
+  id: 904
+  name: "deity"
+  type: "number"

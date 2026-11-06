@@ -133,7 +133,7 @@ engine_test(
     // 这一类。
     const blank = (table, value) =>
       value === undefined || value === '' || Number(value) === 0;
-    for (const table of ['cflag', 'cstr', 'mark', 'talent']) {
+    for (const table of ['cflag', 'cstr', 'ex_talent', 'mark', 'talent']) {
       const used = new Set();
       for (const cid of Object.keys(loader.static_data.chara)) {
         const preset = preset_of(loader, cid, table);
@@ -159,7 +159,7 @@ engine_test(
     let checked = 0;
     for (const cid of Object.keys(loader.static_data.chara)) {
       assert.equal(adder.add(Number(cid)), true, `角色 ${cid} 必须能加入`);
-      for (const table of ['cflag', 'mark', 'talent']) {
+      for (const table of ['cflag', 'ex_talent', 'mark', 'talent']) {
         const preset = preset_of(loader, cid, table);
         for (const index of declared(table)) {
           const want = Number(preset[index] ?? 0);

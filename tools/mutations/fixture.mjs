@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 105; // #875 +2（M17563/M17564：夹具的 nextTurnInTrain 不结算 deltabase→base、endTrain 不结算 gotjuel→juel） // #874 +1（M17406：夹具 nextTurnInTrain 的 delta→palam 镜像） // #902 +17（M16300–M16316：夹具 raw() 的数据层视图——
+export const COUNT = 107; // #834 +2（M18356/M18357：夹具不抄 ex_talent 预设、<表>keys 地址不认下划线表名） // #875 +2（M17563/M17564：夹具的 nextTurnInTrain 不结算 deltabase→base、endTrain 不结算 gotjuel→juel） // #874 +1（M17406：夹具 nextTurnInTrain 的 delta→palam 镜像） // #902 +17（M16300–M16316：夹具 raw() 的数据层视图——
 // 写不落库/自动建行/行不随加入/调教表恒在/source 不随 endTrain 消失/item 骨架缺子表/
 // bought 初值/盖章常量取错/no 返回副本/no 写不落数组/get 不认盖章缺省/行与列不进枚举/
 // 视图不读平表/扩展角色表不建桶或不建行）；#848 +3（M16251–M16253：resetData 按
@@ -969,11 +969,29 @@ export default [
     desc: 'M15805 夹具不从 yml 反查 <表>name:<序号>（名字表读取恒空）',
     file: 'test/helpers/era-fixture.js',
     find: `  function yml_derived_value(var_name) {
-    const name_match = /^([a-z]+)name:(\\d+)$/.exec(var_name);`,
+    const name_match = /^([a-z0-9_]+)name:(\\d+)$/.exec(var_name);`,
     replace: `  function yml_derived_value(var_name) {
     const name_match = null; // 变异：不按 yml 反查名字`,
     tests: ['fixture'],
     must_mention: '读 yml 的名字',
+  },
+  {
+    desc: 'M18357 夹具的 <表>keys 地址不认带下划线的表名（ex_talentkeys 读成 undefined，素质名查询当场抛错，#834）',
+    file: 'test/helpers/era-fixture.js',
+    find: '    const keys_match = /^([a-z0-9_]+)keys$/.exec(var_name);',
+    replace:
+      '    const keys_match = /^([a-z]+)keys$/.exec(var_name); // 变异：表名不收下划线',
+    tests: ['misc-rest'],
+    must_mention: 'EX 素质名取自 yml 名字表',
+  },
+  {
+    desc: 'M18356 夹具不把 ex_talent 预设抄进目标角色（角色专属标记落不了库，#834）',
+    file: 'test/helpers/era-fixture.js',
+    find: "      for (const table of ['portcflag', 'ex_talent']) {",
+    replace:
+      "      for (const table of ['portcflag']) { // 变异：ex_talent 预设不抄",
+    tests: ['page-ending'],
+    must_mention: 'add_chara_ex 分发：EX_TALENT:104 = 菲娅',
   },
   {
     desc: 'M15806 夹具只让读路径归一（写路径按原串落库，名字写、序号读分叉）',

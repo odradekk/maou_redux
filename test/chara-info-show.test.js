@@ -621,9 +621,8 @@ test('show_talent：EX 素质的第二组配色覆盖第一组（表驱动）', 
 });
 
 test('show_talent：模式 2 取 EX 名字表、模式 1 取感觉封锁名', () => {
-  const { fixture, talent_label } = talent_fixture();
-  fixture.load_module('system/chara/chara-ex').ex_talentname_init();
-  // 模式 2：EX_TALENTNAME 的运行时表
+  const { talent_label } = talent_fixture();
+  // 模式 2：EX 素质名直接取自 yml/Ex_Talent.yml（#834，没有运行时表可初始化）
   assert.equal(talent_label(7, 101, 2), '琼');
   assert.equal(talent_label(7, 901, 2), '一人军团');
   assert.equal(talent_label(7, 999, 2), '', '未登记名字的 EX 序号 → 空串');
@@ -807,7 +806,6 @@ test('show_talent：EX 素质走分类分支的 EX 段（性格 100-800 与战�
     flag5: 1 << 8,
     ex_talents: { 101: 1, 801: 1, 901: 1 },
   });
-  fixture.load_module('system/chara/chara-ex').ex_talentname_init();
   show_talent(7);
   const text = fixture.text_lines().join('');
   assert(text.includes('[琼]'), 'EX 101 在性格段（100-800）');
@@ -829,7 +827,6 @@ test('show_talent_group：8 项换行的判定点是「第 9 项先收行再落�
 test('show_talent_group：101-108 的模式取自素质自身的第 2 位', () => {
   // TALENT:101 = 2（封锁位）→ 模式 2 → 走 EX 名字表
   const two = talent_fixture({ talents: { 101: 2 } });
-  two.fixture.load_module('system/chara/chara-ex').ex_talentname_init();
   const line = { fragments: [], count: 0 };
   two.show_talent_group(line, 7, 101, 2);
   assert.equal(line.fragments[0].content, '[琼]');

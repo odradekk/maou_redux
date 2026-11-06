@@ -143,49 +143,35 @@ function load_chara_ex() {
   return { fixture, add_chara_ex, chara_ex };
 }
 
-test('CHARA_EX 族静态形状：45 声明 / 8 实现 / 37 缺失（空间远大于实现集）', () => {
+// CHARA_EX 族的八个实现（魔王、琼、普林希斯、嘉德、狂王、菲娅、丽塔、卡拉）
+// 只做一件事：写角色专属的 EX 素质。#834 起这些值写在角色文件里、由引擎的
+// addCharacter 套用，注册段删除——族因此没有实现，全部 45 个编号都走缺失
+// 路径。族本身与它的调用点留到「删除分发族」那批一起拆，这里钉住现状。
+test('CHARA_EX 族静态形状：45 声明 / 0 实现 / 45 缺失（#834 后改由角色预设）', () => {
   const { chara_ex } = load_chara_ex();
 
   assert.equal(chara_ex.declared.size, 45);
-  // 8 个实现（chara-ex.js 注册的全部编号，即下方清单）
   for (const id of [0, 31, 32, 33, 34, 35, 223, 777]) {
-    assert(chara_ex.has(id), `CHARA_EX_${id} 应已实现`);
+    assert(!chara_ex.has(id), `CHARA_EX_${id} 不应再有实现`);
   }
   const missing = chara_ex.missing();
-  assert.equal(missing.length, 37);
+  assert.equal(missing.length, 45);
   // 缺失全部仍在声明空间内：是合法缺失，不是空间外的拼写错误
   assert(missing.every((id) => chara_ex.declared.has(id)));
 });
 
-test('add_chara_ex(0)：检查通过 → 分发到 CHARA_EX_0，写入魔王素质', async () => {
+test('add_chara_ex(0/31/34)：检查通过但无实现，加入点零写入', async () => {
   const { fixture, add_chara_ex } = load_chara_ex();
 
-  await add_chara_ex(0);
+  for (const cid of [0, 31, 34]) {
+    assert.equal(await add_chara_ex(cid), 0, `CHARA_EX_${cid} 走缺失路径`);
+  }
 
-  assert.deepEqual(fixture.var_writes, [{ name: 'ex_talent:0:200', value: 1 }]);
+  // 手工赋值的时代结束了：EX 素质不再由加入点写，一个字节都不落
+  assert.deepEqual(fixture.var_writes, []);
 });
 
-test('add_chara_ex(31/34)：cid 经 args 透传进实现', async () => {
-  const { fixture, add_chara_ex } = load_chara_ex();
-
-  await add_chara_ex(31);
-  await add_chara_ex(34);
-
-  // 31 → 琼；34 → 狂王替身/无双/一人军团（三个素质连写）。MARK,4,3 不在
-  // 这里：#814 起 Mark.yml 登记了 4 号，预设由 addCharacter 抄进角色数据，
-  // 扩展回调不再补写
-  assert.deepEqual(
-    fixture.var_writes.map((w) => w.name),
-    [
-      'ex_talent:31:101',
-      'ex_talent:34:4',
-      'ex_talent:34:801',
-      'ex_talent:34:901',
-    ],
-  );
-});
-
-test('全部 37 个缺失编号逐个分发：不抛错、返回 0、零写入（37/45 的常态路径）', async () => {
+test('全部 45 个缺失编号逐个分发：不抛错、返回 0、零写入', async () => {
   const { fixture, add_chara_ex, chara_ex } = load_chara_ex();
 
   for (const id of chara_ex.missing()) {
@@ -244,12 +230,10 @@ test('端到端：标题选「新的猎物」→ 加入角色 0 → 经注册表
   // 加入初始角色 0（#23 起夹具实装已加入列表，
   // 断言列表内容即断言调用）
   assert.deepEqual(fixture.chara_no, [0], '必须加入初始角色 0');
-  // add_chara_ex(0) → 分发到 0 号实现：
-  // 分发真实发生的证据 = 角色 0 专属初始化的写入（EX_TALENT:200 = 魔王），
-  // 此外的唯一写入是移植自建的 portcflag 版本戳（#67；全量
-  // 断言，任何意外写入都会暴露）
+  // add_chara_ex(0) 已经没有实现（#834：魔王的高贵标识由角色预设套用），
+  // 所以这里的唯一写入是移植自建的 portcflag 版本戳（#67；全量断言，任何
+  // 意外写入都会暴露）
   assert.deepEqual(fixture.var_writes, [
-    { name: 'ex_talent:0:200', value: 1 },
     { name: 'portcflag:0:数据版本', value: 1 },
   ]);
 });
@@ -298,8 +282,8 @@ test('独立性：CHARA_EX 族不往事件注册表塞任何处理器（反之�
   // chara_ex 没有往事件注册表注册任何处理器：合法事件名在这里同样是空链，
   // 没有任何处理器被广播执行（#849 起事件名只收枚举里的名字，不能拿族名试）
   assert.equal(await registry.emit(EVENT.SHOP), undefined);
-  // 族自身状态完好（8 实现未被事件机制干扰）
-  assert.equal(chara_ex.missing().length, 37);
+  // 族自身状态完好（0 实现，未被事件机制干扰）
+  assert.equal(chara_ex.missing().length, 45);
 });
 
 test('独立性：两套机制同进程并用，同名互不串扰', async () => {
