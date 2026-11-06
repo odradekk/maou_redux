@@ -333,8 +333,9 @@ engine_test(
       api.resetData();
       api.beginTrain(31);
 
-      // 两处真实写点：主人经验（com-caress / com-vaginasex / com-service 等
-      // 十五处 add）与死斗场收入（com-colosseum 的七处 add）
+      // 两处真实写点：主人经验（com-analsex / com-assistant / com-caress /
+      // com-hardcore / com-service / com-sm / com-vaginasex 共十四处 add）
+      // 与死斗场收入（com-colosseum 的八处 add）
       assert.equal(api.add('tflag:30', 1), 1, 'TFLAG:30 主人经验');
       assert.equal(api.add('tflag:30', 1), 2);
       assert.equal(api.add('tflag:402', 13000), 13000, 'TFLAG:402 死斗场收入');
