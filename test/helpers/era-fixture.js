@@ -23,6 +23,7 @@ const { compile_kojo } = require('./engine-bundle');
 const {
   yml_declared_ids,
   yml_extended_chara_tables,
+  yml_extended_normal_tables,
   yml_name_table,
 } = require('./static-names');
 
@@ -800,10 +801,11 @@ function create_era_fixture() {
   // 静态表）做同一件事：`data[e] ||= {}`，再把声明序号逐个 `??= 0`（app.asar
   // 逐字：`Object.entries(this.era.extendedTables).forEach(([e,t]) => {
   // data[e] ||= {}; t===normal && Object.values(staticData[e]).forEach(id =>
-  // data[e][id] ??= 0) })`）。本项目这类表是 audio / exflag / modsave——它们的
-  // 具名访问器读 `era.raw().data.<表>[序号]`，桶和缺省值不在就是 TypeError
-  // （#903 换开发套件后暴露）。
-  const EXTENDED_NORMAL_TABLES = ['audio', 'exflag', 'modsave'];
+  // data[e][id] ??= 0) })`）。本项目这类表由 yml/ 现算（audio / exflag /
+  // modsave 之外还有 da / db / dc / tstr / videoarchive 这五张零条目的空表，
+  // 引擎同样建桶）——它们的具名访问器读 `era.raw().data.<表>[序号]`，桶和
+  // 缺省值不在就是 TypeError（#903 换开发套件后暴露）。
+  const EXTENDED_NORMAL_TABLES = yml_extended_normal_tables();
   const fill_data = () => {
     for (const table of ['flag', ...EXTENDED_NORMAL_TABLES]) {
       for (const id of declared_ids(table) ?? []) {
@@ -1096,12 +1098,12 @@ function create_era_fixture() {
   //     且下限 0 时 loadData 拒（0 falsy 短路）、loadGlobal 收（0 是合法版本）；
   //     version 0 且下限 1 时两者都拒但机制相反（比较命中 vs 短路漏过会放行）。
   //     两条用例在 test/fixture.test.js 各自钉住，不许共用断言（验收清单明写）。
-  //   - 静态 global 键：引擎按 yml/Global.yml 声明表补 0 / 清 0，夹具的
-  //     global 域不镜像这层声明集预置——loadGlobal 灌回后 store 里不在文件中
-  //     的旧键直接删（引擎整份替换 `this.era.global=n`，未声明键同样消失）；
-  //     resetGlobal 对现存 global:* 变量键一律置 0（声明键的引擎语义；未声明
-  //     键引擎置 undefined，夹具以 0 代之——Global.yml 的五条读者全走
-  //     `|| 0`，两侧可观察等价）。
+  //   - 静态 global 键：引擎按 yml/Global.yml 声明表补 0 / 清 0——loadGlobal
+  //     读成文件时对声明序号做 `||(…=0)`，resetGlobal 则一律置 0。夹具两头
+  //     都镜像：建夹具时预置（见下方 resetGlobal 段）、灌回文件后对文件里
+  //     缺的声明序号补 0；store 里不在文件中的旧键直接删（引擎整份替换
+  //     `this.era.global=n`，未声明键同样消失）。这层预置不能省：开发套件的
+  //     具名访问器裸读 `raw().global[序号]`，没有 `|| 0`（#903）。
   //   - 槽位对账 list_save_files（引擎内部 listSaveFiles，不在 SDK 面上，
   //     ere/era-electron.js 无此方法）：文件在 = save_files 有该槽。文件在＋
   //     备注缺 → 'UNNAMED SAVE FILE'；文件在＋备注带前缀 → 剥前缀（引擎
@@ -1140,6 +1142,13 @@ function create_era_fixture() {
         }
       } else if (field !== 'code' && field !== 'version') {
         store.set(`global:${field}`, value);
+      }
+    }
+    // 引擎 loadGlobal 收尾：`Object.values(staticData.global).forEach(e =>
+    // this.global[e] || (this.global[e] = 0))`——文件里缺的声明序号补 0
+    for (const id of declared_ids('global') ?? []) {
+      if (!store.get(`global:${id}`)) {
+        store.set(`global:${id}`, 0);
       }
     }
   };
@@ -1216,14 +1225,19 @@ function create_era_fixture() {
   };
   era.resetGlobal = async () => {
     calls.push({ api: 'resetGlobal', args: [] });
-    // 引擎：this.global = {code, saves:{}, version} 整份重建，声明键清 0。
-    // 夹具近似：saves 键全删（saves:{}），其余现存 global:* 变量键置 0
+    // 引擎：this.global = {code, saves:{}, version} 整份重建，
+    // `Object.values(staticData.global||{}).forEach(e=>this.global[e]=0)`。
+    // 夹具近似：saves 键全删（saves:{}），其余现存 global:* 变量键置 0，
+    // 再把声明序号补成 0（重建后声明键一个不少）
     for (const key of [...store.keys()]) {
       if (key.startsWith('global:saves:')) {
         store.delete(key);
       } else if (key.startsWith('global:')) {
         store.set(key, 0);
       }
+    }
+    for (const id of declared_ids('global') ?? []) {
+      store.set(`global:${id}`, 0);
     }
     await list_save_files();
     return await era.saveGlobal();
@@ -1374,19 +1388,20 @@ function create_era_fixture() {
   // 结构按 resetData / resetGlobal / addCharacter / beginTrain 的原文骨架
   // （引擎逐字，test/fixture-raw.test.js 驱动真 resetData 比对）：
   //   - 顶层恒有 resetData 字面量的 19 张表，外加 yml/_fixed.json 登记的扩展
-  //     角色表（引擎 fillData 为每张登记表建顶层桶，前提是名字表在场；本项目
-  //     登记的四张都有 yml 文件）。code / version 是数字，item 是四个子表
-  //     （bought 初值 -1，引擎字面量）；
+  //     角色表与 yml/ 现算的扩展普通表（引擎 fillData 为每张登记表建顶层桶，
+  //     前提是名字表在场；本项目登记的四张都有 yml 文件，扩展普通表连零条目
+  //     的空表也建桶）。code / version 是数字，item 是四个子表（bought 初值
+  //     -1，引擎字面量）；
   //   - 调教表只有 beginTrain 之后存在；source 例外，它由 resetData 预建、
   //     beginTrain 重建、endTrain 删；
   //   - 逐角色行只对 addCharacter 过的角色存在（调教表对 addCharacterForTrain
   //     过的角色），所以读没加入的角色的具名属性是 `undefined[序号]`，与引擎
   //     一样抛 TypeError（#902 第三条验收）。**视图不自动建行**：行在不在是
   //     语义，不是便利。
-  //   - 值缺省只镜像调教域与 flag：引擎在 resetData / loadData 之后由
-  //     fillData 把 flag 的声明序号填成 0、在建表/加角色时把调教域表的声明
-  //     序号填成 0，夹具按同一份声明集补（fill_data / join_train_chara /
-  //     beginTrain，#977）；其余表的逐角色预设（cflag / abl / talent / base
+  //   - 值缺省只镜像 flag、扩展普通表与调教域：引擎在 resetData / loadData 之后
+  //     由 fillData 把 flag 与扩展普通表的声明序号填成 0、在建表/加角色时把调教
+  //     域表的声明序号填成 0，夹具按同一份声明集补（fill_data / join_train_chara
+  //     / beginTrain，#977）；其余表的逐角色预设（cflag / abl / talent / base
   //     一类）仍是平表的稀疏语义——没写过就是 undefined，与 era.get 一致，
   //     游戏代码按 `|| 0` 读。比对用例因此只比结构（表与行的存在性）和写过
   //     的值，不比那些表的缺省值。
@@ -1411,6 +1426,7 @@ function create_era_fixture() {
     'talent',
     'version',
     ...yml_extended_chara_tables(),
+    ...EXTENDED_NORMAL_TABLES,
   ];
   // addCharacter 逐角色建的行（方法体里的那 12 条 `this.data[表][n]={}`，外加
   // 扩展角色表的同款建桶）
@@ -1642,6 +1658,17 @@ function create_era_fixture() {
   store.set('code', save_gate.game_code);
   store.set('version', save_gate.current_version);
   store.set('item:bought', -1);
+
+  // resetGlobal 的声明集预置（引擎逐字 `Object.values(this.staticData.global
+  // ||{}).forEach(e=>this.global[e]=0)`；loadGlobal 读成文件时是同一件事的
+  // `||(…=0)` 版本）。启动链路里引擎在游戏代码跑起来之前必然走其中一条，
+  // 所以 Global.yml 的声明序号在真机上一直是数字 0。夹具此前不镜像这一层，
+  // 靠「五个读者都走 `|| 0`」兜着；#903 换开发套件后具名访问器改成裸读
+  // `raw().global[序号]`，这层兜底没有了——不预置就读到 undefined（0 号槽
+  // 语义、冒险者性别的分派都指着它）。
+  for (const id of declared_ids('global') ?? []) {
+    store.set(`global:${id}`, 0);
+  }
 
   const data_view = make_view('');
   const global_view = make_view('global');

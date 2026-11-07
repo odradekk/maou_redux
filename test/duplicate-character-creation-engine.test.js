@@ -77,7 +77,9 @@ function setup(presets) {
   });
   api.resetData();
   const fixture = create_era_fixture();
-  // 输出和输入沿用唯一测试注入点，角色与变量读写全部交给真实引擎。
+  // 输出和输入沿用唯一测试注入点，角色与变量读写全部交给真实引擎。`raw()`
+  // 也算变量面：开发套件的具名访问器直接读 `era.raw().data`，换掉 get/set
+  // 却不换 raw，游戏代码会读到夹具那份空数据层而断言看的是引擎那份（#903）。
   for (const name of [
     'get',
     'set',
@@ -85,6 +87,7 @@ function setup(presets) {
     'addCharacter',
     'getAllCharacters',
     'getAddedCharacters',
+    'raw',
   ]) {
     fixture.era[name] = api[name].bind(api);
   }

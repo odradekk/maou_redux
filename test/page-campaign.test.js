@@ -86,7 +86,10 @@ test('SELECT_CAMPAIGN：选 [999] 直接返回，不触碰 FLAG:400', async () =
   fixture.set_inputs(999);
   const ret = await select_campaign();
   assert.equal(ret, 0);
-  assert.equal(fixture.store.get('flag:400'), undefined);
+  assert.ok(
+    !fixture.var_writes.some((w) => w.name === 'flag:400'),
+    '选 [999] 不触碰战役状态字（FLAG:400 一次都没写）',
+  );
 });
 
 test('SELECT_CAMPAIGN：超出 1-20 声明空间的输入不派发 CAMPAIGN_SET（DispatchFamily 的空间外判定是拼写错误用的，不能替代这层范围保护）', async () => {
@@ -98,10 +101,9 @@ test('SELECT_CAMPAIGN：超出 1-20 声明空间的输入不派发 CAMPAIGN_SET�
   fixture.era.input = () => Promise.resolve(500);
   const ret = await select_campaign();
   assert.equal(ret, 0);
-  assert.equal(
-    fixture.store.get('flag:400'),
-    undefined,
-    '越界的 RESULT 不应派发到任何 CAMPAIGN_SET 实现',
+  assert.ok(
+    !fixture.var_writes.some((w) => w.name === 'flag:400'),
+    '越界的 RESULT 不应派发到任何 CAMPAIGN_SET 实现（FLAG:400 一次都没写）',
   );
 });
 

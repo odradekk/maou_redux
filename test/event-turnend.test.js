@@ -1025,7 +1025,10 @@ test('CAMPAIGN_GAMEOVER：不在战役中时气力扣到 0 也不触发', async 
 
   await world.emit('EVENTTURNEND');
 
-  assert.equal(world.fixture.store.get('flag:400'), undefined);
+  assert.ok(
+    !world.fixture.var_writes.some((w) => w.name === 'flag:400'),
+    '不在战役中 → CAMPAIGN_GAMEOVER 不触发（FLAG:400 一次都没写）',
+  );
   assert.ok(!world.fixture.text_lines().some((t) => t.includes('体力耗尽了')));
 });
 

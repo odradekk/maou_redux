@@ -69,7 +69,10 @@ test('MUSEUM：魔王不能成为展品且不产生输出或状态变化', async
   assert.equal(await museum(0, seq([0])), 0);
   assert.deepEqual(fixture.text_lines(), []);
   assert.deepEqual(fixture.era.getAddedCharacters(), [0, 31]);
-  assert.equal(fixture.store.get('flag:84'), undefined);
+  assert.ok(
+    !fixture.var_writes.some((w) => w.name === 'flag:84'),
+    '展品分类计数（FLAG:84）一次都没写',
+  );
 });
 
 test('MUSEUM：范围外输入由引擎在输入框里拒收，选中有效展品照常结算', async () => {
@@ -100,7 +103,10 @@ test('MUSEUM：保留隐藏输入 100 的无分类处刑路径', async () => {
 
   await museum(31, seq([0]));
 
-  assert.equal(fixture.store.get('flag:84'), undefined, '不增加任何展品分类');
+  assert.ok(
+    !fixture.var_writes.some((w) => w.name === 'flag:84'),
+    '不增加任何展品分类（FLAG:84 一次都没写）',
+  );
   assert.equal(fixture.store.get('videoarchive:1'), '温妮');
   assert.deepEqual(fixture.era.getAddedCharacters(), [0], '仍执行公共处刑尾段');
 });

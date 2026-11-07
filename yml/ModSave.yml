@@ -18,7 +18,7 @@
 # 未收录：立绘（#542 判不移植）、NO_SP（SP 图像开关，立绘同判）、
 # 赤森奴隶（非 SAVEDATA 的普通 #DIM，无存档语义）。
 #
-# 包装层产物：ere/era-utils/era-modsave.js（tools/gen-wrapper.js 生成初稿）。
+# 包装层产物：ere/era-utils/era-modsave.js（引擎【帮助】-【生成开发套件】生成）。
 # 各变量的语义与来源见该文件手写区补注。
 "卖淫影响":
   id: 0

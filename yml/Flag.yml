@@ -10,7 +10,7 @@
 #
 # 本表为人工产出（与 Global.yml 同一先例，issue #18）：没有现成的 flag 名表，
 # flag 语义只散见于旧代码注释与游戏内 flag 说明文档。
-# 包装层产物：ere/era-utils/era-flag.js（tools/gen-wrapper.js 生成初稿）。
+# 包装层产物：ere/era-utils/era-flag.js（引擎【帮助】-【生成开发套件】生成）。
 # 各变量的语义与来源见该文件手写区补注。
 #
 # —— 侵略线一段（issue #113，语义依据逐条注明）——

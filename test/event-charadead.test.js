@@ -143,7 +143,10 @@ test('魔王死亡·无候补：GAMEOVER 横幅 + INPUT 后回标题（不再退
   );
   // 转场当场结束本函数：之后的语句（死亡口上/死亡旗）不可达
   assert(!texts.some((line) => line.includes('死掉了')));
-  assert.equal(fixture.store.get('flag:31'), undefined);
+  assert.ok(
+    !fixture.var_writes.some((w) => w.name === 'flag:31'),
+    '死亡旗（FLAG:31）一次都没写——转场之后的语句不可达',
+  );
 });
 
 // 魔王死亡有候补的世界：EX_FLAG:3 = successor 且候补素质标记在身

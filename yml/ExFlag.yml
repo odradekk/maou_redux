@@ -24,8 +24,7 @@
 #     EX_FLAG:(2800+LOCAL)（LOCAL 取 2-15）只达 2815。两槽按语义区间登记
 #     在案，真值归属由 ENDING_1 演出票决定。
 #
-# 包装层产物：暂未生成——首个消费者（侵略线各票）实现时由
-# tools/gen-wrapper.js 入白名单生成 ere/era-utils/era-exflag.js 初稿。
+# 包装层产物：ere/era-utils/era-exflag.js（引擎【帮助】-【生成开发套件】生成）。
 # 上届魔王的角色号（event_maou_tenshin：EX_FLAG:0 = MASTER，注释「上届魔王记录」，
 # 角色名单跳过它）
 "上届魔王":
