@@ -753,6 +753,9 @@ async function orc_quest_bitch(arg, column, rand_n) {
   return 1;
 }
 
+// 服从系（bitch）分支共用同一个「有阴茎」判据：扶她 = TALENT:121。
+// 这一族原写法还并了一个 TALENT:120——编号在素质表里没有条目、全库也没有
+// 任何写点，恒 0，从未参与过判断（ADR-0008：从未生效的分支不恢复），已删。
 /** slime_quest_bitch：スライム。阴茎/阴核点数（JUEL:0 同槽）。 */
 async function slime_quest_bitch(arg, column, rand_n) {
   void rand_n;
@@ -760,7 +763,7 @@ async function slime_quest_bitch(arg, column, rand_n) {
   const monnum = battle_column(column).count;
   const mon_name = era.get(`itemname:${monid}`) ?? '';
   era.print(`${name_of(arg)}服从了命令、${mon_name}慢慢地`);
-  if (era.get(`talent:${arg}:120`) || era.get(`talent:${arg}:121`)) {
+  if (era.get(`talent:${arg}:121`)) {
     era.print('将阴茎插了进去……'); // PRINTL
     era.print(`阴茎点数+${monnum}`);
     era.add(`juel:${arg}:0`, monnum); // JUEL:ARG:0
@@ -781,7 +784,7 @@ async function insect_quest_bitch(arg, column, rand_n) {
   era.print(
     `${name_of(arg)}服从了命令、与${era.get(`itemname:${monid}`) ?? ''}交尾了……`,
   );
-  if (era.get(`talent:${arg}:120`) || era.get(`talent:${arg}:121`)) {
+  if (era.get(`talent:${arg}:121`)) {
     era.print(`阴茎点数+${monnum}`);
     era.add(`juel:${arg}:0`, monnum);
   } else {
@@ -816,7 +819,7 @@ async function syokusyu_quest_bitch(arg, column, rand_n) {
   era.print(
     `${name_of(arg)}服从了命令、任凭${era.get(`itemname:${monid}`) ?? ''}的触手触碰……`,
   );
-  if (era.get(`talent:${arg}:120`) || era.get(`talent:${arg}:121`)) {
+  if (era.get(`talent:${arg}:121`)) {
     era.print(`阴茎点数+${monnum}`);
     era.add(`juel:${arg}:0`, monnum);
   } else {
@@ -836,7 +839,7 @@ async function faily_quest_bitch(arg, column, rand_n) {
   const monnum = battle_column(column).count;
   const mon_name = era.get(`itemname:${monid}`) ?? '';
   era.print(`${name_of(arg)}服从了命令、对${mon_name}`);
-  if (era.get(`talent:${arg}:120`) || era.get(`talent:${arg}:121`)) {
+  if (era.get(`talent:${arg}:121`)) {
     era.print('用阴茎摩擦了起来……'); // PRINTL
     era.print(`阴茎点数+${monnum}`);
     era.add(`juel:${arg}:0`, monnum);
@@ -890,7 +893,7 @@ async function girl_quest_bitch(arg, column, rand_n) {
   const monnum = battle_column(column).count;
   const mon_name = era.get(`itemname:${monid}`) ?? '';
   era.print(`${name_of(arg)}服从了命令、与${mon_name}`);
-  if (era.get(`talent:${arg}:120`) || era.get(`talent:${arg}:121`)) {
+  if (era.get(`talent:${arg}:121`)) {
     era.print('交尾了……'); // PRINTL
     era.print(`阴茎点数+${monnum}`);
     era.add(`juel:${arg}:0`, monnum);

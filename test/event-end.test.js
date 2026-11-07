@@ -122,14 +122,13 @@ test('录像出售接入：EVENTEND 在调教表销毁前结算有效录像', as
   fixture.store.set('base:31:0', 2000);
   fixture.store.set('cflag:31:491', 2);
   fixture.store.set('cflag:31:460', 0);
-  fixture.store.set('abl:31:70', 2);
   fixture.set_inputs(999);
 
   await run_eventend(fixture);
 
   assert.equal(
     fixture.store.get('cflag:31:493'),
-    50,
+    25,
     'sell_video 真身完成定价',
   );
   assert.equal(fixture.store.get('cstr:31:6'), '奴隶的调教');

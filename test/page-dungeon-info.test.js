@@ -150,6 +150,20 @@ test('ENEMY_EXIST2：逃走中前缀优先于侵攻中；nF 侵攻显示推进�
   );
 });
 
+test('ENEMY_EXIST2：近卫（EX_TALENT:1）不在侵攻/迎击时同样不列进部下总览（#991）', async () => {
+  // 原写法的第二子句（带 TALENT:221 的那一支）只会「排除」，从不「纳入」：
+  // 它与非近卫那半互补，合起来等于「状态不是 2/3 就跳过」，与近卫无关。
+  // 改成读 ex_talent:1 也不改变结果，所以这一项已删（见该函数注释）；
+  // 本用例钉住删除后的行为，防的是「把近卫当纳入条件加回来」。
+  const fixture = setup_world();
+  const { enemy_exist2 } = load(fixture, 'page/page-dungeon-info2');
+  fixture.store.set('cflag:1:1', 0); // 勇者甲待机
+  fixture.store.set('cflag:1:501', 3); // 第 3 层
+  fixture.store.set('ex_talent:1:1', 1); // 近卫（EX_TALENT:1）
+  await enemy_exist2(3);
+  assert.deepEqual(fixture.text_lines(), [], '近卫在待机状态下不列进部下总览');
+});
+
 test('ENEMY_EXIST2：近卫层（floor 10）追加护卫中名单（EX_TALENT + 素质名）', async () => {
   const fixture = setup_world();
   const { enemy_exist2 } = load(fixture, 'page/page-dungeon-info2');

@@ -230,6 +230,49 @@ test('enemy_attack：TALENT:193 的自动调教三连接 com13_auto 真身', asy
   assert.equal(fixture.store.get('cflag:1:666'), 1, '自动调教回数 +1');
 });
 
+// —— 攻击演出：肉便器（TALENT:204）＋ 常识改变【战斗】（281）（#991）——
+//
+// 这一支原先读 TALENT:178：那一格既没有名字条目、全库也没有写点，判断恒
+// false，演出永远走武器文。正确的槽是素质表里的「肉便器」= 204（战斗以外
+// 的卖春/处刑/职业切换都按 204 读写），所以改号之后这一支才第一次可达。
+
+test('enemy_attack：肉便器（TALENT:204）与常识改变【战斗】（281）同时为真才走诱惑文', async () => {
+  for (const [label, talents, expect_benki] of [
+    ['两项都有', [204, 281], true],
+    ['只有肉便器', [204], false],
+    ['只有常识改变', [281], false],
+  ]) {
+    const fixture = setup_world();
+    load(fixture, 'system/dungeon/magic').magic = async () => 0;
+    const battle = load(fixture, 'system/dungeon/dungeon-battle');
+    fixture.store.set('flag:5', 32); // 攻击演出开关（FLAG:5 位 32）
+    for (const talent of talents) {
+      fixture.store.set(`talent:1:${talent}`, 1);
+    }
+
+    await battle.enemy_attack(1, 0, () => 0);
+
+    const lines = fixture.text_lines();
+    const benki_line = lines.find((line) => line.includes('进行了诱惑'));
+    if (expect_benki) {
+      assert.ok(
+        benki_line,
+        `${label}：应有诱惑文，实际 ${JSON.stringify(lines)}`,
+      );
+      assert.ok(
+        benki_line.includes('作为肉便器的阿尔'),
+        `${label}：主语是肉便器`,
+      );
+    } else {
+      assert.equal(benki_line, undefined, `${label}：不该出诱惑文`);
+      assert.ok(
+        lines.some((line) => line.includes('阿尔使用')),
+        `${label}：走武器文`,
+      );
+    }
+  }
+});
+
 test('duel_attack：TALENT:193 的自动调教三连接 com13_auto 真身', async () => {
   const fixture = setup_duel_world();
   // 三连末尾的自动结算不是本用例的观察对象：换成空操作（钩子只有一个
