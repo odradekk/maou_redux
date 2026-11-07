@@ -359,6 +359,41 @@ test('AUTOTRAIN: com3_auto 技巧与自慰中毒乘算', async () => {
   assert.equal(fixture.store.get('cflag:17:666'), 1);
 });
 
+test('AUTOTRAIN: com3_auto 的私处/肛门快感恒为 0（技巧与自慰中毒改不动这两个源）', async () => {
+  // 自慰只直接刺激阴蒂：私处/肛门两路快感是 0 源，乘算乘在 0 上仍是 0。
+  for (const [tech, addict] of [
+    [0, 0],
+    [2, 2],
+    [3, 4],
+    [5, 5],
+  ]) {
+    const { fixture } = seed_autotrain_world();
+    const { com3_auto } = fixture.load_module('system/train/autotrain');
+    fixture.store.set('abl:17:0', 5); // C感觉 5 → SOURCE:0 = 1600
+    fixture.store.set('abl:17:1', 5); // B感觉 5 → SOURCE:17 = 1600
+    fixture.store.set('abl:17:12', tech);
+    fixture.store.set('abl:17:31', addict);
+    assert.equal(com3_auto(), 1);
+    const tech_mult = [0.3, 0.7, 1, 1.2, 1.4][tech] ?? 1.6;
+    const addict_mult = [1, 1.1, 1.2, 1.3, 1.5][addict] ?? 1.7;
+    assert.equal(
+      fixture.store.get('source:17:0'),
+      Math.floor(Math.floor(1600 * tech_mult) * addict_mult),
+      `技巧 ${tech} / 自慰中毒 ${addict} 档的阴核快感（证明乘算确实走过）`,
+    );
+    assert.equal(
+      fixture.store.get('source:17:1'),
+      0,
+      `技巧 ${tech} / 自慰中毒 ${addict} 档的私处快感恒为 0`,
+    );
+    assert.equal(
+      fixture.store.get('source:17:2'),
+      0,
+      `技巧 ${tech} / 自慰中毒 ${addict} 档的肛门快感恒为 0`,
+    );
+  }
+});
+
 test('AUTOTRAIN: com13_auto 体力/气力门槛与触手分支', async () => {
   const { fixture } = seed_autotrain_world();
   const { com13_auto } = fixture.load_module('system/train/autotrain');
@@ -418,6 +453,69 @@ test('AUTOTRAIN: com63_auto 分档计算', async () => {
   assert.equal(fixture.store.get('source:17:13'), 10); // 20 ×0.5
   assert.equal(fixture.store.get('source:17:12'), 300); // 250 ×1.2
   assert.equal(fixture.store.get('cflag:17:666'), 1);
+});
+
+test('AUTOTRAIN: com63_auto 的两条损耗都落在气力（合计 120，体力不动）', async () => {
+  // 磨镜的损耗写成两行、都记 LOSEBASE:1（气力）：气力 -30-90，体力一格不动。
+  // 手动磨镜是同一份损耗，两边逐格相同。
+  const auto = seed_autotrain_world();
+  const { com63_auto } = auto.fixture.load_module('system/train/autotrain');
+  auto.fixture.store.set('abl:17:0', 2);
+  assert.equal(com63_auto(), 1);
+  assert.equal(
+    auto.fixture.store.get('deltabase:17:0'),
+    undefined,
+    '磨镜不动体力',
+  );
+  assert.equal(
+    auto.fixture.store.get('deltabase:17:1'),
+    -120,
+    '气力 = 30 + 90 两条都在同一槽',
+  );
+
+  const manual = seed_autotrain_world();
+  manual.fixture.store.set('abl:17:0', 2);
+  manual.fixture.load_module('system/train/com-assistant');
+  const { com_family } = manual.fixture.load_module('system/train/com-family');
+  assert.equal(await com_family.call(63), 1);
+  assert.equal(manual.fixture.store.get('deltabase:17:0'), undefined);
+  assert.equal(manual.fixture.store.get('deltabase:17:1'), -120);
+});
+
+test('AUTOTRAIN: com63_auto 的三路乘数不随技巧档变化', async () => {
+  // 技巧（ABL:12）在这条指令里不参与乘算：六档的系数完全一样。
+  const rows = [];
+  for (let lv = 0; lv <= 7; lv += 1) {
+    const { fixture } = seed_autotrain_world();
+    const { com63_auto } = fixture.load_module('system/train/autotrain');
+    fixture.store.set('abl:17:0', 4); // C感觉 4 → SOURCE:0/4/5 = 1200/700/600
+    fixture.store.set('abl:17:10', 1); // 顺从 1 → SOURCE:11 = 120
+    fixture.store.set('abl:17:12', lv);
+    fixture.store.set('abl:17:16', 2); // 侍奉精神 2 → SOURCE:5 ×1.2
+    assert.equal(com63_auto(), 1);
+    rows.push({
+      lv,
+      values: [0, 4, 5, 11, 12, 13].map((i) =>
+        fixture.store.get(`source:17:${i}`),
+      ),
+    });
+  }
+  const base = rows[0].values;
+  assert.deepEqual(base, [
+    1200,
+    700,
+    Math.floor(600 * 0.6 * 1.2),
+    120,
+    300,
+    10,
+  ]);
+  for (const row of rows) {
+    assert.deepEqual(
+      row.values,
+      base,
+      `技巧 ${row.lv} 档的三路乘数必须与技巧 0 档一致`,
+    );
+  }
 });
 
 test('AUTOTRAIN: after_autotrain ex:1/ex:2 接入 KARMA 真身', async () => {
