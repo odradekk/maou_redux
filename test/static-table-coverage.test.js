@@ -60,16 +60,24 @@ const ALIASED = new Map([
   ['maxbase', 'base'],
   ['deltabase', 'base'],
 ]);
-// 游戏代码用到的引擎内置族，不在 staticData 里：callname/relation 是受保护
-// 内置；no 是已加入角色的数组；gamebase 是一段地址的显式 case；chara 是
-// 内置只读预设对象（era.get(`chara:${id}`) → this.staticData.chara[id]，
-// #383 CSVCSTR 等价物的读法）
+// 游戏代码用到的引擎内置族，不在 staticData 里（app.asar 的寻址层逐字）：
+//   callname/relation 是受保护内置；no 是已加入角色的数组；gamebase 是一段
+//   地址的显式 case；chara 是内置只读预设对象（era.get(`chara:${id}`) →
+//   this.staticData.chara[id]，#383 CSVCSTR 等价物的读法）；
+//   love 是二段地址的显式 case（`case"love": … this.data.love[u]`，数据层
+//   一维表，不经名字表）；version 是一段地址的显式 case（`case"version":
+//   … this.data.version`，data 的顶层标量而不是静态表）；
+//   static 前缀是三段地址的显式 case（`a.startsWith("static")` 之后剥掉
+//   六个字符读 `staticData.chara[c][a][u]`，即角色预设里的字段）。
 const ENGINE_BUILTIN = new Set([
   'callname',
   'relation',
   'no',
   'gamebase',
   'chara',
+  'love',
+  'version',
+  'static',
 ]);
 
 /** 地址里的表名对应 staticData 的哪张表；引擎自带的族返回 undefined */
@@ -229,6 +237,12 @@ engine_test(
         /\$\{|\}/.test(field) ||
         /^-?\d+$/.test(field)
       ) {
+        continue;
+      }
+      // itemname:bought 不是「道具名查找」：引擎的二段分支为 item + bought
+      // 单独设了特例（`(fieldNames.item[data.item.bought]||{}).n`），bought
+      // 是字段名而不是道具名（开发套件的 bought_name 就靠它）
+      if (address === 'itemname:bought') {
         continue;
       }
       const key = static_table_of(table);

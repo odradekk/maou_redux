@@ -19,8 +19,9 @@
  * PORT_TABLE_OWNERS。命名：yml/ 列名 + tools/facade-names.js。
  *
  * 用法：node tools/gen-facade.js [--force]
- * 产物边界与 gen-wrapper 同款：已存在默认跳过，重写须 --force；只替换
- * GENERATED 标记之间，手写区逐字节存活。
+ * 产物边界：已存在默认跳过，重写须 --force；只替换 GENERATED 标记之间，
+ * 手写区逐字节存活（引擎【帮助】-【生成开发套件】对 `ere/era-utils/` 用同一
+ * 条边界规则）。
  */
 
 'use strict';

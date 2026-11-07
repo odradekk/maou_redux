@@ -52,7 +52,9 @@ test('每个用例拿到干净状态，互不污染', () => {
   assert.deepEqual(second.var_reads, []);
   assert.deepEqual(second.lines, []);
   assert.deepEqual(second.inputs_consumed, []);
-  assert.equal(second.era.get('global:3'), undefined);
+  // 声明过的序号（global:3 = 冒险者性别）在新夹具里是 0（引擎 resetGlobal
+  // 的声明集预置），关键是读不到第一个夹具写的 'zh-CN'
+  assert.equal(second.era.get('global:3'), 0);
 });
 
 test('两次夹具拿到的是不同 SDK 实例（ere/ 模块缓存已清）', () => {
@@ -115,8 +117,8 @@ test('saveGlobal 盖戳落盘（#147）：loadGlobal 读回同一份，多出的
   assert.equal(store.get('global:1'), 2, '文件里的键一并灌回');
   assert.equal(
     store.get('global:3'),
-    undefined,
-    '不在文件中的键随整份替换消失（引擎 this.era.global = n）',
+    0,
+    '不在文件中的键随整份替换消失（引擎 this.era.global = n）；声明序号再由 loadGlobal 收尾的 `||(…=0)` 补回 0',
   );
   assert.deepEqual(fixture.logs, [], '版本与游戏标识都对，无报错');
   // loadGlobal 成功路径尾部逐字：listSaveFiles（不在 SDK 面、无记录）+ saveGlobal
@@ -903,7 +905,11 @@ test('地址归一（#821）：未登记的名字原样当键（引擎 safeUndef
   // 二段地址同一语义（引擎 default 分支的缺省同样是原串）
   era.set('flag:未登记的旗标', 9);
   assert.equal(era.get('flag:未登记的旗标'), 9, '二段未登记名字原样当键');
-  assert.equal(era.get('flag:9'), undefined, '二段未登记名字不落进序号槽');
+  assert.equal(
+    era.get('flag:9'),
+    0,
+    '二段未登记名字不落进序号槽（FLAG:9 保持声明缺省 0）',
+  );
   // 地址各段先小写，未登记的名字同样按小写落键
   era.set('talent:31:Unlisted', 5);
   assert.equal(era.get('talent:31:unlisted'), 5, '未登记名字同样按小写落键');

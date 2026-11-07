@@ -15,7 +15,7 @@
 #   实现时播种。
 #   语音对（是否启用语音 / 语音音量，erh:5-6）随语音子系统票增补。
 #
-# 包装层产物：ere/era-utils/era-audio.js（tools/gen-wrapper.js 生成初稿）。
+# 包装层产物：ere/era-utils/era-audio.js（引擎【帮助】-【生成开发套件】生成）。
 "是否启用背景音乐":
   id: 0
   name: "bgm_enabled"

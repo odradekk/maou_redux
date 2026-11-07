@@ -229,10 +229,9 @@ test('CONFIG_AGE_SETTING 退出块检查：位 12/15 全关时不生成、不播
   fixture.set_inputs(100);
   await config_age_setting(always);
 
-  assert.equal(
-    fixture.store.get('flag:26'),
-    undefined,
-    '位 12/15 全关 → 不播种',
+  assert.ok(
+    !fixture.var_writes.some((w) => w.name === 'flag:26'),
+    '位 12/15 全关 → 不播种（FLAG:26 一次都没写）',
   );
   assert.equal(fixture.store.get('cflag:21:451'), undefined, '不生成身体数据');
 });

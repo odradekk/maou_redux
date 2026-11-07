@@ -768,10 +768,9 @@ test('end10_55：天神宫结局演出本体——八行 + 嘉德线 +5、EX_FLA
     70,
     '演出本体不写威望（EX_FLAG:99 += 10 是分派层的职责）',
   );
-  assert.equal(
-    fixture.store.get('exflag:102'),
-    undefined,
-    'EX_FLAG:102 不置（K902 剧情线的职责）',
+  assert.ok(
+    !fixture.var_writes.some((w) => w.name === 'exflag:102'),
+    'EX_FLAG:102 不置（K902 剧情线的职责，这里一次都没写）',
   );
   const texts = history_texts(fixture);
   assert(
@@ -792,7 +791,10 @@ test('天神宫组不再是 invasion_check 的分派（#652 删除死分支）�
 
   assert.equal(history_texts(fixture).length, 0, '空转零输出');
   assert.equal(fixture.store.get('exflag:99'), 70, '威望不动');
-  assert.equal(fixture.store.get('exflag:2810'), undefined, '嘉德线不推进');
+  assert.ok(
+    !fixture.var_writes.some((w) => w.name === 'exflag:2810'),
+    '嘉德线不推进（EX_FLAG:2810 一次都没写）',
+  );
 });
 test('五组全不满足：零输出、威望不动（窄路径的常态）', async () => {
   const fixture = create_era_fixture();

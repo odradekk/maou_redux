@@ -153,7 +153,10 @@ test('EVENT_VIDEO_DAY：空标题仍累计浏览与粉丝，但不输出也不�
   }
   assert.equal(fixture.store.get('cflag:31:495'), 100);
   assert.equal(fixture.store.get('cflag:31:496'), 1);
-  assert.equal(fixture.store.get('flag:10004'), undefined);
+  assert.ok(
+    !fixture.var_writes.some((w) => w.name === 'flag:10004'),
+    '不发钱（所持金 FLAG:10004 一次都没写）',
+  );
   assert.deepEqual(fixture.text_lines(), []);
 });
 
@@ -464,10 +467,9 @@ test('SELL_VIDEO：EX_TALENT:1 只豁免出售录像的水晶球库存', async (
 
   await video.sell_video(31, 0);
 
-  assert.equal(
-    fixture.store.get('exflag:9010'),
-    undefined,
-    'EX_TALENT:1 不增加库存',
+  assert.ok(
+    !fixture.var_writes.some((w) => w.name === 'exflag:9010'),
+    'EX_TALENT:1 不增加库存（EX_FLAG:9010 一次都没写）',
   );
   assert.equal(
     fixture.store.get('videoarchive:0'),

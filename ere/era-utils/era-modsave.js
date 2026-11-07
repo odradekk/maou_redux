@@ -1,42 +1,63 @@
-/**
- * @file modsave 表的具名访问器初稿（tools/gen-wrapper.js 自 yml/ModSave.yml 生成）。
- *
- * 生成区（GENERATED 标记之间）由脚本维护，重生成加 --force；
- * 标记之外是手写区：变量语义补注、业务方法，重新生成不会触碰（#11 决议）。
- * 变量语义与来源写进手写区补注（AGENTS.md「变量语义必须注释」）。
- */
-
+// GENERATED START
 const era = require('#/era-electron');
 
-// GENERATED START —— tools/gen-wrapper.js 自 yml/ModSave.yml 生成，勿手改；重新生成（--force）只替换本标记之间
+/**
+ * @param {number|string} param
+ * @returns {number}
+ */
+function get(param) {
+  return era.get(`modsave:${param}`) || 0;
+}
+
 const era_modsave = {
   /**
-   * 卖淫影响（modsave:0）
+   * 卖淫影响
    * @returns {number}
    */
-  get prostitution_effect() {
-    return era.get('modsave:0') || 0;
+  get "prostitution_effect"() {
+    return era['raw']().data['modsave'][0];
   },
   /**
+   * 卖淫影响
    * @param {number} v
    */
-  set prostitution_effect(v) {
-    era.set('modsave:0', v);
+  set "prostitution_effect"(v) {
+    era['raw']().data['modsave'][0] = v;
   },
   /**
-   * 反作弊（modsave:1）
+   * 反作弊
    * @returns {number}
    */
-  get anti_cheat() {
-    return era.get('modsave:1') || 0;
+  get "anti_cheat"() {
+    return era['raw']().data['modsave'][1];
   },
   /**
+   * 反作弊
    * @param {number} v
    */
-  set anti_cheat(v) {
-    era.set('modsave:1', v);
+  set "anti_cheat"(v) {
+    era['raw']().data['modsave'][1] = v;
+  },
+  get,
+  /**
+   * @param {number|string} param
+   * @param {number} val
+   * @returns {number}
+   */
+  set(param, val) {
+    return era.set(`modsave:${param}`, val);
+  },
+  /**
+   * @param {number|string} param
+   * @param {number} val
+   * @returns {number}
+   */
+  add(param, val) {
+    return era.set(`modsave:${param}`, get(param) + val);
   },
 };
+
+module.exports = era_modsave;
 // GENERATED END
 
 // —— 手写区（重新生成不会触碰）——

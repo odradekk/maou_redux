@@ -146,9 +146,75 @@ function yml_extended_chara_tables() {
   return extended_chara_tables;
 }
 
+/**
+ * 引擎 embeddedTableNames（eraStart 的内置族，app.asar 逐字）：这些表由
+ * resetData / beginTrain 的字面量建桶，装载循环不把它们标成扩展表。
+ */
+const ENGINE_EMBEDDED_TABLES = new Set([
+  'abl',
+  'base',
+  'maxbase',
+  'cflag',
+  'cstr',
+  'equip',
+  'ex',
+  'nowex',
+  'exp',
+  'flag',
+  'global',
+  'item',
+  'mark',
+  'palam',
+  'juel',
+  'gotjuel',
+  'stain',
+  'talent',
+  'tcvar',
+  'tequip',
+  'tflag',
+  'source',
+  'delta',
+]);
+
+let extended_normal_tables;
+
+/**
+ * yml/ 里被引擎标成 `tableType.normal` 的扩展表。
+ *
+ * 引擎装载循环对每个 yml 文件建 `staticData[表]`（**零条目的空表也建**，见
+ * #903 实测），再把「不在 embeddedTableNames、也不是扩展角色表」的表登记成
+ * 扩展普通表；fillData 随后为每张这样的表建 `data[表]` 顶层桶、把声明序号补
+ * 成 0。所以它们的「在不在」同样是数据层结构的一部分，与写过没有无关。
+ *
+ * 从 yml/ 现算而不是写死清单：新增一张扩展表时夹具与引擎比对会一起跟上，
+ * 不用记得改这儿（#903 换成引擎生成的开发套件后，era-utils 里逐表出现具名
+ * 访问器，漏一张就是 TypeError）。
+ *
+ * @returns {string[]} 表名（小写，与引擎的键一致）
+ */
+function yml_extended_normal_tables() {
+  if (extended_normal_tables === undefined) {
+    const chara_tables = new Set(yml_extended_chara_tables());
+    extended_normal_tables = yml_file_names()
+      .filter((name) => name.toLowerCase().endsWith('.yml'))
+      .map((name) => name.slice(0, -'.yml'.length).toLowerCase())
+      // GameBase 是启动配置不是变量表；Chara<N> 走角色分支（引擎的
+      // staticFormatRegex），两者都不进 extendedTables
+      .filter(
+        (table) =>
+          table !== 'gamebase' &&
+          !/^chara\d+$/.test(table) &&
+          !ENGINE_EMBEDDED_TABLES.has(table) &&
+          !chara_tables.has(table),
+      );
+  }
+  return extended_normal_tables;
+}
+
 module.exports = {
   parse_yml_ids,
   yml_declared_ids,
   yml_extended_chara_tables,
+  yml_extended_normal_tables,
   yml_name_table,
 };

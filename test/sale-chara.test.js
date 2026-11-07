@@ -152,7 +152,10 @@ test('SALE_CHARA：取消后不结算并返回 -1', async () => {
   const { sale_chara } = fixture.load_module('system/stronghold/sale');
   assert.equal(await sale_chara(31, { rand: seq([0]) }), -1);
   assert.equal(era_flag.money, 100);
-  assert.equal(fixture.store.get('exflag:4444'), undefined);
+  assert.ok(
+    !fixture.var_writes.some((w) => w.name === 'exflag:4444'),
+    '取消后不结算（非作弊资金 EX_FLAG:4444 一次都没写）',
+  );
   // #612：两键正文带「- 」是有意保留的格式
   assert.deepEqual(
     fixture.lines

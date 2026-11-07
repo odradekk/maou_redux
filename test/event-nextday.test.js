@@ -984,7 +984,21 @@ test('魔王候补确定（MAOU_KOUHO）：净效果 = 最后一名持有 EX_TAL
 
     maou_kouho();
 
-    assert.equal(fixture.store.get('exflag:3'), expected, label);
+    if (expected === undefined) {
+      // 「不写」按写记录判：fillData 把声明序号预置成 0，读值分不出「没写」与
+      // 「写了 0」，而这条用例钉的是「一个写都没有」
+      assert.equal(
+        fixture.store.get('exflag:3'),
+        0,
+        `${label}：继任魔王槽停在声明缺省`,
+      );
+      assert.ok(
+        !fixture.var_writes.some((w) => w.name === 'exflag:3'),
+        `${label}：没有候补时一个写都没有`,
+      );
+    } else {
+      assert.equal(fixture.store.get('exflag:3'), expected, label);
+    }
   }
 });
 
@@ -998,7 +1012,10 @@ test('魔王候补确定（MAOU_KOUHO） 号位不参与（FOR COUNT, 1, CHARANU
   // 0 号位只有自己是候补时，TEMP 停在初值 0，`SIF TEMP` 不成立 → 一个写都没有。
   // 这条同时钉住「魔王自己不当继任魔王」 号位恒在加入序最前，被跳过与否在
   // 现网角色序下不可区分（故不设变异条目），行为标准以本条为准。
-  assert.equal(fixture.store.get('exflag:3'), undefined, '魔王自己不当候补');
+  assert.ok(
+    !fixture.var_writes.some((w) => w.name === 'exflag:3'),
+    '魔王自己不当候补（EX_FLAG:3 一次都没写）',
+  );
 });
 
 test('魔王替换（MAOU_TENSHIN）：候补即玛奥时走直接继位支', async () => {
@@ -1062,9 +1079,8 @@ test('魔王替换（MAOU_TENSHIN）：候补非玛奥时走灵魂转移支', as
     1,
     '灵魂转移的错位素质已落（transfer_soul 真身跑过）',
   );
-  assert.equal(
-    fixture.store.get('exflag:0'),
-    undefined,
+  assert.ok(
+    !fixture.var_writes.some((w) => w.name === 'exflag:0'),
     '灵魂转移支不记上届魔王（只在 IF 支写 EX_FLAG:0）',
   );
 });

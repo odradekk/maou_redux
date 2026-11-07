@@ -275,11 +275,17 @@ test('LIST_DATA 高亮：LASTLOAD_NO 深天蓝 / LASTSAVE_NO 浅绿，同槽浅�
   );
 });
 
-test('未读/未存过档：-1 作默认值，任何槽都不高亮（?? 缺省处理，0 是有效槽号）', () => {
+test('未读/未存过档：值不在时读 -1（不是 0），任何槽都不高亮（?? 缺省处理）', () => {
   const fixture = create_era_fixture();
   seed_save(fixture, 0, '零号');
   const { list_data } = load_page(fixture);
   const era_flag = fixture.load_module('era-utils/era-flag');
+  // 新档的初值 -1 由 EVENTFIRST 显式写进 flag:10018-10028（见 era-flag.js
+  // 手写区）；fillData 给**声明序号**补出来的是 0，而 0 是有效槽号，所以
+  // 初值不能靠缺省。这里验的是另一条：值真的不在时（存档里缺这个键）的读法
+  // 必须落到 -1，不能落到 0。
+  fixture.store.delete('flag:10018');
+  fixture.store.delete('flag:10019');
   assert.equal(era_flag.last_load_no, -1, '未读过的初值是 -1 而非 0');
   assert.equal(era_flag.last_save_no, -1);
   list_data(0, 1, false);
@@ -855,10 +861,9 @@ test('LOADGAME：引擎拒读（loadData false）不写 LASTLOAD_NO，回列表�
   fixture.era.loadData = async () => false;
   fixture.set_inputs(3, 100);
   await load_game();
-  assert.equal(
-    fixture.store.get('flag:10018'),
-    undefined,
-    '拒读不得写 LASTLOAD_NO',
+  assert.ok(
+    !fixture.var_writes.some((w) => w.name === 'flag:10018'),
+    '拒读不得写 LASTLOAD_NO（FLAG:10018 一次都没写）',
   );
 });
 
@@ -1007,10 +1012,9 @@ test('夹具镜像版本检查：低版本存档 loadData 拒读，不转场、�
     99,
     '拒读时数据不被替换（引擎 r.version < allowVersion → false）',
   );
-  assert.equal(
-    fixture.store.get('flag:10018'),
-    undefined,
-    '拒读不得写 LASTLOAD_NO',
+  assert.ok(
+    !fixture.var_writes.some((w) => w.name === 'flag:10018'),
+    '拒读不得写 LASTLOAD_NO（FLAG:10018 一次都没写）',
   );
 });
 

@@ -20,7 +20,7 @@ ere 官方给了两种写法（`dev-guides/E-erauma-train.md`）：官方例程�
 - **动态下标**（循环变量、算出来的序号）：用访问器的 `get(param)` / `set(param, val)` / `add(param, val)`。
 - **仍直接调用 `era.get`**：只剩开发套件不覆盖的数据路径，即元数据（`gamebase`、`chara:<id>` 等）和名字表（`<表>names`、`<表>name:<序号>` 等）。
 
-门面（`ere/facade/`、`tools/gen-facade.js`、`tools/facade-names.js`）和自建的生成器 `tools/gen-wrapper.js` 在迁移完成后删除。
+门面（`ere/facade/`、`tools/gen-facade.js`、`tools/facade-names.js`）和自建的生成器 `tools/gen-wrapper.js` 在迁移完成后删除。#903 已删除 `tools/gen-wrapper.js` 及其测试：`ere/era-utils/` 的内容此后全部由引擎生成（见「后果」里的「生成要人操作」），仓库里不再有能重写生成区的脚本。
 
 ADR-0001 里另外两条继续有效：引擎变量表是唯一真相源，不另建并行的 JS 对象模型；二次开发的新字段放进自定义扩展表。
 

@@ -20,6 +20,12 @@ yml/
 # 勿格式化
 ownership/
 
+# 引擎生成的开发套件（#903）：`// GENERATED START/END` 之间是引擎【帮助】-
+# 【生成开发套件】的逐字输出，在引擎里重新生成会被原样覆盖——在这里重排只会
+# 制造「每次重生成都多出一坨格式 diff」。手写区（GENERATED END 之后）跟着
+# 一起豁免：一个文件要么整体格式化，要么整体不格式化。
+/ere/era-utils/
+
 # 本地设置由工具维护，不参与项目格式检查。
 /.claude/settings.local.json
 

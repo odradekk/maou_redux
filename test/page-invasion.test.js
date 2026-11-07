@@ -427,7 +427,10 @@ test('[0] 威望岌岌可危：侵攻失败早退，怪物照减半但零战利�
 
   assert.equal(fixture.store.get('item:100'), 300, '减半在威望判定之前');
   assert.equal(fixture.store.get('flag:81'), 0, '侵攻失败不加侵攻度');
-  assert.equal(fixture.store.get('flag:10004'), undefined, '无战利品');
+  assert.ok(
+    !fixture.var_writes.some((w) => w.name === 'flag:10004'),
+    '无战利品（所持金 FLAG:10004 一次都没写）',
+  );
   assert.equal(fixture.store.get('exflag:99'), 10, '早退跳过威望 +2');
   const texts = history_texts(fixture);
   assert(texts.includes('威望值是【岌岌可危】'));
@@ -4390,10 +4393,9 @@ test('【地区续接】[1]/[2]/[3] 各映射到自己的 AREA/SINDO 并汇入�
       [95, '龙的 FLAG:95'],
       [96, '天界的 FLAG:96'],
     ]) {
-      assert.equal(
-        fixture.store.get(`flag:${flag}`),
-        undefined,
-        `[${region.result}] kyoten_event 三分支不推进状态字（${who} 不变）`,
+      assert.ok(
+        !fixture.var_writes.some((w) => w.name === `flag:${flag}`),
+        `[${region.result}] kyoten_event 三分支不推进状态字（${who} 一次都没写）`,
       );
     }
   }

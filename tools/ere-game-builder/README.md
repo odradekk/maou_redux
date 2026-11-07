@@ -35,9 +35,8 @@ node tools/ere-game-builder/cli.mjs ere_scaffold_game path/to/new-game --title �
   - 「没有序号为 N 的变量」：`CFlag.yml` 等表按约定不登记或只登记部分序号，引擎对未声明的序号按数字下标正常读写。
   - 「表名为空」：表名是 `${table}` 这类动态拼接，工具无法检查。
   - Chara17 的「第一列 "portcflag" 不是引擎认识的字段」：`portcflag` 是 `_fixed.json` 的 `extendedCharaTables` 声明的扩展表。
-  - 开发套件的两类警告（生成文件缺少 GENERATED 标记、套件与当前静态数据不一致）：见下一条。
 - `ere_check_game` 默认最多收集 200 条，超出的直接截断，排在后面的警告也一并丢掉。要看全量，加 `--maxFindings 100000`。
-- `ere/era-utils/` 不是引擎的开发套件：带 `// GENERATED START/END` 标记的具名访问器由 `tools/gen-wrapper.js` 生成。它的文件名和标记与引擎生成的套件相同，但引擎的【帮助】-【生成开发套件】会把两个标记之间的内容换成 `era.raw()` 写法，还会新建一批文件，所以本项目不用它。技能正文和 `ere_check_game` 里「重新生成开发套件」的建议，在本项目都不适用。
+- `ere/era-utils/` **就是**引擎生成的开发套件（#903 起）：内容是引擎【帮助】-【生成开发套件】的产物，仓库里没有能重写生成区的脚本（`tools/gen-wrapper.js` 已删）。所以「生成文件缺少 GENERATED 标记」与「套件与当前静态数据不一致」这两类警告在本项目是**要处理的**，不是误报——改了 `yml/` 就在引擎里重新生成，不要手改生成区（手写区在 `// GENERATED END` 之后，重新生成不会碰）。
 
 ## 同步上游新版本
 

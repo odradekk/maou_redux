@@ -24,10 +24,13 @@ const { test } = require('node:test');
 const { create_era_fixture } = require('./helpers/era-fixture');
 const {
   create_engine_data,
+  create_variable_loader,
   load_engine_bundle,
 } = require('./helpers/engine-bundle');
-const { load_repo_variable_tables } = require('./helpers/static-tables');
-const { yml_extended_chara_tables } = require('./helpers/static-names');
+const {
+  yml_extended_chara_tables,
+  yml_extended_normal_tables,
+} = require('./helpers/static-names');
 
 const ROOT = path.resolve(__dirname, '..');
 
@@ -118,7 +121,8 @@ test('raw().data 的骨架按 resetData 字面量：19 张表、item 四个子�
   const { data } = fixture.era.raw();
 
   // resetData 的 19 个键 + yml/_fixed.json 登记的扩展角色表（引擎 fillData
-  // 为每张登记表建顶层桶）
+  // 为每张登记表建顶层桶）+ yml/ 现算的扩展普通表（同样建桶，零条目的空表
+  // 也算——da / db / dc / tstr / videoarchive 就是这一类）
   const expected = [
     'abl',
     'base',
@@ -140,6 +144,7 @@ test('raw().data 的骨架按 resetData 字面量：19 张表、item 四个子�
     'talent',
     'version',
     ...yml_extended_chara_tables(),
+    ...yml_extended_normal_tables(),
   ];
   assert.deepEqual(Object.keys(data).sort(), expected.sort());
   assert.ok(yml_extended_chara_tables().length > 0, '本项目登记了扩展角色表');
@@ -252,8 +257,9 @@ test('调教表与 data.no：调教期之外不存在，在训角色才有行', 
 // —— 引擎比对（ADR-0005 第一层：假 this + 真方法）——
 // 引擎侧的 data / global 全部由 app.asar 里的真方法产生：resetData 的顶层
 // 字面量、fillData 的缺省、addCharacter 逐角色建的行、beginTrain 建的表、
-// raw 的包装对象。静态表取自与实机同源的装载（入库变量表 + Flag / Palam /
-// Global），角色预设只留一个 31，便于逐行对照。缺引擎时整组 skip。
+// raw 的包装对象。静态表按 yml/ 全量装载（与实机装载循环同源：每个文件都
+// 建 staticData，零条目的空表也建），角色预设只留一个 31，便于逐行对照。
+// 缺引擎时整组 skip。
 
 const engine = load_engine_bundle();
 const engine_test = engine ? test : test.skip;
@@ -261,19 +267,27 @@ const engine_test = engine ? test : test.skip;
 /**
  * 与实机同源的引擎静态表 + 一个角色预设。夹具的数据层结构与静态表登记了
  * 多少序号无关，所以这里只在预填会用到的表上装真数据。
+ *
+ * 装载面必须覆盖全部非角色 yml：fillData 只为「extendedTables 里且 staticData
+ * 存在」的表建顶层桶，少装一张，引擎侧的骨架就比真机少一格（#903）。
  * @param {{ save_gate: object }} fixture
  * @returns {object} 可直接传给 create_engine_data 的 static_data
  */
 function engine_static_data(fixture) {
-  const tables = load_repo_variable_tables();
-  for (const [file, table] of [
-    ['Flag.yml', 'flag'],
-    ['Palam.yml', 'palam'],
-    ['Global.yml', 'global'],
-  ]) {
+  const tables = create_variable_loader();
+  const yml_dir = path.join(ROOT, 'yml');
+  for (const file of fs.readdirSync(yml_dir)) {
+    const table = path.basename(file, '.yml').toLowerCase();
+    if (
+      !file.endsWith('.yml') ||
+      /^chara\d+$/.test(table) ||
+      table === 'gamebase'
+    ) {
+      continue;
+    }
     tables.load_rows(
       engine.parse_data_file(
-        fs.readFileSync(path.join(ROOT, 'yml', file), 'utf8'),
+        fs.readFileSync(path.join(yml_dir, file), 'utf8'),
         'yml',
         table,
       ),
@@ -294,18 +308,23 @@ function engine_static_data(fixture) {
 }
 
 /**
- * 引擎侧的扩展角色表登记：与 yml/_fixed.json 同源（全部按 tableType.chara）。
- * filler / addCharacter 靠它建顶层桶与逐角色行，夹具靠同一份配置建骨架——
- * 两侧的顶层表集合因此可以直接比。
- * @returns {Object<string, number>} 表名 → tableType.chara
+ * 引擎侧的扩展表登记：与实机装载循环同源——`yml/_fixed.json` 的扩展角色表
+ * 按 chara 登记，其余非内置表由装载循环标成 normal（`embeddedTableNames[i]
+ * || (extendedTables[i] = normal)`）。filler / addCharacter 靠它建顶层桶与
+ * 逐角色行，夹具靠同一份 yml 事实建骨架——两侧的顶层表集合因此可以直接比。
+ * @returns {Object<string, number>} 表名 → tableType
  */
 function engine_extended_tables() {
-  return Object.fromEntries(
-    yml_extended_chara_tables().map((table) => [
+  return Object.fromEntries([
+    ...yml_extended_chara_tables().map((table) => [
       table,
       engine.era_api.tableType.chara,
     ]),
-  );
+    ...yml_extended_normal_tables().map((table) => [
+      table,
+      engine.era_api.tableType.normal,
+    ]),
+  ]);
 }
 
 engine_test('引擎比对：raw().data 的顶层表集合与 resetData 一致', () => {
@@ -356,16 +375,19 @@ engine_test(
       'bought 初值两侧都是 -1',
     );
 
-    // global 的三枚顶层键都在引擎侧；Global.yml 声明序号的 0 预置不镜像
-    // （夹具保持平表稀疏语义，见夹具注释），所以只比这三枚与它们的值
-    const engine_global_keys = Object.keys(engine_raw.global);
-    assert.deepEqual(Object.keys(fixture_raw.global), [
-      'code',
-      'saves',
-      'version',
-    ]);
+    // global 的顶层键：两枚盖章常量 + saves 之外，还有 Global.yml 的声明
+    // 序号——引擎 resetGlobal 对每个声明序号写 0，夹具建夹具时同样预置
+    // （`raw().global[序号]` 是开发套件具名访问器的读法，没有 `|| 0`）
+    assert.deepEqual(
+      Object.keys(fixture_raw.global).sort(),
+      Object.keys(engine_raw.global).sort(),
+      'global 顶层键与引擎 resetGlobal 一致',
+    );
     for (const key of ['code', 'saves', 'version']) {
-      assert.ok(engine_global_keys.includes(key), `引擎 global 也有 ${key}`);
+      assert.ok(
+        Object.keys(engine_raw.global).includes(key),
+        `引擎 global 也有 ${key}`,
+      );
     }
     assert.equal(fixture_raw.global.code, engine_raw.global.code);
     assert.equal(fixture_raw.global.version, engine_raw.global.version);

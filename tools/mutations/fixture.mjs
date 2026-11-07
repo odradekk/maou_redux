@@ -326,6 +326,9 @@ export default [
         store.set(key, 0);
       }
     }
+    for (const id of declared_ids('global') ?? []) {
+      store.set(\`global:\${id}\`, 0);
+    }
     await list_save_files();`,
     replace: `    // 变异：重建被拆（global:* 原样残留）
     await list_save_files();`,
@@ -1024,8 +1027,9 @@ export default [
   {
     desc: 'M16300 夹具 raw() 的写路径不落平表（写只活在视图里，era.get 读不到）',
     file: 'test/helpers/era-fixture.js',
-    find: '        store.set(key, value);\n        return true;',
-    replace: '        void value; // 变异：写不落平表\n        return true;',
+    find: '        store.set(key, value);\n        // 开发套件的具名访问器写的是数据层本身',
+    replace:
+      '        void value; // 变异：写不落平表\n        // 开发套件的具名访问器写的是数据层本身',
     tests: ['fixture-raw'],
     must_mention: 'raw() 写入后 era.get 读到同一槽',
   },
@@ -1128,9 +1132,9 @@ export default [
   {
     desc: 'M16312 夹具 raw() 的扩展角色表不建顶层桶（_fixed.json 的登记不入骨架）',
     file: 'test/helpers/era-fixture.js',
-    find: "    'talent',\n    'version',\n    ...yml_extended_chara_tables(),\n  ];",
+    find: "    'talent',\n    'version',\n    ...yml_extended_chara_tables(),\n    ...EXTENDED_NORMAL_TABLES,\n  ];",
     replace:
-      "    'talent',\n    'version',\n  ]; // 变异：扩展角色表不建顶层桶",
+      "    'talent',\n    'version',\n    ...EXTENDED_NORMAL_TABLES,\n  ]; // 变异：扩展角色表不建顶层桶",
     tests: ['fixture-raw'],
     must_mention: 'raw().data 的骨架按 resetData 字面量',
   },
@@ -1314,10 +1318,10 @@ export default [
   {
     desc: 'M18445 fillData 无条件覆盖已写过的 flag（`?? 0` 写成 `= 0`）',
     file: 'test/helpers/era-fixture.js',
-    find: `      if (!store.has(\`flag:\${id}\`)) {
-        store.set(\`flag:\${id}\`, 0);
-      }`,
-    replace: `      store.set(\`flag:\${id}\`, 0); // 变异：覆盖已写值`,
+    find: `        if (!store.has(\`\${table}:\${id}\`)) {
+          store.set(\`\${table}:\${id}\`, 0);
+        }`,
+    replace: `        store.set(\`\${table}:\${id}\`, 0); // 变异：覆盖已写值`,
     tests: ['fixture-train-preset'],
     must_mention: 'fillData 的 `??=` 只补缺值',
   },

@@ -272,7 +272,10 @@ test('[999] 返回：候选列表退出不打仗，RETURN 0', async () => {
   const r = await mod.arcana_fort(knob());
   assert.equal(r, 0);
   assert(fixture.text_lines().includes('派遣谁去攻击呢？'));
-  assert.equal(fixture.store.get('flag:92'), undefined, 'FLAG:92 未动');
+  assert.ok(
+    !fixture.var_writes.some((w) => w.name === 'flag:92'),
+    'FLAG:92 未动（一次都没写）',
+  );
   assert(!fixture.era.getAddedCharacters().includes(22), '未生成骑士');
 });
 
