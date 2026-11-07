@@ -140,7 +140,7 @@ export default [
   {
     desc: 'M7277 K2 处刑口上：漏注册公开处刑处理器',
     file: 'ere/kojo/kojo-k2-timid.js',
-    find: 'public_exucution_koujo_family.register(2, public_exucution_koujo_k2);',
+    find: 'public_exucution_koujo_family.register(2, (...args) =>\n  kojo_k2.public_exucution_koujo(...args),\n);',
     replace: '// 变异：K2 公开处刑口上未注册',
     tests: ['event-execution'],
     must_mention: 'K2 与 K4 注册四种处刑处理器',

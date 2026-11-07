@@ -3,7 +3,7 @@
 // 分配，只作引用基准点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 2772; // #977 +2（M18448/M18449：K1 的 TEQUIP:45 脱着支与 89/90 淫乱初吻支的判等写反） // #934 +5（M18423-M18427：凌辱畏怖扫描退回列头值、无记忆哨兵退回 0、不同怪物也改写记忆、累加增量、首次不清零）；#865 +8（M16750-M16757：语尾文字搬进 ere/data/gobi-koujo-const.js 后的取值规则——表外编号、档位下标、默认支随机序、单支不掷、%SELF_CALL% 替换、表行与注册一一对应）；#865 另有 30 条既有语尾条目的 find 改挂常量表（编号不变） // 数据地址缺陷修复 +15（M15403-M15417：K10 自慰次数交接与处女丧失增量门槛、K7 录像自我介绍八支、K1 助手 17 号判断）； // #797 +8（M7690-M7697：成熟出售真身调用丢失的原 sell-maturo-k0 分片条目改住本分片，条目内容不变） // #734 +7（M14550–M14556：四类首次口上阈值、真实引擎爱抚与非法阈值地址检查）；#710 净 -1（M12155 改写成 M14254：卖春积极性行随 show_button_bich_level 删除、改指等级网格退回纯文本，条数不变；删 M402：SET_BICH_LEVEL 输入上限随按钮化不可观察）；#711 起 +2（M14310/M14311：K15 暗器菜单的选项按钮化——退回纯文本与按钮后夹等键两条）；#643 -5…沿革见 git 历史；#654（F8）：删反向变异与 k902 条目 67 条、新增 M13300-M13349 与 M13549，#655（F9）-8+5 后合并计数；#688 +35
+export const COUNT = 2778; // #855 +6（M15564-M15569：K0/K1/K2/K3/K5 的口上子类——不进工厂、族注册直挂本体、select_com 与语尾钩子不转交、注册号写错、子类未导出） // #977 +2（M18448/M18449：K1 的 TEQUIP:45 脱着支与 89/90 淫乱初吻支的判等写反） // #934 +5（M18423-M18427：凌辱畏怖扫描退回列头值、无记忆哨兵退回 0、不同怪物也改写记忆、累加增量、首次不清零）；#865 +8（M16750-M16757：语尾文字搬进 ere/data/gobi-koujo-const.js 后的取值规则——表外编号、档位下标、默认支随机序、单支不掷、%SELF_CALL% 替换、表行与注册一一对应）；#865 另有 30 条既有语尾条目的 find 改挂常量表（编号不变） // 数据地址缺陷修复 +15（M15403-M15417：K10 自慰次数交接与处女丧失增量门槛、K7 录像自我介绍八支、K1 助手 17 号判断）； // #797 +8（M7690-M7697：成熟出售真身调用丢失的原 sell-maturo-k0 分片条目改住本分片，条目内容不变） // #734 +7（M14550–M14556：四类首次口上阈值、真实引擎爱抚与非法阈值地址检查）；#710 净 -1（M12155 改写成 M14254：卖春积极性行随 show_button_bich_level 删除、改指等级网格退回纯文本，条数不变；删 M402：SET_BICH_LEVEL 输入上限随按钮化不可观察）；#711 起 +2（M14310/M14311：K15 暗器菜单的选项按钮化——退回纯文本与按钮后夹等键两条）；#643 -5…沿革见 git 历史；#654（F8）：删反向变异与 k902 条目 67 条、新增 M13300-M13349 与 M13549，#655（F9）-8+5 后合并计数；#688 +35
 
 export default [
   {
@@ -20051,7 +20051,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   {
     desc: 'M10980 K2 迷宫胜利口上的族注册整行删除（#514：有本体没注册，玩家侧打占位行）',
     file: 'ere/kojo/kojo-k2-timid.js',
-    find: 'dungeon_victory_family.register(2, dungeon_victory_k2);',
+    find: 'dungeon_victory_family.register(2, (...args) =>\n  kojo_k2.dungeon_victory(...args),\n);',
     replace: '// 变异：dungeon_victory_k2 不注册进族',
     tests: ['kojo-register-coverage'],
     must_mention: '未注册进 dungeon_victory_family[2]',
@@ -20067,7 +20067,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   {
     desc: 'M10982 K2 肉便器口上的族注册整行删除（#514：契约锁不只看迷宫两族）',
     file: 'ere/kojo/kojo-k2-timid.js',
-    find: 'benki_koujo_family.register(2, benki_koujo_k2);',
+    find: 'benki_koujo_family.register(2, (...args) => kojo_k2.benki_koujo(...args));',
     replace: '// 变异：benki_koujo_k2 不注册进族',
     tests: ['kojo-register-coverage'],
     must_mention: '未注册进 benki_koujo_family[2]',
@@ -20083,8 +20083,9 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   {
     desc: 'M10984 K2 迷宫胜利口上注册号改错（2 改 3，注册在但接不上本体）',
     file: 'ere/kojo/kojo-k2-timid.js',
-    find: 'dungeon_victory_family.register(2, dungeon_victory_k2);',
-    replace: 'dungeon_victory_family.register(3, dungeon_victory_k2);',
+    find: 'dungeon_victory_family.register(2, (...args) =>\n  kojo_k2.dungeon_victory(...args),\n);',
+    replace:
+      'dungeon_victory_family.register(3, (...args) =>\n  kojo_k2.dungeon_victory(...args),\n);',
     tests: ['kojo-register-coverage'],
     must_mention: '未注册进 dungeon_victory_family[2]',
   },
@@ -25890,6 +25891,56 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     replace: '    // 变异：副作用不执行',
     tests: ['kojo-base-factory'],
     must_mention: '关掉口上时清 TFLAG:15',
+  },
+  // —— #855：K0/K1/K2/K3/K5 迁成口上子类（族注册转发到工厂实例） ——
+  {
+    desc: 'M15564 K0 不进工厂（run_kojo 找不到实例，K0 的口上整体回落旧族）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: 'register_kojo(0, KojoK0);',
+    replace: '// 变异：K0 不进工厂',
+    tests: ['kojo-classes-k0-k5'],
+    must_mention: 'kojo[0] 不是 KojoK0',
+  },
+  {
+    desc: 'M15565 K3 的 COM 族注册直挂本体（绕过工厂实例，指令口上不再经钩子）',
+    file: 'ere/kojo/kojo-k3-noble.js',
+    find: 'kojo_message_com_family.register(3, (...args) =>\n  kojo_k3.kojo_message_com(...args),\n);',
+    replace: 'kojo_message_com_family.register(3, kojo_message_com_3);',
+    tests: ['kojo-classes-k0-k5'],
+    must_mention: '有直挂本体（或别种转发形状）的族注册',
+  },
+  {
+    desc: 'M15566 K5 的 select_com 不转交本体（指令口上集体失声）',
+    file: 'ere/kojo/kojo-k5-mao.js',
+    find: '  async select_com(...args) {\n    return kojo_message_com_5(...args);\n  }',
+    replace: '  async select_com() {\n    return 0; // 变异：不转交\n  }',
+    tests: ['kojo-classes-k0-k5'],
+    must_mention: '缺转交方法',
+  },
+  {
+    desc: 'M15567 K1 的语尾钩子不转交（语尾恒空串，调用方那一行照常结束）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find: '  async gobi_koujo(...args) {\n    return gobi_koujo_k1(...args);\n  }',
+    replace: "  async gobi_koujo() {\n    return ''; // 变异：不转交\n  }",
+    tests: ['kojo-classes-k0-k5'],
+    must_mention: '缺转交方法',
+  },
+  {
+    desc: 'M15568 K2 的惩罚结算族注册号写错（2 改 3，注册在但接不上 K2）',
+    file: 'ere/kojo/kojo-k2-timid.js',
+    find: 'osioski_koujo_family.register(2, (...args) => kojo_k2.osioski_koujo(...args));',
+    replace:
+      'osioski_koujo_family.register(3, (...args) => kojo_k2.osioski_koujo(...args));',
+    tests: ['kojo-classes-k0-k5'],
+    must_mention: '的族注册应逐个指向 kojo_k2',
+  },
+  {
+    desc: 'M15569 K3 的子类不导出（迁移面从模块对外消失）',
+    file: 'ere/kojo/kojo-k3-noble.js',
+    find: '  register,\n  KojoK3,\n  kojo_message_com_3,',
+    replace: '  register,\n  kojo_message_com_3,',
+    tests: ['kojo-classes-k0-k5'],
+    must_mention: 'kojo/kojo-k3-noble 未导出 KojoK3',
   },
   // —— #817：处刑钩子从实参读处分方式，不再读 tflag ——
   {

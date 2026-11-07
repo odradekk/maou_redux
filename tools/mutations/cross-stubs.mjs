@@ -281,7 +281,7 @@ export default [
   {
     desc: 'M6596 NTR_KOUJO_K2 未注册进分发族',
     file: 'ere/kojo/kojo-k2-timid.js',
-    find: 'ntr_koujo_family.register(2, ntr_koujo_k2);',
+    find: 'ntr_koujo_family.register(2, (...args) => kojo_k2.ntr_koujo(...args));',
     replace: '// NTR_KOUJO_K2 未注册',
     tests: ['cross-stubs'],
     must_mention: 'K2 与 K4 真身按统一的 rand、P 参数注册',
