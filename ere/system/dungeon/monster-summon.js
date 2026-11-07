@@ -85,6 +85,7 @@ async function summon_monster(arg = 0, rand = default_rand) {
 
       const added = era.getAddedCharacters();
       // GETCHARA(35) <= 0 的条件会把不在场与 0 号都跳过。
+      // TALENT:35:1254 = 魔界公主（菲娅线结局写入），在场时召唤数 +50%。
       if (added.includes(35) && (era.get('talent:35:1254') || 0) === 1) {
         count = Math.trunc((count * 150) / 100);
       }

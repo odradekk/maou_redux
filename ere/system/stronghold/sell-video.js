@@ -531,10 +531,10 @@ async function sell_video(cid = era_flag.target, assi = era_flag.assi) {
     score = times_trunc(score, 0.8);
   }
 
-  // ABL:70 被摄技能倍率。
-  const camera_skill = era.get(`abl:${cid}:70`) || 0;
-  const camera_rates = [0.5, 0.8, 1, 1.2, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2];
-  score = times_trunc(score, camera_rates[Math.min(camera_skill, 10)]);
+  // 被摄技能倍率固定在 0.5 档：ABL:70 在能力表里没有条目、全库也没有写点
+  // （原作同款，那一格的十档倍率只有 `== 0` 这档走到过），其余九档与 ELSE
+  // 从未生效（ADR-0008：从未生效的分支不恢复）。
+  score = times_trunc(score, 0.5);
 
   const title = make_video_title(cid, state);
   if (score > 0) {

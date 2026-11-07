@@ -54,9 +54,12 @@ const { PALAMLV } = require('#/data/palam-level-const');
 const PBAND = 4; // ITEM:PBAND = ITEM:4（4 号 = 假阳具）
 const era0 = (key) => era.get(key) || 0;
 
-// 反复出现的变量语义：TALENT:9/76/85/179/314 = 崩坏/淫乱/爱慕/
-// 菲娅口上素质/魔族种族；MARK:2 = 屈服刻印；TEQUIP:45/55/89/90 =
-// 口塞/死斗场/兽奸/触手；TFLAG:899 = 失神状态。
+// 反复出现的变量语义：TALENT:9/76/85/314 = 崩坏/淫乱/爱慕/魔族种族；
+// TALENT:179 = 菲娅的旧口上标记（性格素质 160-179 一格里的一格，编号 179
+// 经 get_kojo_num 映成口上 119 → 本模块的分发键 19；K904 那份口上走的是
+// 迁移后的 EX_TALENT:104，两份互斥，见各自文件头）；
+// MARK:2 = 屈服刻印；TEQUIP:45/55/89/90 = 口塞/死斗场/兽奸/触手；
+// TFLAG:899 = 失神状态。
 
 // EVENTTRAIN #PRI 档
 async function handle_train_pri() {

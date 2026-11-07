@@ -620,8 +620,9 @@ async function enemy_attack(arg0, arg1, rand, move_ctx = {}) {
   equip_powerup(w, arg0);
 
   // 攻击演出（行内拼接：技能标签 + 攻击文，一次 print）
+  // 肉便器 = TALENT:204（素质表里的「肉便器」条），常识改变【战斗】= 281
   const benki =
-    (era.get(`talent:${arg0}:178`) || 0) !== 0 &&
+    (era.get(`talent:${arg0}:204`) || 0) !== 0 &&
     (era.get(`talent:${arg0}:281`) || 0) !== 0;
   if ((settings & 32) !== 0) {
     let line = skill_tag;

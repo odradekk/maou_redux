@@ -157,13 +157,12 @@ test('EVENT_VIDEO_DAY：空标题仍累计浏览与粉丝，但不输出也不�
   assert.deepEqual(fixture.text_lines(), []);
 });
 
-test('SELL_VIDEO：消费有效录像，按内容、拍摄技能与境遇生成片名并同步入账', async () => {
+test('SELL_VIDEO：消费有效录像，按内容与境遇生成片名并同步入账', async () => {
   const { fixture, video } = seed_world();
   fixture.store.set('tequip:31:53', 1); // 录像仍在拍摄
   fixture.store.set('item:28', 2); // 水晶球魔力源
   fixture.store.set('cflag:31:491', 2); // 结束计数后剩一帧
   fixture.store.set('cflag:31:460', 0); // 爱抚
-  fixture.store.set('abl:31:70', 2); // 被摄技能 ×1.00
   fixture.store.set('talent:31:140', 1); // 母控标题只追加一次
   fixture.store.set('flag:10004', 100);
   fixture.store.set('exflag:4444', 100);
@@ -172,16 +171,16 @@ test('SELL_VIDEO：消费有效录像，按内容、拍摄技能与境遇生成�
 
   assert.equal(fixture.store.get('item:28'), 1, '拍摄中到结算点先扣一份魔力源');
   assert.equal(fixture.store.get('cflag:31:491'), 0, '结算后清录像帧');
-  assert.equal(fixture.store.get('cflag:31:493'), 50, '记录本次录像价值');
+  assert.equal(fixture.store.get('cflag:31:493'), 25, '记录本次录像价值');
   assert.equal(fixture.store.get('cflag:31:498'), -1, '录像属性为不纯');
   assert.equal(fixture.store.get('cstr:31:6'), '母控奴隶的调教');
   assert.equal(fixture.store.get('videoarchive:0'), '母控奴隶的调教');
-  assert.equal(fixture.store.get('flag:10004'), 150);
-  assert.equal(fixture.store.get('exflag:4444'), 150);
+  assert.equal(fixture.store.get('flag:10004'), 125);
+  assert.equal(fixture.store.get('exflag:4444'), 125);
   assert.equal(fixture.store.get('exflag:9010'), 1);
   assert.deepEqual(fixture.text_lines(), [
-    '调教时的视频有着50点的观赏价值。',
-    '卖录像的50点到手了。',
+    '调教时的视频有着25点的观赏价值。',
+    '卖录像的25点到手了。',
   ]);
 });
 
@@ -190,26 +189,24 @@ test('SELL_VIDEO：装备开关会影响后一帧，自慰分支沿录像次序�
   fixture.store.set('cflag:31:491', 3);
   fixture.store.set('cflag:31:460', 11); // 开振动棒：300
   fixture.store.set('cflag:31:461', 3); // 振动棒自慰：1000
-  fixture.store.set('abl:31:70', 2); // ×1.00
 
   await video.sell_video(31, 0);
 
-  assert.equal(fixture.store.get('cflag:31:493'), 1300);
+  assert.equal(fixture.store.get('cflag:31:493'), 650);
   assert.equal(fixture.store.get('cstr:31:6'), '奴隶的子宫口蹂躏调教');
 });
 
 test('SELL_VIDEO：内容能力的四档倍率逐档生效，助手编码不改变低三位指令', async () => {
   for (const [level, expected] of [
-    [0, 800],
-    [1, 880],
-    [3, 960],
-    [6, 1200],
+    [0, 400],
+    [1, 440],
+    [3, 480],
+    [6, 600],
   ]) {
     const { fixture, video } = seed_world();
     fixture.store.set('cflag:31:491', 2);
     fixture.store.set('cflag:31:460', 1020); // 女性助手编码 + 正常位 20
     fixture.store.set('abl:31:30', level);
-    fixture.store.set('abl:31:70', 2);
     await video.sell_video(31, 0);
     assert.equal(
       fixture.store.get('cflag:31:493'),
@@ -221,100 +218,99 @@ test('SELL_VIDEO：内容能力的四档倍率逐档生效，助手编码不改�
 
 test('SELL_VIDEO：全部录像指令的单帧基础价值逐条锁定', async () => {
   const expected_scores = [
-    [0, 50],
-    [1, 50],
-    [2, 100],
-    [3, 500],
-    [4, 200],
-    [5, 100],
-    [6, 100],
-    [7, 300],
-    [8, 150],
-    [9, 150],
-    [10, 250],
-    [11, 300],
-    [12, 300],
-    [13, 700],
-    [14, 150],
-    [15, 150],
-    [16, 500],
-    [17, 100],
-    [18, 100],
-    [19, 700],
-    [20, 800],
-    [21, 1300],
-    [22, 700],
-    [23, 1500],
-    [26, 1000],
-    [27, 1500],
-    [28, 900],
-    [29, 1700],
-    [30, 300],
-    [31, 500],
-    [32, 650],
-    [33, 770],
-    [34, 1700],
-    [36, 1700],
-    [38, 550],
-    [40, 250],
-    [41, 450],
-    [42, 700],
-    [43, 150],
-    [44, 500],
-    [45, 100],
+    [0, 25],
+    [1, 25],
+    [2, 50],
+    [3, 250],
+    [4, 100],
+    [5, 50],
+    [6, 50],
+    [7, 150],
+    [8, 75],
+    [9, 75],
+    [10, 125],
+    [11, 150],
+    [12, 150],
+    [13, 350],
+    [14, 75],
+    [15, 75],
+    [16, 250],
+    [17, 50],
+    [18, 50],
+    [19, 350],
+    [20, 400],
+    [21, 650],
+    [22, 350],
+    [23, 750],
+    [26, 500],
+    [27, 750],
+    [28, 450],
+    [29, 850],
+    [30, 150],
+    [31, 250],
+    [32, 325],
+    [33, 385],
+    [34, 850],
+    [36, 850],
+    [38, 275],
+    [40, 125],
+    [41, 225],
+    [42, 350],
+    [43, 75],
+    [44, 250],
+    [45, 50],
     [46, 0],
-    [50, 100],
-    [54, 500],
-    [56, 10],
+    [50, 50],
+    [54, 250],
+    [56, 5],
     [58, 0],
     [59, 0],
-    [60, 100],
-    [61, 250],
-    [62, 800],
-    [63, 1000],
-    [64, 3000],
-    [65, 1200],
-    [66, 800],
-    [68, 800],
-    [69, 600],
-    [70, 1200],
-    [71, 1300],
-    [80, 1000],
-    [81, 2000],
-    [82, 2500],
-    [83, 3000],
-    [85, 500],
-    [86, 600],
+    [60, 50],
+    [61, 125],
+    [62, 400],
+    [63, 500],
+    [64, 1500],
+    [65, 600],
+    [66, 400],
+    [68, 400],
+    [69, 300],
+    [70, 600],
+    [71, 650],
+    [80, 500],
+    [81, 1000],
+    [82, 1250],
+    [83, 1500],
+    [85, 250],
+    [86, 300],
     [89, 0],
-    [90, 900],
-    [100, 100],
-    [101, 800],
-    [102, 1000],
-    [103, 300],
-    [104, 300],
-    [105, 1000],
-    [106, 800],
-    [107, 1500],
-    [108, 800],
-    [109, 1000],
-    [120, 1200],
-    [121, 1400],
-    [122, 200],
-    [123, 700],
-    [124, 750],
-    [125, 800],
-    [126, 600],
-    [127, 800],
-    [128, 800],
-    [129, 900],
-    [130, 1000],
-    [131, 1300],
-    [132, 1400],
-    [133, 1500],
-    [134, 1500],
+    [90, 450],
+    [100, 50],
+    [101, 400],
+    [102, 500],
+    [103, 150],
+    [104, 150],
+    [105, 500],
+    [106, 400],
+    [107, 750],
+    [108, 400],
+    [109, 500],
+    [120, 600],
+    [121, 700],
+    [122, 100],
+    [123, 350],
+    [124, 375],
+    [125, 400],
+    [126, 300],
+    [127, 400],
+    [128, 400],
+    [129, 450],
+    [130, 500],
+    [131, 650],
+    [132, 700],
+    [133, 750],
+    [134, 750],
   ];
   const { fixture, video } = seed_world();
-  fixture.store.set('abl:31:70', 2); // 被摄技能 ×1.00
 
   for (const [command, expected] of expected_scores) {
     fixture.store.set('cflag:31:491', 2);
@@ -352,7 +348,6 @@ test('SELL_VIDEO：每个指令的内容能力索引均作用于对应帧', asyn
       const base = seed_world();
       base.fixture.store.set('cflag:31:491', 2);
       base.fixture.store.set('cflag:31:460', command);
-      base.fixture.store.set('abl:31:70', 2);
       await base.video.sell_video(31, 0);
       const base_score = base.fixture.store.get('cflag:31:493');
 
@@ -360,7 +355,6 @@ test('SELL_VIDEO：每个指令的内容能力索引均作用于对应帧', asyn
       boosted.fixture.store.set('cflag:31:491', 2);
       boosted.fixture.store.set('cflag:31:460', command);
       boosted.fixture.store.set(`abl:31:${ability}`, 1);
-      boosted.fixture.store.set('abl:31:70', 2);
       await boosted.video.sell_video(31, 0);
       assert.equal(
         boosted.fixture.store.get('cflag:31:493'),
@@ -376,11 +370,10 @@ test('SELL_VIDEO：每个指令的内容能力索引均作用于对应帧', asyn
     beast.fixture.store.set('cflag:31:460', 89);
     beast.fixture.store.set('cflag:31:461', 0);
     beast.fixture.store.set('abl:31:39', level);
-    beast.fixture.store.set('abl:31:70', 2);
     await beast.video.sell_video(31, 0);
     assert.equal(
       beast.fixture.store.get('cflag:31:493'),
-      level === 0 ? 50 : 55,
+      level === 0 ? 25 : 27,
       `兽奸持续装备由 ABL:39 加成（等级 ${level}）`,
     );
   }
@@ -407,7 +400,6 @@ test('SELL_VIDEO：部位、内容、倾向与特殊题材均进入最终片名'
     commands.forEach((command, index) => {
       fixture.store.set(`cflag:31:${460 + index}`, command);
     });
-    fixture.store.set('abl:31:70', 2);
     fixture.override_math_random(() => 0);
     try {
       await video.sell_video(31, 0);
@@ -434,20 +426,19 @@ test('SELL_VIDEO：处女片段、逐步 TIMES 与助手剪辑均在最终价值
   fixture.store.set('talent:31:0', 1); // ×1.20
   fixture.store.set('talent:31:35', 1); // ×1.10
   fixture.store.set('abl:31:30', 6); // 两帧各自 ×1.50
-  fixture.store.set('abl:31:70', 5); // 总价 ×1.50
   fixture.store.set('abl:32:15', 2); // 剪辑 +10%
 
   await video.sell_video(31, 32);
 
   assert.equal(fixture.store.get('exp:31:50'), 1);
-  assert.equal(fixture.store.get('cflag:31:493'), 16922);
+  assert.equal(fixture.store.get('cflag:31:493'), 5640);
   assert.equal(fixture.store.get('cstr:31:6'), '奴隶的子宫口蹂躏性交');
   assert.deepEqual(fixture.text_lines(), [
     '影像中记录了温妮丧失处女的画面',
     '异常经验＋１',
-    '调教时的视频有着15384点的观赏价值。',
-    '助手的巧妙的编辑，令视频价值提高了1538点。',
-    '卖录像的16922点到手了。',
+    '调教时的视频有着5128点的观赏价值。',
+    '助手的巧妙的编辑，令视频价值提高了512点。',
+    '卖录像的5640点到手了。',
   ]);
 });
 
@@ -469,7 +460,6 @@ test('SELL_VIDEO：EX_TALENT:1 只豁免出售录像的水晶球库存', async (
   const { fixture, video } = seed_world();
   fixture.store.set('cflag:31:491', 2);
   fixture.store.set('cflag:31:460', 0);
-  fixture.store.set('abl:31:70', 2);
   fixture.store.set('ex_talent:31:1', 1);
 
   await video.sell_video(31, 0);

@@ -317,12 +317,8 @@ async function aftertrain_sex_check() {
 
   if (abl11 >= 5 && abl16 >= 5 && palam5 >= palamlv4) s += 2;
   if (abl11 === 4 && abl16 >= 4 && palam5 >= palamlv4) s += 1;
-  if (
-    abl11 >= 7 &&
-    (era.get(`abl:${target}:5`) || 0) >= 6 &&
-    palam5 >= palamlv3
-  )
-    s += 1;
+  // ABL:5 的分支已删：那一格没有名字条目，也没有升格途径（ablup5 不接入
+  // 分发，它自己的上限也停在 5），`>= 6` 恒不成立，从未加过分（ADR-0008）。
   if (abl11 >= 4 && abl2 >= 3 && palam5 >= palamlv3) s += 1;
 
   if (era.get(`talent:${target}:85`)) s += 1; // 爱慕
@@ -404,12 +400,8 @@ async function aftertrain_analsex_check() {
 
   if (abl11 >= 5 && abl16 >= 5 && palam5 >= palamlv4) s += 2;
   if (abl11 === 4 && abl16 >= 4 && palam5 >= palamlv4) s += 1;
-  if (
-    abl11 >= 7 &&
-    (era.get(`abl:${target}:5`) || 0) >= 6 &&
-    palam5 >= palamlv3
-  )
-    s += 1;
+  // ABL:5 的分支已删：那一格没有名字条目，也没有升格途径（ablup5 不接入
+  // 分发，它自己的上限也停在 5），`>= 6` 恒不成立，从未加过分（ADR-0008）。
   if (
     abl11 >= 4 &&
     (era.get(`abl:${target}:2`) || 0) >= 3 &&
@@ -505,12 +497,8 @@ async function aftertrain_lesbiansex_check(sex_result = 0) {
   const palamlv3 = 3000;
   if (abl22 >= 5 && palam5 >= palamlv3) n += 1;
   if ((era.get(`abl:${assi}:22`) || 0) >= 3 && palam5 >= palamlv3) n += 1;
-  if (
-    abl11 >= 7 &&
-    (era.get(`abl:${target}:5`) || 0) >= 6 &&
-    palam5 >= palamlv3
-  )
-    n += 1;
+  // ABL:5 的分支已删：那一格没有名字条目，也没有升格途径（ablup5 不接入
+  // 分发，它自己的上限也停在 5），`>= 6` 恒不成立，从未加过分（ADR-0008）。
   if (
     abl11 >= 4 &&
     (era.get(`abl:${target}:2`) || 0) >= 3 &&

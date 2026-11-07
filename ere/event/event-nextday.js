@@ -143,10 +143,9 @@ const RUNNING_COST_FACILITIES = [
  * **目前没有调用点**（调用点被注释掉，ere 侧保持不调用）；本函数导出，
  * 供测试直接驱动（一旦被启用，接上即可）。
  *
- * 两处条件的书写瑕疵照写（改了就是改了行为）：
- *   - 人气梯子升序书写且用 `>=`，故 50 那一支先命中，70/90 两支**永不
- *     可达**——人气 90 仍只乘 1.10；
- *   - 贡献度梯子降序书写，各支正常可达。
+ * 人气（EXP:MASTER:91）与贡献度（EXP:MASTER:90）两个乘率梯子已删：这两格
+ * 在经验表里没有条目，全库也没有任何写点，恒 0，任何一档都不会命中——
+ * 从未生效的功能不恢复（ADR-0008）。维持费的其余部分逐项保留。
  *
  * @returns {Promise<void>}
  */
@@ -161,30 +160,6 @@ async function running_cost() {
     if (facilities & bit) cost += amount;
   }
   if (facilities & 64) cost += (era.get('flag:40') || 0) * 500;
-
-  const popularity = era.get('exp:0:91') || 0; // EXP:MASTER:91
-  if (popularity >= 50) cost = times(cost, 1.1);
-  else if (popularity >= 70)
-    cost = times(cost, 1.2); // （不可达）
-  else if (popularity >= 90) cost = times(cost, 1.3); // （不可达）
-
-  const contribution = era.get('exp:0:90') || 0; // EXP:MASTER:90
-  const contribution_ladder = [
-    [3000, 0.1],
-    [2000, 0.3],
-    [1200, 0.5],
-    [700, 0.6],
-    [400, 0.7],
-    [200, 0.8],
-    [100, 0.9],
-  ];
-  for (const [threshold, factor] of contribution_ladder) {
-    // 降序 IF/ELSEIF：只取首个命中
-    if (contribution >= threshold) {
-      cost = times(cost, factor);
-      break;
-    }
-  }
 
   // 基礎生活費（1 人あたり）难度档 × 人数
   const charnum = era.getAddedCharacters().length;
