@@ -137,6 +137,8 @@ const { game } = require('#/facade/game');
 const { chara_callname } = require('#/utils/callname-utils');
 const { EVENT } = require('#/data/event-name-const');
 const { PALAMLV } = require('#/data/palam-level-const');
+const { KojoBase } = require('#/kojo/kojo-base');
+const { get_kojo, register_kojo } = require('#/kojo/kojo-factory');
 
 /** 读未声明的序号返回 undefined 而非 0（#13），口上条件一律 || 0 保底处理 */
 const era0 = (k) => era.get(k) || 0;
@@ -22983,29 +22985,178 @@ function aegi_k11(args, arg = 0, rand) {
   return result; // RETURNF LOCALS
 }
 
-kojo_message_com_family.register(11, kojo_message_com_11);
-kojo_message_palamcng_family.register(11, kojo_message_palamcng_11);
-kojo_message_markcng_family.register(11, kojo_message_markcng_11);
-self_kojo_family.register(11, self_kojo_k11);
-ryouzyoku_kojo_family.register(11, dungeon_ryouzyoku_k11);
-ryouzyoku_after_kojo_family.register(11, dungeon_ryouzyoku_after_k11);
-benki_koujo_family.register(11, benki_koujo_k11);
-dungeon_victory_family.register(11, dungeon_victory_k11);
-dungeon_attack_family.register(11, dungeon_attack_k11);
-ntr_koujo_family.register(11, ntr_koujo_k11);
-exucution_koujo_family.register(11, exucution_koujo_k11);
-museum_koujo_family.register(11, museum_koujo_k11);
-banishment_koujo_family.register(11, banishment_koujo_k11);
-public_exucution_koujo_family.register(11, public_exucution_koujo_k11);
-grotesque_koujo_family.register(11, grotesque_koujo_k11);
-enterenemy_koujo_family.register(11, enterenemy_koujo_k11);
-gohoubi_request_koujo_family.register(11, () => gohoubi_request_koujo_k11());
-gohoubi_after_koujo_family.register(11, (cid, choice) =>
-  gohoubi_after_koujo_k11(undefined, cid, choice),
+/**
+ * 莉莉的口上子类（#857，与 KojoK4 / KojoK19 同款：钩子各自转交本文件的口上本体）。
+ *
+ * 每个钩子都是**一行转交、实参原样透传**：迁移前族注册的第二参就是这些本体
+ * （`benki_koujo_family.register(11, benki_koujo_k11)` 之类），所以调用形状与
+ * 台词本体一字未动。本类因此成了「K11 在哪些时机说话」的唯一清单。
+ *
+ * 本类没有 `gobi_koujo`：K11 没有语尾本体，也没有 GOBI_KOUJO 族注册——语尾落回
+ * 基类的空串，调用方那一行照常结束（迁移前 TRYCALLFORM 落空同义）。
+ *
+ * == 头部检查为什么不挪进 header_checks() ==
+ *
+ * 与 K4 / K19 同理：四道检查（口塞 / 失神 / 兽奸 / 死斗场，顺序见
+ * `kojo_message_com_11` 头部）留在本体内，存量用例直调该函数来驱动检查本身。
+ * 钩子只是外壳：检查顺序与结果与迁移前一致。
+ *
+ * == 三处实参适配 ==
+ *
+ * `gohoubi_after_koujo` / `osioski_koujo` 的本体沿用三参旧形状（第一位是旧引擎的
+ * 全局随机源，已不用），族的签名是 (cid, choice)；`gohoubi_request_koujo` 迁移前
+ * 注册的是零参闭包（本体不收实参）。三处原本都写在注册处，适配现在落在钩子上。
+ */
+class KojoK11 extends KojoBase {
+  /** 指令分支体（四道头部检查在本体内，见类注释） */
+  async select_com(...args) {
+    return kojo_message_com_11(...args);
+  }
+
+  async kojo_message_palamcng(...args) {
+    return kojo_message_palamcng_11(...args);
+  }
+
+  async kojo_message_markcng(...args) {
+    return kojo_message_markcng_11(...args);
+  }
+
+  async self_kojo(...args) {
+    return self_kojo_k11(...args);
+  }
+
+  /** 兽奸专用（头部检查 TEQUIP:89 岔入；不进族，与迁移前同） */
+  async dog_kojo(...args) {
+    return dog_kojo_11(...args);
+  }
+
+  /** 死斗场专用（头部检查 TEQUIP:55 岔入；不进族，与迁移前同） */
+  async colosseum_kojo(...args) {
+    return colosseum_kojo_11(...args);
+  }
+
+  async benki_koujo(...args) {
+    return benki_koujo_k11(...args);
+  }
+
+  async dungeon_victory(...args) {
+    return dungeon_victory_k11(...args);
+  }
+
+  async dungeon_attack(...args) {
+    return dungeon_attack_k11(...args);
+  }
+
+  async dungeon_ryouzyoku(...args) {
+    return dungeon_ryouzyoku_k11(...args);
+  }
+
+  async dungeon_ryouzyoku_after(...args) {
+    return dungeon_ryouzyoku_after_k11(...args);
+  }
+
+  /** 本体收 (rand, p)：族的统一参数顺序本就是 [rand, P]，原样透传 */
+  async ntr_koujo(...args) {
+    return ntr_koujo_k11(...args);
+  }
+
+  async exucution_koujo(...args) {
+    return exucution_koujo_k11(...args);
+  }
+
+  async museum_koujo(...args) {
+    return museum_koujo_k11(...args);
+  }
+
+  async banishment_koujo(...args) {
+    return banishment_koujo_k11(...args);
+  }
+
+  async public_exucution_koujo(...args) {
+    return public_exucution_koujo_k11(...args);
+  }
+
+  async grotesque_koujo(...args) {
+    return grotesque_koujo_k11(...args);
+  }
+
+  async enterenemy_koujo(...args) {
+    return enterenemy_koujo_k11(...args);
+  }
+
+  /** 迁移前注册的是零参闭包：族的实参不进本体 */
+  async gohoubi_request_koujo() {
+    return gohoubi_request_koujo_k11();
+  }
+
+  /** 本体沿用迁移时的三参形状（第一个实参是旧引擎的全局随机源，已不用） */
+  async gohoubi_after_koujo(cid, choice) {
+    return gohoubi_after_koujo_k11(undefined, cid, choice);
+  }
+
+  /** 同上，史拼 osioki 沿旧址 */
+  async osioski_koujo(cid, choice) {
+    return osioki_koujo_k11(undefined, cid, choice);
+  }
+}
+
+// 口上族接入：本文件每个**有分发路径**的真身都要在下面登记一处；漏一处 = 玩家侧
+// 看到占位行或不响。文件内直调的真身不在此列（dog_kojo_11 与 colosseum_kojo_11
+// 由 COM 头部检查直调）。范围与接入由 test/kojo-register-coverage.test.js 的
+// 「有本体必有 register」契约锁守。
+//
+// #857 起 K11 进工厂：`run_kojo` 走工厂实例的钩子，下面这些族注册是过渡期的旧
+// 入口（存量测试与「有本体必有注册」契约锁直调），一律转发到同一个实例
+// ——两处都经 KojoK11。
+register_kojo(11, KojoK11);
+const kojo_k11 = get_kojo(11);
+kojo_message_com_family.register(11, (...args) =>
+  kojo_k11.kojo_message_com(...args),
 );
-osioski_koujo_family.register(11, (cid, choice) =>
-  osioki_koujo_k11(undefined, cid, choice),
+kojo_message_palamcng_family.register(11, (...args) =>
+  kojo_k11.kojo_message_palamcng(...args),
 );
+kojo_message_markcng_family.register(11, (...args) =>
+  kojo_k11.kojo_message_markcng(...args),
+);
+self_kojo_family.register(11, (...args) => kojo_k11.self_kojo(...args));
+ryouzyoku_kojo_family.register(11, (...args) =>
+  kojo_k11.dungeon_ryouzyoku(...args),
+);
+ryouzyoku_after_kojo_family.register(11, (...args) =>
+  kojo_k11.dungeon_ryouzyoku_after(...args),
+);
+benki_koujo_family.register(11, (...args) => kojo_k11.benki_koujo(...args));
+dungeon_victory_family.register(11, (...args) =>
+  kojo_k11.dungeon_victory(...args),
+);
+dungeon_attack_family.register(11, (...args) =>
+  kojo_k11.dungeon_attack(...args),
+);
+ntr_koujo_family.register(11, (...args) => kojo_k11.ntr_koujo(...args));
+exucution_koujo_family.register(11, (...args) =>
+  kojo_k11.exucution_koujo(...args),
+);
+museum_koujo_family.register(11, (...args) => kojo_k11.museum_koujo(...args));
+banishment_koujo_family.register(11, (...args) =>
+  kojo_k11.banishment_koujo(...args),
+);
+public_exucution_koujo_family.register(11, (...args) =>
+  kojo_k11.public_exucution_koujo(...args),
+);
+grotesque_koujo_family.register(11, (...args) =>
+  kojo_k11.grotesque_koujo(...args),
+);
+enterenemy_koujo_family.register(11, (...args) =>
+  kojo_k11.enterenemy_koujo(...args),
+);
+gohoubi_request_koujo_family.register(11, (...args) =>
+  kojo_k11.gohoubi_request_koujo(...args),
+);
+gohoubi_after_koujo_family.register(11, (...args) =>
+  kojo_k11.gohoubi_after_koujo(...args),
+);
+osioski_koujo_family.register(11, (...args) => kojo_k11.osioski_koujo(...args));
 
 /**
  * 本模块的事件处理器：由 system/flow/startup.js 的装配表按顺序调用 register()
@@ -23020,6 +23171,7 @@ function register() {
 
 module.exports = {
   register,
+  KojoK11,
   aegi_k11,
   colosseum_kojo_11,
   dungeon_attack_k11,
