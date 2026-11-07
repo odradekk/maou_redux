@@ -3,7 +3,7 @@
 // 分配，只作引用编号，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 331; // #935 -2（M16860/M16861 随 legacy 过渡层一起删除：精英技能改按 chara 域结算，不再有「角色号当列下标」的通路）；#852 +2（M17320/M17321：3D 与 2D 两条 ENDING_2 回标题的转场上抛）；#883 +12（M16850-M16861：战斗状态搬成普通对象——列枚举、越界回落、跨列隔离、字段错位、Boss 化门槛、等级缩放、e:1 临时写法复辟） // #883 +12（M16850-M16861：战斗状态搬成普通对象——列枚举、越界回落、跨列隔离、字段错位、Boss 化门槛、等级缩放、e:1 临时写法复辟）；#872 +2（M16500/M16501：怪物改造与怪物玩弄的受理集＝本轮按钮） #724 +2（M14492/M14493：page-dungeon-info2 主屏与部下总览换屏） // #723 +3（M14410-M14412：回主菜单换屏前的段尾等键——回合结算衰减段、尿床播报、巨人婚后结算）；#710 +4（M14239 补回逐层等键、M14255 怪物按钮挪到循环之后、M14240 返回退回纯文本：page-dungeon-info2；M14245：dungeon-battle2 的确认键退回纯文本）；#641 起 -2+1（M6743/M6881 名单复辟检查随存根名单机制移除；+1 M12906 LABO 战斗删除检查）；#651 起 -6+10（M486/M613/M614/M646/M648/M6686 反向变异随缺陷修复删除；+10 M13150-M13159 回归检查）；#597 起 +16（M12100-M12113 与 M12122/M12123：陷阱/2D 地图/
+export const COUNT = 335; // #936 +4（M18450-M18453：防御侧选列——存活判据、三列全空的回落列号、扫描 3 列的边界、第二个调用点是否照选列打）；#935 -2（M16860/M16861 随 legacy 过渡层一起删除：精英技能改按 chara 域结算，不再有「角色号当列下标」的通路）；#852 +2（M17320/M17321：3D 与 2D 两条 ENDING_2 回标题的转场上抛）；#883 +12（M16850-M16861：战斗状态搬成普通对象——列枚举、越界回落、跨列隔离、字段错位、Boss 化门槛、等级缩放、e:1 临时写法复辟） // #883 +12（M16850-M16861：战斗状态搬成普通对象——列枚举、越界回落、跨列隔离、字段错位、Boss 化门槛、等级缩放、e:1 临时写法复辟）；#872 +2（M16500/M16501：怪物改造与怪物玩弄的受理集＝本轮按钮） #724 +2（M14492/M14493：page-dungeon-info2 主屏与部下总览换屏） // #723 +3（M14410-M14412：回主菜单换屏前的段尾等键——回合结算衰减段、尿床播报、巨人婚后结算）；#710 +4（M14239 补回逐层等键、M14255 怪物按钮挪到循环之后、M14240 返回退回纯文本：page-dungeon-info2；M14245：dungeon-battle2 的确认键退回纯文本）；#641 起 -2+1（M6743/M6881 名单复辟检查随存根名单机制移除；+1 M12906 LABO 战斗删除检查）；#651 起 -6+10（M486/M613/M614/M646/M648/M6686 反向变异随缺陷修复删除；+10 M13150-M13159 回归检查）；#597 起 +16（M12100-M12113 与 M12122/M12123：陷阱/2D 地图/
 // 商店街/背叛提问的收尾 PRINTL 不产生空行，休憩演出与税入播报前的真空行不许删，
 // 瞬移/催情气体的分条件真空行两个方向都钉住）；#548 起 +4（M11485-M11487：BEDROOM_BATTLE_MALE 真身——
 // 男人位判断条件、欲望门槛、睡着分支文案；M11489：挑战分支漏掉函数返回的后半句）；#461 +1（SOURCE_CHECK_AUTO 接入 M9882，号段见 #461 完成报告——原
@@ -3030,5 +3030,58 @@ export default [
     replace: `  // 变异：ENDING_2 的转场被吞`,
     tests: ['dungeon-labo'],
     must_mention: '走到中心以 TITLE 转场离开 dungeon_map',
+  },
+  // —— #936 防御侧选列：永假的全灭守卫删除后，守住剩下的选列逻辑 ——
+  {
+    desc: 'M18450 pick_defender_column 的存活判据写成恒真（count > 0 改 >= 0）',
+    file: 'ere/system/dungeon/dungeon-battle.js',
+    find: `    if (battle_column(column).count > 0) {
+      return column;`,
+    replace: `    if (battle_column(column).count >= 0) {
+      return column;`,
+    tests: ['dungeon-battle'],
+    must_mention: '第 1 列空 → 第 2 列',
+  },
+  {
+    desc: 'M18451 三列全空时回落列 0（-1 改 0——往空列上打）',
+    file: 'ere/system/dungeon/dungeon-battle.js',
+    find: '  return -1; // 三列全空：没有可打的列',
+    replace: '  return 0; // 变异：三列全空回落列 0',
+    tests: ['dungeon-battle'],
+    must_mention: '三列全空 → 越界列号 -1',
+  },
+  {
+    desc: 'M18452 扫描只扫前两列（column < 3 改 < 2——第 3 列永不选中）',
+    file: 'ere/system/dungeon/dungeon-battle.js',
+    find: `  for (let column = 0; column < 3; column += 1) {
+    if (battle_column(column).count > 0) {
+      return column;
+    }
+  }
+  return -1; // 三列全空：没有可打的列`,
+    replace: `  for (let column = 0; column < 2; column += 1) {
+    if (battle_column(column).count > 0) {
+      return column;
+    }
+  }
+  return -1; // 三列全空：没有可打的列`,
+    tests: ['dungeon-battle'],
+    must_mention: '前两列空 → 第 3 列',
+  },
+  {
+    desc: 'M18453 slave_monster_attack 无视选列、固定打第 1 列',
+    file: 'ere/system/dungeon/dungeon-battle.js',
+    find: `  // 防御侧选择（同 ENEMY_ATTACK）
+  const c = pick_defender_column();
+
+  // 个体防御与群防御（boss 时 RAND:(Y*30)）
+  const target = battle_column(c);`,
+    replace: `  // 防御侧选择（同 ENEMY_ATTACK）
+  const c = pick_defender_column();
+
+  // 个体防御与群防御（boss 时 RAND:(Y*30)）
+  const target = battle_column(0); // 变异：无视选列，固定打第 1 列`,
+    tests: ['dungeon-battle'],
+    must_mention: '打穿但没全灭',
   },
 ];
