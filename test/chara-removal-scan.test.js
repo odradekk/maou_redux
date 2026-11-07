@@ -66,10 +66,6 @@ const WHITELIST = new Map([
     '狂王线战败的临时骑士移除：召唤物清理，不是除名',
   ],
   [
-    'page/page-chara-shop.js',
-    '奴隶商店换购的旧角色退场：无登记无指针清理，待裁定',
-  ],
-  [
     'page/page-monster-shop.js',
     '怪物商店购买流程的角色退场：无登记无指针清理，待裁定',
   ],

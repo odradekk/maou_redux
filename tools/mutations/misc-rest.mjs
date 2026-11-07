@@ -11,9 +11,7 @@ const make = (id, desc, file, find, replace, must_mention) => ({
 const ex =
   'chara_ex：扩展口上编号取最后命中项并保留静态局部，EX 素质名取自 yml 名字表';
 const tatoo = 'TATOO：只收集 10..19 的非空刺青';
-const draw = 'DRAW_EXT_COMM：两种彩条保留填充宽度';
 const menu_button = 'MENU_BUTTON：前缀、快捷键与明暗参数原样交给引擎';
-const colorbar_boundary = 'PRINT_COLORBAR：超上限、零值与零上限仍保持定宽输出';
 const ikai = 'IKAI_BONUS：异界综合征只生成临时倍率';
 const release = 'NTR_VIDEO：脱离分支恢复侵攻状态';
 const virgin = 'NTR_PLAY：处女分支按随机顺序进入肛交或破处';
@@ -35,8 +33,6 @@ const chara_boundary = 'add_chara_ex：16 被检查拦截，17 从精确下界�
 const chara_shape = 'CHARA_EX 族静态形状';
 const chara_table = 'chara_ex：八个角色的 EX 素质改由角色预设套用';
 const tattoo_show = 'DUNGEON_SPY：刺青炫耀只在有可选图案时输出';
-const gradient = 'PRINT_COLORBAR2：临界值、空格颜色与 1/32 步长可观测';
-const colors = 'BARCOLORSET：十种命名色与默认色逐项对应';
 const transport_tables = 'MAOUNET：通信记录扫描每张表的首尾声明下标';
 const roster_limits = 'MAOUNET：名册 50 人仍可追加，99 人只接收一人后报满';
 const export_rules = 'MAOUNET：导出只保留去重后的前五名并生成角色唯一标记';
@@ -51,7 +47,7 @@ const export_select_100 =
   'MAOUNET：导出菜单里 100 号角色能被选中、取消照常可用（预设 100 × [100] 取消，#593）';
 
 /** 本分片条数（门 1）：增删条目必须同步改它。 */
-export const COUNT = 168; // #834 -13（7224/7225/7527-7537：EX 名字表与八个注册实现的赋值随 #834 搬进 yml/Ex_Talent.yml 与角色预设，目标代码不存在了）+1（M18358：加入点重新手工写值）；#593 +4（M11980-M11982、M11987：导出菜单的取消/决定键不再落进预设 ID 段，全由 100 号角色那条用例盯住）
+export const COUNT = 151; // #844 -17（M7231-M7235/M7344-M7347/M7548-M7555：menu-button.js 的彩条四函数随 #844 删除，目标代码不存在了） // #834 -13（7224/7225/7527-7537：EX 名字表与八个注册实现的赋值随 #834 搬进 yml/Ex_Talent.yml 与角色预设，目标代码不存在了）+1（M18358：加入点重新手工写值）；#593 +4（M11980-M11982、M11987：导出菜单的取消/决定键不再落进预设 ID 段，全由 100 号角色那条用例盯住）
 
 export default [
   make(
@@ -126,47 +122,6 @@ export default [
     '  return positions;\n}',
     '  return [];\n}',
     tatoo,
-  ),
-
-  make(
-    7231,
-    '双色条填充宽度不按比例取整',
-    'ere/page/components/menu-button.js',
-    'Math.trunc((value * width) / maximum)',
-    'Math.ceil((value * width) / maximum)',
-    draw,
-  ),
-  make(
-    7232,
-    '双色条填充字符改用空白字符',
-    'ere/page/components/menu-button.js',
-    'const in_text = fill.repeat',
-    'const in_text = empty.repeat',
-    draw,
-  ),
-  make(
-    7233,
-    '双色条背景色错用前景色',
-    'ere/page/components/menu-button.js',
-    'color: color_hex(empty_color)',
-    'color: color_hex(fill_color)',
-    draw,
-  ),
-  make(
-    7234,
-    '渐变条首格提前扣减颜色',
-    'ere/page/components/menu-button.js',
-    'fill_color - gradient * count',
-    'fill_color - gradient * (count + 1)',
-    draw,
-  ),
-  make(
-    7235,
-    '红色配色前景损坏',
-    'ere/page/components/menu-button.js',
-    '红: [0xc07070, 0x502020]',
-    '红: [0, 0x502020]',
-    draw,
   ),
 
   make(
@@ -397,38 +352,6 @@ export default [
     "const MENU_BUTTON_DIM_COLOR = '#bbbbbb';",
     "const MENU_BUTTON_DIM_COLOR = '#bbbbba';",
     menu_button,
-  ),
-  make(
-    7344,
-    '双色条超上限时取消填充宽度钳制',
-    'ere/page/components/menu-button.js',
-    'fill.repeat(Math.max(0, Math.min(width, filled)))',
-    'fill.repeat(Math.max(0, filled))',
-    colorbar_boundary,
-  ),
-  make(
-    7345,
-    '双色条零值时强制填充一格',
-    'ere/page/components/menu-button.js',
-    'fill.repeat(Math.max(0, Math.min(width, filled)))',
-    'fill.repeat(Math.max(1, Math.min(width, filled)))',
-    colorbar_boundary,
-  ),
-  make(
-    7346,
-    '双色条零值时少输出一格背景',
-    'ere/page/components/menu-button.js',
-    'width - Math.max(0, filled)',
-    'width - Math.max(1, filled)',
-    colorbar_boundary,
-  ),
-  make(
-    7347,
-    '双色条零上限不再填满',
-    'ere/page/components/menu-button.js',
-    '(value * width) / maximum',
-    '(value * width) / (maximum || width)',
-    colorbar_boundary,
   ),
   make(
     7348,
@@ -1305,70 +1228,6 @@ export default [
     "const text = era.get(`cstr:${cid}:${locate}`) ?? '';",
     "const text = era.get(`cstr:${cid}:${locate}`) ?? '损坏';",
     tatoo,
-  ),
-  make(
-    7548,
-    '渐变条 1/32 步长改错',
-    'ere/page/components/menu-button.js',
-    'width / 32',
-    'width / 31',
-    gradient,
-  ),
-  make(
-    7549,
-    '渐变条临界零改为空格',
-    'ere/page/components/menu-button.js',
-    'content: remaining >= 0 ? fill : empty,',
-    'content: remaining > 0 ? fill : empty,',
-    gradient,
-  ),
-  make(
-    7550,
-    '渐变条空格错用填充颜色',
-    'ere/page/components/menu-button.js',
-    'remaining >= 0 ? fill_color - gradient * count : empty_color,',
-    'remaining >= 0 ? fill_color - gradient * count : fill_color,',
-    gradient,
-  ),
-  make(
-    7551,
-    '渐变条循环多输出一格',
-    'ere/page/components/menu-button.js',
-    'for (let count = 0; count < width; count += 1)',
-    'for (let count = 0; count <= width; count += 1)',
-    gradient,
-  ),
-  make(
-    7552,
-    '命名配色深红损坏',
-    'ere/page/components/menu-button.js',
-    '深红: [0xf06050, 0x701000],',
-    '深红: [0xf06051, 0x701000],',
-    colors,
-  ),
-  make(
-    7553,
-    '颜色掩码缩短',
-    'ere/page/components/menu-button.js',
-    'value & 0xffffff',
-    'value & 0xffff',
-    gradient,
-  ),
-  make(
-    7554,
-    '颜色左补零宽度缩短',
-    'ere/page/components/menu-button.js',
-    ".padStart(6, '0')",
-    ".padStart(5, '0')",
-    gradient,
-  ),
-  make(
-    7555,
-    '未知配色的默认前景损坏',
-    'ere/page/components/menu-button.js',
-    '[0xc0c0c0, 0x202020]',
-    '[0xc0c0c1, 0x202020]',
-    colors,
   ),
   make(
     7556,

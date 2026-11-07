@@ -2,7 +2,7 @@
  * @file 美术与音频分期进场的资源完整性测试（issue #69）。
  *
  * 三层验证：
- *   1. 搬运边界：res/ 的文件清单恰为 img.csv「菜单通用」节的 6 张图 + 三首
+ *   1. 搬运边界：res/ 的文件清单恰为 img.csv「菜单通用」节的 6 张图 + 两首
  *      BGM——头像素材（243 项）结论为**不搬运不登记**（依据与过程见
  *      issue #69 评论），精确清单断言让任何混入的头像文件当场红；
  *   2. 复制保真比对已随只读源删除（res/ 的媒体文件本身保留在仓库）；
@@ -41,7 +41,6 @@ const EXPECTED_FILES = [
   'img.csv',
   'sound/TFM-003A_17.mp3',
   'sound/sound.csv',
-  'sound/great-library.mp3',
   'sound/stronghold-2.mp3',
 ];
 
@@ -59,7 +58,7 @@ function walk_files(dir, prefix = '') {
   return out.sort();
 }
 
-test('res/ 的搬运范围恰为「菜单通用」六图 + 三首 BGM（头像素材不在内）', () => {
+test('res/ 的搬运范围恰为「菜单通用」六图 + 两首 BGM（头像素材不在内）', () => {
   assert.deepEqual(walk_files(RES_DIR), [...EXPECTED_FILES].sort());
 });
 
@@ -95,9 +94,6 @@ test('注册表的注册名覆盖游戏代码引用的全部媒体名（注册�
       `游戏代码引用的媒体名 ${name} 未在注册表登记`,
     );
   }
-  // 大书库.mp3 保持登记：播放点（旧调试菜单）所在画面已随 #542 判不移植，
-  // 注册名与文件是 #69 的 res/ 备份（1:1 追溯），永无消费者
-  assert.ok(registered.has('大书库.mp3'));
 });
 
 // —— 引擎比对：注册表与 Audio.yml 都用引擎自己的代码装载 ——
@@ -105,7 +101,7 @@ test('注册表的注册名覆盖游戏代码引用的全部媒体名（注册�
 engine_test('注册表 csv 能被引擎解析器装载，行内文件与 csv 同目录存在', () => {
   const registries = [
     { csv: 'img.csv', expect_rows: 6 },
-    { csv: 'sound/sound.csv', expect_rows: 3 },
+    { csv: 'sound/sound.csv', expect_rows: 2 },
   ];
   for (const { csv, expect_rows } of registries) {
     const text = fs.readFileSync(path.join(RES_DIR, csv), 'utf8');

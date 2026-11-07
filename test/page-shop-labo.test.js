@@ -219,8 +219,8 @@ test('labo_page1：条目编号与价格逐个钉住（页 0）', async () => {
     '所持金行读 era_flag.money（flag:10004）',
   );
   // 日期行是 PRINTV DAY+1 + PRINT 日 + PRINTL  午前：内容一个半角空格。
-  // 同族的 page-item-shop / page-chara-shop / page-tailor / page-shop-trap
-  // 四处都写 1 格；本处原先多写一格，随 #577 的普查一并改正
+  // 同族的 page-item-shop / page-tailor / page-shop-trap 三处都写 1 格；
+  // 本处原先多写一格，随 #577 的普查一并改正
   assert.ok(texts(added).includes('1日 午前'), '日期行（DAY+1 与 TIME==0）');
 });
 

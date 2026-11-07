@@ -15,8 +15,8 @@
  *    `shop_state`。
  * 2. **`[IF DEBUG]` 的 `[2]召唤异界勇者` 不移植**（调试编译块，
  *    page-ablup.js:113 / page-title.js:18 同款先例）。那条支路是
- *    `JUMP CHARA_SIM_SHOP`——同形函数移植在
- *    page-chara-shop.js（文件级交付），但**发布构建里没有入口**。
+ *    `JUMP CHARA_SIM_SHOP`——发布构建里本来就没有入口，该屏已删除。
+ *    本屏的 `select_follower` / `buy_follower` 因此只剩怪物商店一个调用方。
  * 3. **`PRINTFORML` 的换行排版按显示宽度近似**：本屏的种族一览
  *    与商品一览（`,22,LEFT%` + `,5,RIGHT%`）都按原文字面量排版；
  *    商品一览两格一行（`SIF LOCAL%2 == 0 → PRINTL`）。
@@ -299,18 +299,15 @@ async function monster_shop(rand) {
 }
 
 /**
- * select_monster 与 select_chara（page-chara-shop.js 的同形函数）的
- * 通用核：两个函数逐字相同，只差**两道检查**——select_chara 的那份没有
- * 「编号在 201-280 段内」与「ITEMSALES 已点亮」两条，故按 `guard` 形参分档。
+ * 怪物商店的选择核心：种族九档映射 → 商品陈列 → 输入检查。
  *
  * @param {object} options
  * @param {number} options.arg0 种族选择的输入
- * @param {() => void} options.show 头行绘制（show_shop_monster / show_shop_chara）
- * @param {boolean} options.guard 段内与在售位的两道检查（见上）
+ * @param {() => void} options.show 头行绘制
  * @param {(n: number) => number} [options.rand] RAND:N 随机源
  * @returns {Promise<number>} 1 = 买定、0 = 退回种族选择
  */
-async function select_follower({ arg0, show, guard, rand }) {
+async function select_follower({ arg0, show, rand }) {
   // SELECTCASE ARG:0：种族两档的映射（TFLAG:100/101）
   const mapping = {
     1: [1, 1],
@@ -367,15 +364,12 @@ async function select_follower({ arg0, show, guard, rand }) {
     if (result === BACK_KEY) {
       return 0;
     }
-    // 商品编号段与在售位的两道检查（不在段内/没点亮则重问；
-    // select_chara 没有这两条，见函数头）
-    if (guard) {
-      if (result < MONSTER_IDS.start || result > MONSTER_IDS.end) {
-        continue;
-      }
-      if ((era.get(`itemsales:${result}`) || 0) === 0) {
-        continue;
-      }
+    // 商品编号段与在售位的两道检查（不在段内/没点亮则重问）
+    if (result < MONSTER_IDS.start || result > MONSTER_IDS.end) {
+      continue;
+    }
+    if ((era.get(`itemsales:${result}`) || 0) === 0) {
+      continue;
     }
     // 钱不够则重问（两条检查的条件逐字相同，第二条恒不达——
     // 文件头第 4 条）
@@ -402,17 +396,11 @@ async function select_follower({ arg0, show, guard, rand }) {
  * @returns {Promise<number>} 1 = 买定、0 = 退回种族选择
  */
 async function select_monster(arg0, rand) {
-  return select_follower({
-    arg0,
-    show: show_shop_monster,
-    guard: true,
-    rand,
-  });
+  return select_follower({ arg0, show: show_shop_monster, rand });
 }
 
 /**
- * buy_monster 与 buy_chara（page-chara-shop.js 的同形函数）的通用核
- * （两者逐字相同，差处只有头行绘制函数与跳转标签名）。
+ * 怪物商店的成交核：祭品收集 → 等级合计 → 确认扣款（buy_monster 的门面实现）。
  *
  * 祭品表（MONS）按「同种族（CSVTALENT 的 319 与两档任一相等）且在库
  * （ITEM:LCOUNT > 0）」收集，字段：编号 / 等级（E:501）/ 持有数 /
@@ -593,7 +581,7 @@ function read_monster(id, rand) {
 }
 
 /**
- * buy_monster：buy_chara 的同形复用（见 buy_follower）。
+ * buy_monster：成交核的门面入口（见 buy_follower）。
  * @param {(n: number) => number} [rand] RAND:N 随机源（monster_data 的骰子）
  * @returns {Promise<number>} 1 = 召唤成功、0 = 取消或祭品不足
  */
@@ -606,9 +594,5 @@ module.exports = {
   show_shop_monster,
   select_monster,
   buy_monster,
-  // page-chara-shop.js 复用的两份同形函数（两者的
-  // TFLAG 槽位本就共用，见该文件的说明）
-  select_follower,
-  buy_follower,
   shop_state,
 };

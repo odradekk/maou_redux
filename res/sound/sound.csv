@@ -1,7 +1,5 @@
 ;====背景音乐====
-; 三首 BGM（issue #69）。注册名就是调用点 era.playMusic 的实参，磁盘文件名
+; 两首 BGM（issue #69）。注册名就是调用点 era.playMusic 的实参，磁盘文件名
 ; 用 ASCII kebab-case——两列分开，调用点 era.playMusic('据点2.mp3') 不用改。
-; 大书库.mp3 的播放画面已随 #542 删除，这一条目前没有调用点，保留登记。
 TFM-003A_17.mp3,TFM-003A_17.mp3
 据点2.mp3,stronghold-2.mp3
-大书库.mp3,great-library.mp3
