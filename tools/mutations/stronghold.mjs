@@ -1,19 +1,21 @@
 // issue #336：调教录像出售、水晶录像书架及两个事件宿主接入。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
 // #764 净 +2：删除零价旧契约的 M6824，新增 M15003–M15005（零价拒绝与正价边界）。
-export const COUNT = 240; // #991 净 0：删 M6666（ABL:70 倍率梯子随「从未生效的分支」删除）、+1 M18504（固定 0.5 档改错） // #867 净 -6（删随退款路径消失的 M8890/M8895/M8899/M8913/M8914/M8917） // #785 净 -3：kill_target 的机械步骤移入 chara-removal，M6820/M6822/M6823 随实现消失（改由 execution 分片 M15110–M15118 守护），M6821 改写为守出售链路的转发接入；#761 净 +2：删反向变异 M6825，新增 M15000–M15002（出售输入状态校验）；#724 +5（M14486–M14490：怪物商店四屏与奴隶贩卖换屏） // #710 净 -9：删 M8915/M8927/M8928/M8931-M8933/M8935-M8939 共 11 条补位类条目（两个一览改成按钮网格，排版字面量消失），M12024 改写成 M14236，M12027 改写成「返回退回纯文本」，新增 M14238 与 M14253 两条（异界一览正文、可选祭品行退回纯文本）；M9114 保留（返工补了上界内侧的用例）；#562 起 +1（M11864：道具商店页脚不产生空行）；#653 -1 +1（删反向变异 M6638，新增 M13255 检查无影响档倍率）；
+export const COUNT = 218; // #844 -22（page-chara-shop 的 22 条随该屏删除：M8908-M8912/M8934/M9113-M9115/M9122-M9124/M9133-M9138/M12025-M12027/M14238） // #991 净 0：删 M6666（ABL:70 倍率梯子随「从未生效的分支」删除）、+1 M18504（固定 0.5 档改错） // #867 净 -6（删随退款路径消失的 M8890/M8895/M8899/M8913/M8914/M8917） // #785 净 -3：kill_target 的机械步骤移入 chara-removal，M6820/M6822/M6823 随实现消失（改由 execution 分片 M15110–M15118 守护），M6821 改写为守出售链路的转发接入；#761 净 +2：删反向变异 M6825，新增 M15000–M15002（出售输入状态校验）；#724 +5（M14486–M14490：怪物商店四屏与奴隶贩卖换屏） // #710 净 -9：删 M8915/M8927/M8928/M8931-M8933/M8935-M8939 共 11 条补位类条目（两个一览改成按钮网格，排版字面量消失），M12024 改写成 M14236，M12027 改写成「返回退回纯文本」，新增 M14238 与 M14253 两条（异界一览正文、可选祭品行退回纯文本）；M9114 保留（返工补了上界内侧的用例）；#562 起 +1（M11864：道具商店页脚不产生空行）；#653 -1 +1（删反向变异 M6638，新增 M13255 检查无影响档倍率）；
 // #396 起 +18（M8086-M8103，system/stronghold/tax.js）；
 // #397 起 +4（M8437-M8440，stronghold/gohoubi-request）；
 // #399 起 +98（M8881-M8918、M8919-M8940 与 M9101-M9138）：page-item-shop 36 /
-// page-monster-shop 35 / page-chara-shop 22 / page-shop 3（另有 1 条 #395 的
-// page-shop 旧条目） / page-shop-trap 2。
+// page-monster-shop 35 / page-shop 3（另有 1 条 #395 的 page-shop 旧条目） /
+// page-shop-trap 2。其中 page-chara-shop 的 22 条已随 #844 删除该屏一并删掉。
 // 第二轮返工 +23：M8915 与 M8919-M8936 是排版字面量、M8937-M8939 是三处
 // 文本修正、M8940 是菜单行的全角空格；第三轮返工 +15：M9101 起是范围
 // 端点（件数/上下界/槽位），等价的一端不建条目、理由写在相邻条目注释里；
 // M9116-M9118 是第三轮评审补的两个内联端点（戒指槽位、两处页高）；
 // M9119-M9124 是接入一轮：两处召唤确认段接 show_chara_info 真身（#390），
 // 每条各取「接没接」「传给谁」「哪一页」三面之一；M9125-M9138 是随机源
-// 透传面：每条「把 rand 往下传」的调用点各拿掉一次实参。
+// 透传面：每条「把 rand 往下传」的调用点各拿掉一次实参。两批里异界勇者那
+// 一侧的条目（M9122-M9124、M9133-M9138）随 #844 删除该屏一并删除，现存的
+// 是怪物商店一侧的 M9119-M9121、M9125-M9132。
 // M8915 上一轮按「与 page.mjs 的 M8114 同款」跳过，现挂排版条目，那条
 // 「回放播种」变异仍未收录）
 //；#547 起 +1（M11582，sale.js 的卖淫影响缺省读 modsave:0——由 test/sale.test.js 守护）
@@ -1367,47 +1369,6 @@ export default [
     tests: ['monster-shop'],
     must_mention: '再换一个',
   },
-  {
-    desc: 'M8908 异界人的预设编号错一个（211 → 212）',
-    file: 'ere/page/page-chara-shop.js',
-    find: 'const IKA_SIM_ID = 211;',
-    replace: 'const IKA_SIM_ID = 212;',
-    tests: ['chara-shop'],
-    must_mention: '召唤成功',
-  },
-  {
-    desc: 'M8909 强行召唤的编号取模错（10000 → 1000）',
-    file: 'ere/page/page-chara-shop.js',
-    find: 'const IKAI_MOD = 10000;',
-    replace: 'const IKAI_MOD = 1000;',
-    tests: ['chara-shop'],
-    must_mention:
-      'chara_ikai_cost：勋章 = L_I % 10000 / 5（截断、下限 3），金钱 = 勋章 × 2000',
-  },
-  {
-    desc: 'M8910 强行召唤的勋章下限错一档（3 → 4）',
-    file: 'ere/page/page-chara-shop.js',
-    find: 'const IKAI_MIN_COINS = 3;',
-    replace: 'const IKAI_MIN_COINS = 4;',
-    tests: ['chara-shop'],
-    must_mention: '不在场的 10001 是按钮（价钱附在正文里），返回也是按钮',
-  },
-  {
-    desc: 'M8911 强行召唤的金钱单价错（2000 → 2001）',
-    file: 'ere/page/page-chara-shop.js',
-    find: 'const IKAI_COIN_RATE = 2000;',
-    replace: 'const IKAI_COIN_RATE = 2001;',
-    tests: ['chara-shop'],
-    must_mention: '不在场的 10001 是按钮（价钱附在正文里），返回也是按钮',
-  },
-  {
-    desc: 'M8912 成交的勋章闸错一档（< 1 → < 0）',
-    file: 'ere/page/page-chara-shop.js',
-    find: '} else if ((era.get(`exp:0:${MEDAL_EXP}`) || 0) < 1) {',
-    replace: '} else if ((era.get(`exp:0:${MEDAL_EXP}`) || 0) < 0) {',
-    tests: ['chara-shop'],
-    must_mention: '勋章闸',
-  },
   // M8915（商品一览编号字段宽 3 → 5）随 #710 的按钮网格删除：编号补位已
   // 不存在，等价检查换成 M14236（返回退回纯文本）与既有的 M8926（每行格数）。
   {
@@ -1513,14 +1474,6 @@ export default [
   },
   // M8931/M8932/M8933（可选祭品行的名字/数量/编号补位）随 #710 的按钮网格
   // 删除：三个补位常量已不存在，等价检查换成 M14253（可选行退回纯文本）。
-  {
-    desc: 'M8934 异界一览的每行格数错一格（COLUMNS 5 → 4）',
-    file: 'ere/page/page-chara-shop.js',
-    find: 'const COLUMNS = 5;',
-    replace: 'const COLUMNS = 4;',
-    tests: ['chara-shop'],
-    must_mention: '一览的排版字面量',
-  },
   // M8935-M8939（异界一览的补位宽、格首空格、商品一览的半角空格与可选行格尾
   // 制表符）随 #710 的按钮网格删除：这些排版字面量已不存在，等价检查换成
   // M14238（异界一览正文）与 M14253（可选行退回纯文本）。
@@ -1639,32 +1592,6 @@ export default [
     tests: ['monster-shop'],
     must_mention: '扶她档',
   },
-  {
-    desc: 'M9113 异界名录的首号错一格（IKAI_IDS.start 10000 → 10001）',
-    file: 'ere/page/page-chara-shop.js',
-    find: 'const IKAI_IDS = { start: 10000, end: 100000 };',
-    replace: 'const IKAI_IDS = { start: 10001, end: 100000 };',
-    tests: ['chara-shop'],
-    must_mention: '一览的排版字面量',
-  },
-  {
-    // #710 返工恢复：一览循环 `l_i < IKAI_IDS.end` 的上界把 99999 挡在外面，
-    // 测试补了上界内侧的预设（异界一览的上界开区间用例）
-    desc: 'M9114 异界名录的上界错一格（IKAI_IDS.end 100000 → 99999）',
-    file: 'ere/page/page-chara-shop.js',
-    find: 'const IKAI_IDS = { start: 10000, end: 100000 };',
-    replace: 'const IKAI_IDS = { start: 10000, end: 99999 };',
-    tests: ['chara-shop'],
-    must_mention: '上界内侧的 99999 列进按钮网格',
-  },
-  {
-    desc: 'M9115 异界召唤性别选择的上限少一档（SEX_MAX 3 → 2）',
-    file: 'ere/page/page-chara-shop.js',
-    find: 'const SEX_MAX = 3;',
-    replace: 'const SEX_MAX = 2;',
-    tests: ['chara-shop'],
-    must_mention: '扶她档',
-  },
   // 第三轮评审点名的两个内联端点（不是命名常量，条件直接写在行里）
   {
     desc: 'M9116 戒指槽位的上限宽一格（ITEM:300 > 99 → > 100）',
@@ -1718,33 +1645,6 @@ export default [
     tests: ['monster-shop'],
     must_mention: '召唤确认段接上 SHOW_CHARA_INFO 真身',
   },
-  {
-    desc: 'M9122 异界召唤的角色信息页码传错（-2 → -1）',
-    file: 'ere/page/page-chara-shop.js',
-    find: 'await show_chara_info(a, -2, rand);',
-    replace: 'await show_chara_info(a, -1, rand);',
-    tests: ['chara-shop'],
-    must_mention:
-      '召唤确认段接上 show_chara_info 真身（cid = 异界勇者 211、页码 -2）',
-  },
-  {
-    desc: 'M9123 异界召唤的角色信息传错角色（A → 0）',
-    file: 'ere/page/page-chara-shop.js',
-    find: 'await show_chara_info(a, -2, rand);',
-    replace: 'await show_chara_info(0, -2, rand);',
-    tests: ['chara-shop'],
-    must_mention:
-      '召唤确认段接上 show_chara_info 真身（cid = 异界勇者 211、页码 -2）',
-  },
-  {
-    desc: 'M9124 异界召唤不调角色信息屏（去掉调用）',
-    file: 'ere/page/page-chara-shop.js',
-    find: 'await show_chara_info(a, -2, rand);',
-    replace: 'await Promise.resolve(); // 变异：不调角色信息屏',
-    tests: ['chara-shop'],
-    must_mention:
-      '召唤确认段接上 show_chara_info 真身（cid = 异界勇者 211、页码 -2）',
-  },
   // —— #399 接入返工（第二轮）：随机源透传 ——
   // 形参带缺省值时，实参一去掉就静静落回 downstream 的 default_rand
   // （Math.random，#344 的写法：本机跑一次绿、CI 抽中才红）。这一组把每条
@@ -1777,8 +1677,8 @@ export default [
   {
     desc: 'M9128 SELECT_MONSTER 到 SELECT_FOLLOWER 不传随机源',
     file: 'ere/page/page-monster-shop.js',
-    find: '    show: show_shop_monster,\n    guard: true,\n    rand,',
-    replace: '    show: show_shop_monster,\n    guard: true,',
+    find: 'return select_follower({ arg0, show: show_shop_monster, rand });',
+    replace: 'return select_follower({ arg0, show: show_shop_monster });',
     tests: ['monster-shop'],
     must_mention: '随机源透传：召唤全链',
   },
@@ -1787,24 +1687,24 @@ export default [
     file: 'ere/page/page-monster-shop.js',
     find: 'await buy_follower({ show, rand })',
     replace: 'await buy_follower({ show })',
-    tests: ['monster-shop', 'chara-shop'],
-    must_mention: '两个同形出口',
+    tests: ['monster-shop'],
+    must_mention: '随机源透传：召唤全链',
   },
   {
     desc: 'M9130 BUY_MONSTER 到 READ_MONSTER 不传随机源',
     file: 'ere/page/page-monster-shop.js',
     find: 'const data = read_monster(id, rand);',
     replace: 'const data = read_monster(id);',
-    tests: ['monster-shop', 'chara-shop'],
-    must_mention: '两个同形出口',
+    tests: ['monster-shop'],
+    must_mention: '随机源透传：召唤全链',
   },
   {
     desc: 'M9131 READ_MONSTER 到 MONSTER_DATA 不传随机源',
     file: 'ere/page/page-monster-shop.js',
     find: 'monster_data(id, 5, -1, -1, -1, rand);',
     replace: 'monster_data(id, 5, -1, -1, -1);',
-    tests: ['monster-shop', 'chara-shop'],
-    must_mention: '两个同形出口',
+    tests: ['monster-shop'],
+    must_mention: '随机源透传：召唤全链',
   },
   {
     desc: 'M9132 BUY_MONSTER 的独立出口到 BUY_FOLLOWER 不传随机源',
@@ -1813,55 +1713,6 @@ export default [
     replace: 'return buy_follower({ show: show_shop_monster });',
     tests: ['monster-shop'],
     must_mention: 'BUY_MONSTER 的独立出口',
-  },
-  {
-    desc: 'M9133 强行召唤的 CHAR_IKAI_APPEND 到 CHAR_INIT 不传随机源',
-    file: 'ere/page/page-chara-shop.js',
-    find: 'await char_init(a, rand);',
-    replace: 'await char_init(a);',
-    tests: ['chara-shop'],
-    must_mention: '强行召唤链',
-  },
-  {
-    desc: 'M9134 CHAR_IKAI_CREATE 到 CHAR_IKAI_APPEND 不传随机源',
-    file: 'ere/page/page-chara-shop.js',
-    find: 'a = await char_ikai_append(l_i, rand);',
-    replace: 'a = await char_ikai_append(l_i);',
-    tests: ['chara-shop'],
-    must_mention: '强行召唤链',
-  },
-  {
-    desc: 'M9135 异界召唤的 CHAR_MAKE 不传随机源',
-    file: 'ere/page/page-chara-shop.js',
-    find: 'await char_make(a, 0, 0, rand);',
-    replace: 'await char_make(a, 0, 0);',
-    tests: ['chara-shop'],
-    must_mention: '随机源透传：异界召唤全链',
-  },
-  {
-    desc: 'M9136 异界召唤的角色信息屏不传随机源（落回 default_rand）',
-    file: 'ere/page/page-chara-shop.js',
-    find: 'await show_chara_info(a, -2, rand);',
-    replace: 'await show_chara_info(a, -2);',
-    tests: ['chara-shop'],
-    must_mention: '随机源透传：异界召唤全链',
-  },
-  {
-    desc: 'M9137 SELECT_CHARA 到 SELECT_FOLLOWER 不传随机源',
-    file: 'ere/page/page-chara-shop.js',
-    find: 'return select_follower({ arg0, show: show_shop_chara, guard: false, rand });',
-    replace:
-      'return select_follower({ arg0, show: show_shop_chara, guard: false });',
-    tests: ['chara-shop'],
-    must_mention: '两个同形出口',
-  },
-  {
-    desc: 'M9138 BUY_CHARA 的独立出口到 BUY_FOLLOWER 不传随机源',
-    file: 'ere/page/page-chara-shop.js',
-    find: 'return buy_follower({ show: show_shop_chara, rand });',
-    replace: 'return buy_follower({ show: show_shop_chara });',
-    tests: ['chara-shop'],
-    must_mention: '两个同形出口',
   },
   {
     desc: 'M11582 ESTIMATE_CHARA 的卖淫影响缺省退回常量 0（不读设置页档位，#547）',
@@ -1935,42 +1786,6 @@ export default [
     tests: ['monster-shop'],
     // 可选行成了文本 → 白名单只剩 999，祭品编号当场被拒收
     must_mention: '输入不合法！请输入以下值之一：',
-  },
-  {
-    desc: 'M12025 异界勇者性别菜单退回纯文本行',
-    file: 'ere/page/page-chara-shop.js',
-    find: "    era.printButton('扶她', 3);",
-    replace: "    era.print('[3]扶她'); // 变异",
-    tests: ['chara-shop'],
-    must_mention: 'chara_sim_shop：性别菜单是按钮 —— 999 清在售位退出（#572）',
-  },
-  {
-    desc: 'M12026 异界勇者召唤确认退回纯文本行',
-    file: 'ere/page/page-chara-shop.js',
-    find: "    era.printButton('再换一个（花费1500）', 1);",
-    replace: "    era.print('[1] 再换一个（花费1500）'); // 变异",
-    tests: ['chara-shop'],
-    must_mention:
-      'chara_sim_shop：再换一个（[1]）——退人扣 1500 重来；钱不够则只报错',
-  },
-  {
-    // #710：异界一览整轮按钮化（格 + 返回），原检查调转方向：返回退回纯文本
-    desc: 'M12027 异界一览轮的 [999] 返回退回纯文本（预览格编号当场被拒收）',
-    file: 'ere/page/page-chara-shop.js',
-    find: "    // #710：返回与上面的编号格整轮一起按钮化。\n    era.printButton('返回', 999);",
-    replace:
-      "    era.print('[999] 返回'); // 变异：返回退回纯文本\n    // （原按钮行）",
-    tests: ['chara-shop'],
-    must_mention: '输入不合法！请输入以下值之一：',
-  },
-  {
-    desc: 'M14238 异界一览的价钱文案漏掉金钱（正文少了「&…金」）',
-    file: 'ere/page/page-chara-shop.js',
-    find: '      items.push([l_i, `${csv_name(l_i)}(${coins}勋章&${money}金)`]);',
-    replace:
-      '      items.push([l_i, `${csv_name(l_i)}(${coins}勋章)`]); // 变异：漏金钱',
-    tests: ['chara-shop'],
-    must_mention: '不在场的 10001 是按钮（价钱附在正文里），返回也是按钮',
   },
   {
     desc: 'M12028 道具商店购买确认退回纯文本行',

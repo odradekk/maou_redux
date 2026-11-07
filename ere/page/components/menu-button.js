@@ -77,84 +77,8 @@ function menu_button_row(buttons, per_line) {
   );
 }
 
-/** @param {number} value 0xRRGGBB 数值 */
-function color_hex(value) {
-  return `#${(value & 0xffffff).toString(16).padStart(6, '0')}`;
-}
-
-/**
- * 打印定宽双色条。
- */
-function print_colorbar(
-  value,
-  maximum,
-  width,
-  fill = '*',
-  empty = '.',
-  fill_color,
-  empty_color,
-) {
-  const filled = Math.trunc((value * width) / maximum);
-  const content = [];
-  const in_text = fill.repeat(Math.max(0, Math.min(width, filled)));
-  const out_text = empty.repeat(Math.max(0, width - Math.max(0, filled)));
-  if (in_text) content.push({ content: in_text, color: color_hex(fill_color) });
-  if (out_text)
-    content.push({ content: out_text, color: color_hex(empty_color) });
-  return era.print(content);
-}
-
-/**
- * 逐格渐变的彩条。
- */
-function print_colorbar2(
-  value,
-  maximum,
-  width,
-  fill = '*',
-  empty = '.',
-  fill_color,
-  empty_color,
-  gradient = 0,
-) {
-  const step = maximum / (width + width / 32);
-  const content = [];
-  let remaining = value;
-  for (let count = 0; count < width; count += 1) {
-    remaining -= step;
-    content.push({
-      content: remaining >= 0 ? fill : empty,
-      color: color_hex(
-        remaining >= 0 ? fill_color - gradient * count : empty_color,
-      ),
-    });
-  }
-  return era.print(content);
-}
-
-/** 彩条的前景/背景配色。 */
-function bar_color_set(name) {
-  const colors = {
-    深红: [0xf06050, 0x701000],
-    红: [0xc07070, 0x502020],
-    蓝: [0x7070c0, 0x202050],
-    藏青: [0x6666ff, 0x000000],
-    绿: [0x66dd66, 0x205020],
-    紫: [0xc070c0, 0x502050],
-    黄: [0xc0b050, 0x505020],
-    粉: [0xffccff, 0x300020],
-    青绿: [0x70c0c0, 0x205050],
-    灰: [0x666666, 0x333333],
-  };
-  const [foreground, background] = colors[name] ?? [0xc0c0c0, 0x202020];
-  return { foreground, background };
-}
-
 module.exports = {
   menu_button,
   menu_button_row,
   MENU_BUTTON_DIM_COLOR,
-  print_colorbar,
-  print_colorbar2,
-  bar_color_set,
 };

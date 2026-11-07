@@ -29,7 +29,7 @@
 ├── yml/              # 静态数据表（YAML），即引擎的静态数据目录
 ├── tools/            # 离线脚本，不受 ere/ 的依赖限制
 ├── test/             # node --test；helpers/era-fixture.js 是全项目唯一的注入点（issue #16）
-├── res/              # 图片/音频（#69 起启用，resource: true；六图 + 三首 BGM）
+├── res/              # 图片/音频（#69 起启用，resource: true；六图 + 两首 BGM）
 ├── sav/              # 存档，*.sav 已 gitignore
 ├── third-party/      # 随发布包分发的第三方许可证
 ├── dist/             # 发布包产物，已 gitignore

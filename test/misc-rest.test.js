@@ -248,85 +248,6 @@ test('DUNGEON_SPY：刺青炫耀只在有可选图案时输出', async () => {
   }
 });
 
-test('DRAW_EXT_COMM：两种彩条保留填充宽度、渐变颜色与配色表', () => {
-  const fixture = create_era_fixture();
-  const draw = fixture.load_module('page/components/menu-button');
-
-  draw.print_colorbar(40, 100, 8, '*', '.', 0xf06050, 0x701000);
-  assert.equal(fixture.text_lines()[0], '***.....');
-  assert.deepEqual(fixture.lines[0].content, [
-    { content: '***', color: '#f06050' },
-    { content: '.....', color: '#701000' },
-  ]);
-
-  draw.print_colorbar2(100, 100, 3, '#', '.', 0x6666ff, 0, 1);
-  assert.equal(fixture.text_lines()[1], '###');
-  assert.deepEqual(
-    fixture.lines[1].content.map((part) => part.color),
-    ['#6666ff', '#6666fe', '#6666fd'],
-  );
-  assert.deepEqual(draw.bar_color_set('红'), {
-    foreground: 0xc07070,
-    background: 0x502020,
-  });
-  assert.deepEqual(draw.bar_color_set('未知'), {
-    foreground: 0xc0c0c0,
-    background: 0x202020,
-  });
-});
-
-test('PRINT_COLORBAR2：临界值、空格颜色与 1/32 步长可观测', () => {
-  const fixture = create_era_fixture();
-  const { print_colorbar2 } = fixture.load_module(
-    'page/components/menu-button',
-  );
-
-  print_colorbar2(32, 33, 1, '*', '.', 0x123, 0x1000001, 1);
-  print_colorbar2(31.98, 33, 1, '*', '.', 0x123, 0x1000001, 1);
-  print_colorbar2(31, 33, 1, '*', '.', 0x123, 0x1000001, 1);
-
-  assert.deepEqual(fixture.text_lines(), ['*', '.', '.']);
-  assert.equal(fixture.lines[0].content[0].color, '#000123');
-  assert.equal(fixture.lines[1].content[0].color, '#000001');
-  assert.equal(fixture.lines[2].content[0].color, '#000001');
-  assert.equal(fixture.lines.length, 3, '每条宽度为 1，不得多输出一格');
-});
-
-test('BARCOLORSET：十种命名色与默认色逐项对应', () => {
-  const fixture = create_era_fixture();
-  const { bar_color_set } = fixture.load_module('page/components/menu-button');
-  assert.deepEqual(
-    Object.fromEntries(
-      [
-        '深红',
-        '红',
-        '蓝',
-        '藏青',
-        '绿',
-        '紫',
-        '黄',
-        '粉',
-        '青绿',
-        '灰',
-        '未知',
-      ].map((name) => [name, bar_color_set(name)]),
-    ),
-    {
-      深红: { foreground: 0xf06050, background: 0x701000 },
-      红: { foreground: 0xc07070, background: 0x502020 },
-      蓝: { foreground: 0x7070c0, background: 0x202050 },
-      藏青: { foreground: 0x6666ff, background: 0x000000 },
-      绿: { foreground: 0x66dd66, background: 0x205020 },
-      紫: { foreground: 0xc070c0, background: 0x502050 },
-      黄: { foreground: 0xc0b050, background: 0x505020 },
-      粉: { foreground: 0xffccff, background: 0x300020 },
-      青绿: { foreground: 0x70c0c0, background: 0x205050 },
-      灰: { foreground: 0x666666, background: 0x333333 },
-      未知: { foreground: 0xc0c0c0, background: 0x202020 },
-    },
-  );
-});
-
 test('MENU_BUTTON：前缀、快捷键与明暗参数原样交给引擎', () => {
   const fixture = create_era_fixture();
   const { menu_button, MENU_BUTTON_DIM_COLOR } = fixture.load_module(
@@ -346,26 +267,6 @@ test('MENU_BUTTON：前缀、快捷键与明暗参数原样交给引擎', () => 
   assert.equal(lit.accelerator, 497);
   assert.equal(lit.color, undefined);
   assert.equal(lit.rendered, '[497] ▌助手');
-});
-
-test('PRINT_COLORBAR：超上限、零值与零上限仍保持定宽输出', () => {
-  const fixture = create_era_fixture();
-  const { print_colorbar } = fixture.load_module('page/components/menu-button');
-
-  print_colorbar(125, 100, 4, '*', '.', 0xffffff, 0);
-  print_colorbar(0, 100, 4, '*', '.', 0xffffff, 0);
-  print_colorbar(1, 0, 4, '*', '.', 0xffffff, 0);
-
-  assert.deepEqual(fixture.text_lines(), ['****', '....', '****']);
-  assert.deepEqual(fixture.lines[0].content, [
-    { content: '****', color: '#ffffff' },
-  ]);
-  assert.deepEqual(fixture.lines[1].content, [
-    { content: '....', color: '#000000' },
-  ]);
-  assert.deepEqual(fixture.lines[2].content, [
-    { content: '****', color: '#ffffff' },
-  ]);
 });
 
 test('IKAI_BONUS：异界综合征只生成临时倍率，覆盖五档与边界', () => {
