@@ -1,81 +1,105 @@
-/**
- * @file global 表的具名访问器初稿（tools/gen-wrapper.js 自 yml/Global.yml 生成）。
- *
- * 生成区（GENERATED 标记之间）由脚本维护，重生成加 --force；
- * 标记之外是手写区：变量语义补注、业务方法，重新生成不会触碰（#11 决议）。
- * 变量语义与来源写进手写区补注（AGENTS.md「变量语义必须注释」）。
- */
-
+// GENERATED START
 const era = require('#/era-electron');
 
-// GENERATED START —— tools/gen-wrapper.js 自 yml/Global.yml 生成，勿手改；重新生成（--force）只替换本标记之间
+/**
+ * @param {number|string} param
+ * @returns {number}
+ */
+function get(param) {
+  return era.get(`global:${param}`) || 0;
+}
+
 const era_global = {
   /**
-   * 是否启用标题音乐（global:0）
+   * 是否启用标题音乐
    * @returns {number}
    */
-  get title_music_enabled() {
-    return era.get('global:0') || 0;
+  get "title_music_enabled"() {
+    return era['raw']().global[0];
   },
   /**
+   * 是否启用标题音乐
    * @param {number} v
    */
-  set title_music_enabled(v) {
-    era.set('global:0', v);
+  set "title_music_enabled"(v) {
+    era['raw']().global[0] = v;
   },
   /**
-   * 标题音乐音量（global:1）
+   * 标题音乐音量
    * @returns {number}
    */
-  get title_music_volume() {
-    return era.get('global:1') || 0;
+  get "title_music_volume"() {
+    return era['raw']().global[1];
   },
   /**
+   * 标题音乐音量
    * @param {number} v
    */
-  set title_music_volume(v) {
-    era.set('global:1', v);
+  set "title_music_volume"(v) {
+    era['raw']().global[1] = v;
   },
   /**
-   * 音频默认值已落盘（global:2）
+   * 音频默认值已落盘
    * @returns {number}
    */
-  get audio_defaults_seeded() {
-    return era.get('global:2') || 0;
+  get "audio_defaults_seeded"() {
+    return era['raw']().global[2];
   },
   /**
+   * 音频默认值已落盘
    * @param {number} v
    */
-  set audio_defaults_seeded(v) {
-    era.set('global:2', v);
+  set "audio_defaults_seeded"(v) {
+    era['raw']().global[2] = v;
   },
   /**
-   * 冒险者性别（global:3）
+   * 冒险者性别
    * @returns {number}
    */
-  get adventurer_gender() {
-    return era.get('global:3') || 0;
+  get "adventurer_gender"() {
+    return era['raw']().global[3];
   },
   /**
+   * 冒险者性别
    * @param {number} v
    */
-  set adventurer_gender(v) {
-    era.set('global:3', v);
+  set "adventurer_gender"(v) {
+    era['raw']().global[3] = v;
   },
   /**
-   * 通信勇者记录（global:100）
+   * 通信勇者记录
    * @returns {string}
    */
-  get communication_roster() {
-    return era.get('global:100') ?? '';
+  get "communication_roster"() {
+    return era['raw']().global[100];
   },
   /**
+   * 通信勇者记录
    * @param {string} v
    */
-  set communication_roster(v) {
-    era.set('global:100', v);
+  set "communication_roster"(v) {
+    era['raw']().global[100] = v;
+  },
+  get,
+  /**
+   * @param {number|string} param
+   * @param {number} val
+   * @returns {number}
+   */
+  set(param, val) {
+    return era.set(`global:${param}`, val);
+  },
+  /**
+   * @param {number|string} param
+   * @param {number} val
+   * @returns {number}
+   */
+  add(param, val) {
+    return era.set(`global:${param}`, get(param) + val);
   },
 };
+
+module.exports = era_global;
 // GENERATED END
 
 // —— 手写区（重新生成不会触碰）——

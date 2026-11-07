@@ -1,2174 +1,2359 @@
-/**
- * @file flag 表的具名访问器初稿（tools/gen-wrapper.js 自 yml/Flag.yml 生成）。
- *
- * 生成区（GENERATED 标记之间）由脚本维护，重生成加 --force；
- * 标记之外是手写区：变量语义补注、业务方法，重新生成不会触碰（#11 决议）。
- * 变量语义与来源写进手写区补注（AGENTS.md「变量语义必须注释」）。
- */
-
+// GENERATED START
 const era = require('#/era-electron');
 
-// GENERATED START —— tools/gen-wrapper.js 自 yml/Flag.yml 生成，勿手改；重新生成（--force）只替换本标记之间
+/**
+ * @param {number|string} param
+ * @returns {number}
+ */
+function get(param) {
+  return era.get(`flag:${param}`) || 0;
+}
+
 const era_flag = {
   /**
-   * 特别税加成（flag:9）
+   * 休息
    * @returns {number}
    */
-  get tax_surcharge() {
-    return era.get('flag:9') || 0;
+  get "rest"() {
+    return era['raw']().data['flag'][0];
   },
   /**
+   * 休息
    * @param {number} v
    */
-  set tax_surcharge(v) {
-    era.set('flag:9', v);
+  set "rest"(v) {
+    era['raw']().data['flag'][0] = v;
   },
   /**
-   * 人间界侵攻度（flag:81）
+   * 上次调教对象
    * @returns {number}
    */
-  get human_realm_invasion() {
-    return era.get('flag:81') || 0;
+  get "last_train_target"() {
+    return era['raw']().data['flag'][1];
   },
   /**
+   * 上次调教对象
    * @param {number} v
    */
-  set human_realm_invasion(v) {
-    era.set('flag:81', v);
+  set "last_train_target"(v) {
+    era['raw']().data['flag'][1] = v;
   },
   /**
-   * 人间界陷落（flag:82）
+   * 上次助手
    * @returns {number}
    */
-  get human_realm_fallen() {
-    return era.get('flag:82') || 0;
+  get "last_assistant"() {
+    return era['raw']().data['flag'][2];
   },
   /**
+   * 上次助手
    * @param {number} v
    */
-  set human_realm_fallen(v) {
-    era.set('flag:82', v);
+  set "last_assistant"(v) {
+    era['raw']().data['flag'][2] = v;
   },
   /**
-   * 人间界侵略事件进度（flag:93）
+   * 游戏设定
    * @returns {number}
    */
-  get human_realm_event_stage() {
-    return era.get('flag:93') || 0;
+  get "game_settings"() {
+    return era['raw']().data['flag'][5];
   },
   /**
+   * 游戏设定
    * @param {number} v
    */
-  set human_realm_event_stage(v) {
-    era.set('flag:93', v);
+  set "game_settings"(v) {
+    era['raw']().data['flag'][5] = v;
   },
   /**
-   * 精灵领域侵攻度（flag:86）
+   * 调教文本省略
    * @returns {number}
    */
-  get elf_realm_invasion() {
-    return era.get('flag:86') || 0;
+  get "train_text_omitted"() {
+    return era['raw']().data['flag'][6];
   },
   /**
+   * 调教文本省略
    * @param {number} v
    */
-  set elf_realm_invasion(v) {
-    era.set('flag:86', v);
+  set "train_text_omitted"(v) {
+    era['raw']().data['flag'][6] = v;
   },
   /**
-   * 精灵领域征服（flag:87）
+   * 口上开关
    * @returns {number}
    */
-  get elf_realm_conquered() {
-    return era.get('flag:87') || 0;
+  get "kojo_switch"() {
+    return era['raw']().data['flag'][7];
   },
   /**
+   * 口上开关
    * @param {number} v
    */
-  set elf_realm_conquered(v) {
-    era.set('flag:87', v);
+  set "kojo_switch"(v) {
+    era['raw']().data['flag'][7] = v;
   },
   /**
-   * 龙之山脉侵攻度（flag:88）
+   * 勇者相关杂项开关
    * @returns {number}
    */
-  get dragon_realm_invasion() {
-    return era.get('flag:88') || 0;
+  get "adventurer_flags"() {
+    return era['raw']().data['flag'][8];
   },
   /**
+   * 勇者相关杂项开关
    * @param {number} v
    */
-  set dragon_realm_invasion(v) {
-    era.set('flag:88', v);
+  set "adventurer_flags"(v) {
+    era['raw']().data['flag'][8] = v;
   },
   /**
-   * 龙之山脉征服（flag:89）
+   * 特别税加成
    * @returns {number}
    */
-  get dragon_realm_conquered() {
-    return era.get('flag:89') || 0;
+  get "tax_surcharge"() {
+    return era['raw']().data['flag'][9];
   },
   /**
+   * 特别税加成
    * @param {number} v
    */
-  set dragon_realm_conquered(v) {
-    era.set('flag:89', v);
+  set "tax_surcharge"(v) {
+    era['raw']().data['flag'][9] = v;
   },
   /**
-   * 天界侵攻度（flag:90）
+   * 录像开始状况
    * @returns {number}
    */
-  get heaven_invasion() {
-    return era.get('flag:90') || 0;
+  get "video_start_state"() {
+    return era['raw']().data['flag'][22];
   },
   /**
+   * 录像开始状况
    * @param {number} v
    */
-  set heaven_invasion(v) {
-    era.set('flag:90', v);
+  set "video_start_state"(v) {
+    era['raw']().data['flag'][22] = v;
   },
   /**
-   * 天界征服（flag:91）
+   * 指令过滤
    * @returns {number}
    */
-  get heaven_conquered() {
-    return era.get('flag:91') || 0;
+  get "order_filter"() {
+    return era['raw']().data['flag'][25];
   },
   /**
+   * 指令过滤
    * @param {number} v
    */
-  set heaven_conquered(v) {
-    era.set('flag:91', v);
+  set "order_filter"(v) {
+    era['raw']().data['flag'][25] = v;
   },
   /**
-   * 圣灵骑士堡垒攻略进度（flag:92）
+   * 种族年龄设定_0
    * @returns {number}
    */
-  get arcana_fort_stage() {
-    return era.get('flag:92') || 0;
+  get "race_age_setting_0"() {
+    return era['raw']().data['flag'][26];
   },
   /**
+   * 种族年龄设定_0
    * @param {number} v
    */
-  set arcana_fort_stage(v) {
-    era.set('flag:92', v);
+  set "race_age_setting_0"(v) {
+    era['raw']().data['flag'][26] = v;
   },
   /**
-   * 勇者战役中（flag:400）
+   * 种族年龄设定_1
    * @returns {number}
    */
-  get hero_campaign_active() {
-    return era.get('flag:400') || 0;
+  get "race_age_setting_1"() {
+    return era['raw']().data['flag'][27];
   },
   /**
+   * 种族年龄设定_1
    * @param {number} v
    */
-  set hero_campaign_active(v) {
-    era.set('flag:400', v);
+  set "race_age_setting_1"(v) {
+    era['raw']().data['flag'][27] = v;
   },
   /**
-   * 战役剧情进度（flag:401）
+   * 爱或淫乱人数
    * @returns {number}
    */
-  get campaign_story_progress() {
-    return era.get('flag:401') || 0;
+  get "love_or_lewd_count"() {
+    return era['raw']().data['flag'][30];
   },
   /**
+   * 爱或淫乱人数
    * @param {number} v
    */
-  set campaign_story_progress(v) {
-    era.set('flag:401', v);
+  set "love_or_lewd_count"(v) {
+    era['raw']().data['flag'][30] = v;
   },
   /**
-   * 二维地图模式（flag:502）
+   * 杀死人数
    * @returns {number}
    */
-  get map_2d_mode() {
-    return era.get('flag:502') || 0;
+  get "kill_count"() {
+    return era['raw']().data['flag'][31];
   },
   /**
+   * 杀死人数
    * @param {number} v
    */
-  set map_2d_mode(v) {
-    era.set('flag:502', v);
+  set "kill_count"(v) {
+    era['raw']().data['flag'][31] = v;
   },
   /**
-   * 狂王替身登场（flag:224）
+   * 爱之奴隶所生
    * @returns {number}
    */
-  get crazylord_entered() {
-    return era.get('flag:224') || 0;
+  get "born_of_love_slave"() {
+    return era['raw']().data['flag'][32];
   },
   /**
+   * 爱之奴隶所生
    * @param {number} v
    */
-  set crazylord_entered(v) {
-    era.set('flag:224', v);
+  set "born_of_love_slave"(v) {
+    era['raw']().data['flag'][32] = v;
   },
   /**
-   * 葵希罗线（flag:2815）
+   * 技巧素质道具数
    * @returns {number}
    */
-  get route_34() {
-    return era.get('flag:2815') || 0;
+  get "skill_talent_item_count"() {
+    return era['raw']().data['flag'][33];
   },
   /**
+   * 技巧素质道具数
    * @param {number} v
    */
-  set route_34(v) {
-    era.set('flag:2815', v);
+  set "skill_talent_item_count"(v) {
+    era['raw']().data['flag'][33] = v;
   },
   /**
-   * 反叛结局（flag:2816）
+   * 自动购买设定
    * @returns {number}
    */
-  get rebellion_ending() {
-    return era.get('flag:2816') || 0;
+  get "auto_buying_settings"() {
+    return era['raw']().data['flag'][34];
   },
   /**
+   * 自动购买设定
    * @param {number} v
    */
-  set rebellion_ending(v) {
-    era.set('flag:2816', v);
+  set "auto_buying_settings"(v) {
+    era['raw']().data['flag'][34] = v;
   },
   /**
-   * 天数（flag:10000）
+   * 濒死自动结束调教
    * @returns {number}
    */
-  get day_count() {
-    return era.get('flag:10000') || 0;
+  get "auto_end_train_when_dying"() {
+    return era['raw']().data['flag'][35];
   },
   /**
+   * 濒死自动结束调教
    * @param {number} v
    */
-  set day_count(v) {
-    era.set('flag:10000', v);
+  set "auto_end_train_when_dying"(v) {
+    era['raw']().data['flag'][35] = v;
   },
   /**
-   * 月（flag:10001）
+   * 显示模式
    * @returns {number}
    */
-  get month() {
-    return era.get('flag:10001') || 0;
+  get "display_mode"() {
+    return era['raw']().data['flag'][36];
   },
   /**
+   * 显示模式
    * @param {number} v
    */
-  set month(v) {
-    era.set('flag:10001', v);
+  set "display_mode"(v) {
+    era['raw']().data['flag'][36] = v;
   },
   /**
-   * 日（flag:10002）
+   * 着衣系统
    * @returns {number}
    */
-  get date() {
-    return era.get('flag:10002') || 0;
+  get "clothing_system"() {
+    return era['raw']().data['flag'][37];
   },
   /**
+   * 着衣系统
    * @param {number} v
    */
-  set date(v) {
-    era.set('flag:10002', v);
+  set "clothing_system"(v) {
+    era['raw']().data['flag'][37] = v;
   },
   /**
-   * 时段（flag:10003）
+   * 处女献上后续发生方式
    * @returns {number}
    */
-  get time() {
-    return era.get('flag:10003') || 0;
+  get "virgin_conceded_mode"() {
+    return era['raw']().data['flag'][38];
   },
   /**
+   * 处女献上后续发生方式
    * @param {number} v
    */
-  set time(v) {
-    era.set('flag:10003', v);
+  set "virgin_conceded_mode"(v) {
+    era['raw']().data['flag'][38] = v;
   },
   /**
-   * 所持金（flag:10004）
+   * 设施追加人数
    * @returns {number}
    */
-  get money() {
-    return era.get('flag:10004') || 0;
+  get "facility_headcount"() {
+    return era['raw']().data['flag'][40];
   },
   /**
+   * 设施追加人数
    * @param {number} v
    */
-  set money(v) {
-    era.set('flag:10004', v);
+  set "facility_headcount"(v) {
+    era['raw']().data['flag'][40] = v;
   },
   /**
-   * 目标（flag:10005）
+   * 设施建造位
    * @returns {number}
    */
-  get target() {
-    return era.get('flag:10005') || 0;
+  get "facility_bitmap"() {
+    return era['raw']().data['flag'][48];
   },
   /**
+   * 设施建造位
    * @param {number} v
    */
-  set target(v) {
-    era.set('flag:10005', v);
+  set "facility_bitmap"(v) {
+    era['raw']().data['flag'][48] = v;
   },
   /**
-   * 助手（flag:10006）
+   * 勇者基础等级修正
    * @returns {number}
    */
-  get assi() {
-    return era.get('flag:10006') || 0;
+  get "hero_base_level_bonus"() {
+    return era['raw']().data['flag'][60];
   },
   /**
+   * 勇者基础等级修正
    * @param {number} v
    */
-  set assi(v) {
-    era.set('flag:10006', v);
+  set "hero_base_level_bonus"(v) {
+    era['raw']().data['flag'][60] = v;
   },
   /**
-   * 助手参与调教（flag:10007）
+   * 每日香料购买数
    * @returns {number}
    */
-  get assiplay() {
-    return era.get('flag:10007') || 0;
+  get "daily_spice_purchase"() {
+    return era['raw']().data['flag'][61];
   },
   /**
+   * 每日香料购买数
    * @param {number} v
    */
-  set assiplay(v) {
-    era.set('flag:10007', v);
+  set "daily_spice_purchase"(v) {
+    era['raw']().data['flag'][61] = v;
   },
   /**
-   * 调教者（flag:10008）
+   * 肉便器行动
    * @returns {number}
    */
-  get player() {
-    return era.get('flag:10008') || 0;
+  get "benki_behavior"() {
+    return era['raw']().data['flag'][62];
   },
   /**
+   * 肉便器行动
    * @param {number} v
    */
-  set player(v) {
-    era.set('flag:10008', v);
+  set "benki_behavior"(v) {
+    era['raw']().data['flag'][62] = v;
   },
   /**
-   * 上次指令（flag:10009）
+   * 肉便器常识改写
    * @returns {number}
    */
-  get prevcom() {
-    return era.get('flag:10009') || 0;
+  get "benki_common_sense"() {
+    return era['raw']().data['flag'][63];
   },
   /**
+   * 肉便器常识改写
    * @param {number} v
    */
-  set prevcom(v) {
-    era.set('flag:10009', v);
+  set "benki_common_sense"(v) {
+    era['raw']().data['flag'][63] = v;
   },
   /**
-   * 下次指令（flag:10010）
+   * 肉便器侍奉对象
    * @returns {number}
    */
-  get nextcom() {
-    return era.get('flag:10010') || 0;
+  get "benki_service_target"() {
+    return era['raw']().data['flag'][64];
   },
   /**
+   * 肉便器侍奉对象
    * @param {number} v
    */
-  set nextcom(v) {
-    era.set('flag:10010', v);
+  set "benki_service_target"(v) {
+    era['raw']().data['flag'][64] = v;
   },
   /**
-   * 当前指令（flag:10011）
+   * 失神机能关闭
    * @returns {number}
    */
-  get selectcom() {
-    return era.get('flag:10011') || 0;
+  get "passout_disabled"() {
+    return era['raw']().data['flag'][70];
   },
   /**
+   * 失神机能关闭
    * @param {number} v
    */
-  set selectcom(v) {
-    era.set('flag:10011', v);
+  set "passout_disabled"(v) {
+    era['raw']().data['flag'][70] = v;
   },
   /**
-   * 记录调教对象（flag:10012）
+   * 自由调教跳转
    * @returns {number}
    */
-  get target_record() {
-    return era.get('flag:10012') || 0;
+  get "free_train_jump"() {
+    return era['raw']().data['flag'][71];
   },
   /**
+   * 自由调教跳转
    * @param {number} v
    */
-  set target_record(v) {
-    era.set('flag:10012', v);
+  set "free_train_jump"(v) {
+    era['raw']().data['flag'][71] = v;
   },
   /**
-   * 记录助手（flag:10013）
+   * 精饮机能关闭
    * @returns {number}
    */
-  get assi_record() {
-    return era.get('flag:10013') || 0;
+  get "semen_drink_disabled"() {
+    return era['raw']().data['flag'][72];
   },
   /**
+   * 精饮机能关闭
    * @param {number} v
    */
-  set assi_record(v) {
-    era.set('flag:10013', v);
+  set "semen_drink_disabled"(v) {
+    era['raw']().data['flag'][72] = v;
   },
   /**
-   * 暂存主人（flag:10014）
+   * 强化素质关闭
    * @returns {number}
    */
-  get master_backup() {
-    return era.get('flag:10014') || 0;
+  get "super_talent_disabled"() {
+    return era['raw']().data['flag'][73];
   },
   /**
+   * 强化素质关闭
    * @param {number} v
    */
-  set master_backup(v) {
-    era.set('flag:10014', v);
+  set "super_talent_disabled"(v) {
+    era['raw']().data['flag'][73] = v;
   },
   /**
-   * 暂存目标（flag:10015）
+   * 时常发情关闭
    * @returns {number}
    */
-  get target_backup() {
-    return era.get('flag:10015') || 0;
+  get "always_aroused_disabled"() {
+    return era['raw']().data['flag'][75];
   },
   /**
+   * 时常发情关闭
    * @param {number} v
    */
-  set target_backup(v) {
-    era.set('flag:10015', v);
+  set "always_aroused_disabled"(v) {
+    era['raw']().data['flag'][75] = v;
   },
   /**
-   * 暂存助手（flag:10016）
+   * 外来勇者等级上限
    * @returns {number}
    */
-  get assi_backup() {
-    return era.get('flag:10016') || 0;
+  get "foreign_hero_level_cap"() {
+    return era['raw']().data['flag'][76];
   },
   /**
+   * 外来勇者等级上限
    * @param {number} v
    */
-  set assi_backup(v) {
-    era.set('flag:10016', v);
+  set "foreign_hero_level_cap"(v) {
+    era['raw']().data['flag'][76] = v;
   },
   /**
-   * 星期（flag:10017）
+   * 通信勇者登场压级
    * @returns {number}
    */
-  get weekday() {
-    return era.get('flag:10017') || 0;
+  get "communication_hero_level_one"() {
+    return era['raw']().data['flag'][77];
   },
   /**
+   * 通信勇者登场压级
    * @param {number} v
    */
-  set weekday(v) {
-    era.set('flag:10017', v);
+  set "communication_hero_level_one"(v) {
+    era['raw']().data['flag'][77] = v;
   },
   /**
-   * 上次读取存档（flag:10018）
+   * 处刑勇者数
    * @returns {number}
    */
-  get last_load_no() {
-    return era.get('flag:10018') || 0;
+  get "executed_hero_count"() {
+    return era['raw']().data['flag'][80];
   },
   /**
+   * 处刑勇者数
    * @param {number} v
    */
-  set last_load_no(v) {
-    era.set('flag:10018', v);
+  set "executed_hero_count"(v) {
+    era['raw']().data['flag'][80] = v;
   },
   /**
-   * 上次保存存档（flag:10019）
+   * 人间界侵攻度
    * @returns {number}
    */
-  get last_save_no() {
-    return era.get('flag:10019') || 0;
+  get "human_realm_invasion"() {
+    return era['raw']().data['flag'][81];
   },
   /**
+   * 人间界侵攻度
    * @param {number} v
    */
-  set last_save_no(v) {
-    era.set('flag:10019', v);
+  set "human_realm_invasion"(v) {
+    era['raw']().data['flag'][81] = v;
   },
   /**
-   * 上次保存存档_1（flag:10020）
+   * 人间界陷落
    * @returns {number}
    */
-  get last_save_no_1() {
-    return era.get('flag:10020') || 0;
+  get "human_realm_fallen"() {
+    return era['raw']().data['flag'][82];
   },
   /**
+   * 人间界陷落
    * @param {number} v
    */
-  set last_save_no_1(v) {
-    era.set('flag:10020', v);
+  set "human_realm_fallen"(v) {
+    era['raw']().data['flag'][82] = v;
   },
   /**
-   * 上次保存存档_2（flag:10021）
+   * 肉便器数
    * @returns {number}
    */
-  get last_save_no_2() {
-    return era.get('flag:10021') || 0;
+  get "meat_toilet_count"() {
+    return era['raw']().data['flag'][83];
   },
   /**
+   * 肉便器数
    * @param {number} v
    */
-  set last_save_no_2(v) {
-    era.set('flag:10021', v);
+  set "meat_toilet_count"(v) {
+    era['raw']().data['flag'][83] = v;
   },
   /**
-   * 上次保存存档_3（flag:10022）
+   * 展品数
    * @returns {number}
    */
-  get last_save_no_3() {
-    return era.get('flag:10022') || 0;
+  get "exhibit_count"() {
+    return era['raw']().data['flag'][84];
   },
   /**
+   * 展品数
    * @param {number} v
    */
-  set last_save_no_3(v) {
-    era.set('flag:10022', v);
+  set "exhibit_count"(v) {
+    era['raw']().data['flag'][84] = v;
   },
   /**
-   * 上次保存存档_4（flag:10023）
+   * 陷阱等级
    * @returns {number}
    */
-  get last_save_no_4() {
-    return era.get('flag:10023') || 0;
+  get "trap_level"() {
+    return era['raw']().data['flag'][85];
   },
   /**
+   * 陷阱等级
    * @param {number} v
    */
-  set last_save_no_4(v) {
-    era.set('flag:10023', v);
+  set "trap_level"(v) {
+    era['raw']().data['flag'][85] = v;
   },
   /**
-   * 上次保存存档_5（flag:10024）
+   * 精灵领域侵攻度
    * @returns {number}
    */
-  get last_save_no_5() {
-    return era.get('flag:10024') || 0;
+  get "elf_realm_invasion"() {
+    return era['raw']().data['flag'][86];
   },
   /**
+   * 精灵领域侵攻度
    * @param {number} v
    */
-  set last_save_no_5(v) {
-    era.set('flag:10024', v);
+  set "elf_realm_invasion"(v) {
+    era['raw']().data['flag'][86] = v;
   },
   /**
-   * 上次保存存档_6（flag:10025）
+   * 精灵领域征服
    * @returns {number}
    */
-  get last_save_no_6() {
-    return era.get('flag:10025') || 0;
+  get "elf_realm_conquered"() {
+    return era['raw']().data['flag'][87];
   },
   /**
+   * 精灵领域征服
    * @param {number} v
    */
-  set last_save_no_6(v) {
-    era.set('flag:10025', v);
+  set "elf_realm_conquered"(v) {
+    era['raw']().data['flag'][87] = v;
   },
   /**
-   * 上次保存存档_7（flag:10026）
+   * 龙之山脉侵攻度
    * @returns {number}
    */
-  get last_save_no_7() {
-    return era.get('flag:10026') || 0;
+  get "dragon_realm_invasion"() {
+    return era['raw']().data['flag'][88];
   },
   /**
+   * 龙之山脉侵攻度
    * @param {number} v
    */
-  set last_save_no_7(v) {
-    era.set('flag:10026', v);
+  set "dragon_realm_invasion"(v) {
+    era['raw']().data['flag'][88] = v;
   },
   /**
-   * 上次保存存档_8（flag:10027）
+   * 龙之山脉征服
    * @returns {number}
    */
-  get last_save_no_8() {
-    return era.get('flag:10027') || 0;
+  get "dragon_realm_conquered"() {
+    return era['raw']().data['flag'][89];
   },
   /**
+   * 龙之山脉征服
    * @param {number} v
    */
-  set last_save_no_8(v) {
-    era.set('flag:10027', v);
+  set "dragon_realm_conquered"(v) {
+    era['raw']().data['flag'][89] = v;
   },
   /**
-   * 上次保存存档_9（flag:10028）
+   * 天界侵攻度
    * @returns {number}
    */
-  get last_save_no_9() {
-    return era.get('flag:10028') || 0;
+  get "heaven_invasion"() {
+    return era['raw']().data['flag'][90];
   },
   /**
+   * 天界侵攻度
    * @param {number} v
    */
-  set last_save_no_9(v) {
-    era.set('flag:10028', v);
+  set "heaven_invasion"(v) {
+    era['raw']().data['flag'][90] = v;
   },
   /**
-   * 第1层陷阱A（flag:300）
+   * 天界征服
    * @returns {number}
    */
-  get floor_1_trap_a() {
-    return era.get('flag:300') || 0;
+  get "heaven_conquered"() {
+    return era['raw']().data['flag'][91];
   },
   /**
+   * 天界征服
    * @param {number} v
    */
-  set floor_1_trap_a(v) {
-    era.set('flag:300', v);
+  set "heaven_conquered"(v) {
+    era['raw']().data['flag'][91] = v;
   },
   /**
-   * 第2层陷阱A（flag:301）
+   * 圣灵骑士堡垒攻略进度
    * @returns {number}
    */
-  get floor_2_trap_a() {
-    return era.get('flag:301') || 0;
+  get "arcana_fort_stage"() {
+    return era['raw']().data['flag'][92];
   },
   /**
+   * 圣灵骑士堡垒攻略进度
    * @param {number} v
    */
-  set floor_2_trap_a(v) {
-    era.set('flag:301', v);
+  set "arcana_fort_stage"(v) {
+    era['raw']().data['flag'][92] = v;
   },
   /**
-   * 第3层陷阱A（flag:302）
+   * 人间界侵略事件进度
    * @returns {number}
    */
-  get floor_3_trap_a() {
-    return era.get('flag:302') || 0;
+  get "human_realm_event_stage"() {
+    return era['raw']().data['flag'][93];
   },
   /**
+   * 人间界侵略事件进度
    * @param {number} v
    */
-  set floor_3_trap_a(v) {
-    era.set('flag:302', v);
+  set "human_realm_event_stage"(v) {
+    era['raw']().data['flag'][93] = v;
   },
   /**
-   * 第4层陷阱A（flag:303）
+   * 口上存在_0
    * @returns {number}
    */
-  get floor_4_trap_a() {
-    return era.get('flag:303') || 0;
+  get "kojo_exists_0"() {
+    return era['raw']().data['flag'][100];
   },
   /**
+   * 口上存在_0
    * @param {number} v
    */
-  set floor_4_trap_a(v) {
-    era.set('flag:303', v);
+  set "kojo_exists_0"(v) {
+    era['raw']().data['flag'][100] = v;
   },
   /**
-   * 第5层陷阱A（flag:304）
+   * 口上存在_1
    * @returns {number}
    */
-  get floor_5_trap_a() {
-    return era.get('flag:304') || 0;
+  get "kojo_exists_1"() {
+    return era['raw']().data['flag'][101];
   },
   /**
+   * 口上存在_1
    * @param {number} v
    */
-  set floor_5_trap_a(v) {
-    era.set('flag:304', v);
+  set "kojo_exists_1"(v) {
+    era['raw']().data['flag'][101] = v;
   },
   /**
-   * 第6层陷阱A（flag:305）
+   * 口上存在_2
    * @returns {number}
    */
-  get floor_6_trap_a() {
-    return era.get('flag:305') || 0;
+  get "kojo_exists_2"() {
+    return era['raw']().data['flag'][102];
   },
   /**
+   * 口上存在_2
    * @param {number} v
    */
-  set floor_6_trap_a(v) {
-    era.set('flag:305', v);
+  set "kojo_exists_2"(v) {
+    era['raw']().data['flag'][102] = v;
   },
   /**
-   * 第7层陷阱A（flag:306）
+   * 口上存在_3
    * @returns {number}
    */
-  get floor_7_trap_a() {
-    return era.get('flag:306') || 0;
+  get "kojo_exists_3"() {
+    return era['raw']().data['flag'][103];
   },
   /**
+   * 口上存在_3
    * @param {number} v
    */
-  set floor_7_trap_a(v) {
-    era.set('flag:306', v);
+  set "kojo_exists_3"(v) {
+    era['raw']().data['flag'][103] = v;
   },
   /**
-   * 第8层陷阱A（flag:307）
+   * 口上存在_4
    * @returns {number}
    */
-  get floor_8_trap_a() {
-    return era.get('flag:307') || 0;
+  get "kojo_exists_4"() {
+    return era['raw']().data['flag'][104];
   },
   /**
+   * 口上存在_4
    * @param {number} v
    */
-  set floor_8_trap_a(v) {
-    era.set('flag:307', v);
+  set "kojo_exists_4"(v) {
+    era['raw']().data['flag'][104] = v;
   },
   /**
-   * 第9层陷阱A（flag:308）
+   * 口上存在_5
    * @returns {number}
    */
-  get floor_9_trap_a() {
-    return era.get('flag:308') || 0;
+  get "kojo_exists_5"() {
+    return era['raw']().data['flag'][105];
   },
   /**
+   * 口上存在_5
    * @param {number} v
    */
-  set floor_9_trap_a(v) {
-    era.set('flag:308', v);
+  set "kojo_exists_5"(v) {
+    era['raw']().data['flag'][105] = v;
   },
   /**
-   * 第1层陷阱B（flag:310）
+   * 口上存在_6
    * @returns {number}
    */
-  get floor_1_trap_b() {
-    return era.get('flag:310') || 0;
+  get "kojo_exists_6"() {
+    return era['raw']().data['flag'][106];
   },
   /**
+   * 口上存在_6
    * @param {number} v
    */
-  set floor_1_trap_b(v) {
-    era.set('flag:310', v);
+  set "kojo_exists_6"(v) {
+    era['raw']().data['flag'][106] = v;
   },
   /**
-   * 第2层陷阱B（flag:311）
+   * 口上存在_7
    * @returns {number}
    */
-  get floor_2_trap_b() {
-    return era.get('flag:311') || 0;
+  get "kojo_exists_7"() {
+    return era['raw']().data['flag'][107];
   },
   /**
+   * 口上存在_7
    * @param {number} v
    */
-  set floor_2_trap_b(v) {
-    era.set('flag:311', v);
+  set "kojo_exists_7"(v) {
+    era['raw']().data['flag'][107] = v;
   },
   /**
-   * 第3层陷阱B（flag:312）
+   * 口上存在_8
    * @returns {number}
    */
-  get floor_3_trap_b() {
-    return era.get('flag:312') || 0;
+  get "kojo_exists_8"() {
+    return era['raw']().data['flag'][108];
   },
   /**
+   * 口上存在_8
    * @param {number} v
    */
-  set floor_3_trap_b(v) {
-    era.set('flag:312', v);
+  set "kojo_exists_8"(v) {
+    era['raw']().data['flag'][108] = v;
   },
   /**
-   * 第4层陷阱B（flag:313）
+   * 口上存在_9
    * @returns {number}
    */
-  get floor_4_trap_b() {
-    return era.get('flag:313') || 0;
+  get "kojo_exists_9"() {
+    return era['raw']().data['flag'][109];
   },
   /**
+   * 口上存在_9
    * @param {number} v
    */
-  set floor_4_trap_b(v) {
-    era.set('flag:313', v);
+  set "kojo_exists_9"(v) {
+    era['raw']().data['flag'][109] = v;
   },
   /**
-   * 第5层陷阱B（flag:314）
+   * 口上存在_10
    * @returns {number}
    */
-  get floor_5_trap_b() {
-    return era.get('flag:314') || 0;
+  get "kojo_exists_10"() {
+    return era['raw']().data['flag'][110];
   },
   /**
+   * 口上存在_10
    * @param {number} v
    */
-  set floor_5_trap_b(v) {
-    era.set('flag:314', v);
+  set "kojo_exists_10"(v) {
+    era['raw']().data['flag'][110] = v;
   },
   /**
-   * 第6层陷阱B（flag:315）
+   * 口上存在_11
    * @returns {number}
    */
-  get floor_6_trap_b() {
-    return era.get('flag:315') || 0;
+  get "kojo_exists_11"() {
+    return era['raw']().data['flag'][111];
   },
   /**
+   * 口上存在_11
    * @param {number} v
    */
-  set floor_6_trap_b(v) {
-    era.set('flag:315', v);
+  set "kojo_exists_11"(v) {
+    era['raw']().data['flag'][111] = v;
   },
   /**
-   * 第7层陷阱B（flag:316）
+   * 口上存在_12
    * @returns {number}
    */
-  get floor_7_trap_b() {
-    return era.get('flag:316') || 0;
+  get "kojo_exists_12"() {
+    return era['raw']().data['flag'][112];
   },
   /**
+   * 口上存在_12
    * @param {number} v
    */
-  set floor_7_trap_b(v) {
-    era.set('flag:316', v);
+  set "kojo_exists_12"(v) {
+    era['raw']().data['flag'][112] = v;
   },
   /**
-   * 第8层陷阱B（flag:317）
+   * 口上存在_13
    * @returns {number}
    */
-  get floor_8_trap_b() {
-    return era.get('flag:317') || 0;
+  get "kojo_exists_13"() {
+    return era['raw']().data['flag'][113];
   },
   /**
+   * 口上存在_13
    * @param {number} v
    */
-  set floor_8_trap_b(v) {
-    era.set('flag:317', v);
+  set "kojo_exists_13"(v) {
+    era['raw']().data['flag'][113] = v;
   },
   /**
-   * 第9层陷阱B（flag:318）
+   * 口上存在_14
    * @returns {number}
    */
-  get floor_9_trap_b() {
-    return era.get('flag:318') || 0;
+  get "kojo_exists_14"() {
+    return era['raw']().data['flag'][114];
   },
   /**
+   * 口上存在_14
    * @param {number} v
    */
-  set floor_9_trap_b(v) {
-    era.set('flag:318', v);
+  set "kojo_exists_14"(v) {
+    era['raw']().data['flag'][114] = v;
   },
   /**
-   * 第1层陷阱C（flag:320）
+   * 口上存在_15
    * @returns {number}
    */
-  get floor_1_trap_c() {
-    return era.get('flag:320') || 0;
+  get "kojo_exists_15"() {
+    return era['raw']().data['flag'][115];
   },
   /**
+   * 口上存在_15
    * @param {number} v
    */
-  set floor_1_trap_c(v) {
-    era.set('flag:320', v);
+  set "kojo_exists_15"(v) {
+    era['raw']().data['flag'][115] = v;
   },
   /**
-   * 第2层陷阱C（flag:321）
+   * 口上存在_19
    * @returns {number}
    */
-  get floor_2_trap_c() {
-    return era.get('flag:321') || 0;
+  get "kojo_exists_19"() {
+    return era['raw']().data['flag'][119];
   },
   /**
+   * 口上存在_19
    * @param {number} v
    */
-  set floor_2_trap_c(v) {
-    era.set('flag:321', v);
+  set "kojo_exists_19"(v) {
+    era['raw']().data['flag'][119] = v;
   },
   /**
-   * 第3层陷阱C（flag:322）
+   * 勇者入场_23
    * @returns {number}
    */
-  get floor_3_trap_c() {
-    return era.get('flag:322') || 0;
+  get "hero_entry_23"() {
+    return era['raw']().data['flag'][223];
   },
   /**
+   * 勇者入场_23
    * @param {number} v
    */
-  set floor_3_trap_c(v) {
-    era.set('flag:322', v);
+  set "hero_entry_23"(v) {
+    era['raw']().data['flag'][223] = v;
   },
   /**
-   * 第4层陷阱C（flag:323）
+   * 狂王替身登场
    * @returns {number}
    */
-  get floor_4_trap_c() {
-    return era.get('flag:323') || 0;
+  get "crazylord_entered"() {
+    return era['raw']().data['flag'][224];
   },
   /**
+   * 狂王替身登场
    * @param {number} v
    */
-  set floor_4_trap_c(v) {
-    era.set('flag:323', v);
+  set "crazylord_entered"(v) {
+    era['raw']().data['flag'][224] = v;
   },
   /**
-   * 第5层陷阱C（flag:324）
+   * 第1层陷阱a
    * @returns {number}
    */
-  get floor_5_trap_c() {
-    return era.get('flag:324') || 0;
+  get "floor_1_trap_a"() {
+    return era['raw']().data['flag'][300];
   },
   /**
+   * 第1层陷阱a
    * @param {number} v
    */
-  set floor_5_trap_c(v) {
-    era.set('flag:324', v);
+  set "floor_1_trap_a"(v) {
+    era['raw']().data['flag'][300] = v;
   },
   /**
-   * 第6层陷阱C（flag:325）
+   * 第2层陷阱a
    * @returns {number}
    */
-  get floor_6_trap_c() {
-    return era.get('flag:325') || 0;
+  get "floor_2_trap_a"() {
+    return era['raw']().data['flag'][301];
   },
   /**
+   * 第2层陷阱a
    * @param {number} v
    */
-  set floor_6_trap_c(v) {
-    era.set('flag:325', v);
+  set "floor_2_trap_a"(v) {
+    era['raw']().data['flag'][301] = v;
   },
   /**
-   * 第7层陷阱C（flag:326）
+   * 第3层陷阱a
    * @returns {number}
    */
-  get floor_7_trap_c() {
-    return era.get('flag:326') || 0;
+  get "floor_3_trap_a"() {
+    return era['raw']().data['flag'][302];
   },
   /**
+   * 第3层陷阱a
    * @param {number} v
    */
-  set floor_7_trap_c(v) {
-    era.set('flag:326', v);
+  set "floor_3_trap_a"(v) {
+    era['raw']().data['flag'][302] = v;
   },
   /**
-   * 第8层陷阱C（flag:327）
+   * 第4层陷阱a
    * @returns {number}
    */
-  get floor_8_trap_c() {
-    return era.get('flag:327') || 0;
+  get "floor_4_trap_a"() {
+    return era['raw']().data['flag'][303];
   },
   /**
+   * 第4层陷阱a
    * @param {number} v
    */
-  set floor_8_trap_c(v) {
-    era.set('flag:327', v);
+  set "floor_4_trap_a"(v) {
+    era['raw']().data['flag'][303] = v;
   },
   /**
-   * 第9层陷阱C（flag:328）
+   * 第5层陷阱a
    * @returns {number}
    */
-  get floor_9_trap_c() {
-    return era.get('flag:328') || 0;
+  get "floor_5_trap_a"() {
+    return era['raw']().data['flag'][304];
   },
   /**
+   * 第5层陷阱a
    * @param {number} v
    */
-  set floor_9_trap_c(v) {
-    era.set('flag:328', v);
+  set "floor_5_trap_a"(v) {
+    era['raw']().data['flag'][304] = v;
   },
   /**
-   * 第1层宝箱（flag:340）
+   * 第6层陷阱a
    * @returns {number}
    */
-  get floor_1_treasure() {
-    return era.get('flag:340') || 0;
+  get "floor_6_trap_a"() {
+    return era['raw']().data['flag'][305];
   },
   /**
+   * 第6层陷阱a
    * @param {number} v
    */
-  set floor_1_treasure(v) {
-    era.set('flag:340', v);
+  set "floor_6_trap_a"(v) {
+    era['raw']().data['flag'][305] = v;
   },
   /**
-   * 第2层宝箱（flag:341）
+   * 第7层陷阱a
    * @returns {number}
    */
-  get floor_2_treasure() {
-    return era.get('flag:341') || 0;
+  get "floor_7_trap_a"() {
+    return era['raw']().data['flag'][306];
   },
   /**
+   * 第7层陷阱a
    * @param {number} v
    */
-  set floor_2_treasure(v) {
-    era.set('flag:341', v);
+  set "floor_7_trap_a"(v) {
+    era['raw']().data['flag'][306] = v;
   },
   /**
-   * 第3层宝箱（flag:342）
+   * 第8层陷阱a
    * @returns {number}
    */
-  get floor_3_treasure() {
-    return era.get('flag:342') || 0;
+  get "floor_8_trap_a"() {
+    return era['raw']().data['flag'][307];
   },
   /**
+   * 第8层陷阱a
    * @param {number} v
    */
-  set floor_3_treasure(v) {
-    era.set('flag:342', v);
+  set "floor_8_trap_a"(v) {
+    era['raw']().data['flag'][307] = v;
   },
   /**
-   * 第4层宝箱（flag:343）
+   * 第9层陷阱a
    * @returns {number}
    */
-  get floor_4_treasure() {
-    return era.get('flag:343') || 0;
+  get "floor_9_trap_a"() {
+    return era['raw']().data['flag'][308];
   },
   /**
+   * 第9层陷阱a
    * @param {number} v
    */
-  set floor_4_treasure(v) {
-    era.set('flag:343', v);
+  set "floor_9_trap_a"(v) {
+    era['raw']().data['flag'][308] = v;
   },
   /**
-   * 第5层宝箱（flag:344）
+   * 第1层陷阱b
    * @returns {number}
    */
-  get floor_5_treasure() {
-    return era.get('flag:344') || 0;
+  get "floor_1_trap_b"() {
+    return era['raw']().data['flag'][310];
   },
   /**
+   * 第1层陷阱b
    * @param {number} v
    */
-  set floor_5_treasure(v) {
-    era.set('flag:344', v);
+  set "floor_1_trap_b"(v) {
+    era['raw']().data['flag'][310] = v;
   },
   /**
-   * 第6层宝箱（flag:345）
+   * 第2层陷阱b
    * @returns {number}
    */
-  get floor_6_treasure() {
-    return era.get('flag:345') || 0;
+  get "floor_2_trap_b"() {
+    return era['raw']().data['flag'][311];
   },
   /**
+   * 第2层陷阱b
    * @param {number} v
    */
-  set floor_6_treasure(v) {
-    era.set('flag:345', v);
+  set "floor_2_trap_b"(v) {
+    era['raw']().data['flag'][311] = v;
   },
   /**
-   * 第7层宝箱（flag:346）
+   * 第3层陷阱b
    * @returns {number}
    */
-  get floor_7_treasure() {
-    return era.get('flag:346') || 0;
+  get "floor_3_trap_b"() {
+    return era['raw']().data['flag'][312];
   },
   /**
+   * 第3层陷阱b
    * @param {number} v
    */
-  set floor_7_treasure(v) {
-    era.set('flag:346', v);
+  set "floor_3_trap_b"(v) {
+    era['raw']().data['flag'][312] = v;
   },
   /**
-   * 第8层宝箱（flag:347）
+   * 第4层陷阱b
    * @returns {number}
    */
-  get floor_8_treasure() {
-    return era.get('flag:347') || 0;
+  get "floor_4_trap_b"() {
+    return era['raw']().data['flag'][313];
   },
   /**
+   * 第4层陷阱b
    * @param {number} v
    */
-  set floor_8_treasure(v) {
-    era.set('flag:347', v);
+  set "floor_4_trap_b"(v) {
+    era['raw']().data['flag'][313] = v;
   },
   /**
-   * 第9层宝箱（flag:348）
+   * 第5层陷阱b
    * @returns {number}
    */
-  get floor_9_treasure() {
-    return era.get('flag:348') || 0;
+  get "floor_5_trap_b"() {
+    return era['raw']().data['flag'][314];
   },
   /**
+   * 第5层陷阱b
    * @param {number} v
    */
-  set floor_9_treasure(v) {
-    era.set('flag:348', v);
+  set "floor_5_trap_b"(v) {
+    era['raw']().data['flag'][314] = v;
   },
   /**
-   * 第1层设施（flag:350）
+   * 第6层陷阱b
    * @returns {number}
    */
-  get floor_1_facility() {
-    return era.get('flag:350') || 0;
+  get "floor_6_trap_b"() {
+    return era['raw']().data['flag'][315];
   },
   /**
+   * 第6层陷阱b
    * @param {number} v
    */
-  set floor_1_facility(v) {
-    era.set('flag:350', v);
+  set "floor_6_trap_b"(v) {
+    era['raw']().data['flag'][315] = v;
   },
   /**
-   * 第2层设施（flag:351）
+   * 第7层陷阱b
    * @returns {number}
    */
-  get floor_2_facility() {
-    return era.get('flag:351') || 0;
+  get "floor_7_trap_b"() {
+    return era['raw']().data['flag'][316];
   },
   /**
+   * 第7层陷阱b
    * @param {number} v
    */
-  set floor_2_facility(v) {
-    era.set('flag:351', v);
+  set "floor_7_trap_b"(v) {
+    era['raw']().data['flag'][316] = v;
   },
   /**
-   * 第3层设施（flag:352）
+   * 第8层陷阱b
    * @returns {number}
    */
-  get floor_3_facility() {
-    return era.get('flag:352') || 0;
+  get "floor_8_trap_b"() {
+    return era['raw']().data['flag'][317];
   },
   /**
+   * 第8层陷阱b
    * @param {number} v
    */
-  set floor_3_facility(v) {
-    era.set('flag:352', v);
+  set "floor_8_trap_b"(v) {
+    era['raw']().data['flag'][317] = v;
   },
   /**
-   * 第4层设施（flag:353）
+   * 第9层陷阱b
    * @returns {number}
    */
-  get floor_4_facility() {
-    return era.get('flag:353') || 0;
+  get "floor_9_trap_b"() {
+    return era['raw']().data['flag'][318];
   },
   /**
+   * 第9层陷阱b
    * @param {number} v
    */
-  set floor_4_facility(v) {
-    era.set('flag:353', v);
+  set "floor_9_trap_b"(v) {
+    era['raw']().data['flag'][318] = v;
   },
   /**
-   * 第5层设施（flag:354）
+   * 第1层陷阱c
    * @returns {number}
    */
-  get floor_5_facility() {
-    return era.get('flag:354') || 0;
+  get "floor_1_trap_c"() {
+    return era['raw']().data['flag'][320];
   },
   /**
+   * 第1层陷阱c
    * @param {number} v
    */
-  set floor_5_facility(v) {
-    era.set('flag:354', v);
+  set "floor_1_trap_c"(v) {
+    era['raw']().data['flag'][320] = v;
   },
   /**
-   * 第6层设施（flag:355）
+   * 第2层陷阱c
    * @returns {number}
    */
-  get floor_6_facility() {
-    return era.get('flag:355') || 0;
+  get "floor_2_trap_c"() {
+    return era['raw']().data['flag'][321];
   },
   /**
+   * 第2层陷阱c
    * @param {number} v
    */
-  set floor_6_facility(v) {
-    era.set('flag:355', v);
+  set "floor_2_trap_c"(v) {
+    era['raw']().data['flag'][321] = v;
   },
   /**
-   * 第7层设施（flag:356）
+   * 第3层陷阱c
    * @returns {number}
    */
-  get floor_7_facility() {
-    return era.get('flag:356') || 0;
+  get "floor_3_trap_c"() {
+    return era['raw']().data['flag'][322];
   },
   /**
+   * 第3层陷阱c
    * @param {number} v
    */
-  set floor_7_facility(v) {
-    era.set('flag:356', v);
+  set "floor_3_trap_c"(v) {
+    era['raw']().data['flag'][322] = v;
   },
   /**
-   * 第8层设施（flag:357）
+   * 第4层陷阱c
    * @returns {number}
    */
-  get floor_8_facility() {
-    return era.get('flag:357') || 0;
+  get "floor_4_trap_c"() {
+    return era['raw']().data['flag'][323];
   },
   /**
+   * 第4层陷阱c
    * @param {number} v
    */
-  set floor_8_facility(v) {
-    era.set('flag:357', v);
+  set "floor_4_trap_c"(v) {
+    era['raw']().data['flag'][323] = v;
   },
   /**
-   * 第9层设施（flag:358）
+   * 第5层陷阱c
    * @returns {number}
    */
-  get floor_9_facility() {
-    return era.get('flag:358') || 0;
+  get "floor_5_trap_c"() {
+    return era['raw']().data['flag'][324];
   },
   /**
+   * 第5层陷阱c
    * @param {number} v
    */
-  set floor_9_facility(v) {
-    era.set('flag:358', v);
+  set "floor_5_trap_c"(v) {
+    era['raw']().data['flag'][324] = v;
   },
   /**
-   * 肉便器数（flag:83）
+   * 第6层陷阱c
    * @returns {number}
    */
-  get meat_toilet_count() {
-    return era.get('flag:83') || 0;
+  get "floor_6_trap_c"() {
+    return era['raw']().data['flag'][325];
   },
   /**
+   * 第6层陷阱c
    * @param {number} v
    */
-  set meat_toilet_count(v) {
-    era.set('flag:83', v);
+  set "floor_6_trap_c"(v) {
+    era['raw']().data['flag'][325] = v;
   },
   /**
-   * 展品数（flag:84）
+   * 第7层陷阱c
    * @returns {number}
    */
-  get exhibit_count() {
-    return era.get('flag:84') || 0;
+  get "floor_7_trap_c"() {
+    return era['raw']().data['flag'][326];
   },
   /**
+   * 第7层陷阱c
    * @param {number} v
    */
-  set exhibit_count(v) {
-    era.set('flag:84', v);
+  set "floor_7_trap_c"(v) {
+    era['raw']().data['flag'][326] = v;
   },
   /**
-   * 处女献上后续发生方式（flag:38）
+   * 第8层陷阱c
    * @returns {number}
    */
-  get virgin_conceded_mode() {
-    return era.get('flag:38') || 0;
+  get "floor_8_trap_c"() {
+    return era['raw']().data['flag'][327];
   },
   /**
+   * 第8层陷阱c
    * @param {number} v
    */
-  set virgin_conceded_mode(v) {
-    era.set('flag:38', v);
+  set "floor_8_trap_c"(v) {
+    era['raw']().data['flag'][327] = v;
   },
   /**
-   * 勇者相关杂项开关（flag:8）
+   * 第9层陷阱c
    * @returns {number}
    */
-  get adventurer_flags() {
-    return era.get('flag:8') || 0;
+  get "floor_9_trap_c"() {
+    return era['raw']().data['flag'][328];
   },
   /**
+   * 第9层陷阱c
    * @param {number} v
    */
-  set adventurer_flags(v) {
-    era.set('flag:8', v);
+  set "floor_9_trap_c"(v) {
+    era['raw']().data['flag'][328] = v;
   },
   /**
-   * 休息（flag:0）
+   * 第1层宝箱
    * @returns {number}
    */
-  get rest() {
-    return era.get('flag:0') || 0;
+  get "floor_1_treasure"() {
+    return era['raw']().data['flag'][340];
   },
   /**
+   * 第1层宝箱
    * @param {number} v
    */
-  set rest(v) {
-    era.set('flag:0', v);
+  set "floor_1_treasure"(v) {
+    era['raw']().data['flag'][340] = v;
   },
   /**
-   * 上次调教对象（flag:1）
+   * 第2层宝箱
    * @returns {number}
    */
-  get last_train_target() {
-    return era.get('flag:1') || 0;
+  get "floor_2_treasure"() {
+    return era['raw']().data['flag'][341];
   },
   /**
+   * 第2层宝箱
    * @param {number} v
    */
-  set last_train_target(v) {
-    era.set('flag:1', v);
+  set "floor_2_treasure"(v) {
+    era['raw']().data['flag'][341] = v;
   },
   /**
-   * 上次助手（flag:2）
+   * 第3层宝箱
    * @returns {number}
    */
-  get last_assistant() {
-    return era.get('flag:2') || 0;
+  get "floor_3_treasure"() {
+    return era['raw']().data['flag'][342];
   },
   /**
+   * 第3层宝箱
    * @param {number} v
    */
-  set last_assistant(v) {
-    era.set('flag:2', v);
+  set "floor_3_treasure"(v) {
+    era['raw']().data['flag'][342] = v;
   },
   /**
-   * 游戏设定（flag:5）
+   * 第4层宝箱
    * @returns {number}
    */
-  get game_settings() {
-    return era.get('flag:5') || 0;
+  get "floor_4_treasure"() {
+    return era['raw']().data['flag'][343];
   },
   /**
+   * 第4层宝箱
    * @param {number} v
    */
-  set game_settings(v) {
-    era.set('flag:5', v);
+  set "floor_4_treasure"(v) {
+    era['raw']().data['flag'][343] = v;
   },
   /**
-   * 调教文本省略（flag:6）
+   * 第5层宝箱
    * @returns {number}
    */
-  get train_text_omitted() {
-    return era.get('flag:6') || 0;
+  get "floor_5_treasure"() {
+    return era['raw']().data['flag'][344];
   },
   /**
+   * 第5层宝箱
    * @param {number} v
    */
-  set train_text_omitted(v) {
-    era.set('flag:6', v);
+  set "floor_5_treasure"(v) {
+    era['raw']().data['flag'][344] = v;
   },
   /**
-   * 口上开关（flag:7）
+   * 第6层宝箱
    * @returns {number}
    */
-  get kojo_switch() {
-    return era.get('flag:7') || 0;
+  get "floor_6_treasure"() {
+    return era['raw']().data['flag'][345];
   },
   /**
+   * 第6层宝箱
    * @param {number} v
    */
-  set kojo_switch(v) {
-    era.set('flag:7', v);
+  set "floor_6_treasure"(v) {
+    era['raw']().data['flag'][345] = v;
   },
   /**
-   * 录像开始状况（flag:22）
+   * 第7层宝箱
    * @returns {number}
    */
-  get video_start_state() {
-    return era.get('flag:22') || 0;
+  get "floor_7_treasure"() {
+    return era['raw']().data['flag'][346];
   },
   /**
+   * 第7层宝箱
    * @param {number} v
    */
-  set video_start_state(v) {
-    era.set('flag:22', v);
+  set "floor_7_treasure"(v) {
+    era['raw']().data['flag'][346] = v;
   },
   /**
-   * 指令过滤（flag:25）
+   * 第8层宝箱
    * @returns {number}
    */
-  get order_filter() {
-    return era.get('flag:25') || 0;
+  get "floor_8_treasure"() {
+    return era['raw']().data['flag'][347];
   },
   /**
+   * 第8层宝箱
    * @param {number} v
    */
-  set order_filter(v) {
-    era.set('flag:25', v);
+  set "floor_8_treasure"(v) {
+    era['raw']().data['flag'][347] = v;
   },
   /**
-   * 种族年龄设定_0（flag:26）
+   * 第9层宝箱
    * @returns {number}
    */
-  get race_age_setting_0() {
-    return era.get('flag:26') || 0;
+  get "floor_9_treasure"() {
+    return era['raw']().data['flag'][348];
   },
   /**
+   * 第9层宝箱
    * @param {number} v
    */
-  set race_age_setting_0(v) {
-    era.set('flag:26', v);
+  set "floor_9_treasure"(v) {
+    era['raw']().data['flag'][348] = v;
   },
   /**
-   * 种族年龄设定_1（flag:27）
+   * 第1层设施
    * @returns {number}
    */
-  get race_age_setting_1() {
-    return era.get('flag:27') || 0;
+  get "floor_1_facility"() {
+    return era['raw']().data['flag'][350];
   },
   /**
+   * 第1层设施
    * @param {number} v
    */
-  set race_age_setting_1(v) {
-    era.set('flag:27', v);
+  set "floor_1_facility"(v) {
+    era['raw']().data['flag'][350] = v;
   },
   /**
-   * 爱或淫乱人数（flag:30）
+   * 第2层设施
    * @returns {number}
    */
-  get love_or_lewd_count() {
-    return era.get('flag:30') || 0;
+  get "floor_2_facility"() {
+    return era['raw']().data['flag'][351];
   },
   /**
+   * 第2层设施
    * @param {number} v
    */
-  set love_or_lewd_count(v) {
-    era.set('flag:30', v);
+  set "floor_2_facility"(v) {
+    era['raw']().data['flag'][351] = v;
   },
   /**
-   * 杀死人数（flag:31）
+   * 第3层设施
    * @returns {number}
    */
-  get kill_count() {
-    return era.get('flag:31') || 0;
+  get "floor_3_facility"() {
+    return era['raw']().data['flag'][352];
   },
   /**
+   * 第3层设施
    * @param {number} v
    */
-  set kill_count(v) {
-    era.set('flag:31', v);
+  set "floor_3_facility"(v) {
+    era['raw']().data['flag'][352] = v;
   },
   /**
-   * 爱之奴隶所生（flag:32）
+   * 第4层设施
    * @returns {number}
    */
-  get born_of_love_slave() {
-    return era.get('flag:32') || 0;
+  get "floor_4_facility"() {
+    return era['raw']().data['flag'][353];
   },
   /**
+   * 第4层设施
    * @param {number} v
    */
-  set born_of_love_slave(v) {
-    era.set('flag:32', v);
+  set "floor_4_facility"(v) {
+    era['raw']().data['flag'][353] = v;
   },
   /**
-   * 技巧素质道具数（flag:33）
+   * 第5层设施
    * @returns {number}
    */
-  get skill_talent_item_count() {
-    return era.get('flag:33') || 0;
+  get "floor_5_facility"() {
+    return era['raw']().data['flag'][354];
   },
   /**
+   * 第5层设施
    * @param {number} v
    */
-  set skill_talent_item_count(v) {
-    era.set('flag:33', v);
+  set "floor_5_facility"(v) {
+    era['raw']().data['flag'][354] = v;
   },
   /**
-   * 自动购买设定（flag:34）
+   * 第6层设施
    * @returns {number}
    */
-  get auto_buying_settings() {
-    return era.get('flag:34') || 0;
+  get "floor_6_facility"() {
+    return era['raw']().data['flag'][355];
   },
   /**
+   * 第6层设施
    * @param {number} v
    */
-  set auto_buying_settings(v) {
-    era.set('flag:34', v);
+  set "floor_6_facility"(v) {
+    era['raw']().data['flag'][355] = v;
   },
   /**
-   * 濒死自动结束调教（flag:35）
+   * 第7层设施
    * @returns {number}
    */
-  get auto_end_train_when_dying() {
-    return era.get('flag:35') || 0;
+  get "floor_7_facility"() {
+    return era['raw']().data['flag'][356];
   },
   /**
+   * 第7层设施
    * @param {number} v
    */
-  set auto_end_train_when_dying(v) {
-    era.set('flag:35', v);
+  set "floor_7_facility"(v) {
+    era['raw']().data['flag'][356] = v;
   },
   /**
-   * 显示模式（flag:36）
+   * 第8层设施
    * @returns {number}
    */
-  get display_mode() {
-    return era.get('flag:36') || 0;
+  get "floor_8_facility"() {
+    return era['raw']().data['flag'][357];
   },
   /**
+   * 第8层设施
    * @param {number} v
    */
-  set display_mode(v) {
-    era.set('flag:36', v);
+  set "floor_8_facility"(v) {
+    era['raw']().data['flag'][357] = v;
   },
   /**
-   * 着衣系统（flag:37）
+   * 第9层设施
    * @returns {number}
    */
-  get clothing_system() {
-    return era.get('flag:37') || 0;
+  get "floor_9_facility"() {
+    return era['raw']().data['flag'][358];
   },
   /**
+   * 第9层设施
    * @param {number} v
    */
-  set clothing_system(v) {
-    era.set('flag:37', v);
+  set "floor_9_facility"(v) {
+    era['raw']().data['flag'][358] = v;
   },
   /**
-   * 设施追加人数（flag:40）
+   * 勇者战役中
    * @returns {number}
    */
-  get facility_headcount() {
-    return era.get('flag:40') || 0;
+  get "hero_campaign_active"() {
+    return era['raw']().data['flag'][400];
   },
   /**
+   * 勇者战役中
    * @param {number} v
    */
-  set facility_headcount(v) {
-    era.set('flag:40', v);
+  set "hero_campaign_active"(v) {
+    era['raw']().data['flag'][400] = v;
   },
   /**
-   * 设施建造位（flag:48）
+   * 战役剧情进度
    * @returns {number}
    */
-  get facility_bitmap() {
-    return era.get('flag:48') || 0;
+  get "campaign_story_progress"() {
+    return era['raw']().data['flag'][401];
   },
   /**
+   * 战役剧情进度
    * @param {number} v
    */
-  set facility_bitmap(v) {
-    era.set('flag:48', v);
+  set "campaign_story_progress"(v) {
+    era['raw']().data['flag'][401] = v;
   },
   /**
-   * 勇者基础等级修正（flag:60）
+   * 派遣奴隶标志
    * @returns {number}
    */
-  get hero_base_level_bonus() {
-    return era.get('flag:60') || 0;
+  get "dispatched_slave"() {
+    return era['raw']().data['flag'][402];
   },
   /**
+   * 派遣奴隶标志
    * @param {number} v
    */
-  set hero_base_level_bonus(v) {
-    era.set('flag:60', v);
+  set "dispatched_slave"(v) {
+    era['raw']().data['flag'][402] = v;
   },
   /**
-   * 每日香料购买数（flag:61）
+   * 狂王性别
    * @returns {number}
    */
-  get daily_spice_purchase() {
-    return era.get('flag:61') || 0;
+  get "crazylord_gender"() {
+    return era['raw']().data['flag'][500];
   },
   /**
+   * 狂王性别
    * @param {number} v
    */
-  set daily_spice_purchase(v) {
-    era.set('flag:61', v);
+  set "crazylord_gender"(v) {
+    era['raw']().data['flag'][500] = v;
   },
   /**
-   * 肉便器行动（flag:62）
+   * 初期奴隶类型
    * @returns {number}
    */
-  get benki_behavior() {
-    return era.get('flag:62') || 0;
+  get "initial_slave_type"() {
+    return era['raw']().data['flag'][501];
   },
   /**
+   * 初期奴隶类型
    * @param {number} v
    */
-  set benki_behavior(v) {
-    era.set('flag:62', v);
+  set "initial_slave_type"(v) {
+    era['raw']().data['flag'][501] = v;
   },
   /**
-   * 肉便器常识改写（flag:63）
+   * 二维地图模式
    * @returns {number}
    */
-  get benki_common_sense() {
-    return era.get('flag:63') || 0;
+  get "map_2d_mode"() {
+    return era['raw']().data['flag'][502];
   },
   /**
+   * 二维地图模式
    * @param {number} v
    */
-  set benki_common_sense(v) {
-    era.set('flag:63', v);
+  set "map_2d_mode"(v) {
+    era['raw']().data['flag'][502] = v;
   },
   /**
-   * 肉便器侍奉对象（flag:64）
+   * 指令菜单长度
    * @returns {number}
    */
-  get benki_service_target() {
-    return era.get('flag:64') || 0;
+  get "order_menu_length"() {
+    return era['raw']().data['flag'][550];
   },
   /**
+   * 指令菜单长度
    * @param {number} v
    */
-  set benki_service_target(v) {
-    era.set('flag:64', v);
+  set "order_menu_length"(v) {
+    era['raw']().data['flag'][550] = v;
   },
   /**
-   * 失神机能关闭（flag:70）
+   * 石像数
    * @returns {number}
    */
-  get passout_disabled() {
-    return era.get('flag:70') || 0;
+  get "stone_statue_count"() {
+    return era['raw']().data['flag'][600];
   },
   /**
+   * 石像数
    * @param {number} v
    */
-  set passout_disabled(v) {
-    era.set('flag:70', v);
+  set "stone_statue_count"(v) {
+    era['raw']().data['flag'][600] = v;
   },
   /**
-   * 自由调教跳转（flag:71）
+   * 剥制数
    * @returns {number}
    */
-  get free_train_jump() {
-    return era.get('flag:71') || 0;
+  get "taxidermy_count"() {
+    return era['raw']().data['flag'][601];
   },
   /**
+   * 剥制数
    * @param {number} v
    */
-  set free_train_jump(v) {
-    era.set('flag:71', v);
+  set "taxidermy_count"(v) {
+    era['raw']().data['flag'][601] = v;
   },
   /**
-   * 精饮机能关闭（flag:72）
+   * 蜡像数
    * @returns {number}
    */
-  get semen_drink_disabled() {
-    return era.get('flag:72') || 0;
+  get "wax_statue_count"() {
+    return era['raw']().data['flag'][602];
   },
   /**
+   * 蜡像数
    * @param {number} v
    */
-  set semen_drink_disabled(v) {
-    era.set('flag:72', v);
+  set "wax_statue_count"(v) {
+    era['raw']().data['flag'][602] = v;
   },
   /**
-   * 强化素质关闭（flag:73）
+   * 人偶数_服装
    * @returns {number}
    */
-  get super_talent_disabled() {
-    return era.get('flag:73') || 0;
+  get "doll_clothed_count"() {
+    return era['raw']().data['flag'][603];
   },
   /**
+   * 人偶数_服装
    * @param {number} v
    */
-  set super_talent_disabled(v) {
-    era.set('flag:73', v);
+  set "doll_clothed_count"(v) {
+    era['raw']().data['flag'][603] = v;
   },
   /**
-   * 时常发情关闭（flag:75）
+   * 人偶数_球形关节
    * @returns {number}
    */
-  get always_aroused_disabled() {
-    return era.get('flag:75') || 0;
+  get "doll_ball_joint_count"() {
+    return era['raw']().data['flag'][604];
   },
   /**
+   * 人偶数_球形关节
    * @param {number} v
    */
-  set always_aroused_disabled(v) {
-    era.set('flag:75', v);
+  set "doll_ball_joint_count"(v) {
+    era['raw']().data['flag'][604] = v;
   },
   /**
-   * 外来勇者等级上限（flag:76）
+   * 金属像数
    * @returns {number}
    */
-  get foreign_hero_level_cap() {
-    return era.get('flag:76') || 0;
+  get "metal_statue_count"() {
+    return era['raw']().data['flag'][605];
   },
   /**
+   * 金属像数
    * @param {number} v
    */
-  set foreign_hero_level_cap(v) {
-    era.set('flag:76', v);
+  set "metal_statue_count"(v) {
+    era['raw']().data['flag'][605] = v;
   },
   /**
-   * 通信勇者登场压级（flag:77）
+   * 冰像数
    * @returns {number}
    */
-  get communication_hero_level_one() {
-    return era.get('flag:77') || 0;
+  get "ice_statue_count"() {
+    return era['raw']().data['flag'][606];
   },
   /**
+   * 冰像数
    * @param {number} v
    */
-  set communication_hero_level_one(v) {
-    era.set('flag:77', v);
+  set "ice_statue_count"(v) {
+    era['raw']().data['flag'][606] = v;
   },
   /**
-   * 处刑勇者数（flag:80）
+   * 金属像数_2
    * @returns {number}
    */
-  get executed_hero_count() {
-    return era.get('flag:80') || 0;
+  get "metal_statue_count_2"() {
+    return era['raw']().data['flag'][607];
   },
   /**
+   * 金属像数_2
    * @param {number} v
    */
-  set executed_hero_count(v) {
-    era.set('flag:80', v);
+  set "metal_statue_count_2"(v) {
+    era['raw']().data['flag'][607] = v;
   },
   /**
-   * 陷阱等级（flag:85）
+   * 家具数
    * @returns {number}
    */
-  get trap_level() {
-    return era.get('flag:85') || 0;
+  get "furniture_count"() {
+    return era['raw']().data['flag'][608];
   },
   /**
+   * 家具数
    * @param {number} v
    */
-  set trap_level(v) {
-    era.set('flag:85', v);
+  set "furniture_count"(v) {
+    era['raw']().data['flag'][608] = v;
   },
   /**
-   * 口上存在_0（flag:100）
+   * 绘画数
    * @returns {number}
    */
-  get kojo_exists_0() {
-    return era.get('flag:100') || 0;
+  get "painting_count"() {
+    return era['raw']().data['flag'][609];
   },
   /**
+   * 绘画数
    * @param {number} v
    */
-  set kojo_exists_0(v) {
-    era.set('flag:100', v);
+  set "painting_count"(v) {
+    era['raw']().data['flag'][609] = v;
   },
   /**
-   * 口上存在_1（flag:101）
+   * 喷水像_石
    * @returns {number}
    */
-  get kojo_exists_1() {
-    return era.get('flag:101') || 0;
+  get "fountain_stone_count"() {
+    return era['raw']().data['flag'][611];
   },
   /**
+   * 喷水像_石
    * @param {number} v
    */
-  set kojo_exists_1(v) {
-    era.set('flag:101', v);
+  set "fountain_stone_count"(v) {
+    era['raw']().data['flag'][611] = v;
   },
   /**
-   * 口上存在_2（flag:102）
+   * 喷水像_金属
    * @returns {number}
    */
-  get kojo_exists_2() {
-    return era.get('flag:102') || 0;
+  get "fountain_metal_count"() {
+    return era['raw']().data['flag'][612];
   },
   /**
+   * 喷水像_金属
    * @param {number} v
    */
-  set kojo_exists_2(v) {
-    era.set('flag:102', v);
+  set "fountain_metal_count"(v) {
+    era['raw']().data['flag'][612] = v;
   },
   /**
-   * 口上存在_3（flag:103）
+   * 人间牧场竿役
    * @returns {number}
    */
-  get kojo_exists_3() {
-    return era.get('flag:103') || 0;
+  get "ranch_stud"() {
+    return era['raw']().data['flag'][613];
   },
   /**
+   * 人间牧场竿役
    * @param {number} v
    */
-  set kojo_exists_3(v) {
-    era.set('flag:103', v);
+  set "ranch_stud"(v) {
+    era['raw']().data['flag'][613] = v;
   },
   /**
-   * 口上存在_4（flag:104）
+   * 人类牧场设定
    * @returns {number}
    */
-  get kojo_exists_4() {
-    return era.get('flag:104') || 0;
+  get "ranch_display_settings"() {
+    return era['raw']().data['flag'][614];
   },
   /**
+   * 人类牧场设定
    * @param {number} v
    */
-  set kojo_exists_4(v) {
-    era.set('flag:104', v);
+  set "ranch_display_settings"(v) {
+    era['raw']().data['flag'][614] = v;
   },
   /**
-   * 口上存在_5（flag:105）
+   * 葵希罗线
    * @returns {number}
    */
-  get kojo_exists_5() {
-    return era.get('flag:105') || 0;
+  get "route_34"() {
+    return era['raw']().data['flag'][2815];
   },
   /**
+   * 葵希罗线
    * @param {number} v
    */
-  set kojo_exists_5(v) {
-    era.set('flag:105', v);
+  set "route_34"(v) {
+    era['raw']().data['flag'][2815] = v;
   },
   /**
-   * 口上存在_6（flag:106）
+   * 反叛结局
    * @returns {number}
    */
-  get kojo_exists_6() {
-    return era.get('flag:106') || 0;
+  get "rebellion_ending"() {
+    return era['raw']().data['flag'][2816];
   },
   /**
+   * 反叛结局
    * @param {number} v
    */
-  set kojo_exists_6(v) {
-    era.set('flag:106', v);
+  set "rebellion_ending"(v) {
+    era['raw']().data['flag'][2816] = v;
   },
   /**
-   * 口上存在_7（flag:107）
+   * 天数
    * @returns {number}
    */
-  get kojo_exists_7() {
-    return era.get('flag:107') || 0;
+  get "day_count"() {
+    return era['raw']().data['flag'][10000];
   },
   /**
+   * 天数
    * @param {number} v
    */
-  set kojo_exists_7(v) {
-    era.set('flag:107', v);
+  set "day_count"(v) {
+    era['raw']().data['flag'][10000] = v;
   },
   /**
-   * 口上存在_8（flag:108）
+   * 月
    * @returns {number}
    */
-  get kojo_exists_8() {
-    return era.get('flag:108') || 0;
+  get "month"() {
+    return era['raw']().data['flag'][10001];
   },
   /**
+   * 月
    * @param {number} v
    */
-  set kojo_exists_8(v) {
-    era.set('flag:108', v);
+  set "month"(v) {
+    era['raw']().data['flag'][10001] = v;
   },
   /**
-   * 口上存在_9（flag:109）
+   * 日
    * @returns {number}
    */
-  get kojo_exists_9() {
-    return era.get('flag:109') || 0;
+  get "date"() {
+    return era['raw']().data['flag'][10002];
   },
   /**
+   * 日
    * @param {number} v
    */
-  set kojo_exists_9(v) {
-    era.set('flag:109', v);
+  set "date"(v) {
+    era['raw']().data['flag'][10002] = v;
   },
   /**
-   * 口上存在_10（flag:110）
+   * 时段
    * @returns {number}
    */
-  get kojo_exists_10() {
-    return era.get('flag:110') || 0;
+  get "time"() {
+    return era['raw']().data['flag'][10003];
   },
   /**
+   * 时段
    * @param {number} v
    */
-  set kojo_exists_10(v) {
-    era.set('flag:110', v);
+  set "time"(v) {
+    era['raw']().data['flag'][10003] = v;
   },
   /**
-   * 口上存在_11（flag:111）
+   * 所持金
    * @returns {number}
    */
-  get kojo_exists_11() {
-    return era.get('flag:111') || 0;
+  get "money"() {
+    return era['raw']().data['flag'][10004];
   },
   /**
+   * 所持金
    * @param {number} v
    */
-  set kojo_exists_11(v) {
-    era.set('flag:111', v);
+  set "money"(v) {
+    era['raw']().data['flag'][10004] = v;
   },
   /**
-   * 口上存在_12（flag:112）
+   * 目标
    * @returns {number}
    */
-  get kojo_exists_12() {
-    return era.get('flag:112') || 0;
+  get "target"() {
+    return era['raw']().data['flag'][10005];
   },
   /**
+   * 目标
    * @param {number} v
    */
-  set kojo_exists_12(v) {
-    era.set('flag:112', v);
+  set "target"(v) {
+    era['raw']().data['flag'][10005] = v;
   },
   /**
-   * 口上存在_13（flag:113）
+   * 助手
    * @returns {number}
    */
-  get kojo_exists_13() {
-    return era.get('flag:113') || 0;
+  get "assi"() {
+    return era['raw']().data['flag'][10006];
   },
   /**
+   * 助手
    * @param {number} v
    */
-  set kojo_exists_13(v) {
-    era.set('flag:113', v);
+  set "assi"(v) {
+    era['raw']().data['flag'][10006] = v;
   },
   /**
-   * 口上存在_14（flag:114）
+   * 助手参与调教
    * @returns {number}
    */
-  get kojo_exists_14() {
-    return era.get('flag:114') || 0;
+  get "assiplay"() {
+    return era['raw']().data['flag'][10007];
   },
   /**
+   * 助手参与调教
    * @param {number} v
    */
-  set kojo_exists_14(v) {
-    era.set('flag:114', v);
+  set "assiplay"(v) {
+    era['raw']().data['flag'][10007] = v;
   },
   /**
-   * 口上存在_15（flag:115）
+   * 调教者
    * @returns {number}
    */
-  get kojo_exists_15() {
-    return era.get('flag:115') || 0;
+  get "player"() {
+    return era['raw']().data['flag'][10008];
   },
   /**
+   * 调教者
    * @param {number} v
    */
-  set kojo_exists_15(v) {
-    era.set('flag:115', v);
+  set "player"(v) {
+    era['raw']().data['flag'][10008] = v;
   },
   /**
-   * 口上存在_19（flag:119）
+   * 上次指令
    * @returns {number}
    */
-  get kojo_exists_19() {
-    return era.get('flag:119') || 0;
+  get "prevcom"() {
+    return era['raw']().data['flag'][10009];
   },
   /**
+   * 上次指令
    * @param {number} v
    */
-  set kojo_exists_19(v) {
-    era.set('flag:119', v);
+  set "prevcom"(v) {
+    era['raw']().data['flag'][10009] = v;
   },
   /**
-   * 勇者入场_23（flag:223）
+   * 下次指令
    * @returns {number}
    */
-  get hero_entry_23() {
-    return era.get('flag:223') || 0;
+  get "nextcom"() {
+    return era['raw']().data['flag'][10010];
   },
   /**
+   * 下次指令
    * @param {number} v
    */
-  set hero_entry_23(v) {
-    era.set('flag:223', v);
+  set "nextcom"(v) {
+    era['raw']().data['flag'][10010] = v;
   },
   /**
-   * 派遣奴隶标志（flag:402）
+   * 当前指令
    * @returns {number}
    */
-  get dispatched_slave() {
-    return era.get('flag:402') || 0;
+  get "selectcom"() {
+    return era['raw']().data['flag'][10011];
   },
   /**
+   * 当前指令
    * @param {number} v
    */
-  set dispatched_slave(v) {
-    era.set('flag:402', v);
+  set "selectcom"(v) {
+    era['raw']().data['flag'][10011] = v;
   },
   /**
-   * 狂王性别（flag:500）
+   * 记录调教对象
    * @returns {number}
    */
-  get crazylord_gender() {
-    return era.get('flag:500') || 0;
+  get "target_record"() {
+    return era['raw']().data['flag'][10012];
   },
   /**
+   * 记录调教对象
    * @param {number} v
    */
-  set crazylord_gender(v) {
-    era.set('flag:500', v);
+  set "target_record"(v) {
+    era['raw']().data['flag'][10012] = v;
   },
   /**
-   * 初期奴隶类型（flag:501）
+   * 记录助手
    * @returns {number}
    */
-  get initial_slave_type() {
-    return era.get('flag:501') || 0;
+  get "assi_record"() {
+    return era['raw']().data['flag'][10013];
   },
   /**
+   * 记录助手
    * @param {number} v
    */
-  set initial_slave_type(v) {
-    era.set('flag:501', v);
+  set "assi_record"(v) {
+    era['raw']().data['flag'][10013] = v;
   },
   /**
-   * 指令菜单长度（flag:550）
+   * 暂存主人
    * @returns {number}
    */
-  get order_menu_length() {
-    return era.get('flag:550') || 0;
+  get "master_backup"() {
+    return era['raw']().data['flag'][10014];
   },
   /**
+   * 暂存主人
    * @param {number} v
    */
-  set order_menu_length(v) {
-    era.set('flag:550', v);
+  set "master_backup"(v) {
+    era['raw']().data['flag'][10014] = v;
   },
   /**
-   * 石像数（flag:600）
+   * 暂存目标
    * @returns {number}
    */
-  get stone_statue_count() {
-    return era.get('flag:600') || 0;
+  get "target_backup"() {
+    return era['raw']().data['flag'][10015];
   },
   /**
+   * 暂存目标
    * @param {number} v
    */
-  set stone_statue_count(v) {
-    era.set('flag:600', v);
+  set "target_backup"(v) {
+    era['raw']().data['flag'][10015] = v;
   },
   /**
-   * 剥制数（flag:601）
+   * 暂存助手
    * @returns {number}
    */
-  get taxidermy_count() {
-    return era.get('flag:601') || 0;
+  get "assi_backup"() {
+    return era['raw']().data['flag'][10016];
   },
   /**
+   * 暂存助手
    * @param {number} v
    */
-  set taxidermy_count(v) {
-    era.set('flag:601', v);
+  set "assi_backup"(v) {
+    era['raw']().data['flag'][10016] = v;
   },
   /**
-   * 蜡像数（flag:602）
+   * 星期
    * @returns {number}
    */
-  get wax_statue_count() {
-    return era.get('flag:602') || 0;
+  get "weekday"() {
+    return era['raw']().data['flag'][10017];
   },
   /**
+   * 星期
    * @param {number} v
    */
-  set wax_statue_count(v) {
-    era.set('flag:602', v);
+  set "weekday"(v) {
+    era['raw']().data['flag'][10017] = v;
   },
   /**
-   * 人偶数_服装（flag:603）
+   * 上次读取存档
    * @returns {number}
    */
-  get doll_clothed_count() {
-    return era.get('flag:603') || 0;
+  get "last_load_no"() {
+    return era['raw']().data['flag'][10018];
   },
   /**
+   * 上次读取存档
    * @param {number} v
    */
-  set doll_clothed_count(v) {
-    era.set('flag:603', v);
+  set "last_load_no"(v) {
+    era['raw']().data['flag'][10018] = v;
   },
   /**
-   * 人偶数_球形关节（flag:604）
+   * 上次保存存档
    * @returns {number}
    */
-  get doll_ball_joint_count() {
-    return era.get('flag:604') || 0;
+  get "last_save_no"() {
+    return era['raw']().data['flag'][10019];
   },
   /**
+   * 上次保存存档
    * @param {number} v
    */
-  set doll_ball_joint_count(v) {
-    era.set('flag:604', v);
+  set "last_save_no"(v) {
+    era['raw']().data['flag'][10019] = v;
   },
   /**
-   * 金属像数（flag:605）
+   * 上次保存存档_1
    * @returns {number}
    */
-  get metal_statue_count() {
-    return era.get('flag:605') || 0;
+  get "last_save_no_1"() {
+    return era['raw']().data['flag'][10020];
   },
   /**
+   * 上次保存存档_1
    * @param {number} v
    */
-  set metal_statue_count(v) {
-    era.set('flag:605', v);
+  set "last_save_no_1"(v) {
+    era['raw']().data['flag'][10020] = v;
   },
   /**
-   * 冰像数（flag:606）
+   * 上次保存存档_2
    * @returns {number}
    */
-  get ice_statue_count() {
-    return era.get('flag:606') || 0;
+  get "last_save_no_2"() {
+    return era['raw']().data['flag'][10021];
   },
   /**
+   * 上次保存存档_2
    * @param {number} v
    */
-  set ice_statue_count(v) {
-    era.set('flag:606', v);
+  set "last_save_no_2"(v) {
+    era['raw']().data['flag'][10021] = v;
   },
   /**
-   * 金属像数_2（flag:607）
+   * 上次保存存档_3
    * @returns {number}
    */
-  get metal_statue_count_2() {
-    return era.get('flag:607') || 0;
+  get "last_save_no_3"() {
+    return era['raw']().data['flag'][10022];
   },
   /**
+   * 上次保存存档_3
    * @param {number} v
    */
-  set metal_statue_count_2(v) {
-    era.set('flag:607', v);
+  set "last_save_no_3"(v) {
+    era['raw']().data['flag'][10022] = v;
   },
   /**
-   * 家具数（flag:608）
+   * 上次保存存档_4
    * @returns {number}
    */
-  get furniture_count() {
-    return era.get('flag:608') || 0;
+  get "last_save_no_4"() {
+    return era['raw']().data['flag'][10023];
   },
   /**
+   * 上次保存存档_4
    * @param {number} v
    */
-  set furniture_count(v) {
-    era.set('flag:608', v);
+  set "last_save_no_4"(v) {
+    era['raw']().data['flag'][10023] = v;
   },
   /**
-   * 绘画数（flag:609）
+   * 上次保存存档_5
    * @returns {number}
    */
-  get painting_count() {
-    return era.get('flag:609') || 0;
+  get "last_save_no_5"() {
+    return era['raw']().data['flag'][10024];
   },
   /**
+   * 上次保存存档_5
    * @param {number} v
    */
-  set painting_count(v) {
-    era.set('flag:609', v);
+  set "last_save_no_5"(v) {
+    era['raw']().data['flag'][10024] = v;
   },
   /**
-   * 喷水像_石（flag:611）
+   * 上次保存存档_6
    * @returns {number}
    */
-  get fountain_stone_count() {
-    return era.get('flag:611') || 0;
+  get "last_save_no_6"() {
+    return era['raw']().data['flag'][10025];
   },
   /**
+   * 上次保存存档_6
    * @param {number} v
    */
-  set fountain_stone_count(v) {
-    era.set('flag:611', v);
+  set "last_save_no_6"(v) {
+    era['raw']().data['flag'][10025] = v;
   },
   /**
-   * 喷水像_金属（flag:612）
+   * 上次保存存档_7
    * @returns {number}
    */
-  get fountain_metal_count() {
-    return era.get('flag:612') || 0;
+  get "last_save_no_7"() {
+    return era['raw']().data['flag'][10026];
   },
   /**
+   * 上次保存存档_7
    * @param {number} v
    */
-  set fountain_metal_count(v) {
-    era.set('flag:612', v);
+  set "last_save_no_7"(v) {
+    era['raw']().data['flag'][10026] = v;
   },
   /**
-   * 人间牧场竿役（flag:613）
+   * 上次保存存档_8
    * @returns {number}
    */
-  get ranch_stud() {
-    return era.get('flag:613') || 0;
+  get "last_save_no_8"() {
+    return era['raw']().data['flag'][10027];
   },
   /**
+   * 上次保存存档_8
    * @param {number} v
    */
-  set ranch_stud(v) {
-    era.set('flag:613', v);
+  set "last_save_no_8"(v) {
+    era['raw']().data['flag'][10027] = v;
   },
   /**
-   * 人类牧场设定（flag:614）
+   * 上次保存存档_9
    * @returns {number}
    */
-  get ranch_display_settings() {
-    return era.get('flag:614') || 0;
+  get "last_save_no_9"() {
+    return era['raw']().data['flag'][10028];
   },
   /**
+   * 上次保存存档_9
    * @param {number} v
    */
-  set ranch_display_settings(v) {
-    era.set('flag:614', v);
+  set "last_save_no_9"(v) {
+    era['raw']().data['flag'][10028] = v;
   },
   /**
-   * 触手回合计数（flag:10030）
+   * 触手回合计数
    * @returns {number}
    */
-  get tentacle_round() {
-    return era.get('flag:10030') || 0;
+  get "tentacle_round"() {
+    return era['raw']().data['flag'][10030];
   },
   /**
+   * 触手回合计数
    * @param {number} v
    */
-  set tentacle_round(v) {
-    era.set('flag:10030', v);
+  set "tentacle_round"(v) {
+    era['raw']().data['flag'][10030] = v;
+  },
+  get,
+  /**
+   * @param {number|string} param
+   * @param {number} val
+   * @returns {number}
+   */
+  set(param, val) {
+    return era.set(`flag:${param}`, val);
+  },
+  /**
+   * @param {number|string} param
+   * @param {number} val
+   * @returns {number}
+   */
+  add(param, val) {
+    return era.set(`flag:${param}`, get(param) + val);
   },
 };
+
+module.exports = era_flag;
 // GENERATED END
 
 // —— 手写区（重新生成不会触碰）——

@@ -1,42 +1,63 @@
-/**
- * @file audio 表的具名访问器初稿（tools/gen-wrapper.js 自 yml/Audio.yml 生成）。
- *
- * 生成区（GENERATED 标记之间）由脚本维护，重生成加 --force；
- * 标记之外是手写区：变量语义补注、业务方法，重新生成不会触碰（#11 决议）。
- * 变量语义与来源写进手写区补注（AGENTS.md「变量语义必须注释」）。
- */
-
+// GENERATED START
 const era = require('#/era-electron');
 
-// GENERATED START —— tools/gen-wrapper.js 自 yml/Audio.yml 生成，勿手改；重新生成（--force）只替换本标记之间
+/**
+ * @param {number|string} param
+ * @returns {number}
+ */
+function get(param) {
+  return era.get(`audio:${param}`) || 0;
+}
+
 const era_audio = {
   /**
-   * 是否启用背景音乐（audio:0）
+   * 是否启用背景音乐
    * @returns {number}
    */
-  get bgm_enabled() {
-    return era.get('audio:0') || 0;
+  get "bgm_enabled"() {
+    return era['raw']().data['audio'][0];
   },
   /**
+   * 是否启用背景音乐
    * @param {number} v
    */
-  set bgm_enabled(v) {
-    era.set('audio:0', v);
+  set "bgm_enabled"(v) {
+    era['raw']().data['audio'][0] = v;
   },
   /**
-   * 背景音乐音量（audio:1）
+   * 背景音乐音量
    * @returns {number}
    */
-  get bgm_volume() {
-    return era.get('audio:1') || 0;
+  get "bgm_volume"() {
+    return era['raw']().data['audio'][1];
   },
   /**
+   * 背景音乐音量
    * @param {number} v
    */
-  set bgm_volume(v) {
-    era.set('audio:1', v);
+  set "bgm_volume"(v) {
+    era['raw']().data['audio'][1] = v;
+  },
+  get,
+  /**
+   * @param {number|string} param
+   * @param {number} val
+   * @returns {number}
+   */
+  set(param, val) {
+    return era.set(`audio:${param}`, val);
+  },
+  /**
+   * @param {number|string} param
+   * @param {number} val
+   * @returns {number}
+   */
+  add(param, val) {
+    return era.set(`audio:${param}`, get(param) + val);
   },
 };
+
+module.exports = era_audio;
 // GENERATED END
 
 // —— 手写区（重新生成不会触碰）——

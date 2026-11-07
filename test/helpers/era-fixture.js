@@ -796,13 +796,30 @@ function create_era_fixture() {
   // ——声明序号缺值补 0，写过的值不动。夹具此前一格都不补：真机上
   // `era.get('flag:80')` 是 0、测试里是 undefined，#830 把 flag 的声明集从
   // 89 条补到 166 条之后这个偏差开始骗人（#977）。
+  // 引擎 fillData 对**扩展普通表**（不在 embeddedTableNames 里、type=normal 的
+  // 静态表）做同一件事：`data[e] ||= {}`，再把声明序号逐个 `??= 0`（app.asar
+  // 逐字：`Object.entries(this.era.extendedTables).forEach(([e,t]) => {
+  // data[e] ||= {}; t===normal && Object.values(staticData[e]).forEach(id =>
+  // data[e][id] ??= 0) })`）。本项目这类表是 audio / exflag / modsave——它们的
+  // 具名访问器读 `era.raw().data.<表>[序号]`，桶和缺省值不在就是 TypeError
+  // （#903 换开发套件后暴露）。
+  const EXTENDED_NORMAL_TABLES = ['audio', 'exflag', 'modsave'];
   const fill_data = () => {
-    for (const id of declared_ids('flag') ?? []) {
-      if (!store.has(`flag:${id}`)) {
-        store.set(`flag:${id}`, 0);
+    for (const table of ['flag', ...EXTENDED_NORMAL_TABLES]) {
+      for (const id of declared_ids(table) ?? []) {
+        if (!store.has(`${table}:${id}`)) {
+          store.set(`${table}:${id}`, 0);
+        }
       }
     }
   };
+  // 引擎在游戏代码跑起来**之前**必然先 resetData + fillData（启动链路），所以
+  // 真机上 `data.<表>` 与声明序号的 0 缺省一直存在。夹具此前只在 resetData /
+  // loadData 里补，直接调游戏函数的用例拿到的是空数据层——#903 换成引擎生成的
+  // 开发套件后，具名访问器读 `era.raw().data.<表>[序号]` 直接 TypeError
+  // （`Cannot read properties of undefined (reading '0')`）。这里在建夹具时
+  // 先跑一遍，让「代码跑起来时的数据层」与真机一致。
+  fill_data();
 
   // 引擎读 `<表>name:<序号>` 直接取 fieldNames[表][序号].n：yml 里有这张表
   // 而序号未声明时抛 TypeError，不返回 undefined（#739）。用例显式播种的
@@ -1565,6 +1582,11 @@ function create_era_fixture() {
           return true;
         }
         store.set(key, value);
+        // 开发套件的具名访问器写的是数据层本身（`era_flag.money = 800` →
+        // `raw().data.flag[10000] = 800`），引擎侧不经 setVar，但**那是游戏
+        // 代码的写**。var_writes 是「本次调用写了哪些变量」的观测面（#903 前
+        // 每条写都过 era.set，换开发套件后全走这里），不记就等于把观测面丢了。
+        var_writes.push({ name: key, value });
         return true;
       },
       has(_target, prop) {
