@@ -3,7 +3,7 @@
 // 分配，只作引用基准点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 2778; // #855 +6（M15564-M15569：K0/K1/K2/K3/K5 的口上子类——不进工厂、族注册直挂本体、select_com 与语尾钩子不转交、注册号写错、子类未导出） // #977 +2（M18448/M18449：K1 的 TEQUIP:45 脱着支与 89/90 淫乱初吻支的判等写反） // #934 +5（M18423-M18427：凌辱畏怖扫描退回列头值、无记忆哨兵退回 0、不同怪物也改写记忆、累加增量、首次不清零）；#865 +8（M16750-M16757：语尾文字搬进 ere/data/gobi-koujo-const.js 后的取值规则——表外编号、档位下标、默认支随机序、单支不掷、%SELF_CALL% 替换、表行与注册一一对应）；#865 另有 30 条既有语尾条目的 find 改挂常量表（编号不变） // 数据地址缺陷修复 +15（M15403-M15417：K10 自慰次数交接与处女丧失增量门槛、K7 录像自我介绍八支、K1 助手 17 号判断）； // #797 +8（M7690-M7697：成熟出售真身调用丢失的原 sell-maturo-k0 分片条目改住本分片，条目内容不变） // #734 +7（M14550–M14556：四类首次口上阈值、真实引擎爱抚与非法阈值地址检查）；#710 净 -1（M12155 改写成 M14254：卖春积极性行随 show_button_bich_level 删除、改指等级网格退回纯文本，条数不变；删 M402：SET_BICH_LEVEL 输入上限随按钮化不可观察）；#711 起 +2（M14310/M14311：K15 暗器菜单的选项按钮化——退回纯文本与按钮后夹等键两条）；#643 -5…沿革见 git 历史；#654（F8）：删反向变异与 k902 条目 67 条、新增 M13300-M13349 与 M13549，#655（F9）-8+5 后合并计数；#688 +35
+export const COUNT = 2785; // #856 +7（M15570-M15576：K6/K7/K8/K9/K10 的口上子类——不进工厂、族注册直挂本体、select_com 与语尾钩子不转交、裸注册号写错、子类未导出、实参适配丢失） // #855 +6（M15564-M15569：K0/K1/K2/K3/K5 的口上子类——不进工厂、族注册直挂本体、select_com 与语尾钩子不转交、注册号写错、子类未导出） // #977 +2（M18448/M18449：K1 的 TEQUIP:45 脱着支与 89/90 淫乱初吻支的判等写反） // #934 +5（M18423-M18427：凌辱畏怖扫描退回列头值、无记忆哨兵退回 0、不同怪物也改写记忆、累加增量、首次不清零）；#865 +8（M16750-M16757：语尾文字搬进 ere/data/gobi-koujo-const.js 后的取值规则——表外编号、档位下标、默认支随机序、单支不掷、%SELF_CALL% 替换、表行与注册一一对应）；#865 另有 30 条既有语尾条目的 find 改挂常量表（编号不变） // 数据地址缺陷修复 +15（M15403-M15417：K10 自慰次数交接与处女丧失增量门槛、K7 录像自我介绍八支、K1 助手 17 号判断）； // #797 +8（M7690-M7697：成熟出售真身调用丢失的原 sell-maturo-k0 分片条目改住本分片，条目内容不变） // #734 +7（M14550–M14556：四类首次口上阈值、真实引擎爱抚与非法阈值地址检查）；#710 净 -1（M12155 改写成 M14254：卖春积极性行随 show_button_bich_level 删除、改指等级网格退回纯文本，条数不变；删 M402：SET_BICH_LEVEL 输入上限随按钮化不可观察）；#711 起 +2（M14310/M14311：K15 暗器菜单的选项按钮化——退回纯文本与按钮后夹等键两条）；#643 -5…沿革见 git 历史；#654（F8）：删反向变异与 k902 条目 67 条、新增 M13300-M13349 与 M13549，#655（F9）-8+5 后合并计数；#688 +35
 
 export default [
   {
@@ -12408,144 +12408,180 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M2323 K10 家族接入：kojo_message_com_family 注册号错位（10 改 11，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
-    find: `kojo_message_com_family.register(10, kojo_message_com_10);`,
-    replace: `kojo_message_com_family.register(11, kojo_message_com_10); // 变异`,
+    find: `kojo_message_com_family.register(10, (...args) =>
+  kojo_k10.kojo_message_com(...args),
+);`,
+    replace: `kojo_message_com_family.register(11, (...args) =>
+  kojo_k10.kojo_message_com(...args),
+); // 变异`,
     tests: ['kojo-k10-club'],
     must_mention: '20 个分发族全部注册了 K10',
   },
   {
     desc: 'M2324 K10 家族接入：self_kojo_family 注册号错位（10 改 11，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
-    find: `self_kojo_family.register(10, self_kojo_k10);`,
-    replace: `self_kojo_family.register(11, self_kojo_k10); // 变异`,
+    find: `self_kojo_family.register(10, (...args) => kojo_k10.self_kojo(...args));`,
+    replace: `self_kojo_family.register(11, (...args) => kojo_k10.self_kojo(...args)); // 变异`,
     tests: ['kojo-k10-club'],
     must_mention: '20 个分发族全部注册了 K10',
   },
   {
     desc: 'M2325 K10 家族接入：kojo_message_palamcng_family 注册号错位（10 改 11，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
-    find: `kojo_message_palamcng_family.register(10, kojo_message_palamcng_10);`,
-    replace: `kojo_message_palamcng_family.register(11, kojo_message_palamcng_10); // 变异`,
+    find: `kojo_message_palamcng_family.register(10, (...args) =>
+  kojo_k10.kojo_message_palamcng(...args),
+);`,
+    replace: `kojo_message_palamcng_family.register(11, (...args) =>
+  kojo_k10.kojo_message_palamcng(...args),
+); // 变异`,
     tests: ['kojo-k10-club'],
     must_mention: '20 个分发族全部注册了 K10',
   },
   {
     desc: 'M2326 K10 家族接入：kojo_message_markcng_family 注册号错位（10 改 11，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
-    find: `kojo_message_markcng_family.register(10, kojo_message_markcng_10);`,
-    replace: `kojo_message_markcng_family.register(11, kojo_message_markcng_10); // 变异`,
+    find: `kojo_message_markcng_family.register(10, (...args) =>
+  kojo_k10.kojo_message_markcng(...args),
+);`,
+    replace: `kojo_message_markcng_family.register(11, (...args) =>
+  kojo_k10.kojo_message_markcng(...args),
+); // 变异`,
     tests: ['kojo-k10-club'],
     must_mention: '20 个分发族全部注册了 K10',
   },
   {
     desc: 'M2327 K10 家族接入：gohoubi_after_koujo_family 注册号错位（10 改 11，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
-    find: `gohoubi_after_koujo_family.register(10, (cid, choice) =>
-  gohoubi_after_koujo_k10(undefined, cid, choice),
+    find: `gohoubi_after_koujo_family.register(10, (...args) =>
+  kojo_k10.gohoubi_after_koujo(...args),
 );`,
-    replace: `gohoubi_after_koujo_family.register(11, (cid, choice) =>  // 变异
-  gohoubi_after_koujo_k10(undefined, cid, choice),
-);`,
+    replace: `gohoubi_after_koujo_family.register(11, (...args) =>
+  kojo_k10.gohoubi_after_koujo(...args),
+); // 变异`,
     tests: ['kojo-k10-club'],
     must_mention: '20 个分发族全部注册了 K10',
   },
   {
     desc: 'M2328 K10 家族接入：osioski_koujo_family 注册号错位（10 改 11，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
-    find: `osioski_koujo_family.register(10, (cid, choice) =>
-  osioki_koujo_k10(undefined, cid, choice),
-);`,
-    replace: `osioski_koujo_family.register(11, (cid, choice) =>  // 变异
-  osioki_koujo_k10(undefined, cid, choice),
-);`,
+    find: `osioski_koujo_family.register(10, (...args) => kojo_k10.osioski_koujo(...args));`,
+    replace: `osioski_koujo_family.register(11, (...args) => kojo_k10.osioski_koujo(...args)); // 变异`,
     tests: ['kojo-k10-club'],
     must_mention: '20 个分发族全部注册了 K10',
   },
   {
     desc: 'M2329 K10 家族接入：gohoubi_request_koujo_family 注册号错位（10 改 11，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
-    find: `gohoubi_request_koujo_family.register(10, () => gohoubi_request_koujo_k10());`,
-    replace: `gohoubi_request_koujo_family.register(11, () => gohoubi_request_koujo_k10()); // 变异`,
+    find: `gohoubi_request_koujo_family.register(10, (...args) =>
+  kojo_k10.gohoubi_request_koujo(...args),
+);`,
+    replace: `gohoubi_request_koujo_family.register(11, (...args) =>
+  kojo_k10.gohoubi_request_koujo(...args),
+); // 变异`,
     tests: ['kojo-k10-club'],
     must_mention: '20 个分发族全部注册了 K10',
   },
   {
     desc: 'M2330 K10 家族接入：ryouzyoku_kojo_family 注册号错位（10 改 11，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
-    find: `ryouzyoku_kojo_family.register(10, dungeon_ryouzyoku_k10);`,
-    replace: `ryouzyoku_kojo_family.register(11, dungeon_ryouzyoku_k10); // 变异`,
+    find: `ryouzyoku_kojo_family.register(10, (...args) =>
+  kojo_k10.dungeon_ryouzyoku(...args),
+);`,
+    replace: `ryouzyoku_kojo_family.register(11, (...args) =>
+  kojo_k10.dungeon_ryouzyoku(...args),
+); // 变异`,
     tests: ['kojo-k10-club'],
     must_mention: '20 个分发族全部注册了 K10',
   },
   {
     desc: 'M2331 K10 家族接入：ryouzyoku_after_kojo_family 注册号错位（10 改 11，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
-    find: `ryouzyoku_after_kojo_family.register(10, dungeon_ryouzyoku_after_k10);`,
-    replace: `ryouzyoku_after_kojo_family.register(11, dungeon_ryouzyoku_after_k10); // 变异`,
+    find: `ryouzyoku_after_kojo_family.register(10, (...args) =>
+  kojo_k10.dungeon_ryouzyoku_after(...args),
+);`,
+    replace: `ryouzyoku_after_kojo_family.register(11, (...args) =>
+  kojo_k10.dungeon_ryouzyoku_after(...args),
+); // 变异`,
     tests: ['kojo-k10-club'],
     must_mention: '20 个分发族全部注册了 K10',
   },
   {
     desc: 'M2332 K10 家族接入：gobi_koujo_family 注册号错位（10 改 11，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
-    find: `gobi_koujo_family.register(10, gobi_koujo_k10);`,
-    replace: `gobi_koujo_family.register(11, gobi_koujo_k10); // 变异`,
+    find: `gobi_koujo_family.register(10, (...args) => kojo_k10.gobi_koujo(...args));`,
+    replace: `gobi_koujo_family.register(11, (...args) => kojo_k10.gobi_koujo(...args)); // 变异`,
     tests: ['kojo-k10-club'],
     must_mention: '20 个分发族全部注册了 K10',
   },
   {
     desc: 'M2333 K10 家族接入：benki_koujo_family 注册号错位（10 改 11，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
-    find: `benki_koujo_family.register(10, benki_koujo_k10);`,
-    replace: `benki_koujo_family.register(11, benki_koujo_k10); // 变异`,
+    find: `benki_koujo_family.register(10, (...args) => kojo_k10.benki_koujo(...args));`,
+    replace: `benki_koujo_family.register(11, (...args) => kojo_k10.benki_koujo(...args)); // 变异`,
     tests: ['kojo-k10-club'],
     must_mention: '20 个分发族全部注册了 K10',
   },
   {
     desc: 'M2334 K10 家族接入：enterenemy_koujo_family 注册号错位（10 改 11，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
-    find: `enterenemy_koujo_family.register(10, enterenemy_koujo_k10);`,
-    replace: `enterenemy_koujo_family.register(11, enterenemy_koujo_k10); // 变异`,
+    find: `enterenemy_koujo_family.register(10, (...args) =>
+  kojo_k10.enterenemy_koujo(...args),
+);`,
+    replace: `enterenemy_koujo_family.register(11, (...args) =>
+  kojo_k10.enterenemy_koujo(...args),
+); // 变异`,
     tests: ['kojo-k10-club'],
     must_mention: '20 个分发族全部注册了 K10',
   },
   {
     desc: 'M2335 K10 家族接入：dungeon_victory_family 注册号错位（10 改 11，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
-    find: `dungeon_victory_family.register(10, dungeon_victory_k10);`,
-    replace: `dungeon_victory_family.register(11, dungeon_victory_k10); // 变异`,
+    find: `dungeon_victory_family.register(10, (...args) =>
+  kojo_k10.dungeon_victory(...args),
+);`,
+    replace: `dungeon_victory_family.register(11, (...args) =>
+  kojo_k10.dungeon_victory(...args),
+); // 变异`,
     tests: ['kojo-k10-club'],
     must_mention: '20 个分发族全部注册了 K10',
   },
   {
     desc: 'M2336 K10 家族接入：dungeon_attack_family 注册号错位（10 改 11，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
-    find: `dungeon_attack_family.register(10, dungeon_attack_k10);`,
-    replace: `dungeon_attack_family.register(11, dungeon_attack_k10); // 变异`,
+    find: `dungeon_attack_family.register(10, (...args) =>
+  kojo_k10.dungeon_attack(...args),
+);`,
+    replace: `dungeon_attack_family.register(11, (...args) =>
+  kojo_k10.dungeon_attack(...args),
+); // 变异`,
     tests: ['kojo-k10-club'],
     must_mention: '20 个分发族全部注册了 K10',
   },
   {
     desc: 'M2337 K10 家族接入：ntr_koujo_family 注册号错位（10 改 11，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
-    find: `ntr_koujo_family.register(10, ntr_koujo_k10);`,
-    replace: `ntr_koujo_family.register(11, ntr_koujo_k10); // 变异`,
+    find: `ntr_koujo_family.register(10, (...args) => kojo_k10.ntr_koujo(...args));`,
+    replace: `ntr_koujo_family.register(11, (...args) => kojo_k10.ntr_koujo(...args)); // 变异`,
     tests: ['kojo-k10-club'],
     must_mention: '20 个分发族全部注册了 K10',
   },
   {
     desc: 'M2338 K10 家族接入：exucution_koujo_family 注册号错位（10 改 11，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
-    find: `exucution_koujo_family.register(10, exucution_koujo_k10);`,
-    replace: `exucution_koujo_family.register(11, exucution_koujo_k10); // 变异`,
+    find: `exucution_koujo_family.register(10, (...args) =>
+  kojo_k10.exucution_koujo(...args),
+);`,
+    replace: `exucution_koujo_family.register(11, (...args) =>
+  kojo_k10.exucution_koujo(...args),
+); // 变异`,
     tests: ['kojo-k10-club'],
     must_mention: '20 个分发族全部注册了 K10',
   },
   {
     desc: 'M2339 K10 家族接入：museum_koujo_family 注册号错位（10 改 11，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
-    find: `museum_koujo_family.register(10, museum_koujo_k10);`,
-    replace: `museum_koujo_family.register(11, museum_koujo_k10); // 变异`,
+    find: `museum_koujo_family.register(10, (...args) => kojo_k10.museum_koujo(...args));`,
+    replace: `museum_koujo_family.register(11, (...args) => kojo_k10.museum_koujo(...args)); // 变异`,
     tests: ['kojo-k10-club'],
     must_mention: '20 个分发族全部注册了 K10',
   },
@@ -14045,9 +14081,9 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M2508 K8 NTR 注册退回只收 P 的适配器（族实参是 [rand, P]，rand 被当成 P → 整段静默，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
-    find: 'ntr_koujo_family.register(8, ntr_koujo_k8);',
+    find: 'ntr_koujo_family.register(8, (...args) => kojo_k8.ntr_koujo(...args));',
     replace:
-      'ntr_koujo_family.register(8, (p_arg) => ntr_koujo_k8(undefined, p_arg));',
+      'ntr_koujo_family.register(8, (p_arg) => kojo_k8.ntr_koujo(undefined, p_arg));',
     tests: ['kojo-k8-spade'],
     must_mention: 'NTR：P==1 陥落済支走巨根',
   },
@@ -25941,6 +25977,64 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     replace: '  register,\n  kojo_message_com_3,',
     tests: ['kojo-classes-k0-k5'],
     must_mention: 'kojo/kojo-k3-noble 未导出 KojoK3',
+  },
+  // —— #856：K6/K7/K8/K9/K10 迁成口上子类（族注册转发到工厂实例） ——
+  {
+    desc: 'M15570 K6 不进工厂（run_kojo 找不到实例，K6 的口上整体回落旧族）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find: 'register_kojo(6, KojoK6);',
+    replace: '// 变异：K6 不进工厂',
+    tests: ['kojo-classes-k6-k10'],
+    must_mention: 'kojo[6] 不是 KojoK6',
+  },
+  {
+    desc: 'M15571 K8 的 COM 族注册直挂本体（绕过工厂实例，指令口上不再经钩子）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: 'kojo_message_com_family.register(8, (...args) =>\n  kojo_k8.kojo_message_com(...args),\n);',
+    replace: 'kojo_message_com_family.register(8, kojo_message_com_8);',
+    tests: ['kojo-classes-k6-k10'],
+    must_mention: '有直挂本体（或别种转发形状）的族注册',
+  },
+  {
+    desc: 'M15572 K10 的 select_com 不转交本体（指令口上集体失声）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: '  async select_com(...args) {\n    return kojo_message_com_10(...args);\n  }',
+    replace: '  async select_com() {\n    return 0; // 变异：不转交\n  }',
+    tests: ['kojo-classes-k6-k10'],
+    must_mention: '缺转交方法',
+  },
+  {
+    desc: 'M15573 K9 的语尾钩子不转交（语尾恒空串，调用方那一行照常结束）',
+    file: 'ere/kojo/kojo-k9-diamond.js',
+    find: '  async gobi_koujo(...args) {\n    return gobi_koujo_k9(...args);\n  }',
+    replace: "  async gobi_koujo() {\n    return ''; // 变异：不转交\n  }",
+    tests: ['kojo-classes-k6-k10'],
+    must_mention: '缺转交方法',
+  },
+  {
+    desc: 'M15574 K7 的惩罚结算族注册号写错（7 改 8，注册在但接不上 K7）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: 'osioski_koujo_family.register(7, osioki_koujo_k7);',
+    replace: 'osioski_koujo_family.register(8, osioki_koujo_k7); // 变异',
+    tests: ['kojo-classes-k6-k10'],
+    must_mention: '的 osioski 例外应裸注册 osioki_koujo_k7',
+  },
+  {
+    desc: 'M15575 K8 的子类不导出（迁移面从模块对外消失）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '  register,\n  KojoK8,\n  kojo_message_com_8,',
+    replace: '  register,\n  kojo_message_com_8,',
+    tests: ['kojo-classes-k6-k10'],
+    must_mention: 'kojo/kojo-k8-spade 未导出 KojoK8',
+  },
+  {
+    desc: 'M15576 K8 的奖赏结算钩子丢了实参适配（随机源位不再留空，实参整体错位）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '  async gohoubi_after_koujo(cid, choice) {\n    return gohoubi_after_koujo_k8(undefined, cid, choice);\n  }',
+    replace:
+      '  async gohoubi_after_koujo(cid, choice) {\n    return gohoubi_after_koujo_k8(cid, choice);\n  }',
+    tests: ['kojo-classes-k6-k10'],
+    must_mention: '的实参表须与迁移前的注册适配器一致',
   },
   // —— #817：处刑钩子从实参读处分方式，不再读 tflag ——
   {

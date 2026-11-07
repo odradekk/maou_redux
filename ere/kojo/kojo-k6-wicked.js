@@ -22,6 +22,12 @@
  * 每次出声；FLAG:7 == 1 时逐阶段各出一次声。
  *
  * SELL_MATURO_K0 成熟出售真身已随 #338 接通。
+ *
+ * == 口上子类（#856） ==
+ *
+ * 文件末尾的 KojoK6 是口上基类（`ere/kojo/kojo-base.js`）的子类：钩子各自转交
+ * 本文件的口上本体，注册进工厂后由 `run_kojo` 取实例执行。台词本体没有搬家
+ * （#891/#892 迁 .kojo 时整体替换），本票只把「K6 在哪个时机说话」收成一张清单。
  */
 
 const era = require('#/era-electron');
@@ -29,6 +35,8 @@ const { piercing_state } = require('#/system/train/piercing-state');
 const { sell_maturo_k0 } = require('#/system/stronghold/sell-maturo-k0');
 const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
+const { KojoBase } = require('#/kojo/kojo-base');
+const { get_kojo, register_kojo } = require('#/kojo/kojo-factory');
 const {
   kojo_message_com_family,
   kojo_message_palamcng_family,
@@ -12255,28 +12263,170 @@ function gobi_koujo_k6(arg_0, rand) {
   return gobi_text(6, arg_0, rand);
 }
 
-kojo_message_com_family.register(6, kojo_message_com_6);
-dog_kojo_family.register(6, dog_kojo_6);
-colosseum_kojo_family.register(6, colosseum_kojo_6);
-kojo_message_palamcng_family.register(6, kojo_message_palamcng_6);
-kojo_message_markcng_family.register(6, kojo_message_markcng_6);
-self_kojo_family.register(6, self_kojo_k6);
-ryouzyoku_kojo_family.register(6, dungeon_ryouzyoku_k6);
-ryouzyoku_after_kojo_family.register(6, dungeon_ryouzyoku_after_k6);
-benki_koujo_family.register(6, benki_koujo_k6);
-dungeon_victory_family.register(6, dungeon_victory_k6);
-dungeon_attack_family.register(6, dungeon_attack_k6);
-ntr_koujo_family.register(6, ntr_koujo_k6);
-exucution_koujo_family.register(6, exucution_koujo_k6);
-museum_koujo_family.register(6, museum_koujo_k6);
-banishment_koujo_family.register(6, banishment_koujo_k6);
-public_exucution_koujo_family.register(6, public_exucution_koujo_k6);
-grotesque_koujo_family.register(6, grotesque_koujo_k6);
-enterenemy_koujo_family.register(6, enterenemy_koujo_k6);
-gohoubi_request_koujo_family.register(6, gohoubi_request_koujo_k6);
-gohoubi_after_koujo_family.register(6, gohoubi_after_koujo_k6);
-osioski_koujo_family.register(6, osioki_koujo_k6);
-gobi_koujo_family.register(6, gobi_koujo_k6);
+/**
+ * K6 悪女的口上子类（#856：与 KojoK4/K2 同款，钩子各自转交本文件的口上本体）。
+ *
+ * 每个钩子都是一行转交、实参原样透传：迁移前族注册的第二参就是这些本体
+ * （`self_kojo_family.register(6, self_kojo_k6)` 之类），所以调用形状与台词本体
+ * 一字未动。本类因此成了「K6 在哪些时机说话」的唯一清单——没有覆盖的钩子落到
+ * 基类的默认实现（不输出）。
+ *
+ * 头部检查不挪进 header_checks()：K6 的检查（含兽奸 → dog_kojo_6、
+ * 死斗场 → colosseum_kojo_6 两条岔路，见文件头）留在 kojo_message_com_6 体内，
+ * 钩子只做外壳，检查顺序与结果与迁移前一致。
+ */
+class KojoK6 extends KojoBase {
+  /** 指令分支体（头部检查在本体内，见上） */
+  async select_com(...args) {
+    return kojo_message_com_6(...args);
+  }
+
+  async kojo_message_palamcng(...args) {
+    return kojo_message_palamcng_6(...args);
+  }
+
+  async kojo_message_markcng(...args) {
+    return kojo_message_markcng_6(...args);
+  }
+
+  async self_kojo(...args) {
+    return self_kojo_k6(...args);
+  }
+
+  /** 兽奸专用（由 kojo_message_com_6 的头部检查岔入） */
+  async dog_kojo(...args) {
+    return dog_kojo_6(...args);
+  }
+
+  /** 死斗场专用（同上） */
+  async colosseum_kojo(...args) {
+    return colosseum_kojo_6(...args);
+  }
+
+  async benki_koujo(...args) {
+    return benki_koujo_k6(...args);
+  }
+
+  async dungeon_victory(...args) {
+    return dungeon_victory_k6(...args);
+  }
+
+  async dungeon_attack(...args) {
+    return dungeon_attack_k6(...args);
+  }
+
+  async dungeon_ryouzyoku(...args) {
+    return dungeon_ryouzyoku_k6(...args);
+  }
+
+  async dungeon_ryouzyoku_after(...args) {
+    return dungeon_ryouzyoku_after_k6(...args);
+  }
+
+  async ntr_koujo(...args) {
+    return ntr_koujo_k6(...args);
+  }
+
+  async exucution_koujo(...args) {
+    return exucution_koujo_k6(...args);
+  }
+
+  async museum_koujo(...args) {
+    return museum_koujo_k6(...args);
+  }
+
+  async banishment_koujo(...args) {
+    return banishment_koujo_k6(...args);
+  }
+
+  async public_exucution_koujo(...args) {
+    return public_exucution_koujo_k6(...args);
+  }
+
+  async grotesque_koujo(...args) {
+    return grotesque_koujo_k6(...args);
+  }
+
+  async enterenemy_koujo(...args) {
+    return enterenemy_koujo_k6(...args);
+  }
+
+  async gohoubi_request_koujo(...args) {
+    return gohoubi_request_koujo_k6(...args);
+  }
+
+  async gohoubi_after_koujo(...args) {
+    return gohoubi_after_koujo_k6(...args);
+  }
+
+  /** 惩罚结算后：本体沿用史拼 osioki_koujo_k6（钩子名按基类） */
+  async osioski_koujo(...args) {
+    return osioki_koujo_k6(...args);
+  }
+
+  async gobi_koujo(...args) {
+    return gobi_koujo_k6(...args);
+  }
+}
+
+// 注册进分发族（TRYCALLFORM KOJO_MESSAGE_COM_6 的等价物；重复注册抛错）。
+// K6 的兽奸与死斗场两个真身也各自有族注册（两族没有分发入口，由 COM 头部检查
+// 直调，见文件头）。范围与接入由 test/kojo-register-coverage.test.js 的
+// 「有本体必有 register」契约锁守。
+//
+// #856 起 K6 进工厂：`run_kojo` 走工厂实例的钩子，下面这些族注册是过渡期的旧
+// 入口（存量测试与「有本体必有注册」契约锁直调），一律转发到同一个实例
+// ——两处都经 KojoK6。#855–#858 迁完后随族一起删。
+register_kojo(6, KojoK6);
+const kojo_k6 = get_kojo(6);
+kojo_message_com_family.register(6, (...args) =>
+  kojo_k6.kojo_message_com(...args),
+);
+dog_kojo_family.register(6, (...args) => kojo_k6.dog_kojo(...args));
+colosseum_kojo_family.register(6, (...args) => kojo_k6.colosseum_kojo(...args));
+kojo_message_palamcng_family.register(6, (...args) =>
+  kojo_k6.kojo_message_palamcng(...args),
+);
+kojo_message_markcng_family.register(6, (...args) =>
+  kojo_k6.kojo_message_markcng(...args),
+);
+self_kojo_family.register(6, (...args) => kojo_k6.self_kojo(...args));
+ryouzyoku_kojo_family.register(6, (...args) =>
+  kojo_k6.dungeon_ryouzyoku(...args),
+);
+ryouzyoku_after_kojo_family.register(6, (...args) =>
+  kojo_k6.dungeon_ryouzyoku_after(...args),
+);
+benki_koujo_family.register(6, (...args) => kojo_k6.benki_koujo(...args));
+dungeon_victory_family.register(6, (...args) =>
+  kojo_k6.dungeon_victory(...args),
+);
+dungeon_attack_family.register(6, (...args) => kojo_k6.dungeon_attack(...args));
+ntr_koujo_family.register(6, (...args) => kojo_k6.ntr_koujo(...args));
+exucution_koujo_family.register(6, (...args) =>
+  kojo_k6.exucution_koujo(...args),
+);
+museum_koujo_family.register(6, (...args) => kojo_k6.museum_koujo(...args));
+banishment_koujo_family.register(6, (...args) =>
+  kojo_k6.banishment_koujo(...args),
+);
+public_exucution_koujo_family.register(6, (...args) =>
+  kojo_k6.public_exucution_koujo(...args),
+);
+grotesque_koujo_family.register(6, (...args) =>
+  kojo_k6.grotesque_koujo(...args),
+);
+enterenemy_koujo_family.register(6, (...args) =>
+  kojo_k6.enterenemy_koujo(...args),
+);
+gohoubi_request_koujo_family.register(6, (...args) =>
+  kojo_k6.gohoubi_request_koujo(...args),
+);
+gohoubi_after_koujo_family.register(6, (...args) =>
+  kojo_k6.gohoubi_after_koujo(...args),
+);
+osioski_koujo_family.register(6, (...args) => kojo_k6.osioski_koujo(...args));
+gobi_koujo_family.register(6, (...args) => kojo_k6.gobi_koujo(...args));
 
 /**
  * 本模块的事件处理器：由 system/flow/startup.js 的装配表按顺序调用 register()
@@ -12291,6 +12441,7 @@ function register() {
 
 module.exports = {
   register,
+  KojoK6,
   kojo_message_com_6,
   dog_kojo_6,
   colosseum_kojo_6,

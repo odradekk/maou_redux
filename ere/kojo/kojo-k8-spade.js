@@ -50,6 +50,12 @@
  * 全部口上均已实现：头部检查、开局/终局口上（CFLAG:201 状态机）、
  * k8_kojo2、kojo_message_com_8 的 51 个 SELECTCOM 分支、dog_kojo_8、
  * colosseum_kojo_8、PALAMCNG/MARKCNG、self_kojo_k8 与全部非调教函数；
+ *
+ * == 口上子类（#856） ==
+ *
+ * 文件末尾的 KojoK8 是口上基类（`ere/kojo/kojo-base.js`）的子类：钩子各自转交
+ * 本文件的口上本体，注册进工厂后由 `run_kojo` 取实例执行。台词本体没有搬家
+ * （#891/#892 迁 .kojo 时整体替换），本票只把「K8 在哪个时机说话」收成一张清单。
  */
 
 const era = require('#/era-electron');
@@ -57,6 +63,8 @@ const { sell_maturo_k0 } = require('#/system/stronghold/sell-maturo-k0');
 const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
 const { peek_aftertrain_s } = require('#/event/event-aftertrain');
+const { KojoBase } = require('#/kojo/kojo-base');
+const { get_kojo, register_kojo } = require('#/kojo/kojo-factory');
 const {
   kojo_message_com_family,
   kojo_message_palamcng_family,
@@ -9337,9 +9345,6 @@ async function kojo_message_com_8(rand) {
   return 0;
 }
 
-// 注册进分发族（TRYCALLFORM KOJO_MESSAGE_COM_8 的等价物；重复注册抛错）
-kojo_message_com_family.register(8, kojo_message_com_8);
-
 /**
  * dog_kojo_8：兽奸 PLAY 的专用口上（头部检查 TEQUIP:89 岔入）。
  * 与主 COM_8 同构：SELECTCOM 0/1/5/6/9/21/27/30/31/34/37/43/56 各支 +
@@ -10723,9 +10728,6 @@ async function kojo_message_palamcng_8(rand) {
   return 0;
 }
 
-// 注册进分发族（TRYCALLFORM KOJO_MESSAGE_PALAMCNG_8 的等价物）
-kojo_message_palamcng_family.register(8, kojo_message_palamcng_8);
-
 /**
  * kojo_message_markcng_8：刻印取得口上。
  * 检查：口塞、失神、兽奸、触手、崩坏、死斗场（助手
@@ -10826,9 +10828,6 @@ async function kojo_message_markcng_8() {
 
   return 0;
 }
-
-// 注册进分发族（TRYCALLFORM KOJO_MESSAGE_MARKCNG_8 的等价物）
-kojo_message_markcng_family.register(8, kojo_message_markcng_8);
 
 /**
  * self_kojo_k8：事件口上（TFLAG:13 分派）。
@@ -11488,9 +11487,6 @@ async function self_kojo_k8(rand, q) {
   return 0;
 }
 
-// 注册进分发族（TRYCALLFORM SELF_KOJO_K8 的等价物）
-self_kojo_family.register(8, self_kojo_k8);
-
 /**
  * dungeon_ryouzyoku_k8：迷宫凌辱前的一言。
  * 处女（TALENT:0）与非处女只差中间一行心声，其余两行相同。
@@ -11668,12 +11664,6 @@ async function dungeon_attack_k8(rand) {
   return 0;
 }
 
-// 注册进迷宫四族（TRYCALLFORM DUNGEON_*_K8 的等价物）
-ryouzyoku_kojo_family.register(8, dungeon_ryouzyoku_k8);
-ryouzyoku_after_kojo_family.register(8, dungeon_ryouzyoku_after_k8);
-dungeon_victory_family.register(8, dungeon_victory_k8);
-dungeon_attack_family.register(8, dungeon_attack_k8);
-
 /**
  * benki_koujo_k8：肉便器口上（角色即 A）。
  *
@@ -11829,9 +11819,6 @@ async function benki_koujo_k8(rand) {
 
   return 0;
 }
-
-// 注册进肉便器口上族（TRYCALLFORM BENKI_KOUJO_K8 的等价物）
-benki_koujo_family.register(8, benki_koujo_k8);
 
 /**
  * colosseum_kojo_8：死斗场专用口上（头部检查 TEQUIP:55 岔入）。
@@ -12299,12 +12286,6 @@ async function ntr_koujo_k8(rand, p_arg = 0) {
   return 0;
 }
 
-// 注册进 NTR 口上族（TRYCALLFORM NTR_KOUJO_K8 的等价物）。族的实参是
-// [rand, P]（K7/K9/K10 一致，见 test/kojo-k7-heart.test.js 的 call），
-// 与本函数签名同形，直接注册即可——不要再包一层只收 P 的适配器，
-// 那会把 rand 当成 P，整段永远静默
-ntr_koujo_family.register(8, ntr_koujo_k8);
-
 /**
  * exucution_koujo_k8：处刑口上。
  * 处分方式编号分四档：4 肉便器刑 / 5 战斗员化 / 6 晒し台刑 / 7 消除记忆解放。
@@ -12492,14 +12473,6 @@ async function enterenemy_koujo_k8(rand) {
   return 0;
 }
 
-// 注册进各自的分发族（TRYCALLFORM *_KOUJO_K8 的等价物）
-exucution_koujo_family.register(8, exucution_koujo_k8);
-museum_koujo_family.register(8, museum_koujo_k8);
-banishment_koujo_family.register(8, banishment_koujo_k8);
-public_exucution_koujo_family.register(8, public_exucution_koujo_k8);
-grotesque_koujo_family.register(8, grotesque_koujo_k8);
-enterenemy_koujo_family.register(8, enterenemy_koujo_k8);
-
 /**
  * gohoubi_request_koujo_k8：迎击时的奖赏要求（角色即 A）。
  * CFLAG:504（要求奖赏）分十档：0 钱 / 1-3 兽奸（犬·猪·马）/ 4 吻 /
@@ -12680,12 +12653,6 @@ async function gohoubi_after_koujo_k8(rand, cid, choice) {
   return 0;
 }
 
-// 注册进奖赏两族（TRYCALLFORM GOHOUBI_*_KOUJO_K8 的等价物，签名同 K3）
-gohoubi_request_koujo_family.register(8, () => gohoubi_request_koujo_k8());
-gohoubi_after_koujo_family.register(8, (cid, choice) =>
-  gohoubi_after_koujo_k8(undefined, cid, choice),
-);
-
 /**
  * osioki_koujo_k8：迎击失败后的惩罚口上（角色即 A）。
  *
@@ -12783,11 +12750,175 @@ function gobi_koujo_k8(arg_0, rand) {
   return gobi_text(8, arg_0, rand);
 }
 
-// 注册进惩罚族与语尾族（TRYCALLFORM OSIOKI_KOUJO_K8 / GOBI_KOUJO_K8 的等价物）
-osioski_koujo_family.register(8, (cid, choice) =>
-  osioki_koujo_k8(undefined, cid, choice),
+/**
+ * K8 银黑桃的口上子类（#856：与 KojoK4/K2 同款，钩子各自转交本文件的口上本体）。
+ *
+ * 每个钩子都是一行转交：迁移前族注册的第二参就是这些本体
+ * （`benki_koujo_family.register(8, benki_koujo_k8)` 之类），实参原样透传，所以
+ * 调用形状与台词本体一字未动。奖赏请求 / 奖赏结算后 / 惩罚结算后三处的族实参与
+ * 本体形参位不同，转交时照搬迁移前注册适配器的实参表（本体首个 rand 位由调用方
+ * 留空）。
+ *
+ * 本类因此成了「K8 在哪些时机说话」的唯一清单——没有覆盖的钩子落到基类的默认
+ * 实现（不输出）。兽奸与死斗场两个钩子没有分发入口（由 kojo_message_com_8 的
+ * 头部检查岔入本文件的真身），这里只作声明。
+ *
+ * 头部检查不挪进 header_checks()：K8 的七道检查留在 kojo_message_com_8 体内，
+ * 钩子只做外壳，检查顺序与结果与迁移前一致。
+ */
+class KojoK8 extends KojoBase {
+  /** 指令分支体（七道头部检查在本体内，见上） */
+  async select_com(...args) {
+    return kojo_message_com_8(...args);
+  }
+
+  async kojo_message_palamcng(...args) {
+    return kojo_message_palamcng_8(...args);
+  }
+
+  async kojo_message_markcng(...args) {
+    return kojo_message_markcng_8(...args);
+  }
+
+  async self_kojo(...args) {
+    return self_kojo_k8(...args);
+  }
+
+  /** 兽奸专用（由 kojo_message_com_8 的头部检查岔入） */
+  async dog_kojo(...args) {
+    return dog_kojo_8(...args);
+  }
+
+  /** 死斗场专用（同上） */
+  async colosseum_kojo(...args) {
+    return colosseum_kojo_8(...args);
+  }
+
+  async benki_koujo(...args) {
+    return benki_koujo_k8(...args);
+  }
+
+  async dungeon_victory(...args) {
+    return dungeon_victory_k8(...args);
+  }
+
+  async dungeon_attack(...args) {
+    return dungeon_attack_k8(...args);
+  }
+
+  async dungeon_ryouzyoku(...args) {
+    return dungeon_ryouzyoku_k8(...args);
+  }
+
+  async dungeon_ryouzyoku_after(...args) {
+    return dungeon_ryouzyoku_after_k8(...args);
+  }
+
+  async ntr_koujo(...args) {
+    return ntr_koujo_k8(...args);
+  }
+
+  async exucution_koujo(...args) {
+    return exucution_koujo_k8(...args);
+  }
+
+  async museum_koujo(...args) {
+    return museum_koujo_k8(...args);
+  }
+
+  async banishment_koujo(...args) {
+    return banishment_koujo_k8(...args);
+  }
+
+  async public_exucution_koujo(...args) {
+    return public_exucution_koujo_k8(...args);
+  }
+
+  async grotesque_koujo(...args) {
+    return grotesque_koujo_k8(...args);
+  }
+
+  async enterenemy_koujo(...args) {
+    return enterenemy_koujo_k8(...args);
+  }
+
+  /** 族实参只有角色号；本体的随机源位由调用方留空（迁移前的注册适配器同形） */
+  async gohoubi_request_koujo() {
+    return gohoubi_request_koujo_k8();
+  }
+
+  /** 族实参是 (cid, choice)，本体还要随机源在前 */
+  async gohoubi_after_koujo(cid, choice) {
+    return gohoubi_after_koujo_k8(undefined, cid, choice);
+  }
+
+  /** 同上；本体沿用史拼 osioki_koujo_k8（钩子名按基类） */
+  async osioski_koujo(cid, choice) {
+    return osioki_koujo_k8(undefined, cid, choice);
+  }
+
+  async gobi_koujo(...args) {
+    return gobi_koujo_k8(...args);
+  }
+}
+
+// 注册进分发族（TRYCALLFORM *_K8 的等价物；重复注册抛错）。K8 的兽奸与死斗场
+// 两个真身没有族注册（两族没有分发入口，由 COM 头部检查直调）；NTR 族的实参是
+// [rand, P]，与本函数签名同形，转交时不包只收 P 的适配器——那会把 rand 当成 P，
+// 整段永远静默。
+//
+// #856 起 K8 进工厂：`run_kojo` 走工厂实例的钩子，下面这些族注册是过渡期的旧
+// 入口（存量测试与「有本体必有注册」契约锁直调），一律转发到同一个实例
+// ——两处都经 KojoK8。#855–#858 迁完后随族一起删。原先散在正文里的注册集中到
+// 这里统一登记：闭包引用的是本块上方的实例，注册行搬在实例之后才不会接空。
+register_kojo(8, KojoK8);
+const kojo_k8 = get_kojo(8);
+kojo_message_com_family.register(8, (...args) =>
+  kojo_k8.kojo_message_com(...args),
 );
-gobi_koujo_family.register(8, gobi_koujo_k8);
+kojo_message_palamcng_family.register(8, (...args) =>
+  kojo_k8.kojo_message_palamcng(...args),
+);
+kojo_message_markcng_family.register(8, (...args) =>
+  kojo_k8.kojo_message_markcng(...args),
+);
+self_kojo_family.register(8, (...args) => kojo_k8.self_kojo(...args));
+ryouzyoku_kojo_family.register(8, (...args) =>
+  kojo_k8.dungeon_ryouzyoku(...args),
+);
+ryouzyoku_after_kojo_family.register(8, (...args) =>
+  kojo_k8.dungeon_ryouzyoku_after(...args),
+);
+dungeon_victory_family.register(8, (...args) =>
+  kojo_k8.dungeon_victory(...args),
+);
+dungeon_attack_family.register(8, (...args) => kojo_k8.dungeon_attack(...args));
+benki_koujo_family.register(8, (...args) => kojo_k8.benki_koujo(...args));
+ntr_koujo_family.register(8, (...args) => kojo_k8.ntr_koujo(...args));
+exucution_koujo_family.register(8, (...args) =>
+  kojo_k8.exucution_koujo(...args),
+);
+museum_koujo_family.register(8, (...args) => kojo_k8.museum_koujo(...args));
+banishment_koujo_family.register(8, (...args) =>
+  kojo_k8.banishment_koujo(...args),
+);
+public_exucution_koujo_family.register(8, (...args) =>
+  kojo_k8.public_exucution_koujo(...args),
+);
+grotesque_koujo_family.register(8, (...args) =>
+  kojo_k8.grotesque_koujo(...args),
+);
+enterenemy_koujo_family.register(8, (...args) =>
+  kojo_k8.enterenemy_koujo(...args),
+);
+gohoubi_request_koujo_family.register(8, (...args) =>
+  kojo_k8.gohoubi_request_koujo(...args),
+);
+gohoubi_after_koujo_family.register(8, (...args) =>
+  kojo_k8.gohoubi_after_koujo(...args),
+);
+osioski_koujo_family.register(8, (...args) => kojo_k8.osioski_koujo(...args));
+gobi_koujo_family.register(8, (...args) => kojo_k8.gobi_koujo(...args));
 
 /**
  * 本模块的事件处理器：由 system/flow/startup.js 的装配表按顺序调用 register()
@@ -12802,6 +12933,7 @@ function register() {
 
 module.exports = {
   register,
+  KojoK8,
   kojo_message_com_8,
   dog_kojo_8,
   kojo_message_palamcng_8,
