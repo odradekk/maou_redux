@@ -43,7 +43,6 @@ const {
   enterenemy_koujo_family,
   dungeon_victory_family,
   dungeon_attack_family,
-  adapt_legacy_ntr_koujo,
   ntr_koujo_family,
   exucution_koujo_family,
   museum_koujo_family,
@@ -74,6 +73,8 @@ const { chara } = require('#/facade/chara');
 
 const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
+const { KojoBase } = require('#/kojo/kojo-base');
+const { get_kojo, register_kojo } = require('#/kojo/kojo-factory');
 const { search_family } = require('#/system/chara/chara-family');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
 const { PALAMLV } = require('#/data/palam-level-const');
@@ -1338,8 +1339,6 @@ async function self_kojo_k0(_rand, q = 0) {
   return 0;
 }
 
-self_kojo_family.register(0, self_kojo_k0);
-
 /**
  * dungeon_ryouzyoku_k0：迷宫凌辱前的口上。
  *
@@ -1525,9 +1524,6 @@ async function dungeon_ryouzyoku_after_k0() {
   }
 }
 
-// 注册进分发族（TRYCALLFORM DUNGEON_RYOUZYOKU_K0 的等价物）
-ryouzyoku_kojo_family.register(0, dungeon_ryouzyoku_k0);
-ryouzyoku_after_kojo_family.register(0, dungeon_ryouzyoku_after_k0);
 /**
  * gohoubi_request_koujo_k0：奖赏请求口上（CFLAG:504 分档 0-9）。
  *
@@ -1713,10 +1709,6 @@ async function osioski_koujo_k0(cid, choice) {
   }
 }
 
-// 注册进分发族（TRYCALLFORM GOHOUBI_REQUEST/AFTER_KOUJO_K0、OSIOKI_KOUJO_K0 的等价物）
-gohoubi_request_koujo_family.register(0, gohoubi_request_koujo_k0);
-gohoubi_after_koujo_family.register(0, gohoubi_after_koujo_k0);
-osioski_koujo_family.register(0, osioski_koujo_k0);
 /**
  * benki_koujo_k0：肉便器配信口上（FLAG:62 分档 0-10 × FLAG:63/素质）。
  *
@@ -2178,12 +2170,6 @@ async function enterenemy_koujo_k0() {
   return 0;
 }
 
-// 注册进分发族（TRYCALLFORM BENKI/VICTORY/ATTACK/GOBI/ENTERENEMY_KOUJO_K0 的等价物）
-benki_koujo_family.register(0, benki_koujo_k0);
-dungeon_victory_family.register(0, dungeon_victory_k0);
-dungeon_attack_family.register(0, dungeon_attack_k0);
-gobi_koujo_family.register(0, gobi_koujo_k0);
-enterenemy_koujo_family.register(0, enterenemy_koujo_k0);
 /**
  * ntr_koujo_k0：NTR 事件口上（P 分档 1-7/20，CFLAG:650-657 记录）。
  *
@@ -2577,15 +2563,6 @@ async function colosseum_kojo_0() {
   }
   return 0;
 }
-
-// 注册进分发族（TRYCALLFORM NTR/处刑系/COLOSSEUM_KOUJO_K0 的等价物）
-ntr_koujo_family.register(0, adapt_legacy_ntr_koujo(ntr_koujo_k0));
-exucution_koujo_family.register(0, exucution_koujo_k0);
-museum_koujo_family.register(0, museum_koujo_k0);
-banishment_koujo_family.register(0, banishment_koujo_k0);
-public_exucution_koujo_family.register(0, public_exucution_koujo_k0);
-grotesque_koujo_family.register(0, grotesque_koujo_k0);
-colosseum_kojo_family.register(0, colosseum_kojo_0);
 
 /**
  * dog_kojo_0：兽奸专用口上（SELECTCOM 0/1/5/6/9/
@@ -4157,9 +4134,6 @@ async function dog_kojo_0(rand) {
 }
 
 /* eslint-enable no-irregular-whitespace */
-
-// 注册进分发族（TRYCALLFORM DOG_KOJO_0 的等价物）
-dog_kojo_family.register(0, dog_kojo_0);
 
 /**
  * kojo_message_palamcng_0：参数变动后口上。
@@ -12316,11 +12290,179 @@ async function kojo_message_com_0(rand) {
   return 0;
 }
 
-// 注册进分发族（TRYCALLFORM KOJO_MESSAGE_COM_0 的等价物；重复注册抛错）
-// 注册进分发族（TRYCALLFORM KOJO_MESSAGE_PALAMCNG_0 / _MARKCNG_0 的等价物）
-kojo_message_palamcng_family.register(0, kojo_message_palamcng_0);
-kojo_message_markcng_family.register(0, kojo_message_markcng_0);
-kojo_message_com_family.register(0, kojo_message_com_0);
+/**
+ * K0 温柔的口上子类（#855：与 KojoK4 同款，钩子各自转交本文件的口上本体）。
+ *
+ * 每个钩子都是**一行转交、实参原样透传**：迁移前族注册的第二参就是这些本体
+ * （`benki_koujo_family.register(0, benki_koujo_k0)` 之类），所以调用形状与台词
+ * 本体一字未动（`ntr_koujo` 例外，见下）。本类因此成了「K0 在哪些时机说话」的
+ * 唯一清单——没覆盖的钩子落到基类的默认实现（不输出）。
+ *
+ * == 头部检查为什么不挪进 header_checks() ==
+ *
+ * K4 把五道检查挪了进来；K0 不挪。K0 的检查（含死斗场 → colosseum_kojo_0、
+ * 兽奸 → dog_kojo_0 两道岔路）留在 kojo_message_com_0 体内，存量用例直调该
+ * 函数来驱动检查本身，挪出来会让它们的断言失守。钩子只是外壳：检查顺序与
+ * 结果与迁移前一致。
+ */
+class KojoK0 extends KojoBase {
+  /** 指令分支体（头部检查在本体内，见文件头） */
+  async select_com(...args) {
+    return kojo_message_com_0(...args);
+  }
+
+  async kojo_message_palamcng(...args) {
+    return kojo_message_palamcng_0(...args);
+  }
+
+  async kojo_message_markcng(...args) {
+    return kojo_message_markcng_0(...args);
+  }
+
+  async self_kojo(...args) {
+    return self_kojo_k0(...args);
+  }
+
+  /** 兽奸专用（由 kojo_message_com_0 的头部检查岔入） */
+  async dog_kojo(...args) {
+    return dog_kojo_0(...args);
+  }
+
+  /** 死斗场专用（同上） */
+  async colosseum_kojo(...args) {
+    return colosseum_kojo_0(...args);
+  }
+
+  async benki_koujo(...args) {
+    return benki_koujo_k0(...args);
+  }
+
+  async dungeon_victory(...args) {
+    return dungeon_victory_k0(...args);
+  }
+
+  async dungeon_attack(...args) {
+    return dungeon_attack_k0(...args);
+  }
+
+  async dungeon_ryouzyoku(...args) {
+    return dungeon_ryouzyoku_k0(...args);
+  }
+
+  async dungeon_ryouzyoku_after(...args) {
+    return dungeon_ryouzyoku_after_k0(...args);
+  }
+
+  /** NTR：本体只收旧引擎的全局 P，实参对 (rand, P) 按既有适配器取 P（照旧） */
+  async ntr_koujo(rand, p) {
+    return ntr_koujo_k0(p ?? rand);
+  }
+
+  async exucution_koujo(...args) {
+    return exucution_koujo_k0(...args);
+  }
+
+  async museum_koujo(...args) {
+    return museum_koujo_k0(...args);
+  }
+
+  async banishment_koujo(...args) {
+    return banishment_koujo_k0(...args);
+  }
+
+  async public_exucution_koujo(...args) {
+    return public_exucution_koujo_k0(...args);
+  }
+
+  async grotesque_koujo(...args) {
+    return grotesque_koujo_k0(...args);
+  }
+
+  async enterenemy_koujo(...args) {
+    return enterenemy_koujo_k0(...args);
+  }
+
+  async gohoubi_request_koujo(...args) {
+    return gohoubi_request_koujo_k0(...args);
+  }
+
+  async gohoubi_after_koujo(...args) {
+    return gohoubi_after_koujo_k0(...args);
+  }
+
+  async osioski_koujo(...args) {
+    return osioski_koujo_k0(...args);
+  }
+
+  async gobi_koujo(...args) {
+    return gobi_koujo_k0(...args);
+  }
+}
+
+// 口上族接入：本文件每个**有分发路径**的真身都要在下面登记一处（顺序照
+// kojo-system.js 的分发表）；漏一处 = 玩家侧看到占位行或不响。文件内直调的
+// 真身不在此列。范围与接入由 test/kojo-register-coverage.test.js 的
+// 「有本体必有注册」契约锁守。
+//
+// #855 起 K0 进工厂：`run_kojo` 走工厂实例的钩子，下面这些族注册是过渡期的旧
+// 入口（存量测试与「有本体必有注册」契约锁直调），一律转发到同一个实例
+// ——两处都经 KojoK0。#855–#858 迁完后随族一起删。
+register_kojo(0, KojoK0);
+const kojo_k0 = get_kojo(0);
+kojo_message_com_family.register(0, (...args) =>
+  kojo_k0.kojo_message_com(...args),
+);
+kojo_message_palamcng_family.register(0, (...args) =>
+  kojo_k0.kojo_message_palamcng(...args),
+);
+kojo_message_markcng_family.register(0, (...args) =>
+  kojo_k0.kojo_message_markcng(...args),
+);
+self_kojo_family.register(0, (...args) => kojo_k0.self_kojo(...args));
+dog_kojo_family.register(0, (...args) => kojo_k0.dog_kojo(...args));
+colosseum_kojo_family.register(0, (...args) => kojo_k0.colosseum_kojo(...args));
+benki_koujo_family.register(0, (...args) => kojo_k0.benki_koujo(...args));
+dungeon_victory_family.register(0, (...args) =>
+  kojo_k0.dungeon_victory(...args),
+);
+dungeon_attack_family.register(0, (...args) => kojo_k0.dungeon_attack(...args));
+ryouzyoku_kojo_family.register(0, (...args) =>
+  kojo_k0.dungeon_ryouzyoku(...args),
+);
+ryouzyoku_after_kojo_family.register(0, (...args) =>
+  kojo_k0.dungeon_ryouzyoku_after(...args),
+);
+ntr_koujo_family.register(0, (...args) => kojo_k0.ntr_koujo(...args));
+exucution_koujo_family.register(0, (...args) =>
+  kojo_k0.exucution_koujo(...args),
+);
+museum_koujo_family.register(0, (...args) => kojo_k0.museum_koujo(...args));
+banishment_koujo_family.register(0, (...args) =>
+  kojo_k0.banishment_koujo(...args),
+);
+public_exucution_koujo_family.register(0, (...args) =>
+  kojo_k0.public_exucution_koujo(...args),
+);
+grotesque_koujo_family.register(0, (...args) =>
+  kojo_k0.grotesque_koujo(...args),
+);
+enterenemy_koujo_family.register(0, (...args) =>
+  kojo_k0.enterenemy_koujo(...args),
+);
+gohoubi_request_koujo_family.register(0, (...args) =>
+  kojo_k0.gohoubi_request_koujo(...args),
+);
+gohoubi_after_koujo_family.register(0, (...args) =>
+  kojo_k0.gohoubi_after_koujo(...args),
+);
+// 本族例外：注册的是本体本身，不是转发闭包。osioski_koujo_k0 的形参
+// (cid, choice) 已经就是族的签名，转发只是多一层；更重要的是这个裸标识符是
+// `osioski_koujo_k` 这个史拼前缀在「有本体必有注册」扫描器里的唯一锚点
+// （#855 迁完后 K0/K1 之外没有第二处裸注册）——换成闭包，扫描器就认不出
+// 「osioski_koujo_k3/k4/k14」这一批本体，族注册号与本体数会对不上。
+// 入口（osioski_koujo）照旧经 run_kojo → 工厂实例的钩子，与本注册无关。
+osioski_koujo_family.register(0, osioski_koujo_k0);
+gobi_koujo_family.register(0, (...args) => kojo_k0.gobi_koujo(...args));
 
 /**
  * 本模块的事件处理器：由 system/flow/startup.js 的装配表按顺序调用 register()
@@ -12333,4 +12475,9 @@ function register() {
   on(EVENT.END, handle_end);
 }
 
-module.exports = { register, kojo_message_com_0, eventtrain_normal_k0 };
+module.exports = {
+  register,
+  KojoK0,
+  kojo_message_com_0,
+  eventtrain_normal_k0,
+};
