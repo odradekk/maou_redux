@@ -293,8 +293,6 @@ function com3_auto() {
   else if (abl1 === 4) source17 = 1100;
   else source17 = 1600;
 
-  let source1 = 0;
-  let source2 = 0;
   let source4 = 0;
 
   const abl12 = era.get(`abl:${target}:12`) || 0; // 技巧
@@ -320,42 +318,31 @@ function com3_auto() {
   }
   source0 = Math.floor(source0 * tech_mult);
   source17 = Math.floor(source17 * tech_mult);
-  source1 = Math.floor(source1 * tech_mult);
-  source2 = Math.floor(source2 * tech_mult);
 
   const abl31 = era.get(`abl:${target}:31`) || 0; // 自慰中毒
   let source7 = 0;
   let addict_mult = 1.0;
-  let addict_mult_12 = 1.0;
   if (abl31 === 0) {
     source7 = 0;
     addict_mult = 1.0;
-    addict_mult_12 = 1.0;
   } else if (abl31 === 1) {
     source7 = 100;
     addict_mult = 1.1;
-    addict_mult_12 = 1.1;
   } else if (abl31 === 2) {
     source7 = 300;
     addict_mult = 1.2;
-    addict_mult_12 = 1.2;
   } else if (abl31 === 3) {
     source7 = 800;
     addict_mult = 1.3;
-    addict_mult_12 = 1.3;
   } else if (abl31 === 4) {
     source7 = 1500;
     addict_mult = 1.5;
-    addict_mult_12 = 1.5;
   } else {
     source7 = 2500;
     addict_mult = 1.7;
-    addict_mult_12 = 1.5;
   }
   source0 = Math.floor(source0 * addict_mult);
   source17 = Math.floor(source17 * addict_mult);
-  source1 = Math.floor(source1 * addict_mult_12);
-  source2 = Math.floor(source2 * addict_mult_12);
 
   if (
     !era.get(`talent:${target}:125`) &&
@@ -365,8 +352,10 @@ function com3_auto() {
   }
 
   chara(target).train.阴核快感 = source0;
-  chara(target).train.私处快感 = source1;
-  chara(target).train.肛门快感 = source2;
+  // 自慰只直接刺激阴蒂与乳房：私处/肛门两路的源值恒为 0，技巧与自慰中毒的
+  // 乘算都乘在 0 上，所以直接写 0，不参与乘算。
+  chara(target).train.私处快感 = 0;
+  chara(target).train.肛门快感 = 0;
   chara(target).train.性行为 = source4;
   chara(target).train.成瘾追加 = source7;
   chara(target).train.露出 = source12;
@@ -552,6 +541,7 @@ function com63_auto() {
   const target = era_flag.target;
   era.print(`${chara_name(target)}和妓女用阴唇相互摩擦着…`);
 
+  // 两条都扣气力（LOSEBASE:1）：磨镜不动体力，气力合计 120
   lose(target, 1, 30);
   lose(target, 1, 90);
 
@@ -609,13 +599,10 @@ function com63_auto() {
     source12 = Math.floor(source12 * 1.3);
   }
 
-  // 技巧乘算
-  const abl12 = era.get(`abl:${target}:12`) || 0;
-  if (abl12 >= 0) {
-    source4 = Math.floor(source4 * 1.0);
-    source5 = Math.floor(source5 * 0.6);
-    source13 = Math.floor(source13 * 0.5);
-  }
+  // 技巧（ABL:12）不参与磨镜的乘算：三路系数（性行为 ×1.00、达成感 ×0.60、
+  // 屈从 ×0.50）不随技巧档变化，所以不读它——写成恒真条件只会让人去找分支。
+  source5 = Math.floor(source5 * 0.6);
+  source13 = Math.floor(source13 * 0.5);
 
   // 侍奉精神乘算
   const abl16 = era.get(`abl:${target}:16`) || 0;

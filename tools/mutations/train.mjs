@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 1171; // #990 +1（M18422：精饮绝顶又把未登记的 EX:13 写回去——add 在 undefined 上加出 NaN，落档成 null）； #835 净 -1：+2（M18310/M18311：触手回合计数读到/写到退役槽 10029）、-1（M15711 旧档别名迁移随表删除）； #980 +4（M18306-M18309：5 号只写 NOWEX、EX:5 由结算折入——两处直写回潮、com-vaginasex 直写回潮、NOWEX 改成覆盖） // #973 +1（M18304：通常の射精不写 6 号 NOWEX——未登记序号在结算时加出 NaN） // #815 +3（M18300/M18302/M18303：回合开始的 NOWEX 清零——固定清 0 号、改读 Exp 名字表、指令之后重复清零） // #923 +9（M18200-M18208：com-caress 删掉 D 段后，自慰文案的 E 只由 A/B/C 合计——漏加 UP:2、五道档位边界、把 UP:17 / PALAM:17 加回来、UP:2 读错序号） // #876 净 +4：+6（M18102-M18107：自动调教复用手动调教——情爱漏加 B 档增量、取错列、取错表、AUTO_NUM_CHECK 不执行、自动路径退回手动全序、共用处理器默认开关），-2（M41/M42 改挂 ere/data/train-source-const.js，随表移入 data 分片）；#959 +2（M17956/M17957：相殺抽池的候选集、缺省随机源的折算基准） // #853 +3（M17810-M17812：直接调用的三个钩子调用点） // #875 净 +10：+11（M17550-M17560：结算交还引擎——当场写 base、损耗条读裸 base、AUTO 当场结算、当场加 juel、抵消写 juel、抵消行取错增量、窗口内外写错珠表、否定减半读裸 juel、结算表两处读裸 juel），-1（M24 删：结算尾部不再清零 gotjuel，双重结算由 M17553 守；M23 改指 GOTJUEL:3 死存储的写入守卫，M28/M29/M30 与 M9662/M9669/M13871/M9786 随代码改写重锚，条数不变）；#874 +6（M17400-M17403/M17405/M17407：结算交还引擎——当场写 palam、DOWN 折进 delta（完整版与静默版）、欲情快照、时常发情蓄积、参数状态短语）；#906 +2（M16200/M16204：调教结束前的欲情快照、快照名单按参与调教的角色）；#904 -1（M995 删：它守的是「CFLAG:44 经 stronghold 门面写」这条域检查要求，域检查已随 ADR-0010 删除，门面写与裸写落点相同，com-cloth 的落点断言两边都过）；#822 +4（M15706/M15707/M15710/M15711：指令名与能力名的显示文案、旧档别名迁移；M15705 随 #836 删——别名播种表改由指令常量派生，播种表不再另存一份名字）；#836：删 M15124（单一来源后跨表一致性不复存在）、增 7 条指令常量守护（M15650-M15656）、M703/M775 改挂常量写法；界面流程缺陷 +4（M15306–M15309：紧凑序号跳过调教画面子菜单号），M740/M741 改挂新写法，M1044 改由可用性表拦截；数据地址缺陷修复 +3（M15418-M15420：初体验对象改用角色 ID）；#792 净 -2（M1112/M1409 随 times 实现移到 ere/utils/numeric.js，改挂 numeric 分片）；#789 追补 +2（M13706/M13707：编号空间的守卫）；#789 +1（M13703：GET 版特别服装名的未知编号哨兵）；收尾生命周期收拢：新增 2 条登记冲账守护（M15100 重锚为 settle 形状、M15103；M15104 随入口清残留删除）；#782：新增 3 条调教死亡收尾守护（M15100-M15102）；#777：新增 12 条助手射精经验守护（M15047-M15058）；此前沿革见 git 历史。
+export const COUNT = 1178; // #967 +7（M18510-M18516：com63_auto 的两条气力损耗同槽、达成感/屈从乘数、技巧不参与乘算、com3_auto 的私处/肛门快感恒 0）； #990 +1（M18422：精饮绝顶又把未登记的 EX:13 写回去——add 在 undefined 上加出 NaN，落档成 null）； #835 净 -1：+2（M18310/M18311：触手回合计数读到/写到退役槽 10029）、-1（M15711 旧档别名迁移随表删除）； #980 +4（M18306-M18309：5 号只写 NOWEX、EX:5 由结算折入——两处直写回潮、com-vaginasex 直写回潮、NOWEX 改成覆盖） // #973 +1（M18304：通常の射精不写 6 号 NOWEX——未登记序号在结算时加出 NaN） // #815 +3（M18300/M18302/M18303：回合开始的 NOWEX 清零——固定清 0 号、改读 Exp 名字表、指令之后重复清零） // #923 +9（M18200-M18208：com-caress 删掉 D 段后，自慰文案的 E 只由 A/B/C 合计——漏加 UP:2、五道档位边界、把 UP:17 / PALAM:17 加回来、UP:2 读错序号） // #876 净 +4：+6（M18102-M18107：自动调教复用手动调教——情爱漏加 B 档增量、取错列、取错表、AUTO_NUM_CHECK 不执行、自动路径退回手动全序、共用处理器默认开关），-2（M41/M42 改挂 ere/data/train-source-const.js，随表移入 data 分片）；#959 +2（M17956/M17957：相殺抽池的候选集、缺省随机源的折算基准） // #853 +3（M17810-M17812：直接调用的三个钩子调用点） // #875 净 +10：+11（M17550-M17560：结算交还引擎——当场写 base、损耗条读裸 base、AUTO 当场结算、当场加 juel、抵消写 juel、抵消行取错增量、窗口内外写错珠表、否定减半读裸 juel、结算表两处读裸 juel），-1（M24 删：结算尾部不再清零 gotjuel，双重结算由 M17553 守；M23 改指 GOTJUEL:3 死存储的写入守卫，M28/M29/M30 与 M9662/M9669/M13871/M9786 随代码改写重锚，条数不变）；#874 +6（M17400-M17403/M17405/M17407：结算交还引擎——当场写 palam、DOWN 折进 delta（完整版与静默版）、欲情快照、时常发情蓄积、参数状态短语）；#906 +2（M16200/M16204：调教结束前的欲情快照、快照名单按参与调教的角色）；#904 -1（M995 删：它守的是「CFLAG:44 经 stronghold 门面写」这条域检查要求，域检查已随 ADR-0010 删除，门面写与裸写落点相同，com-cloth 的落点断言两边都过）；#822 +4（M15706/M15707/M15710/M15711：指令名与能力名的显示文案、旧档别名迁移；M15705 随 #836 删——别名播种表改由指令常量派生，播种表不再另存一份名字）；#836：删 M15124（单一来源后跨表一致性不复存在）、增 7 条指令常量守护（M15650-M15656）、M703/M775 改挂常量写法；界面流程缺陷 +4（M15306–M15309：紧凑序号跳过调教画面子菜单号），M740/M741 改挂新写法，M1044 改由可用性表拦截；数据地址缺陷修复 +3（M15418-M15420：初体验对象改用角色 ID）；#792 净 -2（M1112/M1409 随 times 实现移到 ere/utils/numeric.js，改挂 numeric 分片）；#789 追补 +2（M13706/M13707：编号空间的守卫）；#789 +1（M13703：GET 版特别服装名的未知编号哨兵）；收尾生命周期收拢：新增 2 条登记冲账守护（M15100 重锚为 settle 形状、M15103；M15104 随入口清残留删除）；#782：新增 3 条调教死亡收尾守护（M15100-M15102）；#777：新增 12 条助手射精经验守护（M15047-M15058）；此前沿革见 git 历史。
 
 export default [
   {
@@ -11990,5 +11990,70 @@ export default [
   chara(cid).dungeon.精饮绝顶经验 = chara(cid).dungeon.精饮绝顶经验 + 1;`,
     tests: ['seiin'],
     must_mention: '精饮绝顶只在 EXP:8 上计数，不写未登记的 EX:13',
+  },
+  // —— #967：自动调教三处数值表达的判定（三处都判定为「与手动调教同源、正确」，
+  // 条目固定的是「读数不变」这条结论） ——
+  {
+    desc: 'M18510 com63_auto 的两条气力损耗都挪到体力槽（30+90 一起落 LOSEBASE:0）',
+    file: 'ere/system/train/autotrain.js',
+    find: `  // 两条都扣气力（LOSEBASE:1）：磨镜不动体力，气力合计 120
+  lose(target, 1, 30);
+  lose(target, 1, 90);`,
+    replace: `  // 变异：两条损耗都记到体力
+  lose(target, 0, 30);
+  lose(target, 0, 90);`,
+    tests: ['autotrain'],
+    must_mention: '两条损耗都落在气力',
+  },
+  {
+    desc: 'M18511 com63_auto 的第二条损耗单独挪到体力槽（只改 90 那条）',
+    file: 'ere/system/train/autotrain.js',
+    find: `  lose(target, 1, 90);`,
+    replace: `  lose(target, 0, 90); // 变异：第二条损耗记到体力`,
+    tests: ['autotrain'],
+    must_mention: '两条损耗都落在气力',
+  },
+  {
+    desc: 'M18512 com63_auto 的达成感乘数写错（×0.60 改 ×0.50）',
+    file: 'ere/system/train/autotrain.js',
+    find: `  source5 = Math.floor(source5 * 0.6);`,
+    replace: `  source5 = Math.floor(source5 * 0.5); // 变异：达成感乘数`,
+    tests: ['autotrain'],
+    must_mention: '三路乘数不随技巧档',
+  },
+  {
+    desc: 'M18513 com63_auto 的屈从乘数写错（×0.50 改 ×0.60）',
+    file: 'ere/system/train/autotrain.js',
+    find: `  source13 = Math.floor(source13 * 0.5);`,
+    replace: `  source13 = Math.floor(source13 * 0.6); // 变异：屈从乘数`,
+    tests: ['autotrain'],
+    must_mention: '三路乘数不随技巧档',
+  },
+  {
+    desc: 'M18514 com63_auto 的乘数又按技巧档分流（技巧 0 档不乘 0.60）',
+    file: 'ere/system/train/autotrain.js',
+    find: `  source5 = Math.floor(source5 * 0.6);
+  source13 = Math.floor(source13 * 0.5);`,
+    replace: `  const tech = era.get(\`abl:\${target}:12\`) || 0;
+  source5 = Math.floor(source5 * (tech === 0 ? 0.5 : 0.6)); // 变异：技巧 0 档另算
+  source13 = Math.floor(source13 * 0.5);`,
+    tests: ['autotrain'],
+    must_mention: '三路乘数不随技巧档',
+  },
+  {
+    desc: 'M18515 com3_auto 的私处快感写回阴核快感的源值（不再是 0）',
+    file: 'ere/system/train/autotrain.js',
+    find: `  chara(target).train.私处快感 = 0;`,
+    replace: `  chara(target).train.私处快感 = source0; // 变异：私处快感非 0`,
+    tests: ['autotrain'],
+    must_mention: '私处/肛门快感恒为 0',
+  },
+  {
+    desc: 'M18516 com3_auto 的肛门快感写回阴核快感的源值（不再是 0）',
+    file: 'ere/system/train/autotrain.js',
+    find: `  chara(target).train.肛门快感 = 0;`,
+    replace: `  chara(target).train.肛门快感 = source0; // 变异：肛门快感非 0`,
+    tests: ['autotrain'],
+    must_mention: '私处/肛门快感恒为 0',
   },
 ];
