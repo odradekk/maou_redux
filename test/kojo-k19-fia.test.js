@@ -1,8 +1,21 @@
 /**
- * ere/kojo/kojo-k19-fia.js 的行为测试（issue #247：J37 口上·K19 菲娅）。
+ * 菲娅两套口上的行为测试（K19 = issue #247 / J37，K904 = issue #250 / J40；
+ * #858 起 K904 继承 K19，本文件合并了原先两份重复的用例）。
  *
- * 缝 = test/helpers/era-fixture.js。世界底座：菲娅（旧口上标记 TALENT:179 →
- * GET_KOJO_NUM = 119 → 分发 key 19）。
+ * 缝 = test/helpers/era-fixture.js。世界底座：菲娅（K19 走旧口上标记
+ * TALENT:179 → GET_KOJO_NUM = 119 → 分发 key 19；K904 走 EX_TALENT:104 →
+ * LOCAL 1004 → 分发 key 904）。
+ *
+ * == 为什么一次跑两套口上 ==
+ *
+ * #858 之前 K904 是 K19 的整份复制品，两个测试文件里的台词断言逐字相同（只是
+ * 键不同）。K904 改成子类后两套口上执行的是**同一份台词本体**，重复的用例因此
+ * 合并成表驱动：`FIA_KOJOS` 的每一行跑一遍，键、素质与存在标志由表给出。
+ *
+ * 三处差异之外的一切都走同一段代码，所以深度扫描类用例（SELECTCOM 全分支状态
+ * 机、PALAMCNG / MARKCNG / SELF_KOJO 分阶段）仍只跑一次——它们验证的是本体，
+ * 不是入口；两套入口的差异由这里的第一、二条用例和
+ * test/kojo-classes-k19-k904.test.js 覆盖。
  */
 
 'use strict';
@@ -14,9 +27,34 @@ const { register_handlers } = require('./helpers/event-registration');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
 
 const CID = 35;
-const KEY = 19;
 
-async function setup_k19(seed, selectcom = 0) {
+/**
+ * 两套口上的接口面：键、模块、本口上素质、存在标志。`other_talent` 是另一套
+ * 的素质——两套互斥，装上它就该本套不响（「素质互斥」用例）。
+ */
+const FIA_KOJOS = [
+  {
+    name: 'K19',
+    key: 19,
+    module: 'kojo/kojo-k19-fia',
+    own_talent: `talent:${CID}:179`,
+    other_talent: `ex_talent:${CID}:104`,
+    presence: 'flag:119',
+  },
+  {
+    name: 'K904',
+    key: 904,
+    module: 'kojo/kojo-k904-fia',
+    own_talent: `ex_talent:${CID}:104`,
+    other_talent: `talent:${CID}:179`,
+    presence: 'exflag:104',
+  },
+];
+
+/** K19（深度扫描类用例只跑这一套：本体只有一份） */
+const K19 = FIA_KOJOS[0];
+
+async function setup_fia(kojo, seed, selectcom = 0) {
   const fixture = create_era_fixture();
   preset_chara_0(fixture);
   fixture.era.addCharacter(0);
@@ -28,18 +66,18 @@ async function setup_k19(seed, selectcom = 0) {
   era_flag.assi = -1;
   era_flag.assiplay = 0;
   era_flag.selectcom = selectcom;
-  fixture.store.set(`talent:${CID}:179`, 1);
+  fixture.store.set(kojo.own_talent, 1);
   for (const talent of [0, 9, 76, 85, 314]) {
     fixture.store.set(`talent:${CID}:${talent}`, 0);
   }
   for (const mark of [0, 1, 2, 3]) {
     fixture.store.set(`mark:${CID}:${mark}`, 0);
   }
-  fixture.store.set('flag:119', 1);
+  fixture.store.set(kojo.presence, 1);
   fixture.store.set('flag:7', 2);
   if (seed) seed(fixture, era_flag);
   register_handlers(fixture, 'kojo/kojo-system');
-  register_handlers(fixture, 'kojo/kojo-k19-fia');
+  register_handlers(fixture, kojo.module);
   return fixture;
 }
 
@@ -50,53 +88,92 @@ async function emit(fixture, event) {
 
 async function speak_k19(fixture, rand = () => 0) {
   const { kojo_message_com_family } = fixture.load_module('kojo/kojo-system');
-  return kojo_message_com_family.call(KEY, { args: [rand] });
+  return kojo_message_com_family.call(K19.key, { args: [rand] });
 }
 
 async function palam_k19(fixture) {
   const { kojo_message_palamcng_family } =
     fixture.load_module('kojo/kojo-system');
-  return kojo_message_palamcng_family.call(KEY, { args: [] });
+  return kojo_message_palamcng_family.call(K19.key, { args: [] });
 }
 
 async function mark_k19(fixture) {
   const { kojo_message_markcng_family } =
     fixture.load_module('kojo/kojo-system');
-  return kojo_message_markcng_family.call(KEY, { args: [] });
+  return kojo_message_markcng_family.call(K19.key, { args: [] });
 }
 
 async function self_k19(fixture) {
   const { self_kojo_family } = fixture.load_module('kojo/kojo-system');
-  return self_kojo_family.call(KEY, { args: [] });
+  return self_kojo_family.call(K19.key, { args: [] });
 }
 
-test('EVENTTRAIN #PRI 档置存在标志并补总开关，EVENTEND #LATER 档清标志', async () => {
-  const fixture = await setup_k19((f) => {
-    f.store.delete('flag:119');
-    f.store.set('flag:7', 0);
-    f.store.set(`cflag:${CID}:201`, 9);
+/** 某一套口上的族调用（表驱动用例用它） */
+async function speak_fia(fixture, kojo, rand = () => 0) {
+  const { kojo_message_com_family } = fixture.load_module('kojo/kojo-system');
+  return kojo_message_com_family.call(kojo.key, { args: [rand] });
+}
+
+for (const kojo of FIA_KOJOS) {
+  test(`${kojo.name}：EVENTTRAIN #PRI 档置存在标志并补总开关，EVENTEND #LATER 档清标志`, async () => {
+    const fixture = await setup_fia(kojo, (f) => {
+      f.store.delete(kojo.presence);
+      f.store.set('flag:7', 0);
+      f.store.set(`cflag:${CID}:201`, 9);
+    });
+    await emit(fixture, 'EVENTTRAIN');
+    assert.equal(
+      fixture.store.get(kojo.presence),
+      1,
+      `${kojo.name} 存在标志置 1`,
+    );
+    assert.equal(fixture.store.get('flag:7'), 2, '口上总开关从 0 补到 2');
+    await emit(fixture, 'EVENTEND');
+    assert.equal(
+      fixture.store.get(kojo.presence),
+      0,
+      `${kojo.name} 存在标志清 0`,
+    );
   });
-  await emit(fixture, 'EVENTTRAIN');
-  assert.equal(fixture.store.get('flag:119'), 1, 'K19 存在标志置 1');
-  assert.equal(fixture.store.get('flag:7'), 2, '口上总开关从 0 补到 2');
-  await emit(fixture, 'EVENTEND');
-  assert.equal(fixture.store.get('flag:119'), 0, 'K19 存在标志清 0');
-});
 
-test('EVENTTRAIN 初调教推进 CFLAG:201，人类与魔族分档', async () => {
-  const human = await setup_k19();
-  await emit(human, 'EVENTTRAIN');
-  assert.equal(human.store.get(`cflag:${CID}:201`), 1, '人类初调教推进到 1');
-  assert.ok(
-    human.text_lines().some((line) => line.includes('你是坏人吧')),
-    '人类初调教台词',
-  );
+  test(`${kojo.name}：EVENTTRAIN 初调教推进 CFLAG:201，人类与魔族分档`, async () => {
+    const human = await setup_fia(kojo);
+    await emit(human, 'EVENTTRAIN');
+    assert.equal(human.store.get(`cflag:${CID}:201`), 1, '人类初调教推进到 1');
+    assert.ok(
+      human.text_lines().some((line) => line.includes('你是坏人吧')),
+      '人类初调教台词',
+    );
 
-  const demon = await setup_k19((f) => f.store.set(`talent:${CID}:314`, 9));
-  await emit(demon, 'EVENTTRAIN');
-  assert.equal(demon.store.get(`cflag:${CID}:201`), 1, '魔族初调教推进到 1');
-  assert.equal(demon.store.get(`cflag:${CID}:370`), 1, '魔族化计数置 1');
-});
+    const demon = await setup_fia(kojo, (f) =>
+      f.store.set(`talent:${CID}:314`, 9),
+    );
+    await emit(demon, 'EVENTTRAIN');
+    assert.equal(demon.store.get(`cflag:${CID}:201`), 1, '魔族初调教推进到 1');
+    assert.equal(demon.store.get(`cflag:${CID}:370`), 1, '魔族化计数置 1');
+  });
+
+  test(`${kojo.name}：只有本套素质在身时才响（两套素质互斥）`, async () => {
+    // EVENTTRAIN 不推进初调教
+    const train = await setup_fia(kojo, (f) => {
+      f.store.delete(kojo.own_talent);
+      f.store.set(kojo.other_talent, 1);
+    });
+    await emit(train, 'EVENTTRAIN');
+    assert.equal(train.store.get(`cflag:${CID}:201`) || 0, 0);
+    assert.deepEqual(train.text_lines(), []);
+
+    // EVENTEND 不输出结束口上
+    const end = await setup_fia(kojo, (f) => {
+      f.store.delete(kojo.own_talent);
+      f.store.set(kojo.other_talent, 1);
+      f.store.set(`base:${CID}:100`, 0);
+      f.store.set(`base:${CID}:0`, 100);
+    });
+    await emit(end, 'EVENTEND');
+    assert.deepEqual(end.text_lines(), []);
+  });
+}
 
 test('EVENTTRAIN CFLAG:201 主状态机逐档推进到 2–9', async () => {
   const cases = [
@@ -125,7 +202,7 @@ test('EVENTTRAIN CFLAG:201 主状态机逐档推进到 2–9', async () => {
     [8, 9, (f) => f.store.set(`talent:${CID}:9`, 1)],
   ];
   for (const [before, after, seed] of cases) {
-    const fixture = await setup_k19((f) => {
+    const fixture = await setup_fia(K19, (f) => {
       f.store.set(`cflag:${CID}:201`, before);
       f.store.set(`cflag:${CID}:650`, 0);
       seed(f);
@@ -148,7 +225,7 @@ for (const guard of [
   ['崩坏', (f) => f.store.set(`talent:${CID}:9`, 1)],
 ]) {
   test(`KOJO_MESSAGE_COM 头部检查：${guard[0]}静默跳过`, async () => {
-    const fixture = await setup_k19((f, flag) => {
+    const fixture = await setup_fia(K19, (f, flag) => {
       f.store.set(`cflag:${CID}:301`, 0);
       guard[1](f, flag);
     });
@@ -163,7 +240,8 @@ for (const guard of [
 }
 
 test('KOJO_MESSAGE_COM 头部检查：死斗场转入专用口上', async () => {
-  const fixture = await setup_k19(
+  const fixture = await setup_fia(
+    K19,
     (f) => f.store.set(`tequip:${CID}:55`, 1),
     55,
   );
@@ -175,7 +253,7 @@ test('KOJO_MESSAGE_COM 头部检查：死斗场转入专用口上', async () => 
 });
 
 test('SELECTCOM 0 爱抚首回合：输出并将 CFLAG:301 从 0 推进到 1', async () => {
-  const fixture = await setup_k19();
+  const fixture = await setup_fia(K19);
   await speak_k19(fixture);
   assert.equal(fixture.store.get(`cflag:${CID}:301`), 1, '爱抚计数推进到 1');
   assert.ok(fixture.text_lines().length > 0, '爱抚首回合有角色台词');
@@ -241,9 +319,13 @@ test('KOJO_MESSAGE_COM：全部 SELECTCOM 顶层分支的首回合状态可达',
     [80, 381],
   ];
   for (const [selectcom, counter, tequip, equipped] of cases) {
-    const fixture = await setup_k19((f) => {
-      if (tequip) f.store.set(`tequip:${CID}:${tequip}`, equipped);
-    }, selectcom);
+    const fixture = await setup_fia(
+      K19,
+      (f) => {
+        if (tequip) f.store.set(`tequip:${CID}:${tequip}`, equipped);
+      },
+      selectcom,
+    );
     await speak_k19(fixture);
     assert.equal(
       fixture.store.get(`cflag:${CID}:${counter}`),
@@ -320,11 +402,15 @@ test('KOJO_MESSAGE_COM：全部可达计数器至少推进一个后续档', asyn
     equipped,
     talent,
   ] of cases) {
-    const fixture = await setup_k19((f) => {
-      f.store.set(`cflag:${CID}:${counter}`, 1);
-      if (tequip) f.store.set(`tequip:${CID}:${tequip}`, equipped);
-      if (talent) f.store.set(`talent:${CID}:${talent}`, 1);
-    }, selectcom);
+    const fixture = await setup_fia(
+      K19,
+      (f) => {
+        f.store.set(`cflag:${CID}:${counter}`, 1);
+        if (tequip) f.store.set(`tequip:${CID}:${tequip}`, equipped);
+        if (talent) f.store.set(`talent:${CID}:${talent}`, 1);
+      },
+      selectcom,
+    );
     await speak_k19(fixture);
     assert.equal(
       fixture.store.get(`cflag:${CID}:${counter}`),
@@ -335,18 +421,24 @@ test('KOJO_MESSAGE_COM：全部可达计数器至少推进一个后续档', asyn
 });
 
 test('SELECTCOM 123 无口上分支：不输出也不推进 CFLAG:360', async () => {
-  const fixture = await setup_k19(undefined, 123);
-  await speak_k19(fixture);
-  assert.deepEqual(fixture.text_lines(), [], 'SELECTCOM 123 无口上输出');
-  assert.equal(
-    fixture.store.get(`cflag:${CID}:360`),
-    undefined,
-    'SELECTCOM 123 不推进 CFLAG:360',
-  );
+  for (const kojo of FIA_KOJOS) {
+    const fixture = await setup_fia(kojo, undefined, 123);
+    await speak_fia(fixture, kojo);
+    assert.deepEqual(
+      fixture.text_lines(),
+      [],
+      `${kojo.name} SELECTCOM 123 无输出`,
+    );
+    assert.equal(
+      fixture.store.get(`cflag:${CID}:360`),
+      undefined,
+      `${kojo.name} SELECTCOM 123 不推进 CFLAG:360`,
+    );
+  }
 });
 
 test('PALAMCNG：润滑首超、四类 NOWEX 首次绝顶分别推进状态', async () => {
-  const fixture = await setup_k19((f) => {
+  const fixture = await setup_fia(K19, (f) => {
     for (const index of [3, 5, 8, 10])
       f.store.set(`palam:${CID}:${index}`, 600);
     f.store.set('tflag:3', 1);
@@ -369,7 +461,7 @@ test('PALAMCNG：润滑首超、四类 NOWEX 首次绝顶分别推进状态', as
 });
 
 test('MARKCNG：苦痛、快乐、屈服、反抗刻印首超分别推进', async () => {
-  const fixture = await setup_k19((f) => {
+  const fixture = await setup_fia(K19, (f) => {
     for (const index of [21, 22, 23, 24]) f.store.set(`tflag:${index}`, 3);
   });
   await mark_k19(fixture);
@@ -388,7 +480,7 @@ test('MARKCNG：苦痛、快乐、屈服、反抗刻印首超分别推进', asyn
 });
 
 test('SELF_KOJO 读取全局 Q 并在结束时清 TFLAG:13', async () => {
-  const fixture = await setup_k19((f, era_flag) => {
+  const fixture = await setup_fia(K19, (f, era_flag) => {
     join_slave_chara(f, 1, '助手');
     era_flag.assi = 1;
     f.store.set('tflag:13', 1);
@@ -417,7 +509,7 @@ test('SELF_KOJO 各阶段推进 CFLAG:261–265 与 271–274', async () => {
     [13, 273],
     [14, 274],
   ]) {
-    const fixture = await setup_k19((f) => f.store.set('tflag:13', phase));
+    const fixture = await setup_fia(K19, (f) => f.store.set('tflag:13', phase));
     await self_k19(fixture);
     assert.equal(
       fixture.store.get(`cflag:${CID}:${counter}`),
@@ -439,35 +531,45 @@ test('自己扒开二次各档推进 CFLAG:308 自身，不再碰胸爱抚 306',
     ['ABL:17>=3', (f) => f.store.set(`abl:${CID}:17`, 3), 3],
     ['无素质保底', () => {}, 2],
   ];
-  for (const [name, seed, expected] of cases) {
-    const fixture = await setup_k19((f) => {
-      f.store.set(`cflag:${CID}:308`, 1);
-      seed(f);
-    }, 7);
-    await speak_k19(fixture);
-    assert.equal(
-      fixture.store.get(`cflag:${CID}:308`),
-      expected,
-      `${name}档推进 CFLAG:308=${expected}`,
+  for (const kojo of FIA_KOJOS) {
+    for (const [name, seed, expected] of cases) {
+      const fixture = await setup_fia(
+        kojo,
+        (f) => {
+          f.store.set(`cflag:${CID}:308`, 1);
+          seed(f);
+        },
+        7,
+      );
+      await speak_fia(fixture, kojo);
+      assert.equal(
+        fixture.store.get(`cflag:${CID}:308`),
+        expected,
+        `${kojo.name} ${name}档推进 CFLAG:308=${expected}`,
+      );
+      assert.equal(
+        fixture.store.get(`cflag:${CID}:306`) || 0,
+        0,
+        `${kojo.name} ${name}档不写胸爱抚 CFLAG:306`,
+      );
+    }
+
+    const guard_fixture = await setup_fia(
+      kojo,
+      (f) => {
+        f.store.set('flag:7', 1); // 关掉总开关旁路，让条件真正生效
+        f.store.set(`cflag:${CID}:308`, 1);
+        f.store.set(`cflag:${CID}:306`, 6); // 干扰项：胸爱抚计数偏高
+      },
+      7,
     );
+    await speak_fia(guard_fixture, kojo);
     assert.equal(
-      fixture.store.get(`cflag:${CID}:306`) || 0,
-      0,
-      `${name}档不写胸爱抚 CFLAG:306`,
+      guard_fixture.store.get(`cflag:${CID}:308`),
+      2,
+      `${kojo.name} 保底条件读 308 自身：306=6 不影响命中`,
     );
   }
-
-  const guard_fixture = await setup_k19((f) => {
-    f.store.set('flag:7', 1); // 关掉总开关旁路，让条件真正生效
-    f.store.set(`cflag:${CID}:308`, 1);
-    f.store.set(`cflag:${CID}:306`, 6); // 干扰项：胸爱抚计数偏高
-  }, 7);
-  await speak_k19(guard_fixture);
-  assert.equal(
-    guard_fixture.store.get(`cflag:${CID}:308`),
-    2,
-    '保底条件读 308 自身：306=6 不影响命中',
-  );
 });
 
 test('MUSEUM 口上不按博物馆口上编号分派：固定低头正文，爱慕加印求慰台词', async () => {
@@ -475,47 +577,59 @@ test('MUSEUM 口上不按博物馆口上编号分派：固定低头正文，爱�
     '「如，如果这样能取悦魔王大人的话……就算要死也……没，没什么……好，好怕的……呢……」';
   const bowed =
     '菲娅深深的低下了头，小小的身体颤抖个不停，努力的不让眼泪流下来。';
-  for (const [love, stage] of [
-    [0, 0],
-    [0, 9],
-    [1, 0],
-    [1, 9],
-  ]) {
-    const fixture = await setup_k19((f) => {
-      if (love) f.store.set(`talent:${CID}:85`, 1);
-    });
-    const { game } = fixture.load_module('facade/game');
-    game.event.博物馆口上 = stage;
-    const { museum_koujo_family } = fixture.load_module('kojo/kojo-system');
-    await museum_koujo_family.call(KEY, { args: [] });
-    assert.deepEqual(
-      fixture.text_lines(),
-      love ? [plea, bowed] : [bowed],
-      `TALENT:85=${love}、博物馆口上=${stage}：输出固定`,
-    );
+  for (const kojo of FIA_KOJOS) {
+    for (const [love, stage] of [
+      [0, 0],
+      [0, 9],
+      [1, 0],
+      [1, 9],
+    ]) {
+      const fixture = await setup_fia(kojo, (f) => {
+        if (love) f.store.set(`talent:${CID}:85`, 1);
+      });
+      const { game } = fixture.load_module('facade/game');
+      game.event.博物馆口上 = stage;
+      const { museum_koujo_family } = fixture.load_module('kojo/kojo-system');
+      await museum_koujo_family.call(kojo.key, { args: [] });
+      assert.deepEqual(
+        fixture.text_lines(),
+        love ? [plea, bowed] : [bowed],
+        `${kojo.name} TALENT:85=${love}、博物馆口上=${stage}：输出固定`,
+      );
+    }
   }
 });
 
 test('非调教族：NTR、处刑与语尾均注册并执行关键状态', async () => {
-  const fixture = await setup_k19();
-  const system = fixture.load_module('kojo/kojo-system');
-  await system.ntr_koujo_family.call(KEY, { args: [1] });
-  assert.equal(fixture.store.get(`cflag:${CID}:650`), 1, 'NTR 再捕获状态推进');
-  assert.equal(fixture.store.get(`cflag:${CID}:651`), 1, 'NTR P==1 状态推进');
+  for (const kojo of FIA_KOJOS) {
+    const fixture = await setup_fia(kojo);
+    const system = fixture.load_module('kojo/kojo-system');
+    await system.ntr_koujo_family.call(kojo.key, { args: [1] });
+    assert.equal(
+      fixture.store.get(`cflag:${CID}:650`),
+      1,
+      `${kojo.name} NTR 再捕获状态推进`,
+    );
+    assert.equal(
+      fixture.store.get(`cflag:${CID}:651`),
+      1,
+      `${kojo.name} NTR P==1 状态推进`,
+    );
 
-  const { game } = fixture.load_module('facade/game');
-  game.event.犬射精或处刑口上 = 4;
-  await system.exucution_koujo_family.call(KEY, { args: [] });
-  const before = fixture.text_lines().length;
-  const gobi_text = await system.gobi_koujo_family.call(KEY, {
-    args: [1, () => 0],
-  });
-  assert.equal(gobi_text, '，诶嘿嘿～♪', '语尾返回文字（#570）');
-  assert.equal(
-    fixture.text_lines().length,
-    before,
-    '语尾真身不打印（行内拼接由调用方做）',
-  );
+    const { game } = fixture.load_module('facade/game');
+    game.event.犬射精或处刑口上 = 4;
+    await system.exucution_koujo_family.call(kojo.key, { args: [] });
+    const before = fixture.text_lines().length;
+    const gobi_text = await system.gobi_koujo_family.call(kojo.key, {
+      args: [1, () => 0],
+    });
+    assert.equal(gobi_text, '，诶嘿嘿～♪', `${kojo.name} 语尾返回文字（#570）`);
+    assert.equal(
+      fixture.text_lines().length,
+      before,
+      `${kojo.name} 语尾真身不打印（行内拼接由调用方做）`,
+    );
+  }
 });
 
 // —— #625：同一行输出被拆成多条 era.print 的合并点 ——
@@ -530,26 +644,36 @@ test('#625 交谈·自我介绍：名字与后续是同一行（两处 × ABL:31
     [1, 0],
     [1, 3],
   ];
-  for (const [talked, abl31] of cases) {
-    const fixture = await setup_k19((f) => {
-      f.store.set(`tequip:${CID}:53`, 1); // 摄影中
-      f.store.set(`abl:${CID}:17`, 5); // 的 (TALENT:89 || ABL:17 >= 5)
-      f.store.set(`abl:${CID}:31`, abl31);
-      if (talked) {
-        f.load_module('facade/chara').chara(CID).kojo.交谈 = 1; // 二次以后
-      }
-    }, 56);
-    await speak_k19(fixture);
-    const merged = fixture.text_lines().find((l) => l.startsWith('于是'));
-    assert.ok(merged, `交谈${talked ? '二次' : '首次'}：自我介绍必须出声`);
-    assert.ok(
-      merged.endsWith('之类的介绍了出来……') &&
-        (abl31 >= 3
-          ? merged ===
-            '于是菲娅将自己的名字、喜欢的H的方式还有手淫时妄想的内容之类的介绍了出来……'
-          : merged === '于是菲娅将自己的名字、喜欢的H的方式之类的介绍了出来……'),
-      `交谈${talked ? '二次' : '首次'}（ABL:31==${abl31}）：名字段与后文落在同一行（#625）`,
-    );
+  for (const kojo of FIA_KOJOS) {
+    for (const [talked, abl31] of cases) {
+      const fixture = await setup_fia(
+        kojo,
+        (f) => {
+          f.store.set(`tequip:${CID}:53`, 1); // 摄影中
+          f.store.set(`abl:${CID}:17`, 5); // 的 (TALENT:89 || ABL:17 >= 5)
+          f.store.set(`abl:${CID}:31`, abl31);
+          if (talked) {
+            f.load_module('facade/chara').chara(CID).kojo.交谈 = 1; // 二次以后
+          }
+        },
+        56,
+      );
+      await speak_fia(fixture, kojo);
+      const merged = fixture.text_lines().find((l) => l.startsWith('于是'));
+      assert.ok(
+        merged,
+        `${kojo.name} 交谈${talked ? '二次' : '首次'}：自我介绍必须出声`,
+      );
+      assert.ok(
+        merged.endsWith('之类的介绍了出来……') &&
+          (abl31 >= 3
+            ? merged ===
+              '于是菲娅将自己的名字、喜欢的H的方式还有手淫时妄想的内容之类的介绍了出来……'
+            : merged ===
+              '于是菲娅将自己的名字、喜欢的H的方式之类的介绍了出来……'),
+        `${kojo.name} 交谈${talked ? '二次' : '首次'}（ABL:31==${abl31}）：名字段与后文落在同一行（#625）`,
+      );
+    }
   }
 });
 
@@ -566,24 +690,30 @@ test('#625 交谈·压抑着呼吸声：工具档与前后文同一行（两处 
     { talked: 1, tequip: 44, prefix: '你' },
     { talked: 1, tequip: 0, prefix: '你' },
   ];
-  for (const { talked, tequip, prefix } of cases) {
-    const fixture = await setup_k19((f) => {
-      f.store.set(`palam:${CID}:5`, 10000); // >= PALAMLV[4]
-      f.store.set(`palam:${CID}:4`, 10000);
-      if (tequip) {
-        f.store.set(`tequip:${CID}:${tequip}`, 1);
-      }
-      if (talked) {
-        f.load_module('facade/chara').chara(CID).kojo.交谈 = 1;
-      }
-    }, 56);
-    await speak_k19(fixture);
-    const word = tequip === 11 ? '快乐的' : tequip === 44 ? '痛苦的' : '';
-    assert.deepEqual(
-      fixture.text_lines(),
-      [`${prefix}菲娅一边压抑着${word}呼吸声，一边努力回应着你……`],
-      `交谈${talked ? '二次' : '首次'}（${word || '空'}档）：工具档与前后文落在同一行（#625）`,
-    );
+  for (const kojo of FIA_KOJOS) {
+    for (const { talked, tequip, prefix } of cases) {
+      const fixture = await setup_fia(
+        kojo,
+        (f) => {
+          f.store.set(`palam:${CID}:5`, 10000); // >= PALAMLV[4]
+          f.store.set(`palam:${CID}:4`, 10000);
+          if (tequip) {
+            f.store.set(`tequip:${CID}:${tequip}`, 1);
+          }
+          if (talked) {
+            f.load_module('facade/chara').chara(CID).kojo.交谈 = 1;
+          }
+        },
+        56,
+      );
+      await speak_fia(fixture, kojo);
+      const word = tequip === 11 ? '快乐的' : tequip === 44 ? '痛苦的' : '';
+      assert.deepEqual(
+        fixture.text_lines(),
+        [`${prefix}菲娅一边压抑着${word}呼吸声，一边努力回应着你……`],
+        `${kojo.name} 交谈${talked ? '二次' : '首次'}（${word || '空'}档）：工具档与前后文落在同一行（#625）`,
+      );
+    }
   }
 });
 
@@ -631,16 +761,22 @@ test('#625 交谈·PLAYER 前缀行与各互斥尾段同属一行', async () => 
       line: '你菲娅乖巧的低着头听着。',
     },
   ];
-  for (const { name, seed, line } of cases) {
-    const fixture = await setup_k19((f) => {
-      seed(f);
-      f.load_module('facade/chara').chara(CID).kojo.交谈 = 1;
-    }, 56);
-    await speak_k19(fixture);
-    assert.ok(
-      fixture.text_lines().includes(line),
-      `${name}：PLAYER 前缀与尾段落在同一行（#625）`,
-    );
+  for (const kojo of FIA_KOJOS) {
+    for (const { name, seed, line } of cases) {
+      const fixture = await setup_fia(
+        kojo,
+        (f) => {
+          seed(f);
+          f.load_module('facade/chara').chara(CID).kojo.交谈 = 1;
+        },
+        56,
+      );
+      await speak_fia(fixture, kojo);
+      assert.ok(
+        fixture.text_lines().includes(line),
+        `${kojo.name} ${name}：PLAYER 前缀与尾段落在同一行（#625）`,
+      );
+    }
   }
 });
 
@@ -648,7 +784,8 @@ test('#625 COLOSSEUM_KOJO_19：SC31/21/27 武器名与前后文同一行（三�
   // 三处武器名行（SC31/21/27）
   // 各是一整行（无后缀 PRINT 不换行，末行 PRINTFORMW 收行），
   // 曾把每行拆成四条 era.print（#625）。助手分支在 KOJO_MESSAGE_COM 的
-  // ASSI 检查之后、运行时不带助手才可达，直接调真身覆盖（同 K2/K4/K903）
+  // ASSI 检查之后、运行时不带助手才可达，直接调真身覆盖（同 K2/K4/K903）。
+  // K904 继承同一个本体（#858），两套口上共用这一具真身，因此只驱动一次。
   const cases = [
     {
       selectcom: 31,
@@ -679,15 +816,19 @@ test('#625 COLOSSEUM_KOJO_19：SC31/21/27 武器名与前后文同一行（三�
       { weapon: '', seed: undefined },
     ];
     for (const { weapon, seed } of tiers) {
-      const fixture = await setup_k19((f, era_flag) => {
-        join_slave_chara(f, 17, '玛奥');
-        f.store.set(`tequip:${CID}:55`, 1); // 死斗场
-        era_flag.assi = 17;
-        era_flag.assiplay = 1;
-        if (seed) {
-          seed(f);
-        }
-      }, selectcom);
+      const fixture = await setup_fia(
+        K19,
+        (f, era_flag) => {
+          join_slave_chara(f, 17, '玛奥');
+          f.store.set(`tequip:${CID}:55`, 1); // 死斗场
+          era_flag.assi = 17;
+          era_flag.assiplay = 1;
+          if (seed) {
+            seed(f);
+          }
+        },
+        selectcom,
+      );
       const { colosseum_kojo_19 } = fixture.load_module('kojo/kojo-k19-fia');
       await colosseum_kojo_19();
       assert.ok(
@@ -710,71 +851,100 @@ test('#625 GOHOUBI_REQUEST：空首尾夹着的兽名单独成行（CFLAG:504 �
     [2, '豚'],
     [3, '马'],
   ];
-  for (const [req, beast] of cases) {
-    const fixture = await setup_k19((f) => {
-      f.load_module('facade/chara').chara(CID).stronghold.要求奖赏 = req;
-    });
-    const { gohoubi_request_koujo_family } = fixture.load_module(
-      'kojo/kojo-dungeon-after',
-    );
-    await gohoubi_request_koujo_family.call(KEY, { args: [CID] });
-    assert.deepEqual(
-      fixture.text_lines(),
-      [beast],
-      `CFLAG:504==${req}：空首尾不再各占一行（#625）`,
-    );
+  for (const kojo of FIA_KOJOS) {
+    for (const [req, beast] of cases) {
+      const fixture = await setup_fia(kojo, (f) => {
+        f.load_module('facade/chara').chara(CID).stronghold.要求奖赏 = req;
+      });
+      const { gohoubi_request_koujo_family } = fixture.load_module(
+        'kojo/kojo-dungeon-after',
+      );
+      await gohoubi_request_koujo_family.call(kojo.key, { args: [CID] });
+      assert.deepEqual(
+        fixture.text_lines(),
+        [beast],
+        `${kojo.name} CFLAG:504==${req}：空首尾不再各占一行（#625）`,
+      );
+    }
   }
 });
 
 // —— #688：SELECTCOM 30 手淫「侍奉精神Lv3以上」档不再要求爱慕 ——
 
 test('SELECTCOM 30 手淫：侍奉精神Lv3以上档不再要求爱慕（#688），口上开关关闭时在 CFLAG:331=2 命中推进到 3', async () => {
-  const fixture = await setup_k19((f) => {
-    f.store.set('flag:7', 0); // 口上开关关闭，档推进上限生效
-    f.store.set(`cflag:${CID}:331`, 2);
-    f.store.set(`abl:${CID}:16`, 3);
-  }, 30);
-  await speak_k19(fixture);
-  assert.deepEqual(fixture.text_lines(), [
-    '「主人的兴趣……真是奇怪呢……」',
-    '虽然对H的事情还不是特别理解，但是菲娅还是乖乖的照做了。',
-    '「这样子……会舒服吗……？」',
-  ]);
-  assert.equal(fixture.store.get(`cflag:${CID}:331`), 3, 'CFLAG:331 推进到 3');
+  for (const kojo of FIA_KOJOS) {
+    const fixture = await setup_fia(
+      kojo,
+      (f) => {
+        f.store.set('flag:7', 0); // 口上开关关闭，档推进上限生效
+        f.store.set(`cflag:${CID}:331`, 2);
+        f.store.set(`abl:${CID}:16`, 3);
+      },
+      30,
+    );
+    await speak_fia(fixture, kojo);
+    assert.deepEqual(fixture.text_lines(), [
+      '「主人的兴趣……真是奇怪呢……」',
+      '虽然对H的事情还不是特别理解，但是菲娅还是乖乖的照做了。',
+      '「这样子……会舒服吗……？」',
+    ]);
+    assert.equal(
+      fixture.store.get(`cflag:${CID}:331`),
+      3,
+      `${kojo.name} CFLAG:331 推进到 3`,
+    );
+  }
 });
 
 // —— #688：肛珠五档档位误写尻穴狂，按同型模板改回肛门感觉 ——
 
 test('SELECTCOM 19 肛珠：五档档位不再要求尻穴狂（#688），口上开关关闭时在 CFLAG:320=4 命中推进到 5', async () => {
-  const fixture = await setup_k19((f) => {
-    f.store.set('flag:7', 0); // 口上开关关闭，档推进上限生效
-    f.store.set(`tequip:${CID}:19`, 1); // 肛珠已插入
-    f.store.set(`cflag:${CID}:320`, 4);
-    f.store.set(`talent:${CID}:85`, 1);
-    f.store.set(`abl:${CID}:3`, 3);
-  }, 19);
-  await speak_k19(fixture);
-  assert.deepEqual(fixture.text_lines(), [
-    '「呼啊啊……主人……请……更多的……呜……玩弄……我吧……」',
-    '菲娅红着脸用纤细的小手分开菊穴，感受着肛珠被一颗一颗塞进去的异样的快感。',
-  ]);
-  assert.equal(fixture.store.get(`cflag:${CID}:320`), 5, 'CFLAG:320 推进到 5');
+  for (const kojo of FIA_KOJOS) {
+    const fixture = await setup_fia(
+      kojo,
+      (f) => {
+        f.store.set('flag:7', 0); // 口上开关关闭，档推进上限生效
+        f.store.set(`tequip:${CID}:19`, 1); // 肛珠已插入
+        f.store.set(`cflag:${CID}:320`, 4);
+        f.store.set(`talent:${CID}:85`, 1);
+        f.store.set(`abl:${CID}:3`, 3);
+      },
+      19,
+    );
+    await speak_fia(fixture, kojo);
+    assert.deepEqual(fixture.text_lines(), [
+      '「呼啊啊……主人……请……更多的……呜……玩弄……我吧……」',
+      '菲娅红着脸用纤细的小手分开菊穴，感受着肛珠被一颗一颗塞进去的异样的快感。',
+    ]);
+    assert.equal(
+      fixture.store.get(`cflag:${CID}:320`),
+      5,
+      `${kojo.name} CFLAG:320 推进到 5`,
+    );
+  }
 });
 
 // —— #688：SELF_KOJO 调教后自慰「尻穴狂」档不再叠加淫乱要求 ——
 
 test('SELF_KOJO 调教后自慰：尻穴狂档（TALENT:77）不再叠加淫乱要求（#688），口上开关关闭时在 CFLAG:261=4（本档上限）命中推进到 4', async () => {
-  const fixture = await setup_k19((f) => {
-    f.store.set('tflag:13', 1); // 初吻与自我口上 === 1 → 调教后自慰段
-    f.store.set('flag:7', 0); // 口上开关关闭，档推进上限生效
-    f.store.set(`cflag:${CID}:261`, 4); // 推进值取在本档上限
-    f.store.set(`talent:${CID}:77`, 1); // 尻穴狂
-  });
-  await self_k19(fixture);
-  assert.deepEqual(fixture.text_lines(), [
-    '「主人……想被主人……疼爱后面……想和主人……更加的……亲热……」',
-    '菲娅轻弄着雏菊，朝你撒着娇。',
-    '「主人……哈啊……主人…………❤」',
-  ]);
-  assert.equal(fixture.store.get(`cflag:${CID}:261`), 4, 'CFLAG:261 推进到 4');
+  for (const kojo of FIA_KOJOS) {
+    const fixture = await setup_fia(kojo, (f) => {
+      f.store.set('tflag:13', 1); // 初吻与自我口上 === 1 → 调教后自慰段
+      f.store.set('flag:7', 0); // 口上开关关闭，档推进上限生效
+      f.store.set(`cflag:${CID}:261`, 4); // 推进值取在本档上限
+      f.store.set(`talent:${CID}:77`, 1); // 尻穴狂
+    });
+    const { self_kojo_family } = fixture.load_module('kojo/kojo-system');
+    await self_kojo_family.call(kojo.key, { args: [] });
+    assert.deepEqual(fixture.text_lines(), [
+      '「主人……想被主人……疼爱后面……想和主人……更加的……亲热……」',
+      '菲娅轻弄着雏菊，朝你撒着娇。',
+      '「主人……哈啊……主人…………❤」',
+    ]);
+    assert.equal(
+      fixture.store.get(`cflag:${CID}:261`),
+      4,
+      `${kojo.name} CFLAG:261 推进到 4`,
+    );
+  }
 });

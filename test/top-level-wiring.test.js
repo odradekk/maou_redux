@@ -46,6 +46,25 @@
  * 并入装配表清单即自动纳入；新口上文件若顶层 require 任一保护模块，
  * 锁当场红并点名「哪个文件顶层 require 了哪个族模块」。
  *
+ * == 派生条件：顶层 require 方自己也在装配表里，且拿它当 extends 的父类（#858） ==
+ *
+ * 唯一的例外形状是**子类 extends 父类**：class 定义期取不到父类就不成立，所以
+ * 这个 require 只能写在顶层。允许它需要一条不含手写名单的条件，由两段拼成：
+ *   1. require 方自己也在装配表清单里——否则它就是个偷偷装载的口子；
+ *   2. 它把这个模块导出的某个名字写进了 `extends <名字>`（`extends_alias_of`）。
+ * 只做了第 1 条而没有第 2 条的，照旧算违规：#288 的 M2118/M2120 正是那种形状
+ * （顶层 require 了族模块却只是拿它当函数用）。
+ *
+ * 这时「父类的装配条目被删」不再静默：
+ *   - 父类的族注册仍随子类的 require 装上（本锁看不见），但
+ *   - 父类的 `register()` 不再被调用，test/event-handlers.test.js 的逐档条数
+ *     契约当场少一条，红。
+ * 换句话说，把「装载」与「装配」拆开之后，后一件事由 #851 的条数契约单独守。
+ *
+ * 例外本身另有闸：当前恰好一处（K904 继承 K19），多一处就在下面那条断言上红，
+ * 逼新增的例外重新论证，不许它悄悄长成通用口子。**这不是豁免名单**——条件是
+ * 从源码推出来的，闸只是钉住它今天还没被用滥。
+ *
  * == 顶层 vs 函数体（这张工单的核心难点） ==
  *
  * require 在**模块作用域**（文件顶层、或顶层的 `const {…} = require(...)`）
@@ -160,6 +179,39 @@ function protected_modules() {
   return out;
 }
 
+/**
+ * 装配表 require 的模块路径全集（`#/kojo/kojo-k19-fia` 这种写法）
+ * @returns {Set<string>}
+ */
+function assembly_modules() {
+  return new Set(startup_targets());
+}
+
+/**
+ * `src` 是否把 `target` 导出的某个名字当成了 extends 的父类。
+ *
+ * 这是「子类取父类」的机器判定：先把该 target 的具名引入解出来，再要求其中
+ * 至少一个名字出现在 `extends <名字>` 里。写成两个条件而不是一步正则，是为了
+ * 让「require 了但没继承」照旧算违规（#288 的 M2118/M2120 就是这种形状）。
+ * @param {string} src 引用方源码
+ * @param {string} target 被 require 的模块路径
+ * @returns {boolean}
+ */
+function extends_alias_of(src, target) {
+  const escaped = target.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const imported = src.match(
+    new RegExp(`const\\s*\\{([^}]*)\\}\\s*=\\s*require\\('${escaped}'\\)`),
+  );
+  if (imported === null) return false;
+  return imported[1]
+    .split(',')
+    .map((part) => part.split(':').pop().trim())
+    .filter(Boolean)
+    .some((name) =>
+      new RegExp(`extends\\s+${name.replace(/\$/g, '\\$')}\\b`).test(src),
+    );
+}
+
 // —— 用例 ——
 
 test('扫描器：正确区分顶层与函数体内 require（现存阳性对照）', () => {
@@ -238,17 +290,29 @@ test('全树：主启动图清单里的族模块不被别处顶层 require', () 
   // 违规时报「顶层 require：ere/xxx.js → #/system/train/com-yyy」——
   // M2118/M2120 的 must_mention 定位串（#288 原编号 M1790/M1791，#295 消重后改号）
   const protected_map = protected_modules();
+  const assembly = assembly_modules();
   const violations = [];
+  const allowed = [];
   for (const rel of list_js_files('ere')) {
     if (rel === 'ere/system/flow/startup.js') continue; // 装配表自己豁免
     const src = fs.readFileSync(path.join(REPO, rel), 'utf8');
+    const self_target = `#/${rel.replace(/^ere\//, '').replace(/\.js$/, '')}`;
     for (const r of scan_requires(src)) {
-      if (r.target && protected_map.has(r.target) && r.top_level) {
-        violations.push(`顶层 require：${rel}:${r.line} → ${r.target}`);
+      if (!r.target || !protected_map.has(r.target) || !r.top_level) continue;
+      if (assembly.has(self_target) && extends_alias_of(src, r.target)) {
+        allowed.push(`${rel} → ${r.target}`);
+        continue;
       }
+      violations.push(`顶层 require：${rel}:${r.line} → ${r.target}`);
     }
   }
   assert.deepEqual(violations, [], violations.join('\n'));
+  // 派生条件的闸：今天只有「K904 继承 K19」一处，新增要重新论证（见文件头）
+  assert.deepEqual(
+    allowed,
+    ['ere/kojo/kojo-k904-fia.js → #/kojo/kojo-k19-fia'],
+    '装配表内的顶层互相 require 只应有一处（子类取父类）；多出来先读文件头',
+  );
 });
 
 test('扫描器：解析不了的 require 抛错（不许静默漏过）', () => {

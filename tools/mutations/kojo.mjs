@@ -3,7 +3,7 @@
 // 分配，只作引用基准点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 2778; // #855 +6（M15564-M15569：K0/K1/K2/K3/K5 的口上子类——不进工厂、族注册直挂本体、select_com 与语尾钩子不转交、注册号写错、子类未导出） // #977 +2（M18448/M18449：K1 的 TEQUIP:45 脱着支与 89/90 淫乱初吻支的判等写反） // #934 +5（M18423-M18427：凌辱畏怖扫描退回列头值、无记忆哨兵退回 0、不同怪物也改写记忆、累加增量、首次不清零）；#865 +8（M16750-M16757：语尾文字搬进 ere/data/gobi-koujo-const.js 后的取值规则——表外编号、档位下标、默认支随机序、单支不掷、%SELF_CALL% 替换、表行与注册一一对应）；#865 另有 30 条既有语尾条目的 find 改挂常量表（编号不变） // 数据地址缺陷修复 +15（M15403-M15417：K10 自慰次数交接与处女丧失增量门槛、K7 录像自我介绍八支、K1 助手 17 号判断）； // #797 +8（M7690-M7697：成熟出售真身调用丢失的原 sell-maturo-k0 分片条目改住本分片，条目内容不变） // #734 +7（M14550–M14556：四类首次口上阈值、真实引擎爱抚与非法阈值地址检查）；#710 净 -1（M12155 改写成 M14254：卖春积极性行随 show_button_bich_level 删除、改指等级网格退回纯文本，条数不变；删 M402：SET_BICH_LEVEL 输入上限随按钮化不可观察）；#711 起 +2（M14310/M14311：K15 暗器菜单的选项按钮化——退回纯文本与按钮后夹等键两条）；#643 -5…沿革见 git 历史；#654（F8）：删反向变异与 k902 条目 67 条、新增 M13300-M13349 与 M13549，#655（F9）-8+5 后合并计数；#688 +35
+export const COUNT = 2767; // #858 -11（删 17 条 K904 复制品的条目、加 6 条 M18517-M18522：K19 迁口上子类、K904 改为继承——不进工厂、素质错格、指令分支与语尾钩子不转交、EVENTEND #LATER 漏接线、K904 注册时退回父类；另 M6072/M6500/M6502 各合并两条、M6505 改锚点） // #855 +6（M15564-M15569：K0/K1/K2/K3/K5 的口上子类——不进工厂、族注册直挂本体、select_com 与语尾钩子不转交、注册号写错、子类未导出） // #977 +2（M18448/M18449：K1 的 TEQUIP:45 脱着支与 89/90 淫乱初吻支的判等写反） // #934 +5（M18423-M18427：凌辱畏怖扫描退回列头值、无记忆哨兵退回 0、不同怪物也改写记忆、累加增量、首次不清零）；#865 +8（M16750-M16757：语尾文字搬进 ere/data/gobi-koujo-const.js 后的取值规则——表外编号、档位下标、默认支随机序、单支不掷、%SELF_CALL% 替换、表行与注册一一对应）；#865 另有 30 条既有语尾条目的 find 改挂常量表（编号不变） // 数据地址缺陷修复 +15（M15403-M15417：K10 自慰次数交接与处女丧失增量门槛、K7 录像自我介绍八支、K1 助手 17 号判断）； // #797 +8（M7690-M7697：成熟出售真身调用丢失的原 sell-maturo-k0 分片条目改住本分片，条目内容不变） // #734 +7（M14550–M14556：四类首次口上阈值、真实引擎爱抚与非法阈值地址检查）；#710 净 -1（M12155 改写成 M14254：卖春积极性行随 show_button_bich_level 删除、改指等级网格退回纯文本，条数不变；删 M402：SET_BICH_LEVEL 输入上限随按钮化不可观察）；#711 起 +2（M14310/M14311：K15 暗器菜单的选项按钮化——退回纯文本与按钮后夹等键两条）；#643 -5…沿革见 git 历史；#654（F8）：删反向变异与 k902 条目 67 条、新增 M13300-M13349 与 M13549，#655（F9）-8+5 后合并计数；#688 +35
 
 export default [
   {
@@ -18812,20 +18812,12 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '反抗刻印首超推进',
   },
   {
-    desc: 'M6072 K19 EVENTTRAIN 存在标志置位删除（#247）',
+    desc: 'M6072 K19 的存在标志写入删除（#858 合并置位/清除两条——两处只剩 mark_present 一个落点）',
     file: 'ere/kojo/kojo-k19-fia.js',
-    find: 'game.kojo.口上存在_19 = 1;',
-    replace: '// 变异：K19 存在标志置位删除',
-    tests: ['kojo-k19-fia'],
-    must_mention: 'K19 存在标志置 1',
-  },
-  {
-    desc: 'M6073 K19 EVENTEND 存在标志清除删除（#247）',
-    file: 'ere/kojo/kojo-k19-fia.js',
-    find: 'game.kojo.口上存在_19 = 0;',
-    replace: '// 变异：K19 存在标志清除删除',
-    tests: ['kojo-k19-fia'],
-    must_mention: 'K19 存在标志清 0',
+    find: '    game.kojo.口上存在_19 = value;',
+    replace: '    // 变异：K19 存在标志不写',
+    tests: ['kojo-k19-fia', 'kojo-classes-k19-k904'],
+    must_mention: '存在标志置 1',
   },
   {
     desc: 'M6074 K19 初调教 CFLAG:201 推进写错（#247）',
@@ -19506,55 +19498,30 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'K902 扩展口上',
   },
   {
-    desc: 'M6500 K904 EVENTTRAIN EX_FLAG:104 置位删除（#250）',
+    desc: 'M6500 K904 的存在标志写入删除（#858 合并置位/清除两条——两处只剩 mark_present 一个落点）',
     file: 'ere/kojo/kojo-k904-fia.js',
-    find: '  era_exflag.set(104, 1);',
-    replace: '  // 变异：EX_FLAG:104 置位删除',
-    tests: ['kojo-k904-fia'],
-    must_mention: 'K904 事件钩子：EVENTTRAIN 置 EX_FLAG:104，EVENTEND 清除',
+    find: '    era_exflag.set(104, value);',
+    replace: '    // 变异：EX_FLAG:104 不写',
+    tests: ['kojo-k19-fia', 'kojo-classes-k19-k904'],
+    must_mention: '存在标志置 1',
   },
   {
-    desc: 'M6501 K904 EVENTEND EX_FLAG:104 清除删除（#250）',
+    desc: 'M6502 K904 的口上素质读错格（EX_TALENT:104 改 105：K904 永远不认为自己是本口上）（#858 合并 TRAIN/END 两处）',
     file: 'ere/kojo/kojo-k904-fia.js',
-    find: '  era_exflag.set(104, 0);',
-    replace: '  // 变异：EX_FLAG:104 清除删除',
-    tests: ['kojo-k904-fia'],
-    must_mention: 'K904 事件钩子：EVENTTRAIN 置 EX_FLAG:104，EVENTEND 清除',
-  },
-  {
-    desc: 'M6502 K904 EVENTTRAIN EX_TALENT:104 检查错读 105（#250）',
-    file: 'ere/kojo/kojo-k904-fia.js',
-    find: '  if (era0(`ex_talent:${target}:104`) != 1) {\n    return 0;\n  }\n\n  if (chara(target).kojo.初调教 == 0) {',
+    find: '    return (era.get(`ex_talent:${target}:104`) || 0) == 1;',
     replace:
-      '  if (era0(`ex_talent:${target}:105`) != 1) {\n    // （变异）\n    return 0;\n  }\n\n  if (chara(target).kojo.初调教 == 0) {',
-    tests: ['kojo-k904-fia'],
-    must_mention: 'K904 EVENTTRAIN：EX_TALENT:104 缺席时不推进初调教',
+      '    return (era.get(`ex_talent:${target}:105`) || 0) == 1; // 变异：素质错格',
+    tests: ['kojo-k19-fia', 'kojo-classes-k19-k904'],
+    must_mention: '只有本套素质在身时才响',
   },
   {
-    desc: 'M6503 K904 EVENTEND EX_TALENT:104 检查错读 105（#250）',
+    desc: 'M6505 K904 的 KOJO_MESSAGE_COM 族注册转发到父类实例（#858：注册键退回 19 已改由工厂承接，此处守的是转发目标）',
     file: 'ere/kojo/kojo-k904-fia.js',
-    find: '  if (era0(`ex_talent:${target}:104`) != 1) {\n    return 0;\n  }\n\n  if (era.get(`base:${target}:0`) <= 0) {',
+    find: 'kojo_message_com_family.register(904, (...args) =>\n  kojo_k904.kojo_message_com(...args),',
     replace:
-      '  if (era0(`ex_talent:${target}:105`) != 1) {\n    // （变异）\n    return 0;\n  }\n\n  if (era.get(`base:${target}:0`) <= 0) {',
-    tests: ['kojo-k904-fia'],
-    must_mention: 'K904 EVENTEND：EX_TALENT:104 缺席时不输出结束口上',
-  },
-  {
-    desc: 'M6504 K904 EVENTTRAIN 助手缺席分支调用名退回 K19（#250）',
-    file: 'ere/kojo/kojo-k904-fia.js',
-    find: '  } else if (era_flag.assi < 0) {\n    await k904_kojo2();',
-    replace:
-      '  } else if (era_flag.assi < 0) {\n    await k19_kojo2(); // （变异）',
-    tests: ['kojo-k904-fia'],
-    must_mention: 'K904 事件钩子：EVENTTRAIN 置 EX_FLAG:104，EVENTEND 清除',
-  },
-  {
-    desc: 'M6505 K904 KOJO_MESSAGE_COM 族注册键退回 19（#250）',
-    file: 'ere/kojo/kojo-k904-fia.js',
-    find: 'kojo_message_com_family.register(904, kojo_message_com_904);',
-    replace: 'kojo_message_com_family.register(19, kojo_message_com_904);',
-    tests: ['kojo-k904-fia'],
-    must_mention: 'K904 分发：全部口上族注册键都是 904',
+      'kojo_message_com_family.register(904, (...args) =>\n  kojo_k19.kojo_message_com(...args), // 变异：转发到父类实例',
+    tests: ['kojo-classes-k19-k904'],
+    must_mention: '都转发到工厂实例',
   },
   {
     desc: 'M6506 主启动图删除 K904 口上装载（#250）',
@@ -24208,87 +24175,6 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '空首尾不再各占一行',
   },
   {
-    desc: 'M12831 K904 交谈·自我介绍拆回三条（#625：自白段又占一行）',
-    file: 'ere/kojo/kojo-k904-fia.js',
-    find: "          // 那一段——条件提到语句外当取值，文本留在输出语句里（#625）\n          const masturbation_note = era.get(`abl:${target}:31`) >= 3;\n          await era.printAndWait(\n            `于是${target_name}将自己的名字、喜欢的H的方式` +\n              (masturbation_note ? '还有手淫时妄想的内容' : '') +\n              `之类的介绍了出来……`,\n          );",
-    replace:
-      '          // 那一段——条件提到语句外当取值，文本留在输出语句里（#625）\n          const masturbation_note = era.get(`abl:${target}:31`) >= 3;\n          await era.print(`于是${target_name}将自己的名字、喜欢的H的方式`); // 变异：拆回\n          if (masturbation_note) {\n            await era.print(`还有手淫时妄想的内容`); // 变异：拆回\n          }\n          await era.printAndWait(`之类的介绍了出来……`); // 变异：拆回',
-    tests: ['kojo-k904-fia'],
-    must_mention: '名字段与后文落在同一行',
-  },
-  {
-    desc: 'M12832 K904 交谈·自我介绍·二次拆回三条（#625）',
-    file: 'ere/kojo/kojo-k904-fia.js',
-    find: "          // 同一行输出：无后缀 PRINTFORM 连续不换行，\n          // 末行 PRINTFORMW 才收行。SIF ABL:31 >= 3 只护住\n          // 那一段——条件提到语句外当取值，文本留在输出语句里（#625）\n          const masturbation_note = era.get(`abl:${target}:31`) >= 3;\n          await era.printAndWait(\n            `于是${target_name}将自己的名字、喜欢的H的方式` +\n              (masturbation_note ? '还有手淫时妄想的内容' : '') +\n              `之类的介绍了出来……`,\n          );",
-    replace:
-      '          const masturbation_note = era.get(`abl:${target}:31`) >= 3;\n          await era.print(`于是${target_name}将自己的名字、喜欢的H的方式`); // 变异：拆回\n          if (masturbation_note) {\n            await era.print(`还有手淫时妄想的内容`); // 变异：拆回\n          }\n          await era.printAndWait(`之类的介绍了出来……`); // 变异：拆回',
-    tests: ['kojo-k904-fia'],
-    must_mention: '名字段与后文落在同一行',
-  },
-  {
-    desc: 'M12833 K904 交谈·压抑着呼吸声拆回四条（#625：工具档又占一行）',
-    file: 'ere/kojo/kojo-k904-fia.js',
-    find: "          await era.print(\n            `${target_name}一边压抑着` +\n              (overwhelmed_by_tool\n                ? '快乐的'\n                : overwhelmed_by_pain\n                  ? '痛苦的'\n                  : '') +\n              `呼吸声，一边努力回应着${master_name}……`,\n          );",
-    replace:
-      '          await era.print(`${target_name}一边压抑着`); // 变异：拆回\n          if (overwhelmed_by_tool) {\n            await era.print(`快乐的`); // 变异：拆回\n          } else if (overwhelmed_by_pain) {\n            await era.print(`痛苦的`); // 变异：拆回\n          }\n          await era.print(`呼吸声，一边努力回应着${master_name}……`); // 变异：拆回',
-    tests: ['kojo-k904-fia'],
-    must_mention: '工具档与前后文落在同一行',
-  },
-  {
-    desc: 'M12834 K904 交谈·压抑着呼吸声·二次拆回四条（#625）',
-    file: 'ere/kojo/kojo-k904-fia.js',
-    find: "          // 同组的一整行（#625）\n          const overwhelmed_by_tool =\n            era.get(`tequip:${target}:11`) ||\n            era.get(`tequip:${target}:13`) ||\n            era.get(`tequip:${target}:14`) ||\n            era.get(`tequip:${target}:15`) ||\n            era.get(`tequip:${target}:16`) ||\n            era.get(`tequip:${target}:17`);\n          const overwhelmed_by_pain =\n            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n          await era.print(\n            player_prefix +\n              `${target_name}一边压抑着` +\n              (overwhelmed_by_tool\n                ? '快乐的'\n                : overwhelmed_by_pain\n                  ? '痛苦的'\n                  : '') +\n              `呼吸声，一边努力回应着${master_name}……`,\n          );",
-    replace:
-      '          const overwhelmed_by_tool =\n            era.get(`tequip:${target}:11`) ||\n            era.get(`tequip:${target}:13`) ||\n            era.get(`tequip:${target}:14`) ||\n            era.get(`tequip:${target}:15`) ||\n            era.get(`tequip:${target}:16`) ||\n            era.get(`tequip:${target}:17`);\n          const overwhelmed_by_pain =\n            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n          await era.print(player_prefix + `${target_name}一边压抑着`); // 变异：拆回\n          if (overwhelmed_by_tool) {\n            await era.print(`快乐的`); // 变异：拆回\n          } else if (overwhelmed_by_pain) {\n            await era.print(`痛苦的`); // 变异：拆回\n          }\n          await era.print(`呼吸声，一边努力回应着${master_name}……`); // 变异：拆回',
-    tests: ['kojo-k904-fia'],
-    must_mention: '工具档与前后文落在同一行',
-  },
-  {
-    desc: 'M12835 K904 交谈·PLAYER 前缀与尾段拆回两条（#625）',
-    file: 'ere/kojo/kojo-k904-fia.js',
-    find: '          await era.print(\n            `${player_name}${target_name}一边与${master_name}说着话，一边对着${master_name}露出了重要的地方。`,\n          );',
-    replace:
-      '          await era.print(player_prefix); // 变异：拆回\n          await era.print(\n            `${target_name}一边与${master_name}说着话，一边对着${master_name}露出了重要的地方。`,\n          ); // 变异：拆回',
-    tests: ['kojo-k904-fia'],
-    must_mention: 'PLAYER 前缀与尾段落在同一行',
-  },
-  {
-    desc: 'M12836 K904 死斗场 SC31·武器名拆回四条（#625：武器名又占一行）',
-    file: 'ere/kojo/kojo-k904-fia.js',
-    find: "      await era.printAndWait(\n        `${assi_name}因为` +\n          (assi_has_penis ? '阴茎' : assi_has_toy ? '假阴茎' : '') +\n          `被${target_name}含住而露出了快乐的的表情……`,\n      );",
-    replace:
-      '      await era.print(`${assi_name}因为`); // 变异：拆回\n      if (assi_has_penis) {\n        await era.print(`阴茎`); // 变异：拆回\n      } else if (assi_has_toy) {\n        await era.print(`假阴茎`); // 变异：拆回\n      }\n      await era.printAndWait(\n        `被${target_name}含住而露出了快乐的的表情……`,\n      ); // 变异：拆回',
-    tests: ['kojo-k904-fia'],
-    must_mention: '武器名与前后文落在同一行',
-  },
-  {
-    desc: 'M12837 K904 死斗场 SC21·武器名拆回四条（#625）',
-    file: 'ere/kojo/kojo-k904-fia.js',
-    find: "      await era.printAndWait(\n        `${assi_name}一边听着悲鸣，一边用` +\n          (assi_has_penis ? '肉棒' : assi_has_toy ? '假阴茎' : '') +\n          `毫不留情的继续蹂躏着${target_name}的腔内……`,\n      );",
-    replace:
-      '      await era.print(`${assi_name}一边听着悲鸣，一边用`); // 变异：拆回\n      if (assi_has_penis) {\n        await era.print(`肉棒`); // 变异：拆回\n      } else if (assi_has_toy) {\n        await era.print(`假阴茎`); // 变异：拆回\n      }\n      await era.printAndWait(`毫不留情的继续蹂躏着${target_name}的腔内……`); // 变异：拆回',
-    tests: ['kojo-k904-fia'],
-    must_mention: '武器名与前后文落在同一行',
-  },
-  {
-    desc: 'M12838 K904 死斗场 SC27·武器名拆回四条（#625）',
-    file: 'ere/kojo/kojo-k904-fia.js',
-    find: "      await era.printAndWait(\n        `${assi_name}一边听着悲鸣，一边用` +\n          (assi_has_penis ? '肉棒' : assi_has_toy ? '假阴茎' : '') +\n          `毫不留情的继续蹂躏着${target_name}的肛门……`,\n      );",
-    replace:
-      '      await era.print(`${assi_name}一边听着悲鸣，一边用`); // 变异：拆回\n      if (assi_has_penis) {\n        await era.print(`肉棒`); // 变异：拆回\n      } else if (assi_has_toy) {\n        await era.print(`假阴茎`); // 变异：拆回\n      }\n      await era.printAndWait(`毫不留情的继续蹂躏着${target_name}的肛门……`); // 变异：拆回',
-    tests: ['kojo-k904-fia'],
-    must_mention: '武器名与前后文落在同一行',
-  },
-  {
-    desc: 'M12839 K904 褒美请求·兽名拆回三条（#625：空首尾又各占一行）',
-    file: 'ere/kojo/kojo-k904-fia.js',
-    find: '    await era.printAndWait(beast_word);',
-    replace:
-      "    await era.print(''); // 变异：拆回\n    await era.print(beast_word); // 变异：拆回\n    await era.printAndWait(''); // 变异：拆回",
-    tests: ['kojo-k904-fia'],
-    must_mention: '空首尾不再各占一行',
-  },
-  {
     desc: 'M12840 K13 正常位恳求·三档拆回多条（#625：恳求段又占一行）',
     file: 'ere/kojo/kojo-k13-protector.js',
     find: '            await era.printAndWait(\n              `「亲爱的…请原谅……` +\n                (rand_n(3) == 0\n                  ? `啊啊啊…`\n                  : rand_n(2) == 0\n                    ? `不行…`\n                    : `噫噫…`) +\n                `${heart(3)}」`,\n            );',
@@ -24875,15 +24761,6 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '自己扒开二次各档推进 CFLAG:308 自身',
   },
   {
-    desc: 'M13323 K904 自己扒开二次写回胸爱抚 CFLAG:306（#654）',
-    file: 'ere/kojo/kojo-k904-fia.js',
-    find: '        // CFLAG:308  = 5（变量语义：CFLAG 族，308）\n        chara(target).kojo.自己扒开 = 5;',
-    replace:
-      '        // CFLAG:308  = 5（变量语义：CFLAG 族，308）\n        chara(target).kojo.胸爱抚 = 5; // 变异：回退误写 306',
-    tests: ['kojo-k904-fia'],
-    must_mention: '自己扒开二次各档推进 CFLAG:308 自身',
-  },
-  {
     desc: 'M13324 K7 屈服刻印 Lv2 台词结尾双引号回归（#654）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: '      `「啊啊啊…真想早点从这里逃走，回到狂王大人温暖的怀抱里去，那才叫心情舒畅！」`,',
@@ -25446,15 +25323,6 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '侍奉精神Lv3以上档不再要求爱慕',
   },
   {
-    desc: 'M13680 K904 SELECTCOM:30 手淫侍奉精神档回退加回 TALENT:85（#688 补查）',
-    file: 'ere/kojo/kojo-k904-fia.js',
-    find: '      } else if (\n        era.get(`abl:${target}:16`) >= 3 &&\n        (chara(target).kojo.手淫 <= 2 || game.kojo.口上开关 == 2)',
-    replace:
-      '      } else if (\n        era.get(`talent:${target}:85`) == 1 &&\n        era.get(`abl:${target}:16`) >= 3 &&\n        (chara(target).kojo.手淫 <= 2 || game.kojo.口上开关 == 2)',
-    tests: ['kojo-k904-fia'],
-    must_mention: '侍奉精神Lv3以上档不再要求爱慕',
-  },
-  {
     desc: 'M13681 K19 SELECTCOM:19 肛珠五档档位回退误读尻穴狂（#688 补查）',
     file: 'ere/kojo/kojo-k19-fia.js',
     find: '      } else if (\n        era.get(`talent:${target}:85`) == 1 &&\n        era.get(`abl:${target}:3`) >= 3 &&\n        (chara(target).kojo.肛珠 <= 4 || game.kojo.口上开关 == 2)',
@@ -25464,30 +25332,12 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '尻穴狂档（TALENT:77）不再叠加淫乱要求',
   },
   {
-    desc: 'M13682 K904 SELECTCOM:19 肛珠五档档位回退误读尻穴狂（#688 补查）',
-    file: 'ere/kojo/kojo-k904-fia.js',
-    find: '      } else if (\n        era.get(`talent:${target}:85`) == 1 &&\n        era.get(`abl:${target}:3`) >= 3 &&\n        (chara(target).kojo.肛珠 <= 4 || game.kojo.口上开关 == 2)',
-    replace:
-      '      } else if (\n        era.get(`talent:${target}:85`) == 1 &&\n        era.get(`talent:${target}:77`) == 1 &&\n        (chara(target).kojo.肛珠 <= 4 || game.kojo.口上开关 == 2)',
-    tests: ['kojo-k904-fia'],
-    must_mention: '尻穴狂档（TALENT:77）不再叠加淫乱要求',
-  },
-  {
     desc: 'M13683 K19 SELF_KOJO 调教后自慰尻穴狂档回退叠回淫乱（#688 补查）',
     file: 'ere/kojo/kojo-k19-fia.js',
     find: '      } else if (\n        era.get(`talent:${target}:77`) == 1 &&\n        (chara(target).kojo.调教后自慰 <= 4 || game.kojo.口上开关 == 2)',
     replace:
       '      } else if (\n        era.get(`talent:${target}:76`) == 1 &&\n        era.get(`talent:${target}:77`) == 1 &&\n        (chara(target).kojo.调教后自慰 <= 4 || game.kojo.口上开关 == 2)',
     tests: ['kojo-k19-fia'],
-    must_mention: '尻穴狂档（TALENT:77）不再叠加淫乱要求',
-  },
-  {
-    desc: 'M13684 K904 SELF_KOJO 调教后自慰尻穴狂档回退叠回淫乱（#688 补查）',
-    file: 'ere/kojo/kojo-k904-fia.js',
-    find: '      } else if (\n        era.get(`talent:${target}:77`) == 1 &&\n        (chara(target).kojo.调教后自慰 <= 4 || game.kojo.口上开关 == 2)',
-    replace:
-      '      } else if (\n        era.get(`talent:${target}:76`) == 1 &&\n        era.get(`talent:${target}:77`) == 1 &&\n        (chara(target).kojo.调教后自慰 <= 4 || game.kojo.口上开关 == 2)',
-    tests: ['kojo-k904-fia'],
     must_mention: '尻穴狂档（TALENT:77）不再叠加淫乱要求',
   },
   // —— #711：K15 暗器菜单的纯文本选项改按钮 ——
@@ -26108,5 +25958,57 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     replace: '      chara(arg).dungeon.凌辱畏怖计数 = 1; // 变异：首次不清零',
     tests: ['kojo-dungeon-ravish'],
     must_mention: '第 1 场：首次记忆，计数 0',
+  },
+  // —— #858：菲娅 K19 迁成口上子类，K904 改为继承 K19（差异只剩三处） ——
+  {
+    desc: 'M18517 K19 的 EVENTEND NORMAL 接线漏掉（handle_end 不接，调教结束口上永久失声）（#858）',
+    file: 'ere/kojo/kojo-k19-fia.js',
+    find: '    on(EVENT.END, () => handle_end(this));\n',
+    replace: '    // 变异：EVENTEND NORMAL 不接\n',
+    tests: ['event-handlers'],
+    must_mention: 'EVENTEND 注册条数与装配表不一致',
+  },
+  {
+    desc: 'M18518 K19 的口上素质读错格（TALENT:179 改 178：K19 永远不认为自己是本口上）（#858）',
+    file: 'ere/kojo/kojo-k19-fia.js',
+    find: '    return era.get(`talent:${target}:179`) == 1;',
+    replace:
+      '    return era.get(`talent:${target}:178`) == 1; // 变异：素质错格',
+    tests: ['kojo-k19-fia', 'kojo-classes-k19-k904'],
+    must_mention: 'K19 认 TALENT:179',
+  },
+  {
+    desc: 'M18519 K19 的指令分支体不转交本体（select_com 直接返回 0：整段指令口上失声）（#858）',
+    file: 'ere/kojo/kojo-k19-fia.js',
+    find: '  async select_com(...args) {\n    return kojo_message_com_19(...args);',
+    replace:
+      '  async select_com(...args) {\n    return 0; // 变异：指令分支不转交',
+    tests: ['kojo-k19-fia', 'kojo-classes-k19-k904'],
+    must_mention: '爱抚计数推进到 1',
+  },
+  {
+    desc: 'M18520 K19 的语尾钩子不转交本体（gobi_koujo 返回空串）（#858）',
+    file: 'ere/kojo/kojo-k19-fia.js',
+    find: '  async gobi_koujo(...args) {\n    return gobi_koujo_k19(...args);',
+    replace:
+      "  async gobi_koujo(...args) {\n    return ''; // 变异：语尾不转交",
+    tests: ['kojo-k19-fia', 'kojo-classes-k19-k904'],
+    must_mention: '语尾返回文字',
+  },
+  {
+    desc: 'M18521 K19 的 EVENTEND #LATER 接线漏掉（存在标志不清，下一次调教混用）（#858）',
+    file: 'ere/kojo/kojo-k19-fia.js',
+    find: '    on(EVENT.END, () => handle_end_later(this), TIER.LATER);\n',
+    replace: '    // 变异：EVENTEND #LATER 不接\n',
+    tests: ['kojo-k19-fia', 'kojo-classes-k19-k904', 'event-handlers'],
+    must_mention: 'EVENTEND 注册条数与装配表不一致',
+  },
+  {
+    desc: 'M18522 K904 注册进工厂时退回父类（三处差异全丢：素质、存在标志、语尾）（#858）',
+    file: 'ere/kojo/kojo-k904-fia.js',
+    find: 'register_kojo(904, KojoK904);',
+    replace: 'register_kojo(904, KojoK19); // 变异：K904 退回父类',
+    tests: ['kojo-k19-fia', 'kojo-classes-k19-k904'],
+    must_mention: '只有本套素质在身时才响',
   },
 ];

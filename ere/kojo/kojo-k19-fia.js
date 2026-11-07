@@ -4,6 +4,17 @@
  *
  * museum_koujo_k19 不按博物馆口上编号分派：固定输出求慰台词（爱慕时）与低头正文。
  * 单人结局口上未实现，不凭空补写。
+ *
+ * == 口上子类与 K904（#858） ==
+ *
+ * 文件末尾的 KojoK19 是口上基类（`ere/kojo/kojo-base.js`）的子类：钩子各自转交
+ * 本文件的口上本体，注册进工厂后由 `run_kojo` 取实例执行。台词本体没有搬家
+ * （#891/#892 迁 .kojo 时整体替换），本票只把「K19 在哪个时机说话」收成一张清单。
+ *
+ * 同一套台词还有第二个入口：K904（`ere/kojo/kojo-k904-fia.js`）继承本类，只有
+ * 三处与 K19 不同——本口上素质、存在标志、语尾文字。差异点收成类上的
+ * `is_own_kojo()` / `mark_present()` 与钩子 `gobi_koujo()`，K904 逐处覆盖，其余
+ * 一律继承：两套口上的正文逐字相同（迁移前是两份复制品），改一处两边一起改。
  */
 
 'use strict';
@@ -17,6 +28,8 @@ const {
 } = require('#/event/event-aftertrain');
 const era_flag = require('#/era-utils/era-flag');
 const { heart, self_call } = require('#/kojo/kojo-text');
+const { KojoBase } = require('#/kojo/kojo-base');
+const { get_kojo, register_kojo } = require('#/kojo/kojo-factory');
 const { gobi_text } = require('#/data/gobi-koujo-const');
 const { EVENT } = require('#/data/event-name-const');
 const {
@@ -27,7 +40,6 @@ const {
   benki_koujo_family,
   dungeon_victory_family,
   dungeon_attack_family,
-  adapt_legacy_ntr_koujo,
   ntr_koujo_family,
   exucution_koujo_family,
   museum_koujo_family,
@@ -62,10 +74,10 @@ const era0 = (key) => era.get(key) || 0;
 // TFLAG:899 = 失神状态。
 
 // EVENTTRAIN #PRI 档
-async function handle_train_pri() {
+async function handle_train_pri(self) {
   // #PRI（事件优先级修饰符，JS 侧用 on() 的 TIER 表达）
-  // FLAG:119  = 1（变量语义：FLAG 族，119）
-  game.kojo.口上存在_19 = 1;
+  // 存在标志落在哪个变量上随口上号走：K19 是 FLAG:119，K904 是 EX_FLAG:104
+  self.mark_present(1);
   if (game.kojo.口上开关 == 0) {
     // FLAG:7  = 2（变量语义：FLAG 族，7）
     game.kojo.口上开关 = 2;
@@ -73,14 +85,13 @@ async function handle_train_pri() {
 }
 
 // EVENTEND #LATER 档
-async function handle_end_later() {
+async function handle_end_later(self) {
   // #LATER（事件优先级修饰符，JS 侧用 on() 的 TIER 表达）
-  // FLAG:119  = 0（变量语义：FLAG 族，119）
-  game.kojo.口上存在_19 = 0;
+  self.mark_present(0);
 }
 
 // EVENTTRAIN NORMAL 档
-async function handle_train() {
+async function handle_train(self) {
   const target = era_flag.target;
   const target_name = chara_callname(target); // %SAVESTR:TARGET%
   const master_name = chara_callname(0); // %SAVESTR:MASTER%
@@ -88,7 +99,7 @@ async function handle_train() {
   if (game.kojo.口上开关 <= 0) {
     return 0;
   }
-  if (era.get(`talent:${target}:179`) != 1) {
+  if (!self.is_own_kojo(target)) {
     return 0;
   }
 
@@ -926,7 +937,7 @@ async function k19_fuku() {
 }
 
 // EVENTEND NORMAL 档
-async function handle_end() {
+async function handle_end(self) {
   const target = era_flag.target;
   const target_name = chara_callname(target); // %SAVESTR:TARGET%
   const master_name = chara_callname(0); // %SAVESTR:MASTER%
@@ -934,7 +945,7 @@ async function handle_end() {
   if (game.kojo.口上开关 <= 0) {
     return 0;
   }
-  if (era.get(`talent:${target}:179`) != 1) {
+  if (!self.is_own_kojo(target)) {
     return 0;
   }
 
@@ -9348,30 +9359,204 @@ function gobi_koujo_k19(arg0, rand) {
   return gobi_text(19, arg0, rand);
 }
 
-ryouzyoku_kojo_family.register(19, dungeon_ryouzyoku_k19);
-ryouzyoku_after_kojo_family.register(19, dungeon_ryouzyoku_after_k19);
-benki_koujo_family.register(19, benki_koujo_k19);
-dungeon_victory_family.register(19, dungeon_victory_k19);
-dungeon_attack_family.register(19, dungeon_attack_k19);
-ntr_koujo_family.register(19, adapt_legacy_ntr_koujo(ntr_koujo_k19));
-exucution_koujo_family.register(19, exucution_koujo_k19);
-museum_koujo_family.register(19, museum_koujo_k19);
-banishment_koujo_family.register(19, banishment_koujo_k19);
-public_exucution_koujo_family.register(19, public_exucution_koujo_k19);
-grotesque_koujo_family.register(19, grotesque_koujo_k19);
-enterenemy_koujo_family.register(19, enterenemy_koujo_k19);
-gohoubi_request_koujo_family.register(19, gohoubi_request_koujo_k19);
-gohoubi_after_koujo_family.register(19, (cid, choice) =>
-  gohoubi_after_koujo_k19(undefined, cid, choice),
+/**
+ * 菲娅旧口上 K19 的口上子类（#858，与 KojoK5 同款：钩子各自转交本文件的口上
+ * 本体）。
+ *
+ * 每个钩子都是**一行转交、实参原样透传**：迁移前族注册的第二参就是这些本体
+ * （`self_kojo_family.register(19, self_kojo_k19)` 之类），所以调用形状与台词
+ * 本体一字未动。本类因此成了「K19 在哪些时机说话」的唯一清单。
+ *
+ * == 本类同时是 K904 的父类 ==
+ *
+ * K19 与 K904 是同一套台词的两个入口，只差三处。差异点收成下面三个成员，
+ * K904 逐处覆盖、其余一律继承：
+ *
+ *   - `is_own_kojo(target)`：目标身上挂着本口上的素质吗（K19 = TALENT:179）；
+ *   - `mark_present(value)`：事件链上的口上存在标志（K19 = FLAG:119）；
+ *   - `gobi_koujo(arg0, rand)`：语尾文字取常量表的哪一行（K19 = 19 号行）。
+ *
+ * 这三处迁移前是**同一段逻辑写了两遍、只换了地址**：存在标志写入、素质判等、
+ * 语尾取行。合并后只剩一份逻辑与各自的地址，改一处两边一起改。
+ *
+ * == 头部检查为什么不挪进 header_checks() ==
+ *
+ * 与 K5 同理：七道检查（助手调教 / 口塞 / 失神 / 兽奸 / 触手 / 死斗场 / 崩坏，
+ * 顺序见 `kojo_message_com_19` 头部）留在本体内，存量用例直调该函数来驱动检查
+ * 本身。钩子只是外壳：检查顺序与结果与迁移前一致。
+ */
+class KojoK19 extends KojoBase {
+  /**
+   * 目标角色身上挂着本口上的素质吗。
+   * @param {number} target 目标角色号
+   * @returns {boolean} true = 这套口上归目标角色
+   */
+  is_own_kojo(target) {
+    return era.get(`talent:${target}:179`) == 1;
+  }
+
+  /**
+   * 本口上的存在标志（EVENTTRAIN 置 1、EVENTEND 清 0；为 0 时指令口上不分发）。
+   * @param {number} value 1 = 存在，0 = 清
+   */
+  mark_present(value) {
+    game.kojo.口上存在_19 = value;
+  }
+
+  /** 指令分支体（七道头部检查在本体内，见类注释） */
+  async select_com(...args) {
+    return kojo_message_com_19(...args);
+  }
+
+  async kojo_message_palamcng(...args) {
+    return kojo_message_palamcng_19(...args);
+  }
+
+  async kojo_message_markcng(...args) {
+    return kojo_message_markcng_19(...args);
+  }
+
+  async self_kojo(...args) {
+    return self_kojo_k19(...args);
+  }
+
+  async benki_koujo(...args) {
+    return benki_koujo_k19(...args);
+  }
+
+  async dungeon_victory(...args) {
+    return dungeon_victory_k19(...args);
+  }
+
+  async dungeon_attack(...args) {
+    return dungeon_attack_k19(...args);
+  }
+
+  async dungeon_ryouzyoku(...args) {
+    return dungeon_ryouzyoku_k19(...args);
+  }
+
+  async dungeon_ryouzyoku_after(...args) {
+    return dungeon_ryouzyoku_after_k19(...args);
+  }
+
+  /** 本体收旧引擎的全局 P 而不是随机源（族注册原先经 adapt_legacy_ntr_koujo 换算） */
+  async ntr_koujo(rand, p) {
+    return ntr_koujo_k19(p ?? rand);
+  }
+
+  async exucution_koujo(...args) {
+    return exucution_koujo_k19(...args);
+  }
+
+  async museum_koujo(...args) {
+    return museum_koujo_k19(...args);
+  }
+
+  async banishment_koujo(...args) {
+    return banishment_koujo_k19(...args);
+  }
+
+  async public_exucution_koujo(...args) {
+    return public_exucution_koujo_k19(...args);
+  }
+
+  async grotesque_koujo(...args) {
+    return grotesque_koujo_k19(...args);
+  }
+
+  async enterenemy_koujo(...args) {
+    return enterenemy_koujo_k19(...args);
+  }
+
+  async gohoubi_request_koujo(...args) {
+    return gohoubi_request_koujo_k19(...args);
+  }
+
+  /** 本体沿用迁移时的三参形状（第一个实参是旧引擎的全局随机源，已不用） */
+  async gohoubi_after_koujo(cid, choice) {
+    return gohoubi_after_koujo_k19(undefined, cid, choice);
+  }
+
+  /** 同上，史拼 osioki 沿旧址 */
+  async osioski_koujo(cid, choice) {
+    return osioki_koujo_k19(undefined, cid, choice);
+  }
+
+  async gobi_koujo(...args) {
+    return gobi_koujo_k19(...args);
+  }
+
+  /**
+   * 本口上在事件链上的四处接线：EVENTTRAIN 的 #PRI / NORMAL 档、EVENTEND 的
+   * #LATER / NORMAL 档（见 system/flow/startup.js 的装配表）。处理器本体在本文件
+   * 顶层，`self` 只用来取上面两个差异点。
+   */
+  register_events() {
+    on(EVENT.TRAIN, () => handle_train_pri(this), TIER.PRI);
+    on(EVENT.END, () => handle_end_later(this), TIER.LATER);
+    on(EVENT.TRAIN, () => handle_train(this));
+    on(EVENT.END, () => handle_end(this));
+  }
+}
+
+// 口上族接入：本文件每个**有分发路径**的真身都要在下面登记一处（顺序照
+// kojo-system.js 的分发表）；漏一处 = 玩家侧看到占位行或不响。范围与接入由
+// test/kojo-register-coverage.test.js 的「有本体必有注册」契约锁守。
+//
+// #858 起 K19 进工厂：`run_kojo` 走工厂实例的钩子，下面这些族注册是过渡期的旧
+// 入口（存量测试与「有本体必有注册」契约锁直调），一律转发到同一个实例
+// ——两处都经 KojoK19。#855–#858 迁完后随族一起删。
+register_kojo(19, KojoK19);
+const kojo_k19 = get_kojo(19);
+ryouzyoku_kojo_family.register(19, (...args) =>
+  kojo_k19.dungeon_ryouzyoku(...args),
 );
-osioski_koujo_family.register(19, (cid, choice) =>
-  osioki_koujo_k19(undefined, cid, choice),
+ryouzyoku_after_kojo_family.register(19, (...args) =>
+  kojo_k19.dungeon_ryouzyoku_after(...args),
 );
-gobi_koujo_family.register(19, gobi_koujo_k19);
-kojo_message_com_family.register(19, kojo_message_com_19);
-kojo_message_palamcng_family.register(19, kojo_message_palamcng_19);
-kojo_message_markcng_family.register(19, kojo_message_markcng_19);
-self_kojo_family.register(19, self_kojo_k19);
+benki_koujo_family.register(19, (...args) => kojo_k19.benki_koujo(...args));
+dungeon_victory_family.register(19, (...args) =>
+  kojo_k19.dungeon_victory(...args),
+);
+dungeon_attack_family.register(19, (...args) =>
+  kojo_k19.dungeon_attack(...args),
+);
+ntr_koujo_family.register(19, (...args) => kojo_k19.ntr_koujo(...args));
+exucution_koujo_family.register(19, (...args) =>
+  kojo_k19.exucution_koujo(...args),
+);
+museum_koujo_family.register(19, (...args) => kojo_k19.museum_koujo(...args));
+banishment_koujo_family.register(19, (...args) =>
+  kojo_k19.banishment_koujo(...args),
+);
+public_exucution_koujo_family.register(19, (...args) =>
+  kojo_k19.public_exucution_koujo(...args),
+);
+grotesque_koujo_family.register(19, (...args) =>
+  kojo_k19.grotesque_koujo(...args),
+);
+enterenemy_koujo_family.register(19, (...args) =>
+  kojo_k19.enterenemy_koujo(...args),
+);
+gohoubi_request_koujo_family.register(19, (...args) =>
+  kojo_k19.gohoubi_request_koujo(...args),
+);
+gohoubi_after_koujo_family.register(19, (...args) =>
+  kojo_k19.gohoubi_after_koujo(...args),
+);
+osioski_koujo_family.register(19, (...args) => kojo_k19.osioski_koujo(...args));
+gobi_koujo_family.register(19, (...args) => kojo_k19.gobi_koujo(...args));
+kojo_message_com_family.register(19, (...args) =>
+  kojo_k19.kojo_message_com(...args),
+);
+kojo_message_palamcng_family.register(19, (...args) =>
+  kojo_k19.kojo_message_palamcng(...args),
+);
+kojo_message_markcng_family.register(19, (...args) =>
+  kojo_k19.kojo_message_markcng(...args),
+);
+self_kojo_family.register(19, (...args) => kojo_k19.self_kojo(...args));
 
 // #625：colosseum_kojo_19 在 kojo_message_com_19 里的调用点位于助手检查之后，
 // 带助手时运行时走不到它；导出只为行为测试能直接调用这具真身。
@@ -9380,10 +9565,7 @@ self_kojo_family.register(19, self_kojo_k19);
  * 注册（模块装载本身不注册，装配顺序见该文件）。
  */
 function register() {
-  on(EVENT.TRAIN, handle_train_pri, TIER.PRI);
-  on(EVENT.END, handle_end_later, TIER.LATER);
-  on(EVENT.TRAIN, handle_train);
-  on(EVENT.END, handle_end);
+  kojo_k19.register_events();
 }
 
-module.exports = { register, colosseum_kojo_19 };
+module.exports = { register, KojoK19, colosseum_kojo_19 };
