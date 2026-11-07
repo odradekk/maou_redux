@@ -514,22 +514,21 @@ function defence_chara_extra_dmg(arg0, dmg, rand) {
 
 /**
  * 防御侧选择（enemy_attack 与 slave_monster_attack 的同构段）：扫三列
- * 数量槽，返回首个存活列。
+ * 数量槽，返回首个存活列；三列全空返回 -1。
  *
- * 返回值照样是「列头 + 扫描终值」两个量：#883 把列头换成列号，`b` 仍按旧
- * 写法给出等价的值（列头 + 99，全灭时 300）——调用方的 `b >= 400` 因此
- * 照旧永假、全灭时带着列号 -1 继续算。这条判据本身是缺陷（REPEAT 3 的终值
- * 最多 300），但修它属于行为变更，不并入「换个容器」这张票。
- * @returns {{column: number, b: number}} column = 列号（全灭 -1），
- *   b = 旧写法的扫描终值（只在上面那条永不成立的判据里被读）
+ * 「全灭」不在这里判：三列全空时 -1 只是「没有可打的列」的回落，读取方按
+ * battle_column 的越界规则拿到全 0 列，战斗不会中断。结束战斗的全灭判定由
+ * death_check 在同一回合末尾给出（它扫同样的三列、打印同一句文案、返回胜利），
+ * monster_attack 另有自己的存活计数——两处都是能命中的写法。
+ * @returns {number} 列号（三列全空时 -1）
  */
 function pick_defender_column() {
   for (let column = 0; column < 3; column += 1) {
     if (battle_column(column).count > 0) {
-      return { column, b: column * 100 + 99 };
+      return column;
     }
   }
-  return { column: -1, b: 300 }; // 全灭（column 无意义）
+  return -1; // 三列全空：没有可打的列
 }
 
 /**
@@ -537,7 +536,7 @@ function pick_defender_column() {
  * @param {number} arg0 勇者（A/TARGET 随之）
  * @param {number} arg1 先后手（0 先手 / 1 后手 / 2 先制）
  * @param {(n: number) => number} rand RAND:N 随机源
- * @returns {Promise<number>} 0 = 通常 / 1 = 怪物（列）全灭 /
+ * @returns {Promise<number>} 0 = 通常 /
  *   999 = 战斗中断（MAGIC 的 target_type 1 分支产物，当前战斗恒 0）
  */
 async function enemy_attack(arg0, arg1, rand, move_ctx = {}) {
@@ -559,17 +558,7 @@ async function enemy_attack(arg0, arg1, rand, move_ctx = {}) {
   }
 
   // 防御侧の防御力を算出
-  const { column: c, b: scan_b } = pick_defender_column();
-  // 全滅時（B >= 400）——**保留**：扫描终值最多 300，这一支当前判不到，
-  // 但它就是 pick_defender_column 那条缺陷的落点（阈值 400 对不上终值 300，
-  // 见该函数注释），缺陷修好之前删掉它只会让修的时候再写一遍（#954）
-  if (scan_b >= 400) {
-    if ((settings & 32) !== 0) {
-      era.print('负责防御的怪物全灭了………');
-      await era.waitAnyKey();
-    }
-    return 1;
-  }
+  const c = pick_defender_column();
 
   // B = C; CALL magic,1; C = B（magic 可重定向目标列——dungeon.js 转发不动目标）
   let target_column = c;
@@ -882,16 +871,7 @@ async function slave_monster_attack(rand) {
   }
 
   // 防御侧选择（同 ENEMY_ATTACK）
-  const { column: c, b: scan_b } = pick_defender_column();
-  if (scan_b >= 400) {
-    // 全滅時——保留，同 ENEMY_ATTACK 那支：判据的阈值与扫描终值对不上，
-    // 缺陷修好之前这处是它的落点（#954）
-    if ((settings & 32) !== 0) {
-      era.print('负责防御的怪物全灭了………');
-      await era.waitAnyKey();
-    }
-    return 1;
-  }
+  const c = pick_defender_column();
 
   // 个体防御与群防御（boss 时 RAND:(Y*30)）
   const target = battle_column(c);

@@ -443,6 +443,101 @@ test('death_check：怪物全灭 → RETURN 1（胜利）；健在 → 0（继�
   assert.equal(await b.death_check(1), 0, '有存活怪物 → 继续');
 });
 
+// —— 防御侧选列（#936：永假的全灭守卫已删，全灭由 death_check 判）——
+//
+// pick_defender_column 不导出，从两个调用方的可观察结果反推它选了哪一列：
+// enemy_attack 把列号透传给 magic，slave_monster_attack 直接打那一列。
+
+const DEFENCE_LINES = ['DEFENSE_1', 'DEFENSE_2', 'DEFENSE_3'];
+
+/** 三列数量按 counts 摆好后跑一次 enemy_attack，回 magic 收到的目标列 */
+async function probe_enemy_attack_column(counts) {
+  const fixture = setup_world();
+  const magic_mod = load(fixture, 'system/dungeon/magic');
+  let column = 'not-called';
+  magic_mod.magic = async (_type, _user, target_column) => {
+    column = target_column;
+    return 999; // 战斗链短路：本用例只观察到选列为止
+  };
+  const battle = load(fixture, 'system/dungeon/dungeon-battle');
+  counts.forEach((n, i) => {
+    fixture.battle(DEFENCE_LINES[i]).id = 100 + i;
+    fixture.battle(DEFENCE_LINES[i]).count = n;
+  });
+  fixture.store.set('flag:5', 32); // 演出开关：守卫若命中会打印全灭文案
+  await battle.enemy_attack(1, 0, () => 0);
+  return { column, fixture };
+}
+
+test('enemy_attack：防御侧取首个非空列，三列全空落到越界列（不报全灭）', async () => {
+  const three = await probe_enemy_attack_column([3, 2, 1]);
+  assert.equal(three.column, 0, '三列都有怪 → 第 1 列');
+
+  const skip_first = await probe_enemy_attack_column([0, 2, 1]);
+  assert.equal(skip_first.column, 1, '第 1 列空 → 第 2 列');
+
+  const only_last = await probe_enemy_attack_column([0, 0, 1]);
+  assert.equal(only_last.column, 2, '前两列空 → 第 3 列');
+
+  const wiped = await probe_enemy_attack_column([0, 0, 0]);
+  assert.equal(
+    wiped.column,
+    -1,
+    '三列全空 → 越界列号 -1（battle_column 回落全 0 列）',
+  );
+  assert.equal(
+    wiped.fixture
+      .text_lines()
+      .some((line) => line.includes('负责防御的怪物全灭了')),
+    false,
+    '全灭文案不在这里：结束战斗的判定是同一回合末尾的 death_check',
+  );
+});
+
+test('slave_monster_attack：打首个非空列；三列全空时走「列全灭」杀伤分支', async () => {
+  // 首列空、第 2 列有 4 只：配下 12 点攻击力打穿 10 点防御 → 杀 2 只
+  const fixture = setup_world();
+  const battle = load(fixture, 'system/dungeon/dungeon-battle');
+  fixture.load_module('era-utils/era-flag').target = 1;
+  fixture.store.set('cflag:1:570', 100); // 有配下
+  fixture.store.set('cflag:1:9', 2); // 等级 2：攻击力 = 2 ×（配下攻击 5 + 1）
+  fixture.store.set('flag:5', 32);
+  fixture.store.set('itemname:101', '兽人');
+  fixture.battle('DEFENSE_2').id = 101;
+  fixture.battle('DEFENSE_2').defense = 10;
+  fixture.battle('DEFENSE_2').count = 4;
+  fixture.battle('MINION_A').id = 100;
+  fixture.battle('MINION_A').attack = 5;
+
+  assert.equal(await battle.slave_monster_attack(() => 0), 0, '打穿但没全灭');
+  assert.equal(fixture.battle('DEFENSE_2').count, 2, '打的是第 2 列：4 - 2');
+  assert.equal(fixture.battle('DEFENSE_1').count, 0, '第 1 列没被碰');
+  assert.equal(
+    fixture
+      .text_lines()
+      .some((line) => line.includes('破坏') && line.includes('兽人')),
+    true,
+    '演出念的是第 2 列的怪物名',
+  );
+
+  // 三列全空：没有可打的列，照旧按 z <= 0 的全灭杀伤分支收尾
+  const empty = setup_world();
+  const battle2 = load(empty, 'system/dungeon/dungeon-battle');
+  empty.load_module('era-utils/era-flag').target = 1;
+  empty.store.set('cflag:1:570', 100);
+  empty.store.set('cflag:1:9', 2);
+  empty.store.set('flag:5', 32);
+  empty.battle('MINION_A').id = 100;
+  empty.battle('MINION_A').attack = 5;
+
+  assert.equal(await battle2.slave_monster_attack(() => 0), 1, '列全灭');
+  assert.equal(
+    empty.text_lines().some((line) => line.includes('负责防御的怪物全灭了')),
+    false,
+    '「负责防御的怪物全灭了」是删掉的守卫的文案，不该出现在这里',
+  );
+});
+
 // —— death_check2 战败分支 ——
 
 test('death_check2：勇者 HP <= 0 用尽 → RETURN 2 且 CFLAG:1 = 0', () => {
