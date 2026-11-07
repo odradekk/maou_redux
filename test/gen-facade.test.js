@@ -449,6 +449,8 @@ test('tequip 不进一维门面：JS 侧是三段寻址，按一维切会写错�
   assert.ok(!text.includes("era.get('tequip:"));
 });
 
+// kojo-k904-fia.js 不在名单里：#858 起它只是 KojoK19 的子类（三处差异），
+// 台词与状态机都在 kojo-k19-fia.js，本检查对它已无可检查的内容。
 test('口上样本里已有门面的读写不再拼 era.get/set 字符串', () => {
   for (const file of [
     'kojo-k3-noble.js',
@@ -463,7 +465,6 @@ test('口上样本里已有门面的读写不再拼 era.get/set 字符串', () =
     'kojo-k12-intellectual.js',
     'kojo-k903-garde.js',
     'kojo-k19-fia.js',
-    'kojo-k904-fia.js',
   ]) {
     const text = fs.readFileSync(
       path.join(REPO_ROOT, 'ere', 'kojo', file),

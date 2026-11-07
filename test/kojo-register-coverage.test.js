@@ -45,8 +45,11 @@
  *
  * == 三道核对（静态两道 + 运行期一道） ==
  *   1. 静态：源码里的「定义」与「注册」对照；
- *   2. 静态：**每族的注册号数与本体条数必须相等**（下一节）；
- *   3. 运行期：装载主启动图后，每个本体都必须能从**该族的实例**上 `has` 到。
+ *   2. 静态：**每族的注册号数 = 本体条数 + 由工厂承接的号数**（下一节）。
+ *      「由工厂承接」= 该文件 `register_kojo(N, Ctor)` 声明过、且本文件没有
+ *      `前缀N` 本体（#858 起 K904 继承 K19，904 号没有自己的本体）；
+ *   3. 运行期：装载主启动图后，每个本体都必须能从**该族的实例**上 `has` 到，
+ *      且每个声明进工厂的号都能从工厂取到口上对象。
  *      静态那层只证明源码里有一行 register，证明不了它落到了运行中的那个族
  *      实例上——#403 出过同一族名两个实例、一边的注册永远分不到的事故。
  *
@@ -149,6 +152,29 @@ for (const name of KOJO_FILES) {
     FAMILY_MODULE.set(m[1], `kojo/${name.replace(/\.js$/, '')}`);
   }
 }
+
+/**
+ * 各文件声明进工厂的口上号（`register_kojo(N, Ctor)`）。
+ *
+ * 这些号由口上类承接，本文件**没有独立的本体函数**：族注册只是转发到工厂实例的
+ * 过渡入口（#854 起）。#858 的 K904 更极端——它继承 K19，连差异那三处都是类方法
+ * 而不是 `xxx_904` 本体，所以它的 904 号永远扫不到本体。
+ *
+ * 豁免按「文件 + 号」记账，不按号全局豁免：另一个文件注册同一个号却写不出本体，
+ * 照旧红。第 4 道运行期核对会再确认这些号在工厂里真有对象。
+ * @type {Map<string, Set<number>>}
+ */
+const FACTORY_IDS = new Map(
+  KOJO_FILES.map((name) => {
+    const ids = new Set();
+    for (const m of STRIPPED.get(name).matchAll(
+      /register_kojo\(\s*(\d+)\s*,/g,
+    )) {
+      ids.add(Number(m[1]));
+    }
+    return [name, ids];
+  }),
+);
 
 /** ere/ 全体源码一份，供 `.call(` 扫描（口上族的调用点不限于 kojo 目录） */
 function all_ere_source() {
@@ -361,14 +387,26 @@ test('每族的注册号数与扫到的本体条数相等，且注册的第二�
   const problems = [];
   for (const family of [...coverage_cached().keys()].sort()) {
     const ids = new Set();
-    for (const rows of REGISTERS.values()) {
+    /** 该族里「进了工厂、且本文件确实没有本体」的号（#858：K904 继承 K19 的那种） */
+    const factory_only = new Set();
+    const body_ids = new Set(
+      found.filter((row) => row.family === family).map((row) => row.id),
+    );
+    for (const [file, rows] of REGISTERS) {
       for (const row of rows) {
-        if (row.family === family) ids.add(row.id);
+        if (row.family !== family) continue;
+        ids.add(row.id);
+        if (FACTORY_IDS.get(file).has(row.id) && !body_ids.has(row.id)) {
+          factory_only.add(row.id);
+        }
       }
     }
     const bodies_count = found.filter((row) => row.family === family).length;
-    if (ids.size !== bodies_count) {
-      problems.push(`${family} 注册号 ${ids.size} / 本体 ${bodies_count}`);
+    // 每个号要么有一个本体，要么由工厂里的口上类承接——两者都没有才是漏移植
+    if (ids.size !== bodies_count + factory_only.size) {
+      problems.push(
+        `${family} 注册号 ${ids.size} / 本体 ${bodies_count} + 工厂 ${factory_only.size}`,
+      );
     }
     // 第二参必须就是该族该号的本体：`register(2, X_k3)`（号与函数对不上）与
     // `register(2, 别的本体)`（号对、函数错）都当场红。适配器/包装函数（如
@@ -427,5 +465,25 @@ test('主启动图装载后，每个口上本体都能从族实例上取到', ()
     `运行期族实例缺本体（#514）：${missing
       .map((row) => `${row.family}[${row.id}]`)
       .join(', ')}`,
+  );
+});
+
+test('主启动图装载后，声明进工厂的每个号在工厂里都有口上对象', () => {
+  // 上一条只核本体；没有本体的那一侧（#858 起 K904）由工厂承接，这里补上：
+  // register_kojo 写错号、或模块忘了被装配表 require 时，工厂里就取不到它。
+  const fixture = create_era_fixture();
+  fixture.load_module('system/flow/main-loop');
+  const { get_kojo } = fixture.load_module('kojo/kojo-factory');
+  const missing = [];
+  for (const [file, ids] of FACTORY_IDS) {
+    for (const id of ids) {
+      if (get_kojo(id) === null)
+        missing.push(`${file} 的 register_kojo(${id})`);
+    }
+  }
+  assert.deepEqual(
+    missing,
+    [],
+    `工厂里取不到声明过的口上号：${missing.join('，')}`,
   );
 });
