@@ -29,6 +29,12 @@
  * 各函数头），这些档输出空行，不代填台词。
  *
  * SELL_MATURO_K0 成熟出售真身已随 #338 接通。
+ *
+ * == 口上子类（#856） ==
+ *
+ * 文件末尾的 KojoK10 是口上基类（`ere/kojo/kojo-base.js`）的子类：钩子各自转交
+ * 本文件的口上本体，注册进工厂后由 `run_kojo` 取实例执行。台词本体没有搬家
+ * （#891/#892 迁 .kojo 时整体替换），本票只把「K10 在哪个时机说话」收成一张清单。
  */
 
 'use strict';
@@ -37,6 +43,8 @@ const era = require('#/era-electron');
 const { sell_maturo_k0 } = require('#/system/stronghold/sell-maturo-k0');
 const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
+const { KojoBase } = require('#/kojo/kojo-base');
+const { get_kojo, register_kojo } = require('#/kojo/kojo-factory');
 const {
   kojo_message_com_family,
   self_kojo_family,
@@ -11263,30 +11271,171 @@ function gobi_koujo_k10(arg0, rand) {
   return gobi_text(10, arg0, rand);
 }
 
-kojo_message_com_family.register(10, kojo_message_com_10);
-self_kojo_family.register(10, self_kojo_k10);
-kojo_message_palamcng_family.register(10, kojo_message_palamcng_10);
-kojo_message_markcng_family.register(10, kojo_message_markcng_10);
-gohoubi_after_koujo_family.register(10, (cid, choice) =>
-  gohoubi_after_koujo_k10(undefined, cid, choice),
+/**
+ * K10 俱乐部的口上子类（#856：与 KojoK4/K2 同款，钩子各自转交本文件的口上本体）。
+ *
+ * 每个钩子都是一行转交：迁移前族注册的第二参就是这些本体
+ * （`benki_koujo_family.register(10, benki_koujo_k10)` 之类），实参原样透传，
+ * 所以调用形状与台词本体一字未动。奖赏请求 / 奖赏结算后 / 惩罚结算后三处的族
+ * 实参与本体形参位不同，转交时照搬迁移前注册适配器的实参表（本体首个 rand 位
+ * 由调用方留空）。
+ *
+ * 本类因此成了「K10 在哪些时机说话」的唯一清单——没有覆盖的钩子落到基类的默认
+ * 实现（不输出）。兽奸与死斗场两个钩子没有分发入口（由 kojo_message_com_10 的
+ * 头部检查岔入本文件的真身），这里只作声明。
+ *
+ * 头部检查不挪进 header_checks()：K10 的七道检查留在 kojo_message_com_10 体内，
+ * 钩子只做外壳，检查顺序与结果与迁移前一致。
+ */
+class KojoK10 extends KojoBase {
+  /** 指令分支体（七道头部检查在本体内，见上） */
+  async select_com(...args) {
+    return kojo_message_com_10(...args);
+  }
+
+  async kojo_message_palamcng(...args) {
+    return kojo_message_palamcng_10(...args);
+  }
+
+  async kojo_message_markcng(...args) {
+    return kojo_message_markcng_10(...args);
+  }
+
+  async self_kojo(...args) {
+    return self_kojo_k10(...args);
+  }
+
+  /** 兽奸专用；本文件内本地函数，不进分发族（见文件头） */
+  async dog_kojo(...args) {
+    return dog_kojo_10(...args);
+  }
+
+  /** 死斗场专用（由 kojo_message_com_10 的头部检查岔入） */
+  async colosseum_kojo(...args) {
+    return colosseum_kojo_10(...args);
+  }
+
+  async benki_koujo(...args) {
+    return benki_koujo_k10(...args);
+  }
+
+  async dungeon_victory(...args) {
+    return dungeon_victory_k10(...args);
+  }
+
+  async dungeon_attack(...args) {
+    return dungeon_attack_k10(...args);
+  }
+
+  async dungeon_ryouzyoku(...args) {
+    return dungeon_ryouzyoku_k10(...args);
+  }
+
+  async dungeon_ryouzyoku_after(...args) {
+    return dungeon_ryouzyoku_after_k10(...args);
+  }
+
+  async ntr_koujo(...args) {
+    return ntr_koujo_k10(...args);
+  }
+
+  async exucution_koujo(...args) {
+    return exucution_koujo_k10(...args);
+  }
+
+  async museum_koujo(...args) {
+    return museum_koujo_k10(...args);
+  }
+
+  async banishment_koujo(...args) {
+    return banishment_koujo_k10(...args);
+  }
+
+  async public_exucution_koujo(...args) {
+    return public_exucution_koujo_k10(...args);
+  }
+
+  async grotesque_koujo(...args) {
+    return grotesque_koujo_k10(...args);
+  }
+
+  async enterenemy_koujo(...args) {
+    return enterenemy_koujo_k10(...args);
+  }
+
+  /** 族实参只有角色号；本体的随机源位由调用方留空（迁移前的注册适配器同形） */
+  async gohoubi_request_koujo() {
+    return gohoubi_request_koujo_k10();
+  }
+
+  /** 族实参是 (cid, choice)，本体还要随机源在前 */
+  async gohoubi_after_koujo(cid, choice) {
+    return gohoubi_after_koujo_k10(undefined, cid, choice);
+  }
+
+  /** 同上；本体沿用史拼 osioki_koujo_k10（钩子名按基类） */
+  async osioski_koujo(cid, choice) {
+    return osioki_koujo_k10(undefined, cid, choice);
+  }
+
+  async gobi_koujo(...args) {
+    return gobi_koujo_k10(...args);
+  }
+}
+
+// #856 起 K10 进工厂：`run_kojo` 走工厂实例的钩子，下面这些族注册是过渡期的旧
+// 入口（存量测试与「有本体必有注册」契约锁直调），一律转发到同一个实例
+// ——两处都经 KojoK10。#855–#858 迁完后随族一起删。
+register_kojo(10, KojoK10);
+const kojo_k10 = get_kojo(10);
+kojo_message_com_family.register(10, (...args) =>
+  kojo_k10.kojo_message_com(...args),
 );
-osioski_koujo_family.register(10, (cid, choice) =>
-  osioki_koujo_k10(undefined, cid, choice),
+self_kojo_family.register(10, (...args) => kojo_k10.self_kojo(...args));
+kojo_message_palamcng_family.register(10, (...args) =>
+  kojo_k10.kojo_message_palamcng(...args),
 );
-gohoubi_request_koujo_family.register(10, () => gohoubi_request_koujo_k10());
-ryouzyoku_kojo_family.register(10, dungeon_ryouzyoku_k10);
-ryouzyoku_after_kojo_family.register(10, dungeon_ryouzyoku_after_k10);
-gobi_koujo_family.register(10, gobi_koujo_k10);
-benki_koujo_family.register(10, benki_koujo_k10);
-enterenemy_koujo_family.register(10, enterenemy_koujo_k10);
-dungeon_victory_family.register(10, dungeon_victory_k10);
-dungeon_attack_family.register(10, dungeon_attack_k10);
-ntr_koujo_family.register(10, ntr_koujo_k10);
-exucution_koujo_family.register(10, exucution_koujo_k10);
-museum_koujo_family.register(10, museum_koujo_k10);
-banishment_koujo_family.register(10, banishment_koujo_k10);
-public_exucution_koujo_family.register(10, public_exucution_koujo_k10);
-grotesque_koujo_family.register(10, grotesque_koujo_k10);
+kojo_message_markcng_family.register(10, (...args) =>
+  kojo_k10.kojo_message_markcng(...args),
+);
+gohoubi_after_koujo_family.register(10, (...args) =>
+  kojo_k10.gohoubi_after_koujo(...args),
+);
+osioski_koujo_family.register(10, (...args) => kojo_k10.osioski_koujo(...args));
+gohoubi_request_koujo_family.register(10, (...args) =>
+  kojo_k10.gohoubi_request_koujo(...args),
+);
+ryouzyoku_kojo_family.register(10, (...args) =>
+  kojo_k10.dungeon_ryouzyoku(...args),
+);
+ryouzyoku_after_kojo_family.register(10, (...args) =>
+  kojo_k10.dungeon_ryouzyoku_after(...args),
+);
+gobi_koujo_family.register(10, (...args) => kojo_k10.gobi_koujo(...args));
+benki_koujo_family.register(10, (...args) => kojo_k10.benki_koujo(...args));
+enterenemy_koujo_family.register(10, (...args) =>
+  kojo_k10.enterenemy_koujo(...args),
+);
+dungeon_victory_family.register(10, (...args) =>
+  kojo_k10.dungeon_victory(...args),
+);
+dungeon_attack_family.register(10, (...args) =>
+  kojo_k10.dungeon_attack(...args),
+);
+ntr_koujo_family.register(10, (...args) => kojo_k10.ntr_koujo(...args));
+exucution_koujo_family.register(10, (...args) =>
+  kojo_k10.exucution_koujo(...args),
+);
+museum_koujo_family.register(10, (...args) => kojo_k10.museum_koujo(...args));
+banishment_koujo_family.register(10, (...args) =>
+  kojo_k10.banishment_koujo(...args),
+);
+public_exucution_koujo_family.register(10, (...args) =>
+  kojo_k10.public_exucution_koujo(...args),
+);
+grotesque_koujo_family.register(10, (...args) =>
+  kojo_k10.grotesque_koujo(...args),
+);
 
 /**
  * 本模块的事件处理器：由 system/flow/startup.js 的装配表按顺序调用 register()
@@ -11301,6 +11450,7 @@ function register() {
 
 module.exports = {
   register,
+  KojoK10,
   kojo_message_com_10,
   dog_kojo_10,
   colosseum_kojo_10,
