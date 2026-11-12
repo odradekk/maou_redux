@@ -114,9 +114,7 @@ function monstername(id) {
   } else if (mod === 2) {
     // 地形适应定语按该层的房间类型（FLAG:(层 + 349)）
     const room =
-      id < 190
-        ? era_flag.get(Math.floor((id - 100) / 10) + 1 + 349)
-        : 0;
+      id < 190 ? era_flag.get(Math.floor((id - 100) / 10) + 1 + 349) : 0;
     if (room === 500) {
       out += '遗迹街的';
     } else if (room === 501) {

@@ -21,7 +21,6 @@ const EraChara = require('#/era-utils/era-chara');
 const era_flag = require('#/era-utils/era-flag');
 const { chara_lv_check } = require('#/system/chara/chara-stats');
 const { battle_column } = require('#/system/dungeon/battle-state');
-const { chara } = require('#/facade/chara');
 const { default_rand, idiv_trunc } = require('#/utils/numeric');
 
 function show_log() {
@@ -810,7 +809,6 @@ async function apply_level_drain(cid, damage) {
     `吸取${name_of(cid)}${damage}点经验值并造成了${damage * 10}点HP的伤害！`,
   );
   if (get_exp(cid) < 0) {
-    const view = chara(cid);
     EraChara.get(cid).cflag.level -= 1;
     set_exp(cid, EraChara.get(cid).cflag.level * 10);
     EraChara.get(cid).cflag.attack -= 1;

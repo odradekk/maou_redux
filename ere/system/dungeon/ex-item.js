@@ -75,9 +75,9 @@ function harb_item(cid, appraise, rand = default_rand) {
     add_juel(cid, 5, 30); // JUEL:A:5 欲情点数
   } else {
     const max_hp = EraChara.get(cid).maxbase.stamina;
-    era.set(
-      `base:${cid}:0`,
-      Math.min(EraChara.get(cid).base.stamina + 500, max_hp),
+    EraChara.get(cid).base.stamina = Math.min(
+      EraChara.get(cid).base.stamina + 500,
+      max_hp,
     );
   }
   item_line(
@@ -98,9 +98,9 @@ function potion_item(cid, appraise, rand = default_rand) {
     add_exp(cid, 20, 1); // EXP:A:20 精液经验
   } else {
     const max_mp = EraChara.get(cid).maxbase.willpower;
-    era.set(
-      `base:${cid}:1`,
-      Math.min(EraChara.get(cid).base.willpower + 500, max_mp),
+    EraChara.get(cid).base.willpower = Math.min(
+      EraChara.get(cid).base.willpower + 500,
+      max_mp,
     );
   }
   item_line(
@@ -123,9 +123,9 @@ function heal_rod_item(cid, appraise, rand = default_rand) {
     add_juel(cid, 5, 20); // JUEL:A:5 欲情点数
   } else {
     const max_hp = EraChara.get(cid).maxbase.stamina;
-    era.set(
-      `base:${cid}:0`,
-      Math.min(EraChara.get(cid).base.stamina + 200, max_hp),
+    EraChara.get(cid).base.stamina = Math.min(
+      EraChara.get(cid).base.stamina + 200,
+      max_hp,
     );
   }
   if (show_log()) {
@@ -161,9 +161,9 @@ function mind_rod_item(cid, appraise, rand = default_rand) {
     add_juel(cid, 5, 20); // JUEL:A:5 欲情点数
   } else {
     const max_mp = EraChara.get(cid).maxbase.willpower;
-    era.set(
-      `base:${cid}:1`,
-      Math.min(EraChara.get(cid).base.willpower + 200, max_mp),
+    EraChara.get(cid).base.willpower = Math.min(
+      EraChara.get(cid).base.willpower + 200,
+      max_mp,
     );
   }
   if (show_log()) {
@@ -189,7 +189,6 @@ function mind_rod_item(cid, appraise, rand = default_rand) {
 
 /** power_seed_item：力量种子。 */
 function power_seed_item(cid, appraise, rand = default_rand) {
-  const view = chara(cid);
   const cursed = appraise === 1 && rand(4) === 0;
   if (cursed) {
     if (EraChara.get(cid).talent.dull_clitoris === 1) {
@@ -221,7 +220,6 @@ function power_seed_item(cid, appraise, rand = default_rand) {
 
 /** def_seed_item：守护种子。 */
 function def_seed_item(cid, appraise, rand = default_rand) {
-  const view = chara(cid);
   const cursed = appraise === 1 && rand(4) === 0;
   if (cursed) {
     if (EraChara.get(cid).talent.dull_breast === 1) {
@@ -266,7 +264,6 @@ function exp_medal_item(cid, appraise, rand = default_rand) {
 
 /** hp_seed_item：命之种子。 */
 function hp_seed_item(cid, appraise, rand = default_rand) {
-  const view = chara(cid);
   let cursed = appraise === 1 && rand(4) === 0;
   if (EraChara.get(cid).talent.male) {
     cursed = false;
@@ -295,7 +292,6 @@ function hp_seed_item(cid, appraise, rand = default_rand) {
 
 /** mp_seed_item：心之种子。 */
 function mp_seed_item(cid, appraise, rand = default_rand) {
-  const view = chara(cid);
   const cursed = appraise === 1 && rand(4) === 0;
   if (cursed) {
     if (EraChara.get(cid).talent.dull_anus === 1) {
@@ -364,7 +360,6 @@ async function detox_worm_item(cid, appraise, rand = default_rand) {
     if (show_log()) {
       era.print('圣水增强了圣女的力量……（攻击+1/防御+1）');
     }
-    const view = chara(cid);
     EraChara.get(cid).cflag.base_attack += 1;
     EraChara.get(cid).cflag.base_defense += 1;
   }
@@ -538,7 +533,6 @@ async function add_ex_item(kind, cid, source, rand = default_rand) {
   }
 
   if (rand(4) === 0 || item_no === -2) {
-    const view = chara(cid);
     const floor = EraChara.get(cid).cflag.invasion_floor;
     const current = EraChara.get(cid).cflag.weapon;
     const current_level = Math.trunc((current % 100000) / 1000);

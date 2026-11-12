@@ -16,7 +16,6 @@ const era_flag = require('#/era-utils/era-flag');
 
 /** 恋人派遣屏的取消键 */
 const LOVERS_CANCEL_KEY = 999;
-const { chara } = require('#/facade/chara');
 const { chara_callname } = require('#/utils/callname-utils');
 const { default_rand } = require('#/utils/numeric');
 const { nakadashi_check } = require('#/system/pregnancy');
@@ -1130,7 +1129,6 @@ async function settle_love_exp(
   love_exp,
   rand,
 ) {
-  const view = chara(cid);
   const first_kiss = EraChara.get(cid).cflag.first_kiss_partner ?? 0; // -1 有语义，不走门面 getter
   if (love_exp[0] > 0 && first_kiss === 0) {
     era.print('?初吻?');
@@ -1260,14 +1258,12 @@ async function dungeon_town_lover(cid, rand = default_rand) {
 /** dungeon_town_lover_chara_enter：随机撮合两名在场角色。 */
 async function dungeon_town_lover_chara_enter(cid, rand = default_rand) {
   if ((era_flag.adventurer_flags & 4) === 0) return 0; // FLAG:8 bit2 = 角色间恋爱
-  const source = chara(cid);
   if (EraChara.get(cid).cflag.lover > 0 || EraChara.get(cid).cflag.spouse > 0)
     return 0;
 
   const added = era.getAddedCharacters();
   if (added.length === 0) return 0;
   const candidate = added[rand(added.length)]; // RAND:CHARANUM；允许抽到自己
-  const target = chara(candidate);
   if (EraChara.get(candidate).cflag.state !== EraChara.get(cid).cflag.state)
     return 0;
   if (

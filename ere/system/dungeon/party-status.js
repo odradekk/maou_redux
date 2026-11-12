@@ -39,7 +39,8 @@ function check_status_one(cid, mode) {
     (EraChara.get(cid).base.stamina * 100) / EraChara.get(cid).maxbase.stamina,
   );
   const wp_pct = Math.floor(
-    (EraChara.get(cid).base.willpower * 100) / EraChara.get(cid).maxbase.willpower,
+    (EraChara.get(cid).base.willpower * 100) /
+      EraChara.get(cid).maxbase.willpower,
   );
   // 阈值（S1_HP 60 / S1_MP 50）内联在首分支里；S2/S3 两档的阈值只在
   // 原脚本的分支顺序下成立，这里由首分支吞并、不写成代码（见函数注释）

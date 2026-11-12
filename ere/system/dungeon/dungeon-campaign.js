@@ -68,7 +68,9 @@ async function campaign_quest(cid) {
     return 0;
   }
   // 楼层（CFLAG:cid:501）超过剧情进度（FLAG:401）时推进一段剧情
-  if (EraChara.get(cid).cflag.invasion_floor > era_flag.campaign_story_progress) {
+  if (
+    EraChara.get(cid).cflag.invasion_floor > era_flag.campaign_story_progress
+  ) {
     era.print('―STORY―');
     await era.waitAnyKey(true); // FORCEWAIT
     await campaign_story_family.call(active, { whenMissing: 0, args: [] });
