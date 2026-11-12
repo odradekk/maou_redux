@@ -10,6 +10,7 @@ const era_tstr = require('#/era-utils/era-tstr');
 const era_videoarchive = require('#/era-utils/era-videoarchive');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
+const era_item = require('#/era-utils/era-item');
 const { chara_callname } = require('#/utils/callname-utils');
 const { times_trunc } = require('#/utils/numeric');
 
@@ -468,7 +469,9 @@ async function sell_video(cid = era_flag.target, assi = era_flag.assi) {
   const target = EraChara.get(cid);
 
   // 仍在录像时先退一份魔力源，再删去“录像结束”占用的一格计数。
-  if (target.tequip.get(53)) era.set('item:28', (era.get('item:28') || 0) - 1); // 水晶球魔力源
+  if (target.tequip.get(53))
+    era_item.crystal_ball_mana.count =
+      (era_item.crystal_ball_mana.count || 0) - 1; // 水晶球魔力源
   target.cflag.set(491, target.cflag.get(491) - 1); // CFLAG:491 = 录像时间
   if (target.cflag.get(491) <= 0) return 0;
 

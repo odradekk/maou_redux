@@ -50,6 +50,7 @@
 
 const era = require('#/era-electron');
 const EraChara = require('#/era-utils/era-chara');
+const era_item = require('#/era-utils/era-item');
 const { KIND, get_look_info } = require('#/system/chara/look-info');
 const { monster_name } = require('#/system/dungeon/monster-data');
 const { monsterplay_list } = require('#/system/dungeon/monster-play');
@@ -431,7 +432,7 @@ async function job_change_benki(arg) {
         (EraChara.get(arg).talent.get(COMMON_SENSE_DAILY_TALENT) || 0) + 1;
       if (
         next === COMMON_SENSE_DAILY_BEAST &&
-        (era.get('item:22') || 0) === 0
+        (era_item.stray_dog.count || 0) === 0
       ) {
         next += 1; // 没养狗就跳过「兽奸」那一档
       }

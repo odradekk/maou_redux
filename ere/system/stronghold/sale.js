@@ -36,6 +36,7 @@ const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const era_modsave = require('#/era-utils/era-modsave');
+const era_item = require('#/era-utils/era-item');
 const { get_look_info } = require('#/system/chara/look-info');
 const { change_screen } = require('#/utils/screen-change');
 const { chara_callname, chara_nickname } = require('#/utils/callname-utils');
@@ -665,7 +666,8 @@ async function sell_milk() {
 async function sell_fightmoney() {
   const target = era_flag.target;
   if (EraChara.get(target).tequip.get(55)) {
-    era.set('item:35', (era.get('item:35') || 0) - 1); // 观战卷
+    era_item.spectator_ticket.count =
+      (era_item.spectator_ticket.count || 0) - 1; // 观战卷
   }
 
   if (era_tflag.get(402) <= 0) return;

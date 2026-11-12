@@ -28,6 +28,7 @@ const era = require('#/era-electron');
 const EraChara = require('#/era-utils/era-chara');
 const era_exflag = require('#/era-utils/era-exflag');
 const era_flag = require('#/era-utils/era-flag');
+const era_item = require('#/era-utils/era-item');
 
 /** 税収日（DAY:2 == 10 || DAY:2 == 20 || DAY:2 == 30） */
 const TAX_DAYS = [10, 20, 30];
@@ -228,9 +229,9 @@ async function tax_get() {
   // 淫魔卖春税（无门槛）：ITEM:143 女巫 / 152 魅魔 / 182 莉莉丝
   // 各 ×2，另加固定 20
   const whores =
-    (era.get('item:143') || 0) * 2 +
-    (era.get('item:152') || 0) * 2 +
-    (era.get('item:182') || 0) * 2 +
+    (era_item.witch.count || 0) * 2 +
+    (era_item.succubus.count || 0) * 2 +
+    (era_item.lilith.count || 0) * 2 +
     20;
   era.print(`└ 淫魔卖春税 ${whores}`);
   toilet_tax += whores;

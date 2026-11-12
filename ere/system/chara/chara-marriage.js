@@ -84,6 +84,7 @@
 
 const era = require('#/era-electron');
 const EraChara = require('#/era-utils/era-chara');
+const era_item = require('#/era-utils/era-item');
 
 /**
  * 结婚菜单的固定键：不可选项的占位编号 666、分手 [903]、
@@ -787,7 +788,7 @@ function print_marriage_menu(arg) {
   era.drawLine();
   era.print('特殊');
   era.drawLine();
-  if ((era.get('item:22') || 0) >= 1) {
+  if ((era_item.stray_dog.count || 0) >= 1) {
     print_choice('野狗', SPOUSE_DOG);
   } else {
     print_disabled('野狗');
