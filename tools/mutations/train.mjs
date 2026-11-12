@@ -4502,8 +4502,7 @@ export default [
   {
     desc: 'M1353 com208 跳向 com31 不改写 SELECTCOM（#227）',
     file: 'ere/system/train/com-tentacle.js',
-    find:
-      '      return jump_com({ target, player, assi }, 31, {\n        rewrite_selectcom: true,\n      });',
+    find: '      return jump_com({ target, player, assi }, 31, {\n        rewrite_selectcom: true,\n      });',
     replace:
       '      return jump_com({ target, player, assi }, 31); // 变异：不改写 SELECTCOM',
     tests: ['com-tentacle'],
