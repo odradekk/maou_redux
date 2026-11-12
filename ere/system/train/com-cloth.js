@@ -499,8 +499,7 @@ function soiled_unusable(mask, poop_bit, pee_bit) {
  * com110：穿脱衣服子菜单。逐键输入循环。
  * @returns {Promise<number>} 返回 0（全部出口；回合取消语义见文件头）
  */
-async function com110() {
-  const target = era_flag.target;
+async function com110({ target }) {
   const name = chara_callname(target);
 
   for (;;) {
@@ -742,7 +741,7 @@ async function com110() {
       // 移动到撕破衣服；菜单输出已经结束当前行，
       // 此处再输出一个空行（#595）。
       era.print('');
-      const ripped = await com111();
+      const ripped = await com111({ target });
       if (ripped === 1) {
         return 0;
       }
@@ -761,8 +760,7 @@ async function com110() {
  * RETURN 1 = 算了（COM110 据此退出）、0 = 返回穿脱/已处理。
  * @returns {Promise<number>} 返回 0 / 1
  */
-async function com111() {
-  const target = era_flag.target;
+async function com111({ target }) {
   const name = chara_callname(target);
 
   for (;;) {

@@ -17,6 +17,7 @@ const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
+const { com_context } = require('./helpers/com-context');
 
 /** NBSP 归一成空格：宽度信息不丢（1:1 替换），读起来能对格式 */
 const narrow = (line) => line.replace(/\u00A0/g, ' ');
@@ -90,7 +91,7 @@ async function run_round() {
     'system/train/source-check',
   );
   const { com_family } = fixture.load_module('system/train/com-family');
-  await com_family.call(0);
+  await com_family.call(0, { args: [com_context(era_flag)] });
   // COM0 之后补种子：COM0 会覆写这些源/名字
   fixture.store.set('source:31:18', 1234);
   fixture.store.set('cstr:31:7', '足');
@@ -286,7 +287,7 @@ test('分隔线与改动前一致：判据序号的 UP 折成负数时仍照画'
     'system/train/source-check',
   );
   const { com_family } = fixture.load_module('system/train/com-family');
-  await com_family.call(0);
+  await com_family.call(0, { args: [com_context(era_flag)] });
   await handle_source_check();
 
   const seq = fixture.lines.map((line) =>

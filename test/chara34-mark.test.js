@@ -23,6 +23,7 @@ const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { com_context } = require('./helpers/com-context');
 const { preset_chara_0 } = require('./helpers/chara');
 const {
   create_add_character,
@@ -152,7 +153,7 @@ async function run_source_check(post, { with_mark4 = true } = {}) {
     'system/train/source-check',
   );
   const { com_family } = fixture.load_module('system/train/com-family');
-  await com_family.call(0);
+  await com_family.call(0, { args: [com_context(era_flag)] });
   if (post) {
     post(fixture);
   }

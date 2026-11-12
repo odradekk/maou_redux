@@ -20,6 +20,7 @@ const { test } = require('node:test');
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { register_handlers } = require('./helpers/event-registration');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
+const { com_context } = require('./helpers/com-context');
 
 /**
  * 结算前的 SOURCE 快照。SOURCE_CHECK 的换算结果（source:31:N）在回合末由
@@ -72,7 +73,7 @@ async function run_caress(seed, post) {
     'system/train/source-check',
   );
   const { com_family } = fixture.load_module('system/train/com-family');
-  await com_family.call(0);
+  await com_family.call(0, { args: [com_context(era_flag)] });
   if (post) {
     post(fixture);
   }

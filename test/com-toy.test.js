@@ -14,6 +14,7 @@ const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { seed_train_world } = require('./helpers/train-world');
+const { com_context } = require('./helpers/com-context');
 
 /** 道具族的最小调教世界：主人 0、目标 31、所有道具无视模式。 */
 function seed_world({ assi = -1 } = {}) {
@@ -41,7 +42,9 @@ function seed_world({ assi = -1 } = {}) {
 
 async function run_com(world, com) {
   world.era_flag.selectcom = com;
-  return world.com_family.call(com);
+  return world.com_family.call(com, {
+    args: [com_context(world.era_flag)],
+  });
 }
 
 function clear_lines(fixture) {
