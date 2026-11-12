@@ -180,7 +180,7 @@ test('买不起的编号按不动：引擎只把 !disabled 的 accelerator 注�
   accepted.set_inputs(24, 1, 999); // 点 24 → 数量选 1 → 退出
   await run_loop(accepted);
   assert.equal(
-    accepted.store.get('item:24'),
+    accepted.store.get('item:hold:24'),
     1,
     '买得起的 24 号照常进购买流程并给货',
   );
@@ -191,7 +191,7 @@ test('买不起的商品即使直调购买也退回：钱与道具都不动', as
   const { purchase } = fixture.load_module('page/page-item-shop');
   assert.equal(await purchase(0), 0);
   assert.equal(fixture.store.get('flag:10004'), 150, '钱不动');
-  assert.equal(fixture.store.get('item:0') ?? 0, 0, '不给货');
+  assert.equal(fixture.store.get('item:hold:0') ?? 0, 0, '不给货');
 });
 
 // ================================================================
@@ -204,7 +204,7 @@ test('简单确认支成交：钱与道具数各动一次（先扣钱、后给�
   await run_loop(fixture);
 
   assert.equal(fixture.store.get('flag:10004'), 9800, 'MONEY -= 200');
-  assert.equal(fixture.store.get('item:0'), 1, 'ITEM:0 += 1');
+  assert.equal(fixture.store.get('item:hold:0'), 1, 'ITEM:0 += 1');
   assert(history_texts(fixture).includes('《购买了振动宝石》'));
 
   // 顺序：钱的写入在道具写入之前（确认 → 扣钱 → 给货）
@@ -226,7 +226,7 @@ test('简单确认支取消：钱与道具都不动（不再「先扣再退」�
 
   assert.equal(fixture.store.get('flag:10004'), 10000, '取消不扣钱');
   assert.equal(
-    fixture.store.get('item:0') ?? 0,
+    fixture.store.get('item:hold:0') ?? 0,
     0,
     '取消不给货（也没有先给后收的痕迹）',
   );
@@ -245,7 +245,7 @@ test('复数购买成交：按件数一次结清（扣钱 a×n、给货 n 件）
   await run_loop(fixture);
 
   assert.equal(fixture.store.get('flag:10004'), 9700, 'MONEY -= 100 × 3');
-  assert.equal(fixture.store.get('item:24'), 3, 'ITEM:24 += 3');
+  assert.equal(fixture.store.get('item:hold:24'), 3, 'ITEM:24 += 3');
   assert(history_texts(fixture).includes('《购买了3个安全套》'));
   const era_exflag = fixture.load_module('era-utils/era-exflag');
   assert.equal(era_exflag.legit_money, -300, '记账额同步（EX_FLAG:4444）');
@@ -264,10 +264,10 @@ test('复数购买取消：钱与道具都不动', async () => {
   await run_loop(fixture);
 
   assert.equal(fixture.store.get('flag:10004'), 10000, '取消不扣钱');
-  assert.equal(fixture.store.get('item:24') ?? 0, 0, '取消不给货');
+  assert.equal(fixture.store.get('item:hold:24') ?? 0, 0, '取消不给货');
   assert(
     !fixture.var_writes.some(
-      (w) => w.name === 'flag:10004' || w.name === 'item:24',
+      (w) => w.name === 'flag:10004' || w.name === 'item:hold:24',
     ),
     '取消路径连写都不该有',
   );
@@ -318,7 +318,7 @@ test('陷阱店里的购买：点中陷阱走同一套 purchase（扣钱与给�
   fixture.set_inputs(998, 60, 1, 999); // 去陷阱店 → 点落穴 → 数量 1 → 退出
   await run_loop(fixture);
 
-  assert.equal(fixture.store.get('item:60'), 1, '陷阱 +1');
+  assert.equal(fixture.store.get('item:hold:60'), 1, '陷阱 +1');
   assert.equal(fixture.store.get('flag:10004'), 990, 'MONEY -= 10');
   assert(history_texts(fixture).includes('《购买了落穴》'));
 });
