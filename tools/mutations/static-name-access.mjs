@@ -1,5 +1,5 @@
 // 名字读取前的声明检查：库存和角色状态可能含有静态表未声明的编号。
-export const COUNT = 9;
+export const COUNT = 8; // #825：M14587 删除——夹具的 keys 已改由 yml 声明集给出（#821），把库存写入当名字声明不再改变结果，变异等价
 
 export default [
   {
@@ -55,14 +55,6 @@ export default [
     file: 'test/helpers/era-fixture.js',
     find: '    return [...new Set([...ids, ...seeded_ids])];',
     replace: '    return [...ids]; // 变异：丢掉播种的名字',
-    tests: ['fixture'],
-    must_mention: '名字表序号：包含 yml 声明',
-  },
-  {
-    desc: 'M14587 夹具把库存写入误当作名字声明',
-    file: 'test/helpers/era-fixture.js',
-    find: '    const names = new RegExp(`^${keys_match[1]}name:',
-    replace: '    const names = new RegExp(`^${keys_match[1]}(?:name)?:',
     tests: ['fixture'],
     must_mention: '名字表序号：包含 yml 声明',
   },

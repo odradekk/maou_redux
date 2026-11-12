@@ -20331,7 +20331,9 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     replace:
       '    // CALL 强制肉偿(ARG)\n    forced_payment(arg, rand); // 变异：漏 await',
     tests: ['kojo-forced-payment', 'kojo-dungeon-bitch'],
-    must_mention: '调用点与真身的抽取序',
+    // 拦截面是夹具的「重叠等待」守卫（printAndWait 在上一次等待完成前开始），
+    // 不是抽取序断言本身：漏 await 时先撞守卫、测试在那之前就抛了。
+    must_mention: '疑似漏写 await',
   },
   // #552 起口上按常量 4 读 item:4（ITEM:PBAND = 4 号假阳具，
   // 开局脚本赋 4）。下列条目把某处回退成字符串具名寻址

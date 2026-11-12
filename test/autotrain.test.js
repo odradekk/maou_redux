@@ -49,6 +49,20 @@ function seed_autotrain_world({ assi = -1 } = {}) {
   return { fixture, era_flag };
 }
 
+test('abl_tier：未声明等级按 0 档，5 及以上落末档', () => {
+  const fixture = create_era_fixture();
+  const { abl_tier } = fixture.load_module('data/train-source-const');
+  // ABL 未声明的序号读值是 undefined（引擎不预置未登记项），旧写法
+  // `era.get(…) || 0` 把它当 0 档——`Math.floor(level || 0)` 就是这一条。
+  // 夹具读面按声明集预置之后，调用方已经拿不到 undefined，只剩这层兜底
+  // 能守住它（M18101 因此存活过）。
+  assert.equal(abl_tier(undefined), 0, 'undefined → 0 档');
+  assert.equal(abl_tier(null), 0, 'null → 0 档');
+  assert.equal(abl_tier(NaN), 0, 'NaN → 0 档');
+  assert.equal(abl_tier(3), 3);
+  assert.equal(abl_tier(5), 5, '5 及以上落末档');
+});
+
 test('AUTOTRAIN: format_autotrain & before_autotrain 重置行为', async () => {
   const fixture = create_era_fixture();
   preset_gamebase(fixture);
