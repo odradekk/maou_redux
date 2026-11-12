@@ -14,6 +14,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 const { join_slave_chara } = require('./helpers/chara');
 const { seed_train_world } = require('./helpers/train-world');
+const { com_context } = require('./helpers/com-context');
 
 const ASSI = 17;
 const TARGET = 31;
@@ -126,7 +127,7 @@ function seed_world({ assi = ASSI, player = 0 } = {}) {
 
 async function run_com(world, id) {
   world.era_flag.selectcom = id;
-  return world.com_family.call(id);
+  return world.com_family.call(id, { args: [com_context(world.era_flag)] });
 }
 
 async function run_b(world, com) {
@@ -265,7 +266,9 @@ test('com64/com69/com70：升格抵达时显式回填 SELECTCOM', async () => {
   for (const id of [64, 69, 70]) {
     const world = seed_world();
     world.era_flag.selectcom = 20;
-    const result = await world.com_family.call(id);
+    const result = await world.com_family.call(id, {
+      args: [com_context(world.era_flag)],
+    });
     assert.equal(result, 1);
     assert.equal(world.era_flag.selectcom, id, `COM${id} 回填 SELECTCOM`);
   }
@@ -618,7 +621,10 @@ test('COM64：升格路径按本次/上次指令分配部位并回填 SELECTCOM'
   const { fixture, era_flag } = world;
   era_flag.selectcom = 20;
   era_flag.prevcom = 27;
-  assert.equal(await world.com_family.call(64), 1);
+  assert.equal(
+    await world.com_family.call(64, { args: [com_context(era_flag)] }),
+    1,
+  );
   assert.equal(era_flag.selectcom, 64);
   assert.equal(fixture.store.get('tflag:40'), 1);
   assert.equal(fixture.store.get('tflag:41'), 2);
@@ -762,7 +768,10 @@ test('#595 COM64：四个部位后缀都与「３Ｐ」同行，且不落纯空�
     // 与「升格抵达时显式回填 SELECTCOM」同一入口
     era_flag.selectcom = selectcom;
     era_flag.prevcom = prevcom;
-    assert.equal(await world.com_family.call(64), 1);
+    assert.equal(
+      await world.com_family.call(64, { args: [com_context(era_flag)] }),
+      1,
+    );
     assert.ok(
       fixture.text_lines().includes(`３Ｐ${suffix}`),
       `selectcom=${selectcom}、prevcom=${prevcom}：３Ｐ 与「${suffix}」同行`,

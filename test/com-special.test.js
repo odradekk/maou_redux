@@ -12,6 +12,7 @@ const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
+const { com_context } = require('./helpers/com-context');
 
 /** 开调教表、加入主人与目标，并加载特殊指令族。 */
 function seed_world({ assi = -1 } = {}) {
@@ -44,7 +45,7 @@ function seed_world({ assi = -1 } = {}) {
 /** 真实分发入口：回合循环已先写 selectcom，单测同位模拟。 */
 async function run_com(world, id) {
   world.era_flag.selectcom = id;
-  return world.com_family.call(id);
+  return world.com_family.call(id, { args: [com_context(world.era_flag)] });
 }
 
 // —— 50–59 号可用性检查：每条至少验证放行与一个拦截条件 ——
@@ -723,7 +724,7 @@ test('主循环加载特殊族：主循环加载后 COM53 的注册实际生效'
 
   const { com_family } = fixture.load_module('system/train/com-family');
   era_flag.selectcom = 53;
-  assert.equal(await com_family.call(53), 1);
+  assert.equal(await com_family.call(53, { args: [com_context(era_flag)] }), 1);
   assert.equal(fixture.store.get('tequip:31:53'), 1);
 });
 

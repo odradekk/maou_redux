@@ -294,20 +294,20 @@ function set_video_record(cid, frame, value) {
 }
 
 /** com50：润滑液。 */
-async function com50() {
-  const cid = target_id();
+async function com50({ target, player }) {
+  const cid = target;
   era.print('润滑液');
   await train_message_b();
   set_src(cid, 10, 10000);
   set_src(cid, 12, 300);
   game.train.润滑液 -= 1;
-  same_sex_exp(cid, era_flag.player, 1);
+  same_sex_exp(cid, player, 1);
   return 1;
 }
 
 /** com51：媚药。 */
-async function com51() {
-  const cid = target_id();
+async function com51({ target, player, assi }) {
+  const cid = target;
   era.print('媚药');
   await train_message_b();
 
@@ -316,7 +316,7 @@ async function com51() {
   if (tal(MASTER, 55)) {
     lose0 -= 150;
     lose1 -= 150;
-  } else if (era_flag.assi >= 0 && tal(era_flag.assi, 55)) {
+  } else if (assi >= 0 && tal(assi, 55)) {
     lose0 -= 150;
     lose1 -= 150;
   }
@@ -335,7 +335,7 @@ async function com51() {
   add_lose(cid, 0, Math.max(lose0, 0)); // 体力损耗不低于 0
   add_lose(cid, 1, lose1);
 
-  same_sex_exp(cid, era_flag.player, 1);
+  same_sex_exp(cid, player, 1);
   era.print('药物经验+1');
   chara(cid).dungeon.药物经验 += 1;
   chara(cid).train.媚药效果 = 1;
@@ -346,8 +346,8 @@ async function com51() {
 }
 
 /** com52：利尿剂。 */
-async function com52() {
-  const cid = target_id();
+async function com52({ target, player, assi }) {
+  const cid = target;
   era.print('利尿剂');
   await train_message_b();
 
@@ -356,7 +356,7 @@ async function com52() {
   if (tal(MASTER, 55)) {
     lose0 += 50;
     lose1 += 50;
-  } else if (era_flag.assi >= 0 && tal(era_flag.assi, 55)) {
+  } else if (assi >= 0 && tal(assi, 55)) {
     lose0 += 50;
     lose1 += 50;
   }
@@ -369,7 +369,7 @@ async function com52() {
   set_src(cid, 14, 2000);
   set_src(cid, 15, 150);
 
-  same_sex_exp(cid, era_flag.player, 1);
+  same_sex_exp(cid, player, 1);
   era.print('药物经验+1');
   chara(cid).dungeon.药物经验 += 1;
   chara(cid).system.利尿剂 = 1;
@@ -387,8 +387,8 @@ function drug_exp_level(value) {
 }
 
 /** com53：水晶球录像开关。 */
-async function com53() {
-  const cid = target_id();
+async function com53({ target }) {
+  const cid = target;
   await train_message_b(); // ：切换前消息看旧 TEQUIP
   if (chara(cid).train.录像摄影) {
     chara(cid).train.录像摄影 = 0;
@@ -501,8 +501,8 @@ async function equip_com53() {
 }
 
 /** com54：野外PLAY。 */
-async function com54() {
-  const cid = target_id();
+async function com54({ target }) {
+  const cid = target;
   era.print('野外ＰＬＡＹ');
   await train_message_b();
   if (chara(cid).train.野外PLAY) {
@@ -535,8 +535,8 @@ async function equip_com54() {
 }
 
 /** com55：放置PLAY。消息在 A 阶段，见 register。 */
-async function com55() {
-  const cid = target_id();
+async function com55({ target }) {
+  const cid = target;
   era.print('什么都不做');
   add_lose(cid, 1, 10);
   set_src(cid, 14, 50);
@@ -571,8 +571,8 @@ async function com55() {
 }
 
 /** com56：交谈。 */
-async function com56() {
-  const cid = target_id();
+async function com56({ target, player }) {
+  const cid = target;
   era.print(tq(cid, 53) ? '介绍自己' : '交谈');
   await train_message_b();
 
@@ -645,7 +645,7 @@ async function com56() {
 
   let gain = tier([1, 1, 2, 2, 3], palam_level4(cid, 4));
   if (tal(cid, 85) && era_flag.assiplay === 0) gain *= 2;
-  gain += tier([0, 1, 1, 2, 2, 3], abl(era_flag.player, 15));
+  gain += tier([0, 1, 1, 2, 2, 3], abl(player, 15));
   era.print(`调教会话经验＋${gain}`);
   chara(cid).dungeon.调教会话经验 += gain;
   if (abl(cid, 71) > 1 && gain > 2) {
@@ -673,8 +673,8 @@ function palam_level4(cid, index) {
 }
 
 /** com57：羞耻PLAY。 */
-async function com57() {
-  const cid = target_id();
+async function com57({ target }) {
+  const cid = target;
   era.print('羞耻ＰＬＡＹ');
   await train_message_b();
   if (chara(cid).train.羞耻PLAY) {
@@ -716,8 +716,8 @@ async function equip_com57() {
 }
 
 /** com58：浴室PLAY。 */
-async function com58() {
-  const cid = target_id();
+async function com58({ target }) {
+  const cid = target;
   era.print('浴室ＰＬＡＹ');
   await train_message_b();
   if (chara(cid).train.浴室PLAY) {
@@ -745,8 +745,8 @@ async function equip_com58() {
 }
 
 /** com59：新妻PLAY。 */
-async function com59() {
-  const cid = target_id();
+async function com59({ target }) {
+  const cid = target;
   era.print('新妻ＰＬＡＹ');
   await train_message_b();
   if (chara(cid).train.新妻PLAY) {

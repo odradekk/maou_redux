@@ -2613,7 +2613,7 @@ export default [
   {
     desc: 'M1021 com201 的非助手出战双保险删',
     file: 'ere/system/train/com-colosseum.js',
-    find: '  // 非助手亲自出战不可执行，与 201 号可用性检查共同限制\n  if (assi !== era_flag.player) {\n    return 0;\n  }',
+    find: '  // 非助手亲自出战不可执行，与 201 号可用性检查共同限制\n  if (assi !== player) {\n    return 0;\n  }',
     replace: '  // 变异：双保险删',
     tests: ['com-colosseum'],
     must_mention: '双保险',
@@ -2629,8 +2629,8 @@ export default [
   {
     desc: 'M1023 com201 的助手退却气力线（1/5）改 1/6',
     file: 'ere/system/train/com-colosseum.js',
-    find: '      idiv(era.get(`maxbase:${era_flag.assi}:1`) || 0, 5)',
-    replace: '      idiv(era.get(`maxbase:${era_flag.assi}:1`) || 0, 6)',
+    find: '      idiv(era.get(`maxbase:${assi}:1`) || 0, 5)',
+    replace: '      idiv(era.get(`maxbase:${assi}:1`) || 0, 6)',
     tests: ['com-colosseum'],
     must_mention: '助手退却后暂时放过（RETURN 1），不再进入凌辱菜单',
   },
@@ -2748,8 +2748,9 @@ export default [
   {
     desc: 'M1038 com207 的 JUMP com51 尾调用改不设 SELECTCOM',
     file: 'ere/system/train/com-colosseum.js',
-    find: 'function call_insult_com(com) {\n  era_flag.selectcom = com;',
-    replace: 'function call_insult_com(com) { // 变异：SELECTCOM 不设',
+    find: 'function call_insult_com(com_context, com) {\n  era_flag.selectcom = com;\n  return com_family.call(com, { whenMissing: 0, args: [com_context] });\n}',
+    replace:
+      'function call_insult_com(com_context, com) {\n  return com_family.call(com, { whenMissing: 0, args: [com_context] }); // 变异：SELECTCOM 不设\n}',
     tests: ['com-colosseum'],
     must_mention: 'SELECTCOM = 51',
   },
@@ -3959,9 +3960,9 @@ export default [
   {
     desc: 'M1415 com72 本体误调 train_message_b（#225）',
     file: 'ere/system/train/com-assistant.js',
-    find: '  era.print(\n    `${chara_callname(era_flag.player)}将${chara_callname(target)}的阴毛漂亮地刮掉了。`,\n  );',
+    find: '  era.print(\n    `${chara_callname(player)}将${chara_callname(target)}的阴毛漂亮地刮掉了。`,\n  );',
     replace:
-      '  await train_message_b(); // 变异：源侧 COM72 不调 B\n  era.print(\n    `${chara_callname(era_flag.player)}将${chara_callname(target)}的阴毛漂亮地刮掉了。`,\n  );',
+      '  await train_message_b(); // 变异：源侧 COM72 不调 B\n  era.print(\n    `${chara_callname(player)}将${chara_callname(target)}的阴毛漂亮地刮掉了。`,\n  );',
     tests: ['com-assistant'],
     must_mention: 'COM72 本体不得再调 B72',
   },
@@ -3976,9 +3977,9 @@ export default [
   {
     desc: 'M1418 com69 亲族路径不调 incest（#225）',
     file: 'ere/system/train/com-assistant.js',
-    find: '  incest(target, player);\n  const prefix = incest_prefix(player);',
+    find: '  incest(target, player);\n  const prefix = incest_prefix(target, player);',
     replace:
-      '  // 变异：不调 INCEST 真身\n  const prefix = incest_prefix(player);',
+      '  // 变异：不调 INCEST 真身\n  const prefix = incest_prefix(target, player);',
     tests: ['com-assistant'],
     must_mention: '目标是 PLAYER 的亲族则出前缀',
   },
@@ -4450,17 +4451,17 @@ export default [
   {
     desc: 'M1347 com101 跳转改写 SELECTCOM（#227）',
     file: 'ere/system/train/com-tentacle.js',
-    find: '  return jump_com(11);',
+    find: '  return jump_com(com_context, 11);',
     replace:
-      '  return jump_com(11, { rewrite_selectcom: true }); // 变异：改写 SELECTCOM',
+      '  return jump_com(com_context, 11, { rewrite_selectcom: true }); // 变异：改写 SELECTCOM',
     tests: ['com-tentacle'],
     must_mention: '跳转 COM11 且不改写 selectcom',
   },
   {
     desc: 'M1348 com106 跳转目标改 45（#227）',
     file: 'ere/system/train/com-tentacle.js',
-    find: '  return jump_com(44);',
-    replace: '  return jump_com(45); // 变异：JUMP 目标改 45',
+    find: '  return jump_com(com_context, 44);',
+    replace: '  return jump_com(com_context, 45); // 变异：JUMP 目标改 45',
     tests: ['com-tentacle'],
     must_mention: '目标看到的 selectcom 仍是触手指令号',
   },
@@ -4501,8 +4502,9 @@ export default [
   {
     desc: 'M1353 com208 跳向 com31 不改写 SELECTCOM（#227）',
     file: 'ere/system/train/com-tentacle.js',
-    find: '      return jump_com(31, { rewrite_selectcom: true });',
-    replace: '      return jump_com(31); // 变异：不改写 SELECTCOM',
+    find: '      return jump_com({ target, player, assi }, 31, {\n        rewrite_selectcom: true,\n      });',
+    replace:
+      '      return jump_com({ target, player, assi }, 31); // 变异：不改写 SELECTCOM',
     tests: ['com-tentacle'],
     must_mention: '跳转前改写 selectcom',
   },
@@ -10900,7 +10902,7 @@ export default [
   {
     desc: 'M15043 三人调教主人主导时误用助手增量结算母乳槽',
     file: 'ere/system/train/com-assistant.js',
-    find: '  await com_ejac_player_milk(era_flag.player === MASTER ? b : b2);',
+    find: '  await com_ejac_player_milk(player === MASTER ? b : b2);',
     replace: '  await com_ejac_player_milk(b2);',
     tests: ['com-assistant'],
     must_mention: '#773 三人调教喷乳归属：主人主导',
@@ -10908,7 +10910,7 @@ export default [
   {
     desc: 'M15044 三人调教助手主导时误用主人增量结算母乳槽',
     file: 'ere/system/train/com-assistant.js',
-    find: '  await com_ejac_player_milk(era_flag.player === MASTER ? b : b2);',
+    find: '  await com_ejac_player_milk(player === MASTER ? b : b2);',
     replace: '  await com_ejac_player_milk(b);',
     tests: ['com-assistant'],
     must_mention: '#773 三人调教喷乳归属：助手主导',

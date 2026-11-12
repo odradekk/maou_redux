@@ -91,8 +91,7 @@ const add_lose = (cid, k, v) => era.add(`deltabase:${cid}:${k}`, -v);
  * com200：死斗场的进入/退出开关。
  * @returns {Promise<number>} 返回 1
  */
-async function com200() {
-  const target = era_flag.target;
+async function com200({ target }) {
   era.print('死斗场决斗');
   await train_message_b();
 
@@ -129,8 +128,7 @@ async function com200() {
  *
  * @returns {Promise<number>} 0 = 胜利 / 1 = 陷落
  */
-async function com_after_arena() {
-  const target = era_flag.target;
+async function com_after_arena({ target, player, assi }) {
   if ((era.get(`base:${target}:1`) || 0) > 0) {
     // 胜利
     era.print('斗技胜利经验+1');
@@ -141,11 +139,11 @@ async function com_after_arena() {
   era.print('＜奴隶陷落＞');
   era.set('tflag:401', 1); // （全库无读者，陷落旗标照写）
 
-  if (era_flag.assi === era_flag.player) {
+  if (assi === player) {
     // 助手亲自出战且气力 < 上限 1/5 → 助手退却（调教者归还主人）
     if (
-      (era.get(`base:${era_flag.assi}:1`) || 0) <
-      idiv(era.get(`maxbase:${era_flag.assi}:1`) || 0, 5)
+      (era.get(`base:${assi}:1`) || 0) <
+      idiv(era.get(`maxbase:${assi}:1`) || 0, 5)
     ) {
       era.print('＜助手退却＞');
       era_flag.assiplay = 0;
@@ -162,8 +160,8 @@ async function com_after_arena() {
  *
  * @returns {number} 战斗点（B）
  */
-function arena_slave_point() {
-  const a = era_flag.target; // A = TARGET
+function arena_slave_point({ target }) {
+  const a = target; // A = TARGET
   weapon_restore(a); // 战闘値セット
   let b = 0;
   b += era.get(`cflag:${a}:11`) || 0; // 攻击值
@@ -189,8 +187,8 @@ function arena_slave_point() {
  *
  * @returns {number} 战斗点（B）
  */
-function arena_assi_point() {
-  const a = era_flag.assi; // A = ASSI
+function arena_assi_point({ assi }) {
+  const a = assi; // A = ASSI
   weapon_restore(a);
   let b = 0;
   b += era.get(`cflag:${a}:11`) || 0;
@@ -233,15 +231,9 @@ function assi_can_penetrate(assi) {
  * @param {number} com 指令号（L_I）
  * @returns {Promise<number>} 子指令的 RETURN 值
  */
-function call_insult_com(com) {
+function call_insult_com(com_context, com) {
   era_flag.selectcom = com;
-  // 被调指令从参数取上下文；本函数没有上下文，跳转处按当前指针现取。
-  return com_family.call(com, {
-    whenMissing: 0,
-    args: [
-      { target: era_flag.target, player: era_flag.player, assi: era_flag.assi },
-    ],
-  });
+  return com_family.call(com, { whenMissing: 0, args: [com_context] });
 }
 
 /**
@@ -249,11 +241,9 @@ function call_insult_com(com) {
  * @param {(n: number) => number} [rand] RAND:N 随机源（收入加算的 RAND:RESULT）
  * @returns {Promise<number>} 0/1（0 = 回合作废，引擎重新要求输入）
  */
-async function com201(rand = default_rand) {
-  const target = era_flag.target;
-  const assi = era_flag.assi; // SAVESTR:ASSI 的显示名来源
+async function com201({ target, player, assi }, rand = default_rand) {
   // 非助手亲自出战不可执行，与 201 号可用性检查共同限制
-  if (assi !== era_flag.player) {
+  if (assi !== player) {
     return 0;
   }
 
@@ -261,11 +251,11 @@ async function com201(rand = default_rand) {
   await train_message_b();
 
   // 助手战斗点 → 双方的体力气力损耗
-  const assi_point = arena_assi_point();
+  const assi_point = arena_assi_point({ assi });
   add_lose(target, 0, assi_point);
   add_lose(target, 1, assi_point * 10);
 
-  const slave_point = arena_slave_point();
+  const slave_point = arena_slave_point({ target });
 
   if (slave_point < assi_point) {
     // 奴隶战斗点更低 → 被压制
@@ -300,16 +290,18 @@ async function com201(rand = default_rand) {
 
   // TFLAG:400 = 201（死斗场敌种，B 分支与 source-check 读）
   era.set('tflag:400', 201);
-  const after = await com_after_arena();
+  const after = await com_after_arena({ target, player, assi });
   if (after === 0) {
     return 1; // 胜利即收场
   }
+  // 陷落分支里 com_after_arena 会中途改写 PLAYER（助手退却归位 MASTER），
+  // 这里判的是改写后的值，不是回合开始的那份快照。
   if (era_flag.assi !== era_flag.player) {
     return 1; // 战斗中助手退却 → 暂时放过
   }
 
   // 凌辱菜单（按钮输入规则见文件头）
-  const penetrator = assi_can_penetrate(era_flag.assi);
+  const penetrator = assi_can_penetrate(assi);
   // [2] 私处的显示与执行使用相同条件：须能插入、非男人、
   // 无私处封印、非贞操带（CFLAG:42 != 79）、（未熟时须施虐狂助手）
   const can_vagina =
@@ -318,7 +310,7 @@ async function com201(rand = default_rand) {
     !era.get(`talent:${target}:273`) &&
     (era.get(`cflag:${target}:42`) || 0) !== 79 &&
     (!era.get(`talent:${target}:135`) ||
-      (era.get(`talent:${era_flag.assi}:83`) || 0) === 1);
+      (era.get(`talent:${assi}:83`) || 0) === 1);
   for (;;) {
     // 每个按钮自成一行，
     // 相互之间不补空行（#595）。
@@ -339,7 +331,7 @@ async function com201(rand = default_rand) {
     if (result === 0 && penetrator) {
       // 助手・口交
       era.print('＜助手・口交＞');
-      const com_result = await call_insult_com(31);
+      const com_result = await call_insult_com({ target, player, assi }, 31);
       if (com_result === 0) {
         return 0; // 口交実行不可
       }
@@ -349,7 +341,7 @@ async function com201(rand = default_rand) {
     } else if (result === 1) {
       // 助手・胸爱抚（无実行不可检查——COM5 支无結果検査行）
       era.print('＜助手・胸爱抚＞');
-      const com_result = await call_insult_com(5);
+      const com_result = await call_insult_com({ target, player, assi }, 5);
       era.add('tflag:402', lose(target, 0) * 5 + rand(com_result));
     } else if (result === 2 && can_vagina) {
       // 助手・背后位
@@ -357,7 +349,7 @@ async function com201(rand = default_rand) {
         return 0; // 対象是男人（菜单已滤，执行侧双保险）
       }
       era.print('＜助手・背后位＞');
-      const com_result = await call_insult_com(21);
+      const com_result = await call_insult_com({ target, player, assi }, 21);
       if (com_result === 0) {
         return 0; // 处女を奪わせなかった
       }
@@ -365,13 +357,11 @@ async function com201(rand = default_rand) {
     } else if (result === 3 && penetrator) {
       // 助手・背后位肛交
       era.print('＜助手・背后位肛交＞');
-      const com_result = await call_insult_com(27);
+      const com_result = await call_insult_com({ target, player, assi }, 27);
       era.add('tflag:402', lose(target, 0) * 5 + rand(com_result));
     } else if (result === COLOSSEUM_PASS_KEY) {
       // 暂时放过
-      era.print(
-        `${chara_callname(MASTER)}叫${chara_callname(era_flag.assi)}退下了……`,
-      );
+      era.print(`${chara_callname(MASTER)}叫${chara_callname(assi)}退下了……`);
       await era.waitAnyKey();
       return 0;
     } else {
@@ -502,8 +492,7 @@ const RETIRE = Symbol('MONSTER_RETIRE');
  * @returns {Promise<number|symbol>} 1 = 凌辱成立 / 0 = 子指令失败
  *   （回合作废）/ RETIRE = 999 暂时放过
  */
-async function monster_insult_menu(cfg, rand) {
-  const target = era_flag.target;
+async function monster_insult_menu({ target, player, assi }, cfg, rand) {
   // [2] 私处的显示条件：非男人、无私处封印、非贞操带
   const show_vagina =
     !era.get(`talent:${target}:122`) &&
@@ -525,7 +514,7 @@ async function monster_insult_menu(cfg, rand) {
     if (result === 0) {
       // 口交
       era.print(`＜${cfg.label}${MONSTER_SEP}口交＞`);
-      const com_result = await call_insult_com(31);
+      const com_result = await call_insult_com({ target, player, assi }, 31);
       if (com_result === 0) {
         return 0;
       }
@@ -533,7 +522,7 @@ async function monster_insult_menu(cfg, rand) {
     } else if (result === 1) {
       // 胸爱抚
       era.print(`＜${cfg.label}${MONSTER_SEP}胸爱抚＞`);
-      const com_result = await call_insult_com(5);
+      const com_result = await call_insult_com({ target, player, assi }, 5);
       era.add('tflag:402', cfg.income(lose(target, 0)) + rand(com_result));
     } else if (result === 2) {
       // 背后位（执行条件比显示条件多一条贞操带复合判定）
@@ -547,7 +536,7 @@ async function monster_insult_menu(cfg, rand) {
         return 0; // （按钮已滤显示条件，执行侧双保险）
       }
       era.print(`＜${cfg.label}${MONSTER_SEP}背后位＞`);
-      const com_result = await call_insult_com(21);
+      const com_result = await call_insult_com({ target, player, assi }, 21);
       if (com_result === 0) {
         return 0; // 处女を奪わせなかった
       }
@@ -555,7 +544,7 @@ async function monster_insult_menu(cfg, rand) {
     } else if (result === 3) {
       // 背后位肛交
       era.print(`＜${cfg.label}${MONSTER_SEP}背后位肛交＞`);
-      const com_result = await call_insult_com(27);
+      const com_result = await call_insult_com({ target, player, assi }, 27);
       era.add('tflag:402', cfg.income(lose(target, 0)) + rand(com_result));
     } else if (result === COLOSSEUM_PASS_KEY) {
       // 暂时放过：整条指令作废（monster_com 按 RETIRE 返回 0，
@@ -584,8 +573,12 @@ function monster_text(template, target_name) {
  * @param {(n: number) => number} [rand] RAND:N 随机源（收入加算）
  * @returns {Promise<number>} 0/1（0 = 回合作废，引擎重新要求输入）
  */
-async function monster_com(com, cfg, rand = default_rand) {
-  const target = era_flag.target;
+async function monster_com(
+  { target, player, assi },
+  com,
+  cfg,
+  rand = default_rand,
+) {
   const target_name = chara_callname(target);
   era.print(cfg.label);
 
@@ -598,7 +591,7 @@ async function monster_com(com, cfg, rand = default_rand) {
   add_lose(target, 0, cfg.open_lose0(level, weak));
   add_lose(target, 1, cfg.open_lose1(level));
 
-  const slave_point = arena_slave_point();
+  const slave_point = arena_slave_point({ target });
 
   // —— 战斗点较低时追加伤害 ——
   const fainted = (era.get('tflag:899') || 0) > 0; // 失神中
@@ -627,13 +620,17 @@ async function monster_com(com, cfg, rand = default_rand) {
   }
 
   era.set('tflag:400', com);
-  const after = await com_after_arena();
+  const after = await com_after_arena({ target, player, assi });
   if (after === 0) {
     return 1; // 胜利即收场
   }
 
   // —— 凌辱子指令分发 ——
-  const outcome = await monster_insult_menu(cfg, rand);
+  const outcome = await monster_insult_menu(
+    { target, player, assi },
+    cfg,
+    rand,
+  );
   if (outcome === 0) {
     return 0; // 子指令失败，取消本回合
   }
@@ -661,7 +658,7 @@ async function monster_com(com, cfg, rand = default_rand) {
     }
   }
 
-  await monster_ejaculation();
+  await monster_ejaculation({ target });
   return 1;
 }
 
@@ -672,8 +669,7 @@ async function monster_com(com, cfg, rand = default_rand) {
  *
  * @returns {Promise<void>}
  */
-async function monster_ejaculation() {
-  const target = era_flag.target;
+async function monster_ejaculation({ target }) {
   const master = MASTER;
   const selectcom = era_flag.selectcom;
 
@@ -804,8 +800,7 @@ async function monster_ejaculation() {
  *
  * @returns {Promise<number>} 子指令（COM51）的 RETURN 值或 0/1
  */
-async function com207() {
-  const target = era_flag.target;
+async function com207({ target, player, assi }) {
   const target_name = chara_callname(target);
   era.print('媚药史莱姆');
 
@@ -815,7 +810,7 @@ async function com207() {
   const level = era.get('cflag:0:9') || 0;
   add_lose(target, 1, level * 10); // （LOSEBASE:0 无し——气力要员）
 
-  const slave_point = arena_slave_point();
+  const slave_point = arena_slave_point({ target });
 
   // 207 号指令不检查失神状态 TFLAG:899
   if (slave_point < 5 * level) {
@@ -840,7 +835,7 @@ async function com207() {
   }
 
   era.set('tflag:400', 207);
-  const after = await com_after_arena();
+  const after = await com_after_arena({ target, player, assi });
   if (after === 0) {
     return 1;
   }
@@ -861,7 +856,7 @@ async function com207() {
       // 嘴巴：尾调用 51 号指令，直接返回、不计算收入
       era.print(`在倒下的${target_name}嘴里，灌入了大量的粘液。`);
       await era.waitAnyKey();
-      return await call_insult_com(51);
+      return await call_insult_com({ target, player, assi }, 51);
     }
     if (result === 1) {
       // 私处（执行侧再次检查男人条件）
@@ -872,13 +867,13 @@ async function com207() {
         `在倒下的${target_name}私处里，灌入了大量的粘液，从阴唇到子宫都灌满了。`,
       );
       await era.waitAnyKey();
-      return await call_insult_com(51);
+      return await call_insult_com({ target, player, assi }, 51);
     }
     if (result === 2) {
       // 肛门
       era.print(`在倒下的${target_name}肛门里，灌入了大量的粘液。`);
       await era.waitAnyKey();
-      return await call_insult_com(51);
+      return await call_insult_com({ target, player, assi }, 51);
     }
     if (result === COLOSSEUM_PASS_KEY) {
       // 暂时放过：返回 1
@@ -990,8 +985,8 @@ for (const [com, min_level] of [
 // —— 202–206 号指令注册（配置差异见 MONSTER_CONFIGS；206 独有的扩张经验块
 // 通过标记接入）——
 for (const [com, cfg] of Object.entries(MONSTER_CONFIGS)) {
-  com_family.register(Number(com), (rand) =>
-    monster_com(Number(com), cfg, rand),
+  com_family.register(Number(com), (com_context, rand) =>
+    monster_com(com_context, Number(com), cfg, rand),
   );
 }
 MONSTER_CONFIGS[206].expansion_exp = true; // 扩张经验块（206 号指令独有）
