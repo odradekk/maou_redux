@@ -25,10 +25,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
-const {
-  load_modules,
-  register_handlers,
-} = require('./helpers/event-registration');
+const { load_modules } = require('./helpers/event-registration');
 const { preset_chara_0, join_slave_chara } = require('./helpers/chara');
 
 // RAND:N 定值序：draws 依次被消费，越界取模
@@ -491,14 +488,15 @@ test('DUNGEON_RYOUZYOKU/_AFTER 钩子：窗口按 LOCAL - 100 拼键，前后两
   era_flag.target = 31; // 分派前置 TARGET = ARG 由调用方置好
   const seen_before = [];
   const seen_after = [];
-  mod.ryouzyoku_kojo_family.register(3, async (...args) => {
+  const { get_kojo } = fixture.load_module('kojo/kojo-factory');
+  get_kojo(3).dungeon_ryouzyoku = async (...args) => {
     seen_before.push(args);
     return 0;
-  });
-  mod.ryouzyoku_after_kojo_family.register(3, async (...args) => {
+  };
+  get_kojo(3).dungeon_ryouzyoku_after = async (...args) => {
     seen_after.push(args);
     return 0;
-  });
+  };
 
   assert.equal(await mod.dungeon_ryouzyoku(), 0);
   assert.equal(await mod.dungeon_ryouzyoku_after(), 0);
@@ -515,10 +513,11 @@ test('DUNGEON_RYOUZYOKU 钩子：EX 性格走 LOCAL > 1000 分支（1002 → 键
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.target = 31;
   const seen = [];
-  mod.ryouzyoku_kojo_family.register(902, async (...args) => {
+  const { get_kojo: get_kojo_902 } = fixture.load_module('kojo/kojo-factory');
+  get_kojo_902(902).dungeon_ryouzyoku = async (...args) => {
     seen.push(args);
     return 0;
-  });
+  };
 
   assert.equal(await mod.dungeon_ryouzyoku(), 0);
   assert.deepEqual(seen, [[]], '窗口的 > 1000 分支可达');
@@ -531,10 +530,13 @@ test('DUNGEON_RYOUZYOKU 钩子：无性格编号（LOCAL 0）窗口拒绝，不�
   era_flag.target = 31;
   const seen = [];
   // 键 0 是 LOCAL 100 的落点：窗口若被绕开（LOCAL 0 也拼键），这里会命中
-  mod.ryouzyoku_kojo_family.register(0, async (...args) => {
-    seen.push(args);
-    return 0;
-  });
+  require('./helpers/kojo-families').ryouzyoku_kojo_family.register(
+    0,
+    async (...args) => {
+      seen.push(args);
+      return 0;
+    },
+  );
 
   assert.equal(await mod.dungeon_ryouzyoku(), 0);
   assert.equal(await mod.dungeon_ryouzyoku_after(), 0);
@@ -559,10 +561,11 @@ test('DUNGEON_RYOUZYOKU 钩子：窗口两侧逐点（99/100、139/140、1000/10
     fixture.load_module('system/chara/chara-ex').get_ex_kojo_num = () => local;
     const mod = fixture.load_module('kojo/kojo-dungeon-ravish');
     const seen = [];
-    mod.ryouzyoku_kojo_family.register(key, async (...args) => {
+    const { get_kojo } = fixture.load_module('kojo/kojo-factory');
+    get_kojo(key).dungeon_ryouzyoku = async (...args) => {
       seen.push(args);
       return 0;
-    });
+    };
 
     assert.equal(await mod.dungeon_ryouzyoku(), 0);
     assert.deepEqual(seen, [[]], `LOCAL ${local} → 键 ${key} 必须分发`);
@@ -579,11 +582,12 @@ test('DUNGEON_RYOUZYOKU 钩子：窗口两侧逐点（99/100、139/140、1000/10
     const seen = [];
     // 三个边界键都挂探针：窗口被放宽时键会落到声明空间外直接抛错，
     // 偏移被改动时探针会命中——两条改坏路径都留痕
+    const { get_kojo } = fixture.load_module('kojo/kojo-factory');
     for (const key of [0, 39, 901]) {
-      mod.ryouzyoku_kojo_family.register(key, async (...args) => {
+      get_kojo(key).dungeon_ryouzyoku = async (...args) => {
         seen.push([key, ...args]);
         return 0;
-      });
+      };
     }
 
     assert.equal(await mod.dungeon_ryouzyoku(), 0, `LOCAL ${local}：不抛错`);

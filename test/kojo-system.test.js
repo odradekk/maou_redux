@@ -79,11 +79,13 @@ test('FLAG:7 = 1（少量模式）不拦（检查是 <= 0）', async () => {
   assert.equal(fixture.text_lines().length, 2); // K5 首次两句
 });
 
-test('存在判定：FLAG:105 == 0 时静默（口上文件「被删掉」的容错）', async () => {
-  const fixture = await setup_kojo((f) => f.store.set('flag:105', 0));
-  const { kojo_message_com } = fixture.load_module('kojo/kojo-system');
-  await kojo_message_com();
-  assert.deepEqual(fixture.text_lines(), []);
+test('未注册的编号退回基类实例：钩子不输出（「口上文件被删掉」的容错）', async () => {
+  const fixture = await setup_kojo();
+  const { get_kojo } = fixture.load_module('kojo/kojo-factory');
+  const { KojoBase } = fixture.load_module('kojo/kojo-base');
+  const bare = get_kojo(38); // 空间内、没有任何模块登记过
+  assert.ok(bare instanceof KojoBase, '未注册编号拿到基类实例');
+  assert.equal(await bare.kojo_message_com(() => 0), 0, '钩子不输出、返回 0');
 });
 
 test('GET_KOJO_NUM：素质 160-179 扫描，最后一格命中者胜', async () => {
@@ -107,18 +109,23 @@ test('GET_KOJO_NUM：素质 160-179 扫描，最后一格命中者胜', async ()
   assert.equal(get_kojo_num(17), 0);
 });
 
-test('GET_KOJO_NUM：扩展素质 102 映射到 K902，存在判定读取 EX_FLAG:102', async () => {
+test('GET_KOJO_NUM：扩展素质 102 映射到 K902', async () => {
   const fixture = await setup_kojo((f) => {
     f.store.delete('talent:17:165');
     f.store.set('ex_talent:17:102', 1);
-    f.store.set('exflag:102', 1);
   });
-  const { get_kojo_num, kojo_message_com, kojo_message_com_family } =
+  const { get_kojo_num, kojo_message_com } =
     fixture.load_module('kojo/kojo-system');
-  kojo_message_com_family.register(902, async () => {
-    await fixture.era.print('K902 扩展口上');
-    return 0;
-  });
+  const { KojoBase } = fixture.load_module('kojo/kojo-base');
+  const { register_kojo } = fixture.load_module('kojo/kojo-factory');
+  class K902 extends KojoBase {
+    /** 指令分支体：本用例只验编号映射与分发，不验台词 */
+    async select_com() {
+      await fixture.era.print('K902 扩展口上');
+      return 0;
+    }
+  }
+  register_kojo(902, K902);
 
   assert.equal(get_kojo_num(17), 1002, 'EX_TALENT:102 → 口上编号 1002');
   assert.equal(
@@ -167,53 +174,23 @@ test('分发：性格命中唯一实现；空间内缺失（K4 冷徹未移植�
 
 // —— 分发窗口（#403：七处内联检查整合成 in_kojo_window 的唯一定义） ——
 
-test('分发窗口边界：99/100、139/140、1000/1001 两侧逐点，且恰是声明编号空间的像', () => {
+test('分发窗口边界：99/100、139/140、1000/1001 两侧逐点', () => {
   const fixture = create_era_fixture();
-  const { in_kojo_window, kojo_message_com_family } =
-    fixture.load_module('kojo/kojo-system');
+  const { in_kojo_window } = fixture.load_module('kojo/kojo-system');
 
   // 验收反馈实测的缺口：LOCAL 120-139 没有产出源头（GET_KOJO_NUM 只到
   // 119），边界改动从行为层看不见——所以对着窗口本身逐点钉（两侧都站人）
   for (const [local, expected, label] of [
     [99, false, '下界外侧（键 -1）'],
     [100, true, '下界（慈愛 K0 的 LOCAL）'],
-    [139, true, '上界内侧（声明空间最大键 39）'],
+    [139, true, '上界内侧（最大键 39）'],
     [140, false, '上界外侧（键 40 不在声明空间）'],
     [1000, false, 'EX 下界外侧（键 900 不在声明空间）'],
     [1001, true, 'EX 下界（EX_TALENT:101 → K901）'],
+    [1600, true, 'EX 上界内侧（最大键 1500）'],
+    [1701, true, '窗口上端不封口（EX 空间以外的 LOCAL 也放行）'],
   ]) {
     assert.equal(in_kojo_window(local), expected, `LOCAL ${local}：${label}`);
-  }
-
-  // 窗口与声明空间是同一范围的两侧写法：声明的每个键（LOCAL = 键 + 100）
-  // 都放行，紧邻两侧（-1 / 40 / 900）都拒绝——上界 140 的来历就是「40 格」
-  for (const id of kojo_message_com_family.declared) {
-    assert.equal(in_kojo_window(id + 100), true, `声明键 ${id} 必须在窗口内`);
-  }
-  for (const id of [-1, 40, 900]) {
-    assert.equal(
-      in_kojo_window(id + 100),
-      false,
-      `非声明键 ${id} 必须在窗口外`,
-    );
-  }
-
-  // 声明空间自己的两端逐点：普通分支 0-39、EX 分支 901-1600。上面的循环只保证
-  // 「空间内的键都能放行」，空间被改小（39 或 1600 掉出去）它看不出来——
-  // 这两个字面量（40 格 / 700 格 / 起点 901）要有自己的钉子
-  for (const id of [0, 39, 901, 1600]) {
-    assert.equal(
-      kojo_message_com_family.declared.has(id),
-      true,
-      `键 ${id} 必须在声明空间内`,
-    );
-  }
-  for (const id of [-1, 40, 900, 1601]) {
-    assert.equal(
-      kojo_message_com_family.declared.has(id),
-      false,
-      `键 ${id} 不能在声明空间内`,
-    );
   }
 });
 
@@ -237,58 +214,13 @@ test('GET_KOJO_NUM：0 是合法角色号（魔王），不许并进缺省哨兵
   assert.equal(get_kojo_num(), 103, '不传参 → 当前 TARGET');
 });
 
-test('kojo_handler_id：-1 哨兵与合法 0 各站一侧，空间外一律 -1', () => {
+test('run_kojo：编号在窗口外（无性格素质）直接返回 0，不取实例', async () => {
   const fixture = create_era_fixture();
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.target = 17;
-  fixture.store.set('talent:17:163', 1); // TARGET → 103 → 键 3
-  fixture.store.set('talent:0:160', 1); // 0 号（魔王）→ 100 → 键 0（合法角色号）
-  const { kojo_handler_id } = fixture.load_module('kojo/kojo-system');
+  const { run_kojo } = fixture.load_module('kojo/kojo-system');
 
-  assert.equal(kojo_handler_id(0), 0, '显式 0 → 读它自己（键 0 是合法值）');
-  assert.equal(kojo_handler_id(17), 3, '显式角色号 → 键 = LOCAL - 100');
-  assert.equal(kojo_handler_id(), 3, '缺省 → 当前 TARGET');
-  assert.equal(kojo_handler_id(-1), 3, '哨兵 -1 → 当前 TARGET');
-  assert.equal(kojo_handler_id(-2), 3, '其它负数也走哨兵侧');
-  assert.equal(kojo_handler_id(99), -1, '无素质的合法角色号 → 空间外哨兵 -1');
-});
-
-test('try_kojo：arg 缺省 -1 吃当前 TARGET，显式 0 读它自己（#585 起只剩 family 单必填参）', async () => {
-  const fixture = create_era_fixture();
-  const era_flag = fixture.load_module('era-utils/era-flag');
-  era_flag.target = 17;
-  fixture.store.set('talent:17:163', 1); // TARGET → 键 3
-  fixture.store.set('talent:0:160', 1); // 0 号 → 键 0
-  const mod = fixture.load_module('kojo/kojo-system');
-  const { try_kojo, benki_koujo_family } = mod;
-  assert.equal(
-    mod.try_kojo_or_stub,
-    undefined,
-    '#585 旧名 try_kojo_or_stub 不再导出（or_stub 已名不副实）',
-  );
-  assert.equal(
-    try_kojo.length,
-    1,
-    '只有 family 是必填形参（arg/extra_args 带缺省；#638 起连静态核对的基准名形参也删了）',
-  );
-  const seen = [];
-  benki_koujo_family.register(0, async () => {
-    seen.push('k0');
-    return 0;
-  });
-  benki_koujo_family.register(3, async () => {
-    seen.push('k3');
-    return 0;
-  });
-
-  assert.equal(await try_kojo(benki_koujo_family), 0);
-  assert.equal(await try_kojo(benki_koujo_family, -1), 0);
-  assert.equal(await try_kojo(benki_koujo_family, 0), 0);
-  assert.deepEqual(
-    seen,
-    ['k3', 'k3', 'k0'],
-    '缺省与 -1 都吃 TARGET（键 3）；显式 0 读它自己（键 0）',
-  );
+  assert.equal(await run_kojo('benki_koujo'), 0, '无素质 → LOCAL 0 → 窗口外');
 });
 
 test('改名完整性：ere/ 与 tools/ 里不残留旧名（#585）', () => {
@@ -344,20 +276,6 @@ test('EVENTSHOP #PRI：FLAG:7 == 0 补 2；1 与 -1 不动（关掉不自开）'
   }
 });
 
-test('EVENTTRAIN #PRI 置存在标志、EVENTEND #LATER 清 0（两模块各自一对）', async () => {
-  const fixture = await setup_kojo((f) => f.store.delete('flag:7'));
-  const { emit } = fixture.load_module('system/event/registry');
-
-  await emit('EVENTTRAIN');
-  assert.equal(fixture.store.get('flag:103'), 1); // K3 存在标志
-  assert.equal(fixture.store.get('flag:105'), 1); // K5 存在标志
-  assert.equal(fixture.store.get('flag:7'), 2); // 总开关随之默认开
-
-  await emit('EVENTEND');
-  assert.equal(fixture.store.get('flag:103'), 0);
-  assert.equal(fixture.store.get('flag:105'), 0);
-});
-
 test('实机路径端到端：主菜单 → 调教 → 爱抚 → 玛奥真的说话', async () => {
   const fixture = create_era_fixture();
   preset_chara_0(fixture);
@@ -396,7 +314,11 @@ test('实机路径端到端：主菜单 → 调教 → 爱抚 → 玛奥真的�
   fixture.store.set('talent:17:165', 1);
   const { emit } = fixture.load_module('system/event/registry');
   await emit('EVENTTRAIN');
-  assert.equal(fixture.store.get('flag:105'), 1);
+  assert.equal(
+    fixture.store.get('flag:7'),
+    2,
+    'EVENTTRAIN #PRI 补总开关（存在标志已删）',
+  );
 
   // 回合：COM0（爱抚）→ SOURCE_CHECK（CALL KOJO_MESSAGE_COM）
   fixture.load_module('system/train/com-caress');
@@ -449,10 +371,16 @@ test('#213 契约：七道头部检查对已注册的全部 handler 逐条跳过
   // 对 family 里已注册的每个 handler × 每道检查：置位 → 直调 → 返回 0。
   // 跳过类检查不得等待、不得出台词；死斗场/兽奸岔去专用口上——K5 死斗场
   // 已随 #236 换真台词、兽奸静默；K2 死斗场已随 #233 换真台词、兽奸仍静默；
-  const probe = await setup_kojo();
   const { kojo_message_com_family } = require('./helpers/kojo-families');
-  const handlers = [...kojo_message_com_family.implemented.entries()];
-  assert.ok(handlers.length >= 3, '契约至少要覆盖已注册的 K2/K3/K5');
+  // 只跑本用例播种的三个性格：其余编号在 K5 的世界里没有意义
+  const handlers = [2, 3, 5].map((id) => [
+    id,
+    kojo_message_com_family.implemented.get(id),
+  ]);
+  assert.ok(
+    handlers.every(([, handler]) => typeof handler === 'function'),
+    '契约至少要覆盖已注册的 K2/K3/K5',
+  );
   for (const [num] of handlers) {
     for (const [name, seed_guard] of KOJO_GUARD_STATES) {
       const fixture = await setup_kojo();

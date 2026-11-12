@@ -21,10 +21,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
-const {
-  load_modules,
-  register_handlers,
-} = require('./helpers/event-registration');
+const { load_modules } = require('./helpers/event-registration');
 const {
   assert_one_blank_after,
   assert_one_blank_before,

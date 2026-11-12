@@ -19,10 +19,7 @@ const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
-const {
-  load_modules,
-  register_handlers,
-} = require('./helpers/event-registration');
+const { load_modules } = require('./helpers/event-registration');
 
 /** 素质下标（与 ere/system/chara/look-info.js 的常量同名，测试侧独立写死防串改） */
 const T = {

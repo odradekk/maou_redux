@@ -42,20 +42,6 @@ async function setup_k14(seed) {
 
 // —— EVENTTRAIN / EVENTEND：存在标志一对 ——
 
-test('EVENTTRAIN #PRI 档置存在标志、EVENTEND #LATER 档清 0（K14 一对）', async () => {
-  const fixture = await setup_k14((f) => {
-    f.store.delete('flag:114');
-    f.store.set('cflag:20:201', 9); // 越过 EVENTTRAIN 前段状态机（避免打印）
-  });
-
-  const { emit } = fixture.load_module('system/event/registry');
-  await emit('EVENTTRAIN');
-  assert.equal(fixture.store.get('flag:114'), 1); // K14 存在标志
-  assert.equal(fixture.store.get('flag:7'), 2); // 总开关随之默认开
-  await emit('EVENTEND');
-  assert.equal(fixture.store.get('flag:114'), 0);
-});
-
 test('EVENTTRAIN #PRI 档口上开关补 0（FLAG:7 从 0 补到 2）', async () => {
   const fixture = await setup_k14((f) => {
     f.store.set('flag:7', 0);

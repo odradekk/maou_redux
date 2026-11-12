@@ -254,15 +254,6 @@ test('触手（TEQUIP:90）：静默跳过', async () => {
   assert.deepEqual(fixture.text_lines(), []);
 });
 
-test('EVENTTRAIN #PRI 档置 FLAG:102、EVENTEND #LATER 档清 0', async () => {
-  const fixture = await setup_k2((f) => f.store.set('flag:102', 0));
-  const { emit } = fixture.load_module('system/event/registry');
-  await emit('EVENTTRAIN');
-  assert.equal(fixture.store.get('flag:102'), 1);
-  await emit('EVENTEND');
-  assert.equal(fixture.store.get('flag:102'), 0);
-});
-
 test('EVENTTRAIN NORMAL 档：默认种族初调教台词 + 推进 CFLAG:201', async () => {
   const fixture = await setup_k2();
   const { emit } = fixture.load_module('system/event/registry');

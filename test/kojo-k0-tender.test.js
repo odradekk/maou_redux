@@ -2193,19 +2193,6 @@ test('背后位二次爱慕 + V钝感附加句 / 阈值闸', async () => {
   assert.deepEqual(exhausted.text_lines(), []);
 });
 
-test('K0 EVENTTRAIN #PRI 档置 FLAG:100、EVENTEND #LATER 档清 FLAG:100', async () => {
-  const fixture = await setup_k0((f) => {
-    f.store.delete('flag:100');
-    f.store.delete('flag:7');
-  });
-  const { emit } = fixture.load_module('system/event/registry');
-  await emit('EVENTTRAIN');
-  assert.equal(fixture.store.get('flag:100'), 1, 'K0 EVENTTRAIN 置 FLAG:100');
-  assert.equal(fixture.store.get('flag:7'), 2, 'K0 EVENTTRAIN 总开关补 0→2');
-  await emit('EVENTEND');
-  assert.equal(fixture.store.get('flag:100'), 0, 'K0 EVENTEND 清 FLAG:100');
-});
-
 async function emit_k0(fixture, event, rand) {
   const { emit } = fixture.load_module('system/event/registry');
   return emit(event, rand);

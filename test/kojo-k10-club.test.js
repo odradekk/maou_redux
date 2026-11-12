@@ -44,20 +44,6 @@ async function setup_k10(seed, selectcom = 0) {
 
 // —— EVENTTRAIN：存在标志一对 ——
 
-test('EVENTTRAIN #PRI 档置存在标志、EVENTEND #LATER 档清 0（K10 一对）', async () => {
-  const fixture = await setup_k10((f) => {
-    f.store.delete('flag:110');
-    f.store.set('cflag:20:201', 9); // 越过 EVENTTRAIN 前段状态机（避开 era.input() 分支）
-  });
-
-  const { emit } = fixture.load_module('system/event/registry');
-  await emit('EVENTTRAIN');
-  assert.equal(fixture.store.get('flag:110'), 1); // K10 存在标志
-  assert.equal(fixture.store.get('flag:7'), 2); // 总开关随之默认开
-  await emit('EVENTEND');
-  assert.equal(fixture.store.get('flag:110'), 0);
-});
-
 test('EVENTTRAIN #PRI 档口上开关补 0（FLAG:7 从 0 补到 2）', async () => {
   const fixture = await setup_k10((f) => {
     f.store.set('flag:7', 0);
@@ -177,57 +163,13 @@ test('K10_KOJO2 MARK:3==3 分档：glasses_word 按 CFLAG:41 展开', async () =
 
 // —— 家族注册接入（issue #241 自检 ④ top-level-wiring）——
 
-test('20 个分发族全部注册了 K10（key 10）', async () => {
+test('工厂里登记了口上编号 10（分发族删除后的同类核对）', async () => {
   const fixture = await setup_k10();
-  const {
-    kojo_message_com_family,
-    self_kojo_family,
-    kojo_message_palamcng_family,
-    kojo_message_markcng_family,
-    benki_koujo_family,
-    enterenemy_koujo_family,
-    dungeon_victory_family,
-    dungeon_attack_family,
-    ntr_koujo_family,
-    exucution_koujo_family,
-    museum_koujo_family,
-    banishment_koujo_family,
-    public_exucution_koujo_family,
-    grotesque_koujo_family,
-    gobi_koujo_family,
-  } = require('./helpers/kojo-families');
-  const {
-    gohoubi_after_koujo_family,
-    osioski_koujo_family,
-    gohoubi_request_koujo_family,
-  } = require('./helpers/kojo-families');
-  const { ryouzyoku_kojo_family, ryouzyoku_after_kojo_family } = require('./helpers/kojo-families');
-  const families = [
-    kojo_message_com_family,
-    self_kojo_family,
-    kojo_message_palamcng_family,
-    kojo_message_markcng_family,
-    benki_koujo_family,
-    enterenemy_koujo_family,
-    dungeon_victory_family,
-    dungeon_attack_family,
-    ntr_koujo_family,
-    exucution_koujo_family,
-    museum_koujo_family,
-    banishment_koujo_family,
-    public_exucution_koujo_family,
-    grotesque_koujo_family,
-    gobi_koujo_family,
-    gohoubi_after_koujo_family,
-    osioski_koujo_family,
-    gohoubi_request_koujo_family,
-    ryouzyoku_kojo_family,
-    ryouzyoku_after_kojo_family,
-  ];
-  assert.equal(families.length, 20);
-  for (const family of families) {
-    assert.equal(family.has(10), true, `${family.name || '(族)'} 缺 K10 注册`);
-  }
+  const { registered_kojo_ids } = fixture.load_module('kojo/kojo-factory');
+  assert.ok(
+    registered_kojo_ids().includes(10),
+    '编号 10 未登记进工厂：模块漏被装配 require，整性格口上会静默失声',
+  );
 });
 
 // —— kojo_message_com_10：指令口上族 ——
@@ -379,7 +321,9 @@ test('KOJO_MESSAGE_PALAMCNG_10 处女丧失：反感与不快的本回增量满 
       const { game } = fixture.load_module('facade/game');
       game.train.处女丧失 = 1;
       game.train.主人导致处女丧失 = 1;
-      const { kojo_message_palamcng_family } = require('./helpers/kojo-families');
+      const {
+        kojo_message_palamcng_family,
+      } = require('./helpers/kojo-families');
       await kojo_message_palamcng_family.call(10, { args: [] });
       assert.equal(
         fixture.text_lines().some((l) => l.startsWith(line)),
@@ -479,7 +423,10 @@ test('DUNGEON_RYOUZYOKU_K10 / AFTER_K10：迷宫败北与凌辱结束口上（�
   const fixture = await setup_k10((f) => {
     f.store.set('talent:20:0', 1); // 处女
   });
-  const { ryouzyoku_kojo_family, ryouzyoku_after_kojo_family } = require('./helpers/kojo-families');
+  const {
+    ryouzyoku_kojo_family,
+    ryouzyoku_after_kojo_family,
+  } = require('./helpers/kojo-families');
   await ryouzyoku_kojo_family.call(10, { args: [] });
   assert.deepEqual(fixture.text_lines(), [
     '「请！请住手…哈啊～…求、求你们…人家还是处女…所以说…只有那里请…哈啊～！」',
@@ -506,7 +453,10 @@ test('GOHOUBI_REQUEST_KOUJO_K10：CFLAG:A:504==0 请求金钱', async () => {
 
 test('GOHOUBI_AFTER_KOUJO_K10 / OSIOKI_KOUJO_K10：TFLAG:18 改经 choice 参数传递', async () => {
   const fixture = await setup_k10();
-  const { gohoubi_after_koujo_family, osioski_koujo_family } = require('./helpers/kojo-families');
+  const {
+    gohoubi_after_koujo_family,
+    osioski_koujo_family,
+  } = require('./helpers/kojo-families');
   await gohoubi_after_koujo_family.call(10, { args: [20, 0] });
   assert.deepEqual(fixture.text_lines(), ['「就这样不许动？哈？」']);
   const before = fixture.text_lines().length;

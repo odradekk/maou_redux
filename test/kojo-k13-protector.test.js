@@ -68,17 +68,6 @@ async function emit_end(fixture, rand) {
 
 // —— EVENTTRAIN：存在标志一对 ——
 
-test('EVENTTRAIN #PRI 档置存在标志、EVENTEND #LATER 档清 0（K13 一对）', async () => {
-  const fixture = await setup_k13((f) => {
-    f.store.delete('flag:113');
-  });
-  await emit_train(fixture, seq_rand(1));
-  assert.equal(fixture.store.get('flag:113'), 1, 'K13 一对');
-  assert.equal(fixture.store.get('flag:7'), 2, 'K13 一对');
-  await emit_end(fixture, seq_rand(1));
-  assert.equal(fixture.store.get('flag:113'), 0, 'K13 一对');
-});
-
 test('EVENTTRAIN #PRI 档口上开关补 0（FLAG:7 从 0 补到 2）', async () => {
   const fixture = await setup_k13((f) => {
     f.store.set('flag:7', 0);
@@ -516,57 +505,13 @@ test('阈值闸：FLAG:7==1 时淫乱阶段耗尽不出声、==2 时旁路重出
 
 // —— 家族注册接入 ——
 
-test('20 个分发族全部注册了 K13（key 13）', async () => {
+test('工厂里登记了口上编号 13（分发族删除后的同类核对）', async () => {
   const fixture = await setup_k13();
-  const {
-    kojo_message_com_family,
-    self_kojo_family,
-    kojo_message_palamcng_family,
-    kojo_message_markcng_family,
-    benki_koujo_family,
-    enterenemy_koujo_family,
-    dungeon_victory_family,
-    dungeon_attack_family,
-    ntr_koujo_family,
-    exucution_koujo_family,
-    museum_koujo_family,
-    banishment_koujo_family,
-    public_exucution_koujo_family,
-    grotesque_koujo_family,
-    gobi_koujo_family,
-  } = require('./helpers/kojo-families');
-  const {
-    gohoubi_after_koujo_family,
-    osioski_koujo_family,
-    gohoubi_request_koujo_family,
-  } = require('./helpers/kojo-families');
-  const { ryouzyoku_kojo_family, ryouzyoku_after_kojo_family } = require('./helpers/kojo-families');
-  const families = [
-    kojo_message_com_family,
-    self_kojo_family,
-    kojo_message_palamcng_family,
-    kojo_message_markcng_family,
-    benki_koujo_family,
-    enterenemy_koujo_family,
-    dungeon_victory_family,
-    dungeon_attack_family,
-    ntr_koujo_family,
-    exucution_koujo_family,
-    museum_koujo_family,
-    banishment_koujo_family,
-    public_exucution_koujo_family,
-    grotesque_koujo_family,
-    gobi_koujo_family,
-    gohoubi_after_koujo_family,
-    osioski_koujo_family,
-    gohoubi_request_koujo_family,
-    ryouzyoku_kojo_family,
-    ryouzyoku_after_kojo_family,
-  ];
-  assert.equal(families.length, 20, 'K13 二十族清单长度');
-  for (const family of families) {
-    assert.equal(family.has(13), true, `${family.name || '(族)'} 缺 K13 注册`);
-  }
+  const { registered_kojo_ids } = fixture.load_module('kojo/kojo-factory');
+  assert.ok(
+    registered_kojo_ids().includes(13),
+    '编号 13 未登记进工厂：模块漏被装配 require，整性格口上会静默失声',
+  );
 });
 
 // —— PALAMCNG / MARKCNG ——
@@ -727,7 +672,10 @@ test('DUNGEON_RYOUZYOKU_K13 / AFTER_K13：处女默认档', async () => {
   const fixture = await setup_k13((f) => {
     f.store.set('talent:31:0', 1);
   });
-  const { ryouzyoku_kojo_family, ryouzyoku_after_kojo_family } = require('./helpers/kojo-families');
+  const {
+    ryouzyoku_kojo_family,
+    ryouzyoku_after_kojo_family,
+  } = require('./helpers/kojo-families');
   await ryouzyoku_kojo_family.call(13, { args: [] });
   assert.deepEqual(
     fixture.text_lines(),

@@ -227,15 +227,6 @@ test('死斗场（TEQUIP:55）：SELECTCOM==0 静默、==55 走真身', async ()
   assert.deepEqual(fixture.text_lines(), ['玛奥连站起来的力气都没有了……']);
 });
 
-test('EVENTTRAIN #PRI 置 FLAG:105、EVENTEND #LATER 清 0', async () => {
-  const fixture = await setup_k5((f) => f.store.set('flag:105', 0));
-  const { emit } = fixture.load_module('system/event/registry');
-  await emit('EVENTTRAIN');
-  assert.equal(fixture.store.get('flag:105'), 1);
-  await emit('EVENTEND');
-  assert.equal(fixture.store.get('flag:105'), 0);
-});
-
 test('EVENTTRAIN NORMAL 档：人类初调教台词 + 推进 CFLAG:201', async () => {
   const fixture = await setup_k5();
   const { emit } = fixture.load_module('system/event/registry');

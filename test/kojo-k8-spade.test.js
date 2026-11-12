@@ -66,16 +66,6 @@ async function speak_k8(fixture, rand) {
 
 // —— EVENTTRAIN #PRI / EVENTEND #LATER：存在标志 ——
 
-test('EVENTTRAIN #PRI 置存在标志、EVENTEND #LATER 清 0（K8 一对）', async () => {
-  const fixture = await setup_k8((f) => f.store.delete('flag:108'));
-  const { emit } = fixture.load_module('system/event/registry');
-  await emit('EVENTTRAIN');
-  assert.equal(fixture.store.get('flag:108'), 1); // K8 存在标志
-  assert.equal(fixture.store.get('flag:7'), 2); // 总开关随之默认开
-  await emit('EVENTEND');
-  assert.equal(fixture.store.get('flag:108'), 0);
-});
-
 // —— EVENTTRAIN：CFLAG:201 状态机 ——
 
 test('初調教（CFLAG:201 == 0）：种族分档（人间）+ 推进到 1', async () => {
@@ -4053,7 +4043,7 @@ test('PALAMCNG：处女丧失·主人以外·それ以外', async () => {
 
 // —— KOJO_MESSAGE_MARKCNG_8（刻印取得口上） ——
 
-async function speak_markcng_k8(fixture) {
+async function speak_markcng_k8() {
   const { kojo_message_markcng_family } = require('./helpers/kojo-families');
   return kojo_message_markcng_family.call(8);
 }
@@ -4063,7 +4053,7 @@ test('MARKCNG：头部检查 TEQUIP:45（口塞）跳过', async () => {
     f.store.set('tequip:31:45', 1);
     f.store.set('tflag:22', 3);
   });
-  await speak_markcng_k8(fixture);
+  await speak_markcng_k8();
   assert.deepEqual(fixture.text_lines(), []);
 });
 
@@ -4073,7 +4063,7 @@ test('MARKCNG：助手调教时不跳过（检查未启用）', async () => {
     ef.assi = 5;
     ef.assiplay = 1;
   });
-  await speak_markcng_k8(fixture);
+  await speak_markcng_k8();
   assert.deepEqual(fixture.text_lines(), [
     '「啊啊…这种痛苦…唔……不、不要…不要啊！」',
     '银黑桃因为超过限度的苦痛而悲鸣着………',
@@ -4085,7 +4075,7 @@ test('MARKCNG：苦痛刻印Lv3取得 爱慕写 CFLAG:297', async () => {
     f.store.set('talent:31:85', 1);
     f.store.set('tflag:22', 3);
   });
-  await speak_markcng_k8(fixture);
+  await speak_markcng_k8();
   assert.deepEqual(fixture.text_lines(), [
     '「啊啊…你竟然做到了这种程度…唔…啊…啊啊！」',
     '银黑桃因为超过限度的苦痛而悲鸣着………',
@@ -4097,7 +4087,7 @@ test('MARKCNG：快乐刻印Lv3取得 それ以外写 CFLAG:298', async () => {
   const fixture = await setup_k8((f) => {
     f.store.set('tflag:23', 3);
   });
-  await speak_markcng_k8(fixture);
+  await speak_markcng_k8();
   assert.deepEqual(fixture.text_lines(), [
     '「啊啊…这么舒服…还是第一次…啊啊！不行…再继续被玩弄的话我…已经…啊啊…变得奇怪…回不了头啊！」',
     '银黑桃的身体里被刻下了强烈的快感、漏出了快要融化一样的表情………',
@@ -4109,7 +4099,7 @@ test('MARKCNG：屈服刻印Lv3取得写 CFLAG:299（单档，无爱慕分歧）
   const fixture = await setup_k8((f) => {
     f.store.set('tflag:24', 3);
   });
-  await speak_markcng_k8(fixture);
+  await speak_markcng_k8();
   assert.deepEqual(fixture.text_lines(), [
     '「啊啊…我…已经…不会再反抗了…」',
     '「或许这才是我…新的………」',
@@ -4123,7 +4113,7 @@ test('MARKCNG：反抗刻印Lv3取得 爱慕写 CFLAG:300', async () => {
     f.store.set('talent:31:85', 1);
     f.store.set('tflag:21', 3);
   });
-  await speak_markcng_k8(fixture);
+  await speak_markcng_k8();
   assert.deepEqual(fixture.text_lines(), [
     '「为…为什么要这么对我…真的会讨厌你的…呜呜」',
   ]);
@@ -4421,7 +4411,7 @@ test('SELF_KOJO：寿命消灭 それ以外支也为空行', async () => {
 // —— 迷宫四函数（DUNGEON_RYOUZYOKU / _AFTER / VICTORY / ATTACK） ——
 
 async function call_dungeon(fixture, family_name, module_path, args = []) {
-  const family = fixture.load_module(module_path)[family_name];
+  const family = require('./helpers/kojo-families')[family_name];
   return family.call(8, { args });
 }
 
@@ -4592,7 +4582,7 @@ test('DUNGEON_ATTACK：侵攻中（CFLAG:1 == 2）与迎击中各走各的三选
 
 // —— BENKI_KOUJO_K8（肉便器口上，FLAG:62 六档 × 四选一） ——
 
-async function speak_benki_k8(fixture) {
+async function speak_benki_k8() {
   const { benki_koujo_family } = require('./helpers/kojo-families');
   return benki_koujo_family.call(8, { args: [] });
 }
@@ -4647,7 +4637,7 @@ test('BENKI：FLAG:62==1 爱慕支两行（第二行带角色名）', async () =
     f.store.set('flag:62', 1);
     f.store.set('talent:31:85', 1);
   });
-  await speak_benki_k8(fixture);
+  await speak_benki_k8();
   assert.deepEqual(fixture.text_lines(), [
     '「啊啊…被弄得这么脏的话、会再也见不到那个人了吧………」',
     '面对银黑桃的叹息，周围的女魔族冷冷的笑着………',
@@ -4658,7 +4648,7 @@ test('BENKI：FLAG:62==2 獣姦档それ以外', async () => {
   const fixture = await setup_k8((f) => {
     f.store.set('flag:62', 2);
   });
-  await speak_benki_k8(fixture);
+  await speak_benki_k8();
   assert.deepEqual(fixture.text_lines(), [
     '「不要…不要…竟然被野兽侵犯什么的…嗯咕！嗯！还、还射在里面…啊啊！还这么大！」',
   ]);
@@ -4669,7 +4659,7 @@ test('BENKI：FLAG:62==3 侍奉支句末引号正常', async () => {
     f.store.set('flag:62', 3);
     f.store.set('abl:31:16', 5);
   });
-  await speak_benki_k8(fixture);
+  await speak_benki_k8();
   assert.deepEqual(
     fixture.text_lines(),
     ['「啊嗯…恩…啊啊…我没有2个小穴，所以请按照顺序来侵犯…啊…啊嗯啊」'],
@@ -4682,7 +4672,7 @@ test('BENKI：FLAG:62==4 淫乱支两处爱心', async () => {
     f.store.set('flag:62', 4);
     f.store.set('talent:31:76', 1);
   });
-  await speak_benki_k8(fixture);
+  await speak_benki_k8();
   assert.deepEqual(fixture.text_lines(), [
     '「啊嗯…啊嗯啊♡ 继续侵犯我的小穴…满满的射出精液吧…♡」',
   ]);
@@ -4693,7 +4683,7 @@ test('BENKI：FLAG:62==5 侍奉支；FLAG:62 越界（6）整段静默', async (
     f.store.set('flag:62', 5);
     f.store.set('abl:31:16', 5);
   });
-  await speak_benki_k8(fixture);
+  await speak_benki_k8();
   assert.deepEqual(
     fixture.text_lines(),
     ['「嗯…呀…我是最喜欢肛门的变态便器…啊啊啊…」'],
@@ -4918,7 +4908,7 @@ test('NTR：P==20 公开生产按 CFLAG:102 分岔，且本支不记位', async 
 //    GROTESQUE / ENTERENEMY） ——
 
 async function speak_family_k8(fixture, family_name, args = []) {
-  const family = fixture.load_module('kojo/kojo-system')[family_name];
+  const family = require('./helpers/kojo-families')[family_name];
   return family.call(8, { args });
 }
 
@@ -5046,7 +5036,7 @@ test('ENTERENEMY：淫乱 → 爱慕 → それ以外 三选一', async () => {
 
 // —— GOHOUBI_REQUEST_KOUJO_K8 / GOHOUBI_AFTER_KOUJO_K8（迎击奖赏） ——
 
-async function speak_gohoubi_request_k8(fixture) {
+async function speak_gohoubi_request_k8() {
   const { gohoubi_request_koujo_family } = require('./helpers/kojo-families');
   return gohoubi_request_koujo_family.call(8, { args: [] });
 }
@@ -5060,7 +5050,7 @@ test('GOHOUBI_REQUEST：CFLAG:504==0 要钱两行', async () => {
   const fixture = await setup_k8((f) => {
     f.store.set('cflag:31:504', 0);
   });
-  await speak_gohoubi_request_k8(fixture);
+  await speak_gohoubi_request_k8();
   assert.deepEqual(fixture.text_lines(), [
     '「雇用我这种等级的忍者就要支付相应的金钱」',
     '银黑桃的要求是奖金。',
@@ -5076,7 +5066,7 @@ test('GOHOUBI_REQUEST：兽奸三档只换中间那个兽名（犬/猪/马），
     const fixture = await setup_k8((f) => {
       f.store.set('cflag:31:504', lv);
     });
-    await speak_gohoubi_request_k8(fixture);
+    await speak_gohoubi_request_k8();
     assert.deepEqual(
       fixture.text_lines(),
       [`「我呢，想要和${beast}交尾的那种♡」`, '银黑桃要求兽奸作为报酬。'],

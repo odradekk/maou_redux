@@ -44,16 +44,6 @@ async function setup_k9(seed, selectcom = 0) {
 
 // —— EVENTTRAIN：存在标志一对 ——
 
-test('EVENTTRAIN #PRI 档置存在标志、EVENTEND #LATER 档清 0（K9 一对）', async () => {
-  const fixture = await setup_k9((f) => f.store.delete('flag:109'));
-  const { emit } = fixture.load_module('system/event/registry');
-  await emit('EVENTTRAIN');
-  assert.equal(fixture.store.get('flag:109'), 1, 'K9 存在标志');
-  assert.equal(fixture.store.get('flag:7'), 2); // 总开关随之默认开
-  await emit('EVENTEND');
-  assert.equal(fixture.store.get('flag:109'), 0);
-});
-
 // —— EVENTTRAIN：初調教 CFLAG:201 状态机 ——
 
 test('初調教（CFLAG:201 == 0）：人間分档，推进到 1', async () => {
@@ -149,57 +139,13 @@ test('简易助手（黑方片本人，NO:ASSI==20）首次：默认分支推进
 
 // —— 家族注册接入（issue #240 自检 ④ top-level-wiring）——
 
-test('20 个分发族全部注册了 K9（key 9）', async () => {
+test('工厂里登记了口上编号 9（分发族删除后的同类核对）', async () => {
   const fixture = await setup_k9();
-  const {
-    kojo_message_com_family,
-    self_kojo_family,
-    kojo_message_palamcng_family,
-    kojo_message_markcng_family,
-    benki_koujo_family,
-    enterenemy_koujo_family,
-    dungeon_victory_family,
-    dungeon_attack_family,
-    ntr_koujo_family,
-    exucution_koujo_family,
-    museum_koujo_family,
-    banishment_koujo_family,
-    public_exucution_koujo_family,
-    grotesque_koujo_family,
-    gobi_koujo_family,
-  } = require('./helpers/kojo-families');
-  const {
-    gohoubi_after_koujo_family,
-    osioski_koujo_family,
-    gohoubi_request_koujo_family,
-  } = require('./helpers/kojo-families');
-  const { ryouzyoku_kojo_family, ryouzyoku_after_kojo_family } = require('./helpers/kojo-families');
-  const families = [
-    kojo_message_com_family,
-    self_kojo_family,
-    kojo_message_palamcng_family,
-    kojo_message_markcng_family,
-    benki_koujo_family,
-    enterenemy_koujo_family,
-    dungeon_victory_family,
-    dungeon_attack_family,
-    ntr_koujo_family,
-    exucution_koujo_family,
-    museum_koujo_family,
-    banishment_koujo_family,
-    public_exucution_koujo_family,
-    grotesque_koujo_family,
-    gobi_koujo_family,
-    gohoubi_after_koujo_family,
-    osioski_koujo_family,
-    gohoubi_request_koujo_family,
-    ryouzyoku_kojo_family,
-    ryouzyoku_after_kojo_family,
-  ];
-  assert.equal(families.length, 20);
-  for (const family of families) {
-    assert.equal(family.has(9), true, `${family.name || '(族)'} 缺 K9 注册`);
-  }
+  const { registered_kojo_ids } = fixture.load_module('kojo/kojo-factory');
+  assert.ok(
+    registered_kojo_ids().includes(9),
+    '编号 9 未登记进工厂：模块漏被装配 require，整性格口上会静默失声',
+  );
 });
 
 // —— kojo_message_com_9：指令口上族 + 头部七道检查 ——
@@ -446,7 +392,10 @@ test('DUNGEON_RYOUZYOKU_K9 / AFTER_K9：迷宫败北与凌辱结束口上', asyn
   const fixture = await setup_k9((f) => {
     f.store.set('talent:20:0', 1); // 处女
   });
-  const { ryouzyoku_kojo_family, ryouzyoku_after_kojo_family } = require('./helpers/kojo-families');
+  const {
+    ryouzyoku_kojo_family,
+    ryouzyoku_after_kojo_family,
+  } = require('./helpers/kojo-families');
   await ryouzyoku_kojo_family.call(9, { args: [] });
   assert.deepEqual(fixture.text_lines(), [
     '「不…不要…我是不会将第一次交给你们的！」',
@@ -477,7 +426,10 @@ test('GOHOUBI_REQUEST_KOUJO_K9：CFLAG:A:504==0 请求金钱', async () => {
 
 test('GOHOUBI_AFTER_KOUJO_K9 / OSIOKI_KOUJO_K9：choice 显式形参', async () => {
   const fixture = await setup_k9();
-  const { gohoubi_after_koujo_family, osioski_koujo_family } = require('./helpers/kojo-families');
+  const {
+    gohoubi_after_koujo_family,
+    osioski_koujo_family,
+  } = require('./helpers/kojo-families');
   await gohoubi_after_koujo_family.call(9, { args: [20, 0] });
   assert.deepEqual(fixture.text_lines(), ['「为、为什么啦！」']);
   const before = fixture.text_lines().length;

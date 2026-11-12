@@ -62,16 +62,6 @@ async function speak_k6(fixture, rand) {
 
 // —— EVENTTRAIN / EVENTEND 存在标志 ——
 
-test('EVENTTRAIN #PRI 置存在标志、EVENTEND #LATER 清 0（K6 一对）', async () => {
-  const fixture = await setup_k6((f) => f.store.delete('flag:106'));
-  const { emit } = fixture.load_module('system/event/registry');
-  await emit('EVENTTRAIN');
-  assert.equal(fixture.store.get('flag:106'), 1, 'K6 存在标志 FLAG:106 = 1');
-  assert.equal(fixture.store.get('flag:7'), 2, '总开关随之默认开');
-  await emit('EVENTEND');
-  assert.equal(fixture.store.get('flag:106'), 0, 'EVENTEND #LATER 清 FLAG:106');
-});
-
 test('初調教（CFLAG:201 == 0，人类）：RAND 非 0 支 + 推进到 1', async () => {
   const fixture = await setup_k6();
   const { emit } = fixture.load_module('system/event/registry');

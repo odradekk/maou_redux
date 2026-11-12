@@ -43,6 +43,21 @@ function make_family(hook) {
       );
     },
     /**
+     * 已注册的编号 → 处理器（用例按编号遍历时用；探针优先）。
+     * @returns {Map<number, Function>} 编号 → 处理器
+     */
+    get implemented() {
+      const factory = require('#/kojo/kojo-factory');
+      const out = new Map();
+      for (const id of factory.registered_kojo_ids()) {
+        out.set(id, (...args) => factory.get_kojo(id)[hook](...args));
+      }
+      for (const [id, fn] of overrides) {
+        out.set(id, fn);
+      }
+      return out;
+    },
+    /**
      * 注册探针（用例专用；后注册的覆盖先注册的，与工厂的「重复即炸」不同）。
      * @param {number} id 口上编号
      * @param {Function} fn 处理器

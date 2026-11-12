@@ -17,10 +17,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
-const {
-  load_modules,
-  register_handlers,
-} = require('./helpers/event-registration');
+const { load_modules } = require('./helpers/event-registration');
 const { preset_chara_0, join_slave_chara } = require('./helpers/chara');
 
 // 世界底座：被凌辱者 31 入列（无调教上下文——本文件不依赖 beginTrain）

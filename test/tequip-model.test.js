@@ -26,10 +26,7 @@ const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
-const {
-  load_modules,
-  register_handlers,
-} = require('./helpers/event-registration');
+const { load_modules } = require('./helpers/event-registration');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
 
 const REPO = path.resolve(__dirname, '..');

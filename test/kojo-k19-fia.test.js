@@ -23,7 +23,10 @@
 const assert = require('node:assert/strict');
 const { test } = require('node:test');
 const { create_era_fixture } = require('./helpers/era-fixture');
-const { register_handlers } = require('./helpers/event-registration');
+const {
+  register_handlers,
+  load_modules,
+} = require('./helpers/event-registration');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
 
 const CID = 35;
@@ -39,7 +42,6 @@ const FIA_KOJOS = [
     module: 'kojo/kojo-k19-fia',
     own_talent: `talent:${CID}:179`,
     other_talent: `ex_talent:${CID}:104`,
-    presence: 'flag:119',
   },
   {
     name: 'K904',
@@ -47,7 +49,6 @@ const FIA_KOJOS = [
     module: 'kojo/kojo-k904-fia',
     own_talent: `ex_talent:${CID}:104`,
     other_talent: `talent:${CID}:179`,
-    presence: 'exflag:104',
   },
 ];
 
@@ -73,11 +74,10 @@ async function setup_fia(kojo, seed, selectcom = 0) {
   for (const mark of [0, 1, 2, 3]) {
     fixture.store.set(`mark:${CID}:${mark}`, 0);
   }
-  fixture.store.set(kojo.presence, 1);
   fixture.store.set('flag:7', 2);
   if (seed) seed(fixture, era_flag);
   register_handlers(fixture, 'kojo/kojo-system');
-  register_handlers(fixture, kojo.module);
+  load_modules(fixture, kojo.module);
   return fixture;
 }
 
@@ -91,17 +91,17 @@ async function speak_k19(fixture, rand = () => 0) {
   return kojo_message_com_family.call(K19.key, { args: [rand] });
 }
 
-async function palam_k19(fixture) {
+async function palam_k19() {
   const { kojo_message_palamcng_family } = require('./helpers/kojo-families');
   return kojo_message_palamcng_family.call(K19.key, { args: [] });
 }
 
-async function mark_k19(fixture) {
+async function mark_k19() {
   const { kojo_message_markcng_family } = require('./helpers/kojo-families');
   return kojo_message_markcng_family.call(K19.key, { args: [] });
 }
 
-async function self_k19(fixture) {
+async function self_k19() {
   const { self_kojo_family } = require('./helpers/kojo-families');
   return self_kojo_family.call(K19.key, { args: [] });
 }
@@ -113,24 +113,20 @@ async function speak_fia(fixture, kojo, rand = () => 0) {
 }
 
 for (const kojo of FIA_KOJOS) {
-  test(`${kojo.name}：EVENTTRAIN #PRI 档置存在标志并补总开关，EVENTEND #LATER 档清标志`, async () => {
+  test(`${kojo.name}：EVENTTRAIN #PRI 档补总开关（存在标志已随 #859 删除）`, async () => {
     const fixture = await setup_fia(kojo, (f) => {
-      f.store.delete(kojo.presence);
       f.store.set('flag:7', 0);
       f.store.set(`cflag:${CID}:201`, 9);
     });
     await emit(fixture, 'EVENTTRAIN');
-    assert.equal(
-      fixture.store.get(kojo.presence),
-      1,
-      `${kojo.name} 存在标志置 1`,
-    );
     assert.equal(fixture.store.get('flag:7'), 2, '口上总开关从 0 补到 2');
-    await emit(fixture, 'EVENTEND');
-    assert.equal(
-      fixture.store.get(kojo.presence),
-      0,
-      `${kojo.name} 存在标志清 0`,
+    const written = fixture.var_writes.filter(
+      (w) => /^flag:1\d\d$/.test(w.name) || /^exflag:10[34]$/.test(w.name),
+    );
+    assert.deepEqual(
+      written,
+      [],
+      '口上存在标志不再写（FLAG:100-119 / EX_FLAG:103-104）',
     );
   });
 
@@ -151,25 +147,25 @@ for (const kojo of FIA_KOJOS) {
     assert.equal(demon.store.get(`cflag:${CID}:370`), 1, '魔族化计数置 1');
   });
 
-  test(`${kojo.name}：只有本套素质在身时才响（两套素质互斥）`, async () => {
-    // EVENTTRAIN 不推进初调教
-    const train = await setup_fia(kojo, (f) => {
-      f.store.delete(kojo.own_talent);
-      f.store.set(kojo.other_talent, 1);
-    });
-    await emit(train, 'EVENTTRAIN');
-    assert.equal(train.store.get(`cflag:${CID}:201`) || 0, 0);
-    assert.deepEqual(train.text_lines(), []);
+  test(`${kojo.name}：编号由素质决定（两套互斥地各自命中）`, async () => {
+    const own = await setup_fia(kojo);
+    const { get_kojo_num: own_num } = own.load_module('kojo/kojo-system');
+    assert.equal(
+      own_num(CID),
+      kojo.key + 100,
+      `${kojo.name}：本套素质 → 自己的编号`,
+    );
 
-    // EVENTEND 不输出结束口上
-    const end = await setup_fia(kojo, (f) => {
+    const other = await setup_fia(kojo, (f) => {
       f.store.delete(kojo.own_talent);
       f.store.set(kojo.other_talent, 1);
-      f.store.set(`base:${CID}:100`, 0);
-      f.store.set(`base:${CID}:0`, 100);
     });
-    await emit(end, 'EVENTEND');
-    assert.deepEqual(end.text_lines(), []);
+    const { get_kojo_num: other_num } = other.load_module('kojo/kojo-system');
+    assert.notEqual(
+      other_num(CID),
+      kojo.key + 100,
+      `${kojo.name}：另一套素质不再命中本套（分发按编号走，不看素质自检）`,
+    );
   });
 }
 
@@ -442,7 +438,7 @@ test('PALAMCNG：润滑首超、四类 NOWEX 首次绝顶分别推进状态', as
     f.store.set('tflag:3', 1);
     for (const index of [0, 1, 2, 3]) f.store.set(`nowex:${CID}:${index}`, 1);
   });
-  await palam_k19(fixture);
+  await palam_k19();
   for (const [index, label] of [
     [221, '首次润滑'],
     [222, '首次欲情'],
@@ -462,7 +458,7 @@ test('MARKCNG：苦痛、快乐、屈服、反抗刻印首超分别推进', asyn
   const fixture = await setup_fia(K19, (f) => {
     for (const index of [21, 22, 23, 24]) f.store.set(`tflag:${index}`, 3);
   });
-  await mark_k19(fixture);
+  await mark_k19();
   for (const [index, label] of [
     [297, '苦痛刻印'],
     [298, '快乐刻印'],
@@ -508,7 +504,7 @@ test('SELF_KOJO 各阶段推进 CFLAG:261–265 与 271–274', async () => {
     [14, 274],
   ]) {
     const fixture = await setup_fia(K19, (f) => f.store.set('tflag:13', phase));
-    await self_k19(fixture);
+    await self_k19();
     assert.equal(
       fixture.store.get(`cflag:${CID}:${counter}`),
       1,
@@ -601,8 +597,9 @@ test('MUSEUM 口上不按博物馆口上编号分派：固定低头正文，爱�
 test('非调教族：NTR、处刑与语尾均注册并执行关键状态', async () => {
   for (const kojo of FIA_KOJOS) {
     const fixture = await setup_fia(kojo);
-    const system = fixture.load_module('kojo/kojo-system');
-    await system.ntr_koujo_family.call(kojo.key, { args: [1] });
+    await require('./helpers/kojo-families').ntr_koujo_family.call(kojo.key, {
+      args: [1],
+    });
     assert.equal(
       fixture.store.get(`cflag:${CID}:650`),
       1,
@@ -616,11 +613,18 @@ test('非调教族：NTR、处刑与语尾均注册并执行关键状态', async
 
     const { game } = fixture.load_module('facade/game');
     game.event.犬射精或处刑口上 = 4;
-    await system.exucution_koujo_family.call(kojo.key, { args: [] });
+    await require('./helpers/kojo-families').exucution_koujo_family.call(
+      kojo.key,
+      { args: [] },
+    );
     const before = fixture.text_lines().length;
-    const gobi_text = await system.gobi_koujo_family.call(kojo.key, {
-      args: [1, () => 0],
-    });
+    const gobi_text =
+      await require('./helpers/kojo-families').gobi_koujo_family.call(
+        kojo.key,
+        {
+          args: [1, () => 0],
+        },
+      );
     assert.equal(gobi_text, '，诶嘿嘿～♪', `${kojo.name} 语尾返回文字（#570）`);
     assert.equal(
       fixture.text_lines().length,
@@ -854,7 +858,9 @@ test('#625 GOHOUBI_REQUEST：空首尾夹着的兽名单独成行（CFLAG:504 �
       const fixture = await setup_fia(kojo, (f) => {
         f.load_module('facade/chara').chara(CID).stronghold.要求奖赏 = req;
       });
-      const { gohoubi_request_koujo_family } = require('./helpers/kojo-families');
+      const {
+        gohoubi_request_koujo_family,
+      } = require('./helpers/kojo-families');
       await gohoubi_request_koujo_family.call(kojo.key, { args: [CID] });
       assert.deepEqual(
         fixture.text_lines(),

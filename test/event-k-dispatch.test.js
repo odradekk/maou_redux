@@ -130,19 +130,6 @@ test('KOJO_MESSAGE_PALAMCNG：存在判定的 EX_FLAG 分支——EX 口上不�
   );
 });
 
-test('KOJO_MESSAGE_PALAMCNG：两道存在标志都为 0 时静默早退（EX 分支另一侧）', async () => {
-  const fixture = setup_kojo();
-  seed_ex(fixture);
-  fixture.store.set('exflag:102', 0);
-  const { kojo_message_palamcng, kojo_message_palamcng_family } =
-    fixture.load_module('kojo/kojo-system');
-  const seen = [];
-  kojo_message_palamcng_family.register(902, probe(seen));
-  await kojo_message_palamcng(always);
-  assert.deepEqual(seen, [], 'FLAG:LOCAL == 0 && EX_FLAG == 0 → 早期返回');
-  assert.deepEqual(fixture.text_lines(), [], '早退无输出');
-});
-
 test('KOJO_MESSAGE_MARKCNG：无存在判定（存在判定行是注释态）→ FLAG:LOCAL == 0 也派发', async () => {
   const fixture = setup_kojo();
   fixture.store.set('talent:17:163', 1); // FLAG:103 特意不置

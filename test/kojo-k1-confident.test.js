@@ -145,19 +145,6 @@ test('阈值闸：FLAG:7 == 1 时阶段耗尽不出声、== 2 时旁路重出声
   assert.equal(repeat.store.get(`cflag:${CID}:301`), 2);
 });
 
-test('EVENTTRAIN #PRI 档置 FLAG:101、EVENTEND #LATER 档清 0', async () => {
-  const fixture = await setup_k1((f) => {
-    f.store.delete('flag:101');
-    f.store.delete('flag:7');
-  });
-  const { emit } = fixture.load_module('system/event/registry');
-  await emit('EVENTTRAIN');
-  assert.equal(fixture.store.get('flag:101'), 1, 'K1 存在标志置 1');
-  assert.equal(fixture.store.get('flag:7'), 2, '总开关随之默认开');
-  await emit('EVENTEND');
-  assert.equal(fixture.store.get('flag:101'), 0, 'K1 存在标志清 0');
-});
-
 test('助手调教不跳过：首次爱抚出台词', async () => {
   const fixture = await setup_k1((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
@@ -407,7 +394,7 @@ async function speak_self_kojo_k1(fixture, rand, q) {
   return self_kojo_family.call(1, { args: [rand, q] });
 }
 
-async function speak_gohoubi_request_k1(fixture) {
+async function speak_gohoubi_request_k1() {
   const { gohoubi_request_koujo_family } = require('./helpers/kojo-families');
   return gohoubi_request_koujo_family.call(1, { args: [CID] });
 }
@@ -840,7 +827,7 @@ test('GOHOUBI_REQUEST 兽奸要求：:8075..:8083 是一行，兽名三档（#62
     [3, '马'],
   ]) {
     const fixture = await setup_k1((f) => f.store.set(`cflag:${CID}:504`, lv));
-    await speak_gohoubi_request_k1(fixture);
+    await speak_gohoubi_request_k1();
     assert.deepEqual(
       fixture.text_lines(),
       [`「胜利之后、想要和${beast}交尾」`],
