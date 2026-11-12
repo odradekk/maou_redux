@@ -19,36 +19,9 @@
 'use strict';
 
 const era = require('#/era-electron');
-const era_exflag = require('#/era-utils/era-exflag');
 const { KojoK19 } = require('#/kojo/kojo-k19-fia');
-const { get_kojo, register_kojo } = require('#/kojo/kojo-factory');
+const { register_kojo } = require('#/kojo/kojo-factory');
 const { gobi_text } = require('#/data/gobi-koujo-const');
-const {
-  kojo_message_com_family,
-  kojo_message_palamcng_family,
-  kojo_message_markcng_family,
-  self_kojo_family,
-  benki_koujo_family,
-  dungeon_victory_family,
-  dungeon_attack_family,
-  ntr_koujo_family,
-  exucution_koujo_family,
-  museum_koujo_family,
-  banishment_koujo_family,
-  public_exucution_koujo_family,
-  grotesque_koujo_family,
-  enterenemy_koujo_family,
-  gobi_koujo_family,
-} = require('#/kojo/kojo-system');
-const {
-  ryouzyoku_kojo_family,
-  ryouzyoku_after_kojo_family,
-} = require('#/kojo/kojo-dungeon-ravish');
-const {
-  gohoubi_after_koujo_family,
-  osioski_koujo_family,
-  gohoubi_request_koujo_family,
-} = require('#/kojo/kojo-dungeon-after');
 
 /**
  * 菲娅 EX 口上 K904：只覆盖与 KojoK19 不同的三处。
@@ -66,83 +39,14 @@ class KojoK904 extends KojoK19 {
     return (era.get(`ex_talent:${target}:104`) || 0) == 1;
   }
 
-  /**
-   * 本口上的存在标志（EVENTTRAIN 置 1、EVENTEND 清 0）。EX 口上的标志是
-   * EX_FLAG:(LOCAL - 900)，与 K19 的 FLAG:119 是两个变量，互不覆盖。
-   * @param {number} value 1 = 存在，0 = 清
-   */
-  mark_present(value) {
-    era_exflag.set(104, value);
-  }
-
   /** 语尾取自常量表的 904 号行（K19 用 19 号行；两行文字当前逐字相同） */
   async gobi_koujo(arg0, rand) {
     return gobi_text(904, arg0, rand);
   }
 }
 
-// 口上族接入：与 K19 同款，只是号不同——一律转发到 904 的工厂实例，
-// 台词本体全部继承自 KojoK19。迁移完成后随族一起删。
+// 模块装载即登记口上类（#859 起这是本模块唯一的启动副作用：分发按键查工厂，
+// 事件接线在 kojo-system.js 一处完成）。
 register_kojo(904, KojoK904);
-const kojo_k904 = get_kojo(904);
-ryouzyoku_kojo_family.register(904, (...args) =>
-  kojo_k904.dungeon_ryouzyoku(...args),
-);
-ryouzyoku_after_kojo_family.register(904, (...args) =>
-  kojo_k904.dungeon_ryouzyoku_after(...args),
-);
-benki_koujo_family.register(904, (...args) => kojo_k904.benki_koujo(...args));
-dungeon_victory_family.register(904, (...args) =>
-  kojo_k904.dungeon_victory(...args),
-);
-dungeon_attack_family.register(904, (...args) =>
-  kojo_k904.dungeon_attack(...args),
-);
-ntr_koujo_family.register(904, (...args) => kojo_k904.ntr_koujo(...args));
-exucution_koujo_family.register(904, (...args) =>
-  kojo_k904.exucution_koujo(...args),
-);
-museum_koujo_family.register(904, (...args) => kojo_k904.museum_koujo(...args));
-banishment_koujo_family.register(904, (...args) =>
-  kojo_k904.banishment_koujo(...args),
-);
-public_exucution_koujo_family.register(904, (...args) =>
-  kojo_k904.public_exucution_koujo(...args),
-);
-grotesque_koujo_family.register(904, (...args) =>
-  kojo_k904.grotesque_koujo(...args),
-);
-enterenemy_koujo_family.register(904, (...args) =>
-  kojo_k904.enterenemy_koujo(...args),
-);
-gohoubi_request_koujo_family.register(904, (...args) =>
-  kojo_k904.gohoubi_request_koujo(...args),
-);
-gohoubi_after_koujo_family.register(904, (...args) =>
-  kojo_k904.gohoubi_after_koujo(...args),
-);
-osioski_koujo_family.register(904, (...args) =>
-  kojo_k904.osioski_koujo(...args),
-);
-gobi_koujo_family.register(904, (...args) => kojo_k904.gobi_koujo(...args));
-kojo_message_com_family.register(904, (...args) =>
-  kojo_k904.kojo_message_com(...args),
-);
-kojo_message_palamcng_family.register(904, (...args) =>
-  kojo_k904.kojo_message_palamcng(...args),
-);
-kojo_message_markcng_family.register(904, (...args) =>
-  kojo_k904.kojo_message_markcng(...args),
-);
-self_kojo_family.register(904, (...args) => kojo_k904.self_kojo(...args));
 
-/**
- * 本模块的事件处理器：由 system/flow/startup.js 的装配表按顺序调用 register()
- * 注册（模块装载本身不注册，装配顺序见该文件）。四处接线与 K19 同一份，
- * 处理器只多传一个 K904 实例去取三个差异点。
- */
-function register() {
-  kojo_k904.register_events();
-}
-
-module.exports = { register, KojoK904 };
+module.exports = { KojoK904 };

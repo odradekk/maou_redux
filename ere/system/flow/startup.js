@@ -50,25 +50,6 @@ const HANDLER_MODULES = [
   ['#/page/page-shop', require('#/page/page-shop')],
   ['#/system/turnend-settle', require('#/system/turnend-settle')],
   ['#/kojo/kojo-system', require('#/kojo/kojo-system')],
-  ['#/kojo/kojo-k0-tender', require('#/kojo/kojo-k0-tender')],
-  ['#/kojo/kojo-k2-timid', require('#/kojo/kojo-k2-timid')],
-  ['#/kojo/kojo-k3-noble', require('#/kojo/kojo-k3-noble')],
-  ['#/kojo/kojo-k5-mao', require('#/kojo/kojo-k5-mao')],
-  ['#/kojo/kojo-k1-confident', require('#/kojo/kojo-k1-confident')],
-  ['#/kojo/kojo-k4-stoic', require('#/kojo/kojo-k4-stoic')],
-  ['#/kojo/kojo-k6-wicked', require('#/kojo/kojo-k6-wicked')],
-  ['#/kojo/kojo-k7-heart', require('#/kojo/kojo-k7-heart')],
-  ['#/kojo/kojo-k8-spade', require('#/kojo/kojo-k8-spade')],
-  ['#/kojo/kojo-k9-diamond', require('#/kojo/kojo-k9-diamond')],
-  ['#/kojo/kojo-k10-club', require('#/kojo/kojo-k10-club')],
-  ['#/kojo/kojo-k11-lily', require('#/kojo/kojo-k11-lily')],
-  ['#/kojo/kojo-k13-protector', require('#/kojo/kojo-k13-protector')],
-  ['#/kojo/kojo-k14-nobleman', require('#/kojo/kojo-k14-nobleman')],
-  ['#/kojo/kojo-k15-clever', require('#/kojo/kojo-k15-clever')],
-  ['#/kojo/kojo-k12-intellectual', require('#/kojo/kojo-k12-intellectual')],
-  ['#/kojo/kojo-k903-garde', require('#/kojo/kojo-k903-garde')],
-  ['#/kojo/kojo-k19-fia', require('#/kojo/kojo-k19-fia')],
-  ['#/kojo/kojo-k904-fia', require('#/kojo/kojo-k904-fia')],
 ];
 
 // —— 分发族模块（装载即注册；编号唯一，无顺序语义） ——
@@ -88,6 +69,29 @@ require('#/system/train/com-advanced');
 require('#/system/train/com-tentacle');
 // 战役 1「赤蛮呪森」：CAMPAIGN_* DispatchFamily 的实现注册
 require('#/page/page-campaign-1');
+
+// 口上模块：装载即把自己的口上类登记进工厂（`register_kojo`，分发按性格编号
+// 查表，没有顺序语义）。#859 起它们不再挂事件处理器——EVENTTRAIN / EVENTEND
+// 由 kojo-system 一处注册、一处分发。
+require('#/kojo/kojo-k0-tender');
+require('#/kojo/kojo-k2-timid');
+require('#/kojo/kojo-k3-noble');
+require('#/kojo/kojo-k5-mao');
+require('#/kojo/kojo-k1-confident');
+require('#/kojo/kojo-k4-stoic');
+require('#/kojo/kojo-k6-wicked');
+require('#/kojo/kojo-k7-heart');
+require('#/kojo/kojo-k8-spade');
+require('#/kojo/kojo-k9-diamond');
+require('#/kojo/kojo-k10-club');
+require('#/kojo/kojo-k11-lily');
+require('#/kojo/kojo-k13-protector');
+require('#/kojo/kojo-k14-nobleman');
+require('#/kojo/kojo-k15-clever');
+require('#/kojo/kojo-k12-intellectual');
+require('#/kojo/kojo-k903-garde');
+require('#/kojo/kojo-k19-fia');
+require('#/kojo/kojo-k904-fia');
 
 /**
  * 按装配表注册全部事件处理器。

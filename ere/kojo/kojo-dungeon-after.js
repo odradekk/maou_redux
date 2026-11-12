@@ -5,22 +5,11 @@
  * GOHOUBI_REQUEST_KOUJO 的调用方是商店侧 ere/system/stronghold/
  * gohoubi-request.js（#397）。
  *
- * == GOHOUBI_REQUEST 族只此一个实例（#403 实测的缺陷与修改） ==
+ * 与 kojo-system.js（#46）同构：分发在 ere 侧是工厂（#854 起）——per-角色
+ * 实现随各自的口上票写成口上类的钩子，编号空间内缺失合法
+ * （TRYCALL 落空语义，未移植的性格不发一言，工厂退回基类实例）。
  *
- * 本族的同名族曾在 kojo-system.js 里有**第二份 `new DispatchFamily`
- * （同一族名两个实例）**：K1/K6/K12/K14/K19/K904 从 kojo-system 取族注册、
- * 而分发侧（本文件与商店路径）用的是本文件的实例，于是那六个性格的
- * GOHOUBI_REQUEST_KOUJO 注册**永远不被分发到**（玩家侧表现为静默失声），
- * 而 DispatchFamily 的重复注册检查只挡同一实例内的重号，跨实例看不见。
- * #403 把第二份删掉、六个模块改从本文件取族——族名的唯一性由
- * test/event-k-dispatch.test.js 的族名唯一锁守着（全库扫 `new DispatchFamily`）。
- *
- * 与 kojo-system.js（#46）同构：口上的分发层在 ere 侧是两个
- * DispatchFamily（#7 决议），per-角色实现（GOHOUBI_AFTER_KOUJO_K19 等）
- * 随各自的口上票 register——空间内缺失合法
- * （TRYCALL 落空语义，未移植的性格不发一言）。
- *
- * 编号空间与 KOJO_MESSAGE_COM 族一致（kojo-system.js 的依据在此不复述）：
+ * 编号空间与 KOJO_MESSAGE_COM 一致（kojo-system.js 的依据在此不复述）：
  * 普通口上 0-39（性格素质 160-179 → LOCAL 100-119）、EX 口上 901-1600
  * （EX 半边未移植，LOCAL > 1000 检查恒不达，窗口保留）。
  *
@@ -42,7 +31,7 @@
  *     （dungeon-after.js 的 gohoubi / osioski）自 #508 起落在回合结算的
  *     调教窗口内——「EVENTTURNEND 里没有 tflag 桶」这一条现状不再成立，
  *     参数链仍保持（值同、读者同，见 dungeon-after.js 文件头的补记）；
- *     直读 tflag:18 的口上实现（K14/K19/K904）都在窗口外语境，语义不变；
+ *     直读 tflag:18 的口上实现（K14/K19/K904）都在窗口外语境，语义不变。
  *   - 存在判定（SIF FLAG:LOCAL == 0 → RETURN 0）本就注释掉，
  *     不移植；GET_KOJO_NUM 的 EX 半边同 kojo-system 的
  *     待办说明。
@@ -51,35 +40,8 @@
 'use strict';
 
 const era_flag = require('#/era-utils/era-flag');
-const { run_kojo, try_kojo } = require('#/kojo/kojo-system');
-const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
+const { run_kojo } = require('#/kojo/kojo-system');
 
-// 声明的编号空间：分发检查（LOCAL >= 100 && LOCAL < 140 ||
-// LOCAL > 1000；ere 侧 = in_kojo_window）能拼出的全部
-// GOHOUBI_AFTER_KOUJO_K{N} / OSIOKI_KOUJO_K{N}
-// 名（kojo-system.js 的 DECLARED_KOJO_COM_IDS 同款）
-const DECLARED_KOJO_IDS = [
-  ...Array.from({ length: 40 }, (_, i) => i),
-  ...Array.from({ length: 700 }, (_, i) => i + 901),
-];
-
-/** GOHOUBI_AFTER_KOUJO_K{N} 族：奖赏口上（这张工单只建族，实现随口上票） */
-const gohoubi_after_koujo_family = new DispatchFamily(
-  'GOHOUBI_AFTER_KOUJO',
-  DECLARED_KOJO_IDS,
-);
-
-/** OSIOKI_KOUJO_K{N} 族：惩罚口上（同上） */
-const osioski_koujo_family = new DispatchFamily(
-  'OSIOKI_KOUJO',
-  DECLARED_KOJO_IDS,
-);
-
-/** GOHOUBI_REQUEST_KOUJO_K{N} 族：奖赏请求口上 */
-const gohoubi_request_koujo_family = new DispatchFamily(
-  'GOHOUBI_REQUEST_KOUJO',
-  DECLARED_KOJO_IDS,
-);
 /**
  * gohoubi_after_koujo：奖赏结算后的口上入口。
  *
@@ -91,15 +53,7 @@ async function gohoubi_after_koujo(cid, choice) {
   const target_pool = era_flag.target; // SWAP LOCAL:2, TARGET
   era_flag.target = cid; // TARGET = A
   // 不做存在判定；キャラ別
-  await run_kojo('gohoubi_after_koujo', gohoubi_after_koujo_family, {
-    cid,
-    args: [cid, choice],
-    legacy: (id) =>
-      gohoubi_after_koujo_family.call(id, {
-        whenMissing: 0,
-        args: [cid, choice],
-      }),
-  });
+  await run_kojo('gohoubi_after_koujo', { cid, args: [cid, choice] });
   era_flag.target = target_pool; // SWAP 还原
   return 0;
 }
@@ -124,9 +78,9 @@ async function gohoubi_after_koujo(cid, choice) {
  * 没有回落），其余 `(rand)` 签名的实现一律 `void rand`、改读
  * `era_flag.target`（本入口已置好），所以 cid 恒作首参安全。
  *
- * 缺席语义 = 静默（#565 返工第 4 条起，TRYCALLFORM 落空语义）：无性格
- * 编号（键 -1）或该性格未注册 handler 时返回 0，不打占位行——与
- * kojo-system.js 的 try_kojo 同一条缺席策略。
+ * 缺席语义 = 静默（TRYCALLFORM 落空语义）：无性格编号（键 -1）或该性格
+ * 没有口上类时返回 0，不打占位行——与 kojo-system.js 的 run_kojo 同一条
+ * 缺席策略。
  *
  * @param {number} cid 派遣对象
  * @returns {Promise<number>} 0（调用方不读）
@@ -134,11 +88,7 @@ async function gohoubi_after_koujo(cid, choice) {
 async function gohoubi_request_koujo(cid) {
   const target_pool = era_flag.target; // SWAP LOCAL:2, TARGET
   era_flag.target = cid; // TARGET = A
-  await run_kojo('gohoubi_request_koujo', gohoubi_request_koujo_family, {
-    cid,
-    args: [cid],
-    legacy: () => try_kojo(gohoubi_request_koujo_family, cid, [cid]),
-  });
+  await run_kojo('gohoubi_request_koujo', { cid, args: [cid] });
   era_flag.target = target_pool; // SWAP 还原
   return 0;
 }
@@ -153,12 +103,7 @@ async function gohoubi_request_koujo(cid) {
 async function osioski_koujo(cid, choice) {
   const target_pool = era_flag.target; // SWAP LOCAL:2, TARGET
   era_flag.target = cid; // TARGET = A
-  await run_kojo('osioski_koujo', osioski_koujo_family, {
-    cid,
-    args: [cid, choice],
-    legacy: (id) =>
-      osioski_koujo_family.call(id, { whenMissing: 0, args: [cid, choice] }),
-  });
+  await run_kojo('osioski_koujo', { cid, args: [cid, choice] });
   era_flag.target = target_pool; // SWAP 还原
   return 0;
 }
@@ -167,7 +112,4 @@ module.exports = {
   gohoubi_after_koujo,
   osioski_koujo,
   gohoubi_request_koujo,
-  gohoubi_after_koujo_family,
-  osioski_koujo_family,
-  gohoubi_request_koujo_family,
 };

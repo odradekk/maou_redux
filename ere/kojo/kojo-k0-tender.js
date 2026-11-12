@@ -32,35 +32,6 @@ const { piercing_state } = require('#/system/train/piercing-state');
 const benki_mod = require('#/system/train/benki');
 const { sell_maturo_k0 } = require('#/system/stronghold/sell-maturo-k0');
 
-const { on, TIER } = require('#/system/event/registry');
-const {
-  kojo_message_com_family,
-  self_kojo_family,
-  kojo_message_palamcng_family,
-  kojo_message_markcng_family,
-  benki_koujo_family,
-  gobi_koujo_family,
-  enterenemy_koujo_family,
-  dungeon_victory_family,
-  dungeon_attack_family,
-  ntr_koujo_family,
-  exucution_koujo_family,
-  museum_koujo_family,
-  banishment_koujo_family,
-  public_exucution_koujo_family,
-  grotesque_koujo_family,
-  colosseum_kojo_family,
-  dog_kojo_family,
-} = require('#/kojo/kojo-system');
-const {
-  ryouzyoku_kojo_family,
-  ryouzyoku_after_kojo_family,
-} = require('#/kojo/kojo-dungeon-ravish');
-const {
-  gohoubi_request_koujo_family,
-  gohoubi_after_koujo_family,
-  osioski_koujo_family,
-} = require('#/kojo/kojo-dungeon-after');
 const {
   heart,
   heart_black,
@@ -68,29 +39,15 @@ const {
   self_call_first,
 } = require('#/kojo/kojo-text');
 const { gobi_text } = require('#/data/gobi-koujo-const');
-const { EVENT } = require('#/data/event-name-const');
 const { chara } = require('#/facade/chara');
 
 const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
 const { KojoBase } = require('#/kojo/kojo-base');
-const { get_kojo, register_kojo } = require('#/kojo/kojo-factory');
+const { register_kojo } = require('#/kojo/kojo-factory');
 const { search_family } = require('#/system/chara/chara-family');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
 const { PALAMLV } = require('#/data/palam-level-const');
-
-// EVENTTRAIN #PRI 档：存在标志 + 总开关补 0
-function handle_train_pri() {
-  game.kojo.口上存在_0 = 1; // FLAG:100 = 1（K0 口上存在标志）
-  if (game.kojo.口上开关 === 0) {
-    game.kojo.口上开关 = 2;
-  }
-}
-
-// EVENTEND #LATER 档：调教结束清存在标志
-function handle_end_later() {
-  game.kojo.口上存在_0 = 0;
-}
 
 /**
  * k0_kojo2：无助手 / 非村娘助手时的二次调教开始口上。
@@ -276,9 +233,6 @@ async function eventtrain_normal_k0(rand) {
   const assi_name = assi >= 0 ? chara_callname(assi) : '';
 
   if (game.kojo.口上开关 <= 0) {
-    return 0;
-  }
-  if (chara(target).chara.慈爱 !== 1) {
     return 0;
   }
   if (kojo.初调教 === 0) {
@@ -793,9 +747,6 @@ async function handle_end() {
   const master_name = chara_name(0);
 
   if (game.kojo.口上开关 <= 0) {
-    return 0;
-  }
-  if (chara(target).chara.慈爱 !== 1) {
     return 0;
   }
 
@@ -12397,86 +12348,28 @@ class KojoK0 extends KojoBase {
   async gobi_koujo(...args) {
     return gobi_koujo_k0(...args);
   }
+
+  /**
+   * EVENTTRAIN：调教开始时的口上（#859 起由工厂按性格编号分发一次，
+   * 不再每个性格各注册一份处理器）。
+   * @param {(n: number) => number} [rand] RAND:N 的随机源
+   * @returns {Promise<number>} 0（调用方不读）
+   */
+  async event_train(rand) {
+    return eventtrain_normal_k0(rand);
+  }
+
+  /** EVENTEND：调教结束时的口上（分发同 event_train） */
+  async event_end(rand) {
+    return handle_end(rand);
+  }
 }
 
-// 口上族接入：本文件每个**有分发路径**的真身都要在下面登记一处（顺序照
-// kojo-system.js 的分发表）；漏一处 = 玩家侧看到占位行或不响。文件内直调的
-// 真身不在此列。范围与接入由 test/kojo-register-coverage.test.js 的
-// 「有本体必有注册」契约锁守。
-//
-// #855 起 K0 进工厂：`run_kojo` 走工厂实例的钩子，下面这些族注册是过渡期的旧
-// 入口（存量测试与「有本体必有注册」契约锁直调），一律转发到同一个实例
-// ——两处都经 KojoK0。#855–#858 迁完后随族一起删。
+// 模块装载即登记口上类（#859 起这是本模块唯一的启动副作用：分发按键查工厂，
+// 事件接线在 kojo-system.js 一处完成）。
 register_kojo(0, KojoK0);
-const kojo_k0 = get_kojo(0);
-kojo_message_com_family.register(0, (...args) =>
-  kojo_k0.kojo_message_com(...args),
-);
-kojo_message_palamcng_family.register(0, (...args) =>
-  kojo_k0.kojo_message_palamcng(...args),
-);
-kojo_message_markcng_family.register(0, (...args) =>
-  kojo_k0.kojo_message_markcng(...args),
-);
-self_kojo_family.register(0, (...args) => kojo_k0.self_kojo(...args));
-dog_kojo_family.register(0, (...args) => kojo_k0.dog_kojo(...args));
-colosseum_kojo_family.register(0, (...args) => kojo_k0.colosseum_kojo(...args));
-benki_koujo_family.register(0, (...args) => kojo_k0.benki_koujo(...args));
-dungeon_victory_family.register(0, (...args) =>
-  kojo_k0.dungeon_victory(...args),
-);
-dungeon_attack_family.register(0, (...args) => kojo_k0.dungeon_attack(...args));
-ryouzyoku_kojo_family.register(0, (...args) =>
-  kojo_k0.dungeon_ryouzyoku(...args),
-);
-ryouzyoku_after_kojo_family.register(0, (...args) =>
-  kojo_k0.dungeon_ryouzyoku_after(...args),
-);
-ntr_koujo_family.register(0, (...args) => kojo_k0.ntr_koujo(...args));
-exucution_koujo_family.register(0, (...args) =>
-  kojo_k0.exucution_koujo(...args),
-);
-museum_koujo_family.register(0, (...args) => kojo_k0.museum_koujo(...args));
-banishment_koujo_family.register(0, (...args) =>
-  kojo_k0.banishment_koujo(...args),
-);
-public_exucution_koujo_family.register(0, (...args) =>
-  kojo_k0.public_exucution_koujo(...args),
-);
-grotesque_koujo_family.register(0, (...args) =>
-  kojo_k0.grotesque_koujo(...args),
-);
-enterenemy_koujo_family.register(0, (...args) =>
-  kojo_k0.enterenemy_koujo(...args),
-);
-gohoubi_request_koujo_family.register(0, (...args) =>
-  kojo_k0.gohoubi_request_koujo(...args),
-);
-gohoubi_after_koujo_family.register(0, (...args) =>
-  kojo_k0.gohoubi_after_koujo(...args),
-);
-// 本族例外：注册的是本体本身，不是转发闭包。osioski_koujo_k0 的形参
-// (cid, choice) 已经就是族的签名，转发只是多一层；更重要的是这个裸标识符是
-// `osioski_koujo_k` 这个史拼前缀在「有本体必有注册」扫描器里的唯一锚点
-// （#855 迁完后 K0/K1 之外没有第二处裸注册）——换成闭包，扫描器就认不出
-// 「osioski_koujo_k3/k4/k14」这一批本体，族注册号与本体数会对不上。
-// 入口（osioski_koujo）照旧经 run_kojo → 工厂实例的钩子，与本注册无关。
-osioski_koujo_family.register(0, osioski_koujo_k0);
-gobi_koujo_family.register(0, (...args) => kojo_k0.gobi_koujo(...args));
-
-/**
- * 本模块的事件处理器：由 system/flow/startup.js 的装配表按顺序调用 register()
- * 注册（模块装载本身不注册，装配顺序见该文件）。
- */
-function register() {
-  on(EVENT.TRAIN, handle_train_pri, TIER.PRI);
-  on(EVENT.END, handle_end_later, TIER.LATER);
-  on(EVENT.TRAIN, eventtrain_normal_k0);
-  on(EVENT.END, handle_end);
-}
 
 module.exports = {
-  register,
   KojoK0,
   kojo_message_com_0,
   eventtrain_normal_k0,
