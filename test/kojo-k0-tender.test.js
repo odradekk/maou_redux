@@ -16,7 +16,10 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
-const { register_handlers } = require('./helpers/event-registration');
+const {
+  load_modules,
+  register_handlers,
+} = require('./helpers/event-registration');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
 
 // 世界底座：琼入列调教 + K0 触发面（素质 160 / 存在标志 / 总开关默认 2）
@@ -39,13 +42,13 @@ async function setup_k0(seed) {
     seed(fixture);
   }
   register_handlers(fixture, 'kojo/kojo-system');
-  register_handlers(fixture, 'kojo/kojo-k0-tender');
+  load_modules(fixture, 'kojo/kojo-k0-tender');
   return fixture;
 }
 
 // 经分发族调用（TRYCALLFORM KOJO_MESSAGE_COM_0 的等价物）
 async function speak_k0(fixture, rand) {
-  const { kojo_message_com_family } = fixture.load_module('kojo/kojo-system');
+  const { kojo_message_com_family } = require('./helpers/kojo-families');
   return kojo_message_com_family.call(0, { args: [rand] });
 }
 
@@ -5054,18 +5057,14 @@ test('MARKCNG：助手调教跳过', async () => {
 
 test('DUNGEON_RYOUZYOKU：处女（TALENT:0）按素质分档出声', async () => {
   const fixture = await setup_k0((f) => f.store.set('talent:31:0', 1));
-  const { ryouzyoku_kojo_family } = fixture.load_module(
-    'kojo/kojo-dungeon-ravish',
-  );
+  const { ryouzyoku_kojo_family } = require('./helpers/kojo-families');
   await ryouzyoku_kojo_family.call(0, { args: [] });
   assert.match(fixture.text_lines()[0], /第一次/);
 });
 
 test('DUNGEON_RYOUZYOKU：非处女 + 淫乱（TALENT:76）分档出声', async () => {
   const fixture = await setup_k0((f) => f.store.set('talent:31:76', 1));
-  const { ryouzyoku_kojo_family } = fixture.load_module(
-    'kojo/kojo-dungeon-ravish',
-  );
+  const { ryouzyoku_kojo_family } = require('./helpers/kojo-families');
   await ryouzyoku_kojo_family.call(0, { args: [] });
   assert.match(fixture.text_lines()[0], /你打算怎么办/);
 });
@@ -5075,18 +5074,14 @@ test('DUNGEON_RYOUZYOKU_AFTER：处女 + EXP:0 高 → 追加台词', async () =
     f.store.set('talent:31:0', 1);
     f.store.set('exp:31:0', 30);
   });
-  const { ryouzyoku_after_kojo_family } = fixture.load_module(
-    'kojo/kojo-dungeon-ravish',
-  );
+  const { ryouzyoku_after_kojo_family } = require('./helpers/kojo-families');
   await ryouzyoku_after_kojo_family.call(0, { args: [] });
   assert.match(fixture.text_lines()[0], /太好了/);
 });
 
 test('DUNGEON_RYOUZYOKU_AFTER：非处女 + EXP:1 > 20 → 肛门崩坏', async () => {
   const fixture = await setup_k0((f) => f.store.set('exp:31:1', 30));
-  const { ryouzyoku_after_kojo_family } = fixture.load_module(
-    'kojo/kojo-dungeon-ravish',
-  );
+  const { ryouzyoku_after_kojo_family } = require('./helpers/kojo-families');
   await ryouzyoku_after_kojo_family.call(0, { args: [] });
   assert.match(fixture.text_lines()[0], /对不起/);
   assert.ok(
@@ -5099,9 +5094,7 @@ test('DUNGEON_RYOUZYOKU_AFTER：非处女 + EXP:1 > 20 → 肛门崩坏', async 
 
 test('GOHOUBI_REQUEST：CFLAG:504==0 奖金请求', async () => {
   const fixture = await setup_k0();
-  const { gohoubi_request_koujo_family } = fixture.load_module(
-    'kojo/kojo-dungeon-after',
-  );
+  const { gohoubi_request_koujo_family } = require('./helpers/kojo-families');
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.target = 31;
   await gohoubi_request_koujo_family.call(0, { args: [31] });
@@ -5110,9 +5103,7 @@ test('GOHOUBI_REQUEST：CFLAG:504==0 奖金请求', async () => {
 
 test('GOHOUBI_REQUEST：CFLAG:504==1 与犬做爱请求', async () => {
   const fixture = await setup_k0((f) => f.store.set('cflag:31:504', 1));
-  const { gohoubi_request_koujo_family } = fixture.load_module(
-    'kojo/kojo-dungeon-after',
-  );
+  const { gohoubi_request_koujo_family } = require('./helpers/kojo-families');
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.target = 31;
   await gohoubi_request_koujo_family.call(0, { args: [31] });
@@ -5161,9 +5152,7 @@ test('DUNGEON_RYOUZYOKU：处女 + 献身（TALENT:21）→ 好吧、尽管来�
     f.store.set('talent:31:0', 1);
     f.store.set('talent:31:21', 1);
   });
-  const { ryouzyoku_kojo_family } = fixture.load_module(
-    'kojo/kojo-dungeon-ravish',
-  );
+  const { ryouzyoku_kojo_family } = require('./helpers/kojo-families');
   await ryouzyoku_kojo_family.call(0, { args: [] });
   assert.ok(
     fixture.text_lines().some((l) => /好吧、尽管来吧/.test(l)),
@@ -5314,7 +5303,7 @@ test('ENTERENEMY：献身（TALENT:21）→ 我是不会输的', async () => {
 
 test('NTR：P==1 + 淫乱（TALENT:76）→ 求饶台词 + CFLAG:651 记录', async () => {
   const fixture = await setup_k0((f) => f.store.set('talent:31:76', 1));
-  const { ntr_koujo_family } = fixture.load_module('kojo/kojo-system');
+  const { ntr_koujo_family } = require('./helpers/kojo-families');
   await ntr_koujo_family.call(0, { args: [1] });
   assert.ok(fixture.text_lines().some((l) => /饶/.test(l)));
   assert.equal(fixture.store.get('cflag:31:651'), 1, 'P==1 写 CFLAG:651');
@@ -5322,29 +5311,28 @@ test('NTR：P==1 + 淫乱（TALENT:76）→ 求饶台词 + CFLAG:651 记录', as
 
 test('EXUCUTION：事件类型 4 → 求饶台词', async () => {
   const fixture = await setup_k0();
-  const { exucution_koujo_family } = fixture.load_module('kojo/kojo-system');
+  const { exucution_koujo_family } = require('./helpers/kojo-families');
   await exucution_koujo_family.call(0, { args: [4] });
   assert.ok(fixture.text_lines().some((l) => /饶了我吧/.test(l)));
 });
 
 test('MUSEUM：事件类型 3 → 不想变成这样', async () => {
   const fixture = await setup_k0();
-  const { museum_koujo_family } = fixture.load_module('kojo/kojo-system');
+  const { museum_koujo_family } = require('./helpers/kojo-families');
   await museum_koujo_family.call(0, { args: [3] });
   assert.ok(fixture.text_lines().some((l) => /变成·这·样/.test(l)));
 });
 
 test('BANISHMENT：事件类型 0 → 失去力量也有能做的事', async () => {
   const fixture = await setup_k0();
-  const { banishment_koujo_family } = fixture.load_module('kojo/kojo-system');
+  const { banishment_koujo_family } = require('./helpers/kojo-families');
   await banishment_koujo_family.call(0, { args: [0] });
   assert.ok(fixture.text_lines().some((l) => /失去力量/.test(l)));
 });
 
 test('PUBLIC_EXUCUTION：事件类型 0 → 为什么这样对待', async () => {
   const fixture = await setup_k0();
-  const { public_exucution_koujo_family } =
-    fixture.load_module('kojo/kojo-system');
+  const { public_exucution_koujo_family } = require('./helpers/kojo-families');
   await public_exucution_koujo_family.call(0, { args: [0] });
   assert.ok(fixture.text_lines().some((l) => /为什么要/.test(l)));
 });

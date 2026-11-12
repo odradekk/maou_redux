@@ -29,7 +29,10 @@ const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
-const { register_handlers } = require('./helpers/event-registration');
+const {
+  load_modules,
+  register_handlers,
+} = require('./helpers/event-registration');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
 const { com_context } = require('./helpers/com-context');
 
@@ -53,9 +56,9 @@ async function setup_kojo(seed) {
     seed(fixture);
   }
   register_handlers(fixture, 'kojo/kojo-system');
-  register_handlers(fixture, 'kojo/kojo-k3-noble');
-  register_handlers(fixture, 'kojo/kojo-k5-mao');
-  register_handlers(fixture, 'kojo/kojo-k2-timid');
+  load_modules(fixture, 'kojo/kojo-k3-noble');
+  load_modules(fixture, 'kojo/kojo-k5-mao');
+  load_modules(fixture, 'kojo/kojo-k2-timid');
   return fixture;
 }
 
@@ -370,8 +373,8 @@ test('实机路径端到端：主菜单 → 调教 → 爱抚 → 玛奥真的�
   const { run_shop } = fixture.load_module('page/page-shop');
   register_handlers(fixture, 'page/page-shop');
   register_handlers(fixture, 'kojo/kojo-system');
-  register_handlers(fixture, 'kojo/kojo-k3-noble');
-  register_handlers(fixture, 'kojo/kojo-k5-mao');
+  load_modules(fixture, 'kojo/kojo-k3-noble');
+  load_modules(fixture, 'kojo/kojo-k5-mao');
   // 走一轮面板切换（500 是已打印按钮，#130：引擎只送达已打印按钮的快捷
   // 键；原用例的 9999 属无效输入，引擎侧根本不会送达）后输入耗尽
   fixture.set_inputs(500);
@@ -447,7 +450,7 @@ test('#213 契约：七道头部检查对已注册的全部 handler 逐条跳过
   // 跳过类检查不得等待、不得出台词；死斗场/兽奸岔去专用口上——K5 死斗场
   // 已随 #236 换真台词、兽奸静默；K2 死斗场已随 #233 换真台词、兽奸仍静默；
   const probe = await setup_kojo();
-  const { kojo_message_com_family } = probe.load_module('kojo/kojo-system');
+  const { kojo_message_com_family } = require('./helpers/kojo-families');
   const handlers = [...kojo_message_com_family.implemented.entries()];
   assert.ok(handlers.length >= 3, '契约至少要覆盖已注册的 K2/K3/K5');
   for (const [num] of handlers) {
@@ -455,8 +458,7 @@ test('#213 契约：七道头部检查对已注册的全部 handler 逐条跳过
       const fixture = await setup_kojo();
       const flag = fixture.load_module('era-utils/era-flag');
       seed_guard(fixture, flag);
-      const { kojo_message_com_family } =
-        fixture.load_module('kojo/kojo-system');
+      const { kojo_message_com_family } = require('./helpers/kojo-families');
       const handler = kojo_message_com_family.implemented.get(num);
       const result = await handler();
       assert.equal(result, 0, `KOJO_MESSAGE_COM_${num} 检查「${name}」返回 0`);

@@ -215,9 +215,7 @@ test('GOHOUBI_REQUEST 族单实例：K 模块声明的注册号全部落进 dung
 
   const fixture = create_era_fixture();
   fixture.load_module('system/flow/main-loop');
-  const { gohoubi_request_koujo_family } = fixture.load_module(
-    'kojo/kojo-dungeon-after',
-  );
+  const { gohoubi_request_koujo_family } = require('./helpers/kojo-families');
   const missing = [...expected].filter(
     (id) => !gohoubi_request_koujo_family.has(id),
   );

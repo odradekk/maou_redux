@@ -274,7 +274,7 @@ test('主启动图注册触手系：COM100 / COM150 / COM208 可由主循环侧�
 test('主启动图注册 K2 口上：KOJO_MESSAGE_COM_2 可由主循环侧的 require 发现', async () => {
   const fixture = create_era_fixture();
   fixture.load_module('system/flow/main-loop');
-  const { kojo_message_com_family } = fixture.load_module('kojo/kojo-system');
+  const { kojo_message_com_family } = require('./helpers/kojo-families');
   assert.equal(
     kojo_message_com_family.has(2),
     true,

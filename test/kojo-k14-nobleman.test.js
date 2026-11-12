@@ -11,7 +11,10 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
-const { register_handlers } = require('./helpers/event-registration');
+const {
+  load_modules,
+  register_handlers,
+} = require('./helpers/event-registration');
 const { preset_chara_0, join_slave_chara } = require('./helpers/chara');
 
 // 世界底座：貴公子（素质 174 → GET_KOJO_NUM = 114 → 分发 key 14）入列调教
@@ -33,7 +36,7 @@ async function setup_k14(seed) {
     seed(fixture, era_flag);
   }
   register_handlers(fixture, 'kojo/kojo-system');
-  register_handlers(fixture, 'kojo/kojo-k14-nobleman');
+  load_modules(fixture, 'kojo/kojo-k14-nobleman');
   return fixture;
 }
 

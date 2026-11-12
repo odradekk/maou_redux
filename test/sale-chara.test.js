@@ -9,7 +9,10 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
-const { register_handlers } = require('./helpers/event-registration');
+const {
+  load_modules,
+  register_handlers,
+} = require('./helpers/event-registration');
 const { join_slave_chara } = require('./helpers/chara');
 
 function seed_world(fixture) {
@@ -266,7 +269,7 @@ test('SALE_CHARA：零价普通、精英与近卫角色不结算也不触发出�
     fixture.store.set('talent:19:85', 1);
     if (key) fixture.store.set(key, 1);
     fixture.set_inputs(0);
-    register_handlers(fixture, 'kojo/kojo-k19-fia');
+    load_modules(fixture, 'kojo/kojo-k19-fia');
     const aftertrain = fixture.load_module('event/event-aftertrain');
     aftertrain.remember_sale_price(12345);
     const before = new Map(fixture.store);
@@ -327,7 +330,7 @@ test('SALE_CHARA：调教外事件码能抵达角色出售口上', async () => {
   fixture.store.set('talent:19:179', 1);
   fixture.store.set('talent:19:85', 1);
   fixture.set_inputs(0);
-  register_handlers(fixture, 'kojo/kojo-k19-fia');
+  load_modules(fixture, 'kojo/kojo-k19-fia');
 
   await fixture
     .load_module('system/stronghold/sale')

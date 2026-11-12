@@ -27,4 +27,19 @@ function register_handlers(fixture, ...module_paths) {
   return fixture;
 }
 
-module.exports = { register_handlers };
+/**
+ * 装载模块，只是为了让它的**装载期副作用**发生（口上模块把口上类登记进工厂，
+ * `register_kojo` 就写在模块顶层）。#859 起口上模块不再挂事件处理器，所以没有
+ * `register()` 可调；要挂事件处理器时用 register_handlers。
+ * @param {object} fixture 夹具（test/helpers/era-fixture.js）
+ * @param {...string} module_paths 模块路径（不带 `#/`）
+ * @returns {object} 同一个夹具
+ */
+function load_modules(fixture, ...module_paths) {
+  for (const module_path of module_paths) {
+    fixture.load_module(module_path);
+  }
+  return fixture;
+}
+
+module.exports = { load_modules, register_handlers };

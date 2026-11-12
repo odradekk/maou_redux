@@ -29,7 +29,7 @@ test('try_kojo 未命中静默（TRYCALLFORM 落空语义，不打占位）', as
   assert.equal(fixture.lines_history.length, before, '窗口外不得有任何输出');
 
   // 窗口内但该族无此编号（K11 的 GOBI：两边同缺）→ 同样静默
-  const { gobi_koujo_family } = fixture.load_module('kojo/kojo-system');
+  const { gobi_koujo_family } = require('./helpers/kojo-families');
   fixture.seed_chara(31, { id: 31, name: '温妮', callname: '温妮' });
   fixture.era.addCharacter(31);
   fixture.store.set('talent:31:171', 1); // K11（COUNT 171 − 60 = 111 → 族内 11）

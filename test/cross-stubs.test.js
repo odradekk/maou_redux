@@ -11,7 +11,10 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
-const { register_handlers } = require('./helpers/event-registration');
+const {
+  load_modules,
+  register_handlers,
+} = require('./helpers/event-registration');
 
 function add_chara(fixture, cid, name = `角色${cid}`) {
   fixture.seed_chara(cid, { id: cid, name, callname: name });
@@ -126,9 +129,9 @@ test('SEARCH_FAMILY：慈爱来袭口上会找到家人并按关系称呼', asyn
   fixture.store.set('cflag:31:604', 1); // 家族所属编号
   fixture.store.set('cflag:31:605', 3); // 弟弟
   fixture.load_module('era-utils/era-flag').target = 31;
-  register_handlers(fixture, 'kojo/kojo-k0-tender');
+  load_modules(fixture, 'kojo/kojo-k0-tender');
 
-  await fixture.load_module('kojo/kojo-system').enterenemy_koujo_family.call(0);
+  await require('./helpers/kojo-families').enterenemy_koujo_family.call(0);
   assert.ok(text_lines(fixture).includes('「家人……等着我！」'));
 });
 
@@ -290,7 +293,7 @@ test('NTR_CHILD_BIRTH：父亲分支输出后以 P=20 调用已有 NTR 口上族
   fixture.store.set('talent:1:165', 1); // 口上 K5
   fixture.store.set('cflag:1:102', 7);
   const seen = [];
-  const { ntr_koujo_family } = fixture.load_module('kojo/kojo-system');
+  const { ntr_koujo_family } = require('./helpers/kojo-families');
   ntr_koujo_family.register(5, async (rand, p) => seen.push([rand, p]));
   const { ntr_child_birth } = fixture.load_module('system/ntr');
   const rand = () => 0;

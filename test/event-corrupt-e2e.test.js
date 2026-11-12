@@ -9,7 +9,10 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
-const { register_handlers } = require('./helpers/event-registration');
+const {
+  load_modules,
+  register_handlers,
+} = require('./helpers/event-registration');
 const { preset_gamebase } = require('./helpers/gamebase');
 
 /**
@@ -196,7 +199,7 @@ test('端到端：角色堕落后完成奴隶出售全链', async () => {
     'ESTIMATE_CHARA 必须按调教后的能力给出独立可复算的估价',
   );
 
-  register_handlers(fixture, 'kojo/kojo-k0-tender');
+  load_modules(fixture, 'kojo/kojo-k0-tender');
   fixture.store.set('flag:7', 1); // 口上总开关
   fixture.store.set('talent:17:160', 1); // 慈爱性格：SELF_KOJO_K0
   fixture.reset_inputs(17, 0, 0, 999); // 选玛奥、确认、黑市、返回据点

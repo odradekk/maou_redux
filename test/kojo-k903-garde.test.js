@@ -9,7 +9,10 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
-const { register_handlers } = require('./helpers/event-registration');
+const {
+  load_modules,
+  register_handlers,
+} = require('./helpers/event-registration');
 const { preset_chara_0, join_slave_chara } = require('./helpers/chara');
 
 const CID = 33;
@@ -31,24 +34,22 @@ async function setup_k903(seed, selectcom = 0) {
   fixture.store.set('flag:7', 2);
   if (seed) seed(fixture, era_flag);
   register_handlers(fixture, 'kojo/kojo-system');
-  register_handlers(fixture, 'kojo/kojo-k903-garde');
+  load_modules(fixture, 'kojo/kojo-k903-garde');
   return fixture;
 }
 
 async function speak(fixture) {
-  const { kojo_message_com_family } = fixture.load_module('kojo/kojo-system');
+  const { kojo_message_com_family } = require('./helpers/kojo-families');
   return kojo_message_com_family.call(KEY, { args: [] });
 }
 
 async function palam_change(fixture) {
-  const { kojo_message_palamcng_family } =
-    fixture.load_module('kojo/kojo-system');
+  const { kojo_message_palamcng_family } = require('./helpers/kojo-families');
   return kojo_message_palamcng_family.call(KEY, { args: [] });
 }
 
 async function mark_change(fixture) {
-  const { kojo_message_markcng_family } =
-    fixture.load_module('kojo/kojo-system');
+  const { kojo_message_markcng_family } = require('./helpers/kojo-families');
   return kojo_message_markcng_family.call(KEY, { args: [] });
 }
 
@@ -385,7 +386,7 @@ test('SELF_KOJO 通过 peek_aftertrain_q 读取 Q：野狗妄想分支可达', a
   const after = fixture.load_module('event/event-aftertrain');
   await after.aftertrain_masturbation_check(0, 0, () => 2);
   assert.equal(after.peek_aftertrain_q(), 2, 'AFTERTRAIN 先写入 Q=2');
-  const { self_kojo_family } = fixture.load_module('kojo/kojo-system');
+  const { self_kojo_family } = require('./helpers/kojo-families');
   await self_kojo_family.call(KEY, { args: [] });
   assert.ok(
     fixture.text_lines().some((line) => line.includes('小狗狗')),
@@ -580,9 +581,7 @@ test('#625 GOHOUBI_REQUEST 保留 Y=0、兽名与前后文同一行（要求奖�
     const fixture = await setup_k903();
     const { chara } = fixture.load_module('facade/chara');
     chara(CID).stronghold.要求奖赏 = req;
-    const { gohoubi_request_koujo_family } = fixture.load_module(
-      'kojo/kojo-dungeon-after',
-    );
+    const { gohoubi_request_koujo_family } = require('./helpers/kojo-families');
     await gohoubi_request_koujo_family.call(KEY, { args: [] });
     assert.deepEqual(
       fixture.text_lines(),

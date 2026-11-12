@@ -21,7 +21,10 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
-const { register_handlers } = require('./helpers/event-registration');
+const {
+  load_modules,
+  register_handlers,
+} = require('./helpers/event-registration');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
 
 /**
@@ -325,7 +328,7 @@ test('run_kojo：已迁移的性格走子类钩子（K4 真跑一句）', async 
   seed_stoic(fixture);
   const { kojo_message_com_family, run_kojo } =
     fixture.load_module('kojo/kojo-system');
-  register_handlers(fixture, 'kojo/kojo-k4-stoic');
+  load_modules(fixture, 'kojo/kojo-k4-stoic');
 
   assert.equal(
     await run_kojo('kojo_message_com', kojo_message_com_family, {
@@ -367,7 +370,7 @@ test('run_kojo：总开关关掉时不派发；when_disabled 的副作用照常�
   fixture.store.set('tflag:15', 7);
   const { run_kojo, self_kojo_family } =
     fixture.load_module('kojo/kojo-system');
-  register_handlers(fixture, 'kojo/kojo-k4-stoic');
+  load_modules(fixture, 'kojo/kojo-k4-stoic');
 
   assert.equal(
     await run_kojo('self_kojo', self_kojo_family, {
@@ -390,7 +393,7 @@ test('run_kojo：存在判定命中时不派发（口上文件「被删掉」的
   fixture.store.delete('flag:104'); // K4 存在标志清 0；EX_FLAG 分支也不是它
   const { run_kojo, kojo_message_com_family } =
     fixture.load_module('kojo/kojo-system');
-  register_handlers(fixture, 'kojo/kojo-k4-stoic');
+  load_modules(fixture, 'kojo/kojo-k4-stoic');
 
   assert.equal(
     await run_kojo('kojo_message_com', kojo_message_com_family, {
@@ -491,8 +494,8 @@ test('21 条入口都经工厂：假子类接管后旧分发族不再被调用',
 test('K4 的指令口上经工厂实例：族注册不是直挂本体（头部检查不会被绕开）', async () => {
   const fixture = setup_kojo();
   seed_stoic(fixture);
-  const { kojo_message_com_family } = fixture.load_module('kojo/kojo-system');
-  register_handlers(fixture, 'kojo/kojo-k4-stoic');
+  const { kojo_message_com_family } = require('./helpers/kojo-families');
+  load_modules(fixture, 'kojo/kojo-k4-stoic');
   const { get_kojo } = fixture.load_module('kojo/kojo-factory');
 
   const k4 = get_kojo(4);

@@ -157,7 +157,7 @@ test('MUSEUM：口上收到展品编号（实参，不再读 tflag）', async ()
   fixture.store.set('talent:31:163', 1); // 高贵性格 → K3
   fixture.set_inputs(8);
   const { museum } = fixture.load_module('event/event-museum');
-  const { museum_koujo_family } = fixture.load_module('kojo/kojo-system');
+  const { museum_koujo_family } = require('./helpers/kojo-families');
   let observed;
   museum_koujo_family.register(3, async (event_no) => {
     observed = event_no;
@@ -174,7 +174,7 @@ test('MUSEUM：K0 旧签名收到展品编号', async () => {
   fixture.store.set('talent:31:160', 1); // 慈爱性格 → K0
   fixture.set_inputs(8);
   const { museum } = fixture.load_module('event/event-museum');
-  const { museum_koujo_family } = fixture.load_module('kojo/kojo-system');
+  const { museum_koujo_family } = require('./helpers/kojo-families');
   let observed;
   museum_koujo_family.register(0, async (event_type) => {
     observed = event_type;
@@ -193,7 +193,7 @@ test('MUSEUM：K2 与 K4 口上模块注册博物馆处理器', () => {
   ]) {
     const fixture = create_era_fixture();
     fixture.load_module(module_name);
-    const { museum_koujo_family } = fixture.load_module('kojo/kojo-system');
+    const { museum_koujo_family } = require('./helpers/kojo-families');
     assert.equal(museum_koujo_family.has(id), true, `K${id} 必须注册`);
   }
 });

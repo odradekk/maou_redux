@@ -18,7 +18,10 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
-const { register_handlers } = require('./helpers/event-registration');
+const {
+  load_modules,
+  register_handlers,
+} = require('./helpers/event-registration');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
 
 // 世界底座：温妮（高貴 163 → GET_KOJO_NUM 103）入列调教
@@ -41,13 +44,13 @@ async function setup_k3(seed) {
     seed(fixture);
   }
   register_handlers(fixture, 'kojo/kojo-system');
-  register_handlers(fixture, 'kojo/kojo-k3-noble');
+  load_modules(fixture, 'kojo/kojo-k3-noble');
   return fixture;
 }
 
 // 经分发族调用（TRYCALLFORM KOJO_MESSAGE_COM_3 的等价物）
 async function speak_k3(fixture, rand) {
-  const { kojo_message_com_family } = fixture.load_module('kojo/kojo-system');
+  const { kojo_message_com_family } = require('./helpers/kojo-families');
   return kojo_message_com_family.call(3, { args: [rand] });
 }
 
@@ -935,8 +938,7 @@ test('EVENTEND NORMAL：CFLAG:301 >= 1 钳回 1 + 调教结束台词', async () 
 
 test('PALAMCNG：首次润滑 Lv2 非爱慕支写 CFLAG:221', async () => {
   const fixture = await setup_k3((f) => f.store.set('palam:31:3', 501));
-  const { kojo_message_palamcng_family } =
-    fixture.load_module('kojo/kojo-system');
+  const { kojo_message_palamcng_family } = require('./helpers/kojo-families');
   await kojo_message_palamcng_family.call(3);
   assert.deepEqual(fixture.text_lines(), [
     '「啊~…这，这个难道是…漏，漏了…啊啊…」',
@@ -1379,8 +1381,7 @@ test('#623 排卵·両穴整行', async () => {
       f.store.set('nowex:31:0', 1);
       f.store.set('cflag:31:224', 1);
     });
-    const { kojo_message_palamcng_family } =
-      fixture.load_module('kojo/kojo-system');
+    const { kojo_message_palamcng_family } = require('./helpers/kojo-families');
     await kojo_message_palamcng_family.call(3, {
       args: [seq_rand(item.draw), 31, 0],
     });
@@ -1451,9 +1452,7 @@ test('#623 奖赏请求·野兽名整行', async () => {
       f.load_module('era-utils/era-flag').selectcom = 51;
       f.store.set('cflag:31:504', item.要求);
     });
-    const { gohoubi_request_koujo_family } = fixture.load_module(
-      'kojo/kojo-dungeon-after',
-    );
+    const { gohoubi_request_koujo_family } = require('./helpers/kojo-families');
     await gohoubi_request_koujo_family.call(3, { args: [31, undefined] });
     assert.ok(
       fixture

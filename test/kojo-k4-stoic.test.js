@@ -36,7 +36,10 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
-const { register_handlers } = require('./helpers/event-registration');
+const {
+  load_modules,
+  register_handlers,
+} = require('./helpers/event-registration');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
 
 // RAND:N 定值序：draws 依次被消费，越界取模
@@ -67,13 +70,13 @@ async function setup_k4(seed, selectcom = 0) {
     seed(fixture, era_flag);
   }
   register_handlers(fixture, 'kojo/kojo-system');
-  register_handlers(fixture, 'kojo/kojo-k4-stoic');
+  load_modules(fixture, 'kojo/kojo-k4-stoic');
   return fixture;
 }
 
 // 经分发族调用（TRYCALLFORM KOJO_MESSAGE_COM_4 的等价物）
 async function speak_k4(fixture, rand) {
-  const { kojo_message_com_family } = fixture.load_module('kojo/kojo-system');
+  const { kojo_message_com_family } = require('./helpers/kojo-families');
   return kojo_message_com_family.call(4, { args: [rand] });
 }
 

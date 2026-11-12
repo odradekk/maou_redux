@@ -140,7 +140,7 @@ test('%SELF_CALL% 按当前 TARGET 的自称求值，其余档不含插值', () 
 test('语尾只在表里加行：分发表注册号与表行一一对应，每行五档加默认支', () => {
   const fixture = create_era_fixture();
   load_all_kojo(fixture);
-  const { gobi_koujo_family } = fixture.load_module('kojo/kojo-system');
+  const { gobi_koujo_family } = require('./helpers/kojo-families');
   const { GOBI_KOUJO, gobi_text } = fixture.load_module(
     'data/gobi-koujo-const',
   );

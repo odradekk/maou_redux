@@ -25,7 +25,10 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
-const { register_handlers } = require('./helpers/event-registration');
+const {
+  load_modules,
+  register_handlers,
+} = require('./helpers/event-registration');
 const { preset_chara_0, join_slave_chara } = require('./helpers/chara');
 
 // 定值随机序列：draws 依次被消费，越界取模
@@ -269,7 +272,7 @@ test('run_benki：加载 K3 口上后走常识改写真身', async () => {
     f.store.set('flag:7', 2);
   });
   register_handlers(fixture, 'kojo/kojo-system');
-  register_handlers(fixture, 'kojo/kojo-k3-noble');
+  load_modules(fixture, 'kojo/kojo-k3-noble');
   await mod.run_benki(31, seq_rand(0));
   const lines = fixture.text_lines();
   assert.ok(

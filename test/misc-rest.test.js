@@ -742,8 +742,7 @@ test('NTR_PLAY：七种影像向性格口上传入对应场景编号', async () 
     const current = setup_ntr();
     seed_values(current.fixture, { 'talent:17:165': 1, ...values });
     const scenes = [];
-    const { ntr_koujo_family } =
-      current.fixture.load_module('kojo/kojo-system');
+    const { ntr_koujo_family } = require('./helpers/kojo-families');
     ntr_koujo_family.register(5, async (_rand, p) => scenes.push(p));
     await current.ntr.ntr_play(17, seq(rolls));
     assert.deepEqual(scenes, [scene]);
@@ -782,7 +781,7 @@ test('NTR_PLAY：正常与异常退出都恢复调教目标', async () => {
   const failure_flag = failure.fixture.load_module('era-utils/era-flag');
   failure_flag.target = 3;
   failure.fixture.store.set('talent:17:165', 1);
-  const { ntr_koujo_family } = failure.fixture.load_module('kojo/kojo-system');
+  const { ntr_koujo_family } = require('./helpers/kojo-families');
   ntr_koujo_family.register(5, async () => {
     throw new Error('口上失败');
   });

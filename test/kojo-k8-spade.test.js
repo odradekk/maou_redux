@@ -19,7 +19,10 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
-const { register_handlers } = require('./helpers/event-registration');
+const {
+  load_modules,
+  register_handlers,
+} = require('./helpers/event-registration');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
 
 // RAND:N 定值序：draws 依次被消费，越界取模
@@ -51,13 +54,13 @@ async function setup_k8(seed, selectcom = 0) {
     seed(fixture, era_flag);
   }
   register_handlers(fixture, 'kojo/kojo-system');
-  register_handlers(fixture, 'kojo/kojo-k8-spade');
+  load_modules(fixture, 'kojo/kojo-k8-spade');
   return fixture;
 }
 
 // 经分发族调用（TRYCALLFORM KOJO_MESSAGE_COM_8 的等价物）
 async function speak_k8(fixture, rand) {
-  const { kojo_message_com_family } = fixture.load_module('kojo/kojo-system');
+  const { kojo_message_com_family } = require('./helpers/kojo-families');
   return kojo_message_com_family.call(8, { args: [rand] });
 }
 
@@ -3882,8 +3885,7 @@ test('COLOSSEUM_KOJO_8 SC31/21/27 助手无 121/122 且持假阳具（item:4）�
 // —— KOJO_MESSAGE_PALAMCNG_8（参数变动口上） ——
 
 async function speak_palamcng_k8(fixture, rand) {
-  const { kojo_message_palamcng_family } =
-    fixture.load_module('kojo/kojo-system');
+  const { kojo_message_palamcng_family } = require('./helpers/kojo-families');
   return kojo_message_palamcng_family.call(8, { args: [rand] });
 }
 
@@ -4052,8 +4054,7 @@ test('PALAMCNG：处女丧失·主人以外·それ以外', async () => {
 // —— KOJO_MESSAGE_MARKCNG_8（刻印取得口上） ——
 
 async function speak_markcng_k8(fixture) {
-  const { kojo_message_markcng_family } =
-    fixture.load_module('kojo/kojo-system');
+  const { kojo_message_markcng_family } = require('./helpers/kojo-families');
   return kojo_message_markcng_family.call(8);
 }
 
@@ -4137,7 +4138,7 @@ async function speak_self_kojo_k8(fixture, rand, q, s) {
   if (s !== undefined) {
     fixture.load_module('event/event-aftertrain').remember_aftertrain_s(s);
   }
-  const { self_kojo_family } = fixture.load_module('kojo/kojo-system');
+  const { self_kojo_family } = require('./helpers/kojo-families');
   return self_kojo_family.call(8, { args: [rand, q] });
 }
 
@@ -4592,7 +4593,7 @@ test('DUNGEON_ATTACK：侵攻中（CFLAG:1 == 2）与迎击中各走各的三选
 // —— BENKI_KOUJO_K8（肉便器口上，FLAG:62 六档 × 四选一） ——
 
 async function speak_benki_k8(fixture) {
-  const { benki_koujo_family } = fixture.load_module('kojo/kojo-system');
+  const { benki_koujo_family } = require('./helpers/kojo-families');
   return benki_koujo_family.call(8, { args: [] });
 }
 
@@ -4710,7 +4711,7 @@ test('BENKI：FLAG:62==5 侍奉支；FLAG:62 越界（6）整段静默', async (
 // —— NTR_KOUJO_K8（NTR 口上，P 1-7 / 20） ——
 
 async function speak_ntr_k8(fixture, p) {
-  const { ntr_koujo_family } = fixture.load_module('kojo/kojo-system');
+  const { ntr_koujo_family } = require('./helpers/kojo-families');
   // 族实参是 [rand, P]（K7/K9/K10 同款约定）
   return ntr_koujo_family.call(8, { args: [undefined, p] });
 }
@@ -5046,16 +5047,12 @@ test('ENTERENEMY：淫乱 → 爱慕 → それ以外 三选一', async () => {
 // —— GOHOUBI_REQUEST_KOUJO_K8 / GOHOUBI_AFTER_KOUJO_K8（迎击奖赏） ——
 
 async function speak_gohoubi_request_k8(fixture) {
-  const { gohoubi_request_koujo_family } = fixture.load_module(
-    'kojo/kojo-dungeon-after',
-  );
+  const { gohoubi_request_koujo_family } = require('./helpers/kojo-families');
   return gohoubi_request_koujo_family.call(8, { args: [] });
 }
 
 async function speak_gohoubi_after_k8(fixture, choice) {
-  const { gohoubi_after_koujo_family } = fixture.load_module(
-    'kojo/kojo-dungeon-after',
-  );
+  const { gohoubi_after_koujo_family } = require('./helpers/kojo-families');
   return gohoubi_after_koujo_family.call(8, { args: [31, choice] });
 }
 
@@ -5222,14 +5219,12 @@ test('GOHOUBI_AFTER：童贞狩档的膣/肛门两支文字不同（对照上一
 // —— OSIOKI_KOUJO_K8 / GOBI_KOUJO_K8 ——
 
 async function speak_osioki_k8(fixture, choice) {
-  const { osioski_koujo_family } = fixture.load_module(
-    'kojo/kojo-dungeon-after',
-  );
+  const { osioski_koujo_family } = require('./helpers/kojo-families');
   return osioski_koujo_family.call(8, { args: [31, choice] });
 }
 
 async function speak_gobi_k8(fixture, arg_0, rand) {
-  const { gobi_koujo_family } = fixture.load_module('kojo/kojo-system');
+  const { gobi_koujo_family } = require('./helpers/kojo-families');
   return gobi_koujo_family.call(8, { args: [arg_0, rand] });
 }
 

@@ -26,7 +26,10 @@ const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
-const { register_handlers } = require('./helpers/event-registration');
+const {
+  load_modules,
+  register_handlers,
+} = require('./helpers/event-registration');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
 
 const REPO = path.resolve(__dirname, '..');
@@ -44,7 +47,7 @@ function seed_world() {
   era_flag.assi = -1;
   era_flag.assiplay = 0;
   era_flag.player = 0;
-  register_handlers(fixture, 'kojo/kojo-k3-noble');
+  load_modules(fixture, 'kojo/kojo-k3-noble');
   return fixture;
 }
 

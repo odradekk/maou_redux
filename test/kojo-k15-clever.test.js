@@ -15,7 +15,10 @@
 const assert = require('node:assert/strict');
 const { test } = require('node:test');
 const { create_era_fixture } = require('./helpers/era-fixture');
-const { register_handlers } = require('./helpers/event-registration');
+const {
+  load_modules,
+  register_handlers,
+} = require('./helpers/event-registration');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
 
 const CID = 31;
@@ -47,7 +50,7 @@ async function setup_k15(seed, selectcom = 0) {
     seed(fixture, era_flag);
   }
   register_handlers(fixture, 'kojo/kojo-system');
-  register_handlers(fixture, 'kojo/kojo-k15-clever');
+  load_modules(fixture, 'kojo/kojo-k15-clever');
   return fixture;
 }
 
@@ -62,7 +65,7 @@ async function emit_end(fixture) {
 }
 
 async function speak_k15(fixture, rand) {
-  const { kojo_message_com_family } = fixture.load_module('kojo/kojo-system');
+  const { kojo_message_com_family } = require('./helpers/kojo-families');
   return kojo_message_com_family.call(KEY, { args: [rand] });
 }
 
@@ -544,8 +547,7 @@ test('K15 无 TALENT:9 / TEQUIP:90 检查：崩坏与触手仍出声', async () 
 
 test('kojo_message_com_family 注册了 K15（key 15）', async () => {
   const fixture = await setup_k15();
-  const { kojo_message_com_family, self_kojo_family } =
-    fixture.load_module('kojo/kojo-system');
+  const { kojo_message_com_family, self_kojo_family } = require('./helpers/kojo-families');
   assert.equal(kojo_message_com_family.has(KEY), true, 'COM 族缺 K15 注册');
   assert.equal(self_kojo_family.has(KEY), true, 'SELF_KOJO 族缺 K15 注册');
 });
@@ -1967,14 +1969,12 @@ test('死斗场媚药（SELECTCOM 51）', async () => {
 });
 
 async function palam_k15(fixture) {
-  const { kojo_message_palamcng_family } =
-    fixture.load_module('kojo/kojo-system');
+  const { kojo_message_palamcng_family } = require('./helpers/kojo-families');
   return kojo_message_palamcng_family.call(KEY, { args: [] });
 }
 
 async function mark_k15(fixture) {
-  const { kojo_message_markcng_family } =
-    fixture.load_module('kojo/kojo-system');
+  const { kojo_message_markcng_family } = require('./helpers/kojo-families');
   return kojo_message_markcng_family.call(KEY, { args: [] });
 }
 
@@ -2115,7 +2115,7 @@ test('MARKCNG 口塞检查跳过；苦痛/快乐/屈服/反抗 Lv3', async () =>
 });
 
 async function self_k15(fixture, rand) {
-  const { self_kojo_family } = fixture.load_module('kojo/kojo-system');
+  const { self_kojo_family } = require('./helpers/kojo-families');
   return self_kojo_family.call(KEY, { args: [rand] });
 }
 
@@ -2185,8 +2185,7 @@ test('SELF_KOJO 妊娠发觉：爱慕+主人 CFLAG:102==1', async () => {
 });
 
 async function ravish_k15(fixture) {
-  const { ryouzyoku_kojo_family, ryouzyoku_after_kojo_family } =
-    fixture.load_module('kojo/kojo-dungeon-ravish');
+  const { ryouzyoku_kojo_family, ryouzyoku_after_kojo_family } = require('./helpers/kojo-families');
   return { ryouzyoku_kojo_family, ryouzyoku_after_kojo_family };
 }
 
@@ -2223,7 +2222,7 @@ test('DUNGEON_VICTORY それ以外 RAND；ATTACK 侵攻中それ以外', async (
     f.store.set(`base:${CID}:1`, 80);
     f.store.set(`maxbase:${CID}:1`, 100);
   });
-  const { dungeon_victory_family } = win.load_module('kojo/kojo-system');
+  const { dungeon_victory_family } = require('./helpers/kojo-families');
   await dungeon_victory_family.call(KEY, { args: [seq_rand(0)] });
   assert.ok(win.text_lines().includes(''), '胜利空 PRINTFORMW 决台词');
   assert.ok(
@@ -2250,7 +2249,7 @@ test('BENKI FLAG:62==0 空 PRINTFORMW；NTR P==1 推进 650/651', async () => {
   const benki = await setup_k15();
   const { game } = benki.load_module('facade/game');
   game.train.肉便器行动 = 0;
-  const { benki_koujo_family } = benki.load_module('kojo/kojo-system');
+  const { benki_koujo_family } = require('./helpers/kojo-families');
   await benki_koujo_family.call(KEY, { args: [] });
   assert.ok(benki.text_lines().includes(''), 'BENKI 空 PRINTFORMW');
 
@@ -2264,7 +2263,7 @@ test('BENKI FLAG:62==0 空 PRINTFORMW；NTR P==1 推进 650/651', async () => {
 
 test('ENTERENEMY それ以外；GOHOUBI_REQUEST 赏金；AFTER 勋章；OSIOKI 宽容', async () => {
   const enter = await setup_k15();
-  const { enterenemy_koujo_family } = enter.load_module('kojo/kojo-system');
+  const { enterenemy_koujo_family } = require('./helpers/kojo-families');
   await enterenemy_koujo_family.call(KEY, { args: [] });
   assert.ok(
     enter.text_lines().some((l) => l.includes('也一定有击倒的办法')),
@@ -2272,9 +2271,7 @@ test('ENTERENEMY それ以外；GOHOUBI_REQUEST 赏金；AFTER 勋章；OSIOKI �
   );
 
   const req = await setup_k15();
-  const { gohoubi_request_koujo_family } = req.load_module(
-    'kojo/kojo-dungeon-after',
-  );
+  const { gohoubi_request_koujo_family } = require('./helpers/kojo-families');
   await gohoubi_request_koujo_family.call(KEY, { args: [CID, undefined] });
   assert.ok(
     req.text_lines().some((l) => l.includes('想要一笔赏金')),
@@ -2282,8 +2279,7 @@ test('ENTERENEMY それ以外；GOHOUBI_REQUEST 赏金；AFTER 勋章；OSIOKI �
   );
 
   const after = await setup_k15();
-  const { gohoubi_after_koujo_family, osioski_koujo_family } =
-    after.load_module('kojo/kojo-dungeon-after');
+  const { gohoubi_after_koujo_family, osioski_koujo_family } = require('./helpers/kojo-families');
   await gohoubi_after_koujo_family.call(KEY, { args: [CID, 1] });
   assert.ok(
     after.text_lines().some((l) => l.includes('能得到您的肯定')),
@@ -2302,7 +2298,7 @@ test('ENTERENEMY それ以外；GOHOUBI_REQUEST 赏金；AFTER 勋章；OSIOKI �
 
 test('GOBI ARG:0==1 语尾；EXUCUTION 处分方式 4 空 PRINTFORMW', async () => {
   const gobi = await setup_k15();
-  const { gobi_koujo_family } = gobi.load_module('kojo/kojo-system');
+  const { gobi_koujo_family } = require('./helpers/kojo-families');
   const text = await gobi_koujo_family.call(KEY, { args: [1, () => 0] });
   assert.equal(text, '♪', '语尾返回文字（#570）');
   assert.deepEqual(gobi.text_lines(), [], '语尾真身不得自行打印');

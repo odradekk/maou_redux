@@ -11,7 +11,10 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
-const { register_handlers } = require('./helpers/event-registration');
+const {
+  load_modules,
+  register_handlers,
+} = require('./helpers/event-registration');
 const { preset_chara_0, join_slave_chara } = require('./helpers/chara');
 
 // 世界底座：智慧（素质 172 → GET_KOJO_NUM = 112 → 分发 key 12）入列调教
@@ -34,7 +37,7 @@ async function setup_k12(seed, selectcom = 0) {
     seed(fixture, era_flag);
   }
   register_handlers(fixture, 'kojo/kojo-system');
-  register_handlers(fixture, 'kojo/kojo-k12-intellectual');
+  load_modules(fixture, 'kojo/kojo-k12-intellectual');
   return fixture;
 }
 

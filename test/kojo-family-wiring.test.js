@@ -149,8 +149,7 @@ test('主启动图加载 main-loop 后，口上分发族注册号等于口上模
   const expected_by_module = scan_kojo_modules();
   const fixture = create_era_fixture();
   fixture.load_module('system/flow/main-loop');
-  const { kojo_message_com_family, self_kojo_family } =
-    fixture.load_module('kojo/kojo-system');
+  const { kojo_message_com_family, self_kojo_family } = require('./helpers/kojo-families');
 
   for (const family of ['kojo_message_com_family', 'self_kojo_family']) {
     const dispatch =

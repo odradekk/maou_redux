@@ -14,7 +14,10 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
-const { register_handlers } = require('./helpers/event-registration');
+const {
+  load_modules,
+  register_handlers,
+} = require('./helpers/event-registration');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
 
 const CID = 31;
@@ -39,12 +42,12 @@ async function setup_k1(seed) {
     seed(fixture);
   }
   register_handlers(fixture, 'kojo/kojo-system');
-  register_handlers(fixture, 'kojo/kojo-k1-confident');
+  load_modules(fixture, 'kojo/kojo-k1-confident');
   return fixture;
 }
 
 async function speak_k1(fixture, rand) {
-  const { kojo_message_com_family } = fixture.load_module('kojo/kojo-system');
+  const { kojo_message_com_family } = require('./helpers/kojo-families');
   return kojo_message_com_family.call(1, { args: [rand] });
 }
 
@@ -340,7 +343,7 @@ test('BENKI_KOUJO：肉便器行动 0 默认支真身', async () => {
 
 test('NTR_KOUJO：P=1 默认支推进 CFLAG:651', async () => {
   const fixture = await setup_k1();
-  const { ntr_koujo_family } = fixture.load_module('kojo/kojo-system');
+  const { ntr_koujo_family } = require('./helpers/kojo-families');
   await ntr_koujo_family.call(1, { args: [undefined, 1] });
   assert.deepEqual(
     fixture.text_lines(),
@@ -400,14 +403,12 @@ test('DUNGEON_ATTACK：奴隶态 TALENT:11 真身', async () => {
 // 分组见 ere/kojo/kojo-k1-confident.js 的拼接基准。
 
 async function speak_self_kojo_k1(fixture, rand, q) {
-  const { self_kojo_family } = fixture.load_module('kojo/kojo-system');
+  const { self_kojo_family } = require('./helpers/kojo-families');
   return self_kojo_family.call(1, { args: [rand, q] });
 }
 
 async function speak_gohoubi_request_k1(fixture) {
-  const { gohoubi_request_koujo_family } = fixture.load_module(
-    'kojo/kojo-dungeon-after',
-  );
+  const { gohoubi_request_koujo_family } = require('./helpers/kojo-families');
   return gohoubi_request_koujo_family.call(1, { args: [CID] });
 }
 

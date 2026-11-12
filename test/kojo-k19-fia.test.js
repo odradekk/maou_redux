@@ -87,30 +87,28 @@ async function emit(fixture, event) {
 }
 
 async function speak_k19(fixture, rand = () => 0) {
-  const { kojo_message_com_family } = fixture.load_module('kojo/kojo-system');
+  const { kojo_message_com_family } = require('./helpers/kojo-families');
   return kojo_message_com_family.call(K19.key, { args: [rand] });
 }
 
 async function palam_k19(fixture) {
-  const { kojo_message_palamcng_family } =
-    fixture.load_module('kojo/kojo-system');
+  const { kojo_message_palamcng_family } = require('./helpers/kojo-families');
   return kojo_message_palamcng_family.call(K19.key, { args: [] });
 }
 
 async function mark_k19(fixture) {
-  const { kojo_message_markcng_family } =
-    fixture.load_module('kojo/kojo-system');
+  const { kojo_message_markcng_family } = require('./helpers/kojo-families');
   return kojo_message_markcng_family.call(K19.key, { args: [] });
 }
 
 async function self_k19(fixture) {
-  const { self_kojo_family } = fixture.load_module('kojo/kojo-system');
+  const { self_kojo_family } = require('./helpers/kojo-families');
   return self_kojo_family.call(K19.key, { args: [] });
 }
 
 /** 某一套口上的族调用（表驱动用例用它） */
 async function speak_fia(fixture, kojo, rand = () => 0) {
-  const { kojo_message_com_family } = fixture.load_module('kojo/kojo-system');
+  const { kojo_message_com_family } = require('./helpers/kojo-families');
   return kojo_message_com_family.call(kojo.key, { args: [rand] });
 }
 
@@ -589,7 +587,7 @@ test('MUSEUM 口上不按博物馆口上编号分派：固定低头正文，爱�
       });
       const { game } = fixture.load_module('facade/game');
       game.event.博物馆口上 = stage;
-      const { museum_koujo_family } = fixture.load_module('kojo/kojo-system');
+      const { museum_koujo_family } = require('./helpers/kojo-families');
       await museum_koujo_family.call(kojo.key, { args: [] });
       assert.deepEqual(
         fixture.text_lines(),
@@ -856,9 +854,7 @@ test('#625 GOHOUBI_REQUEST：空首尾夹着的兽名单独成行（CFLAG:504 �
       const fixture = await setup_fia(kojo, (f) => {
         f.load_module('facade/chara').chara(CID).stronghold.要求奖赏 = req;
       });
-      const { gohoubi_request_koujo_family } = fixture.load_module(
-        'kojo/kojo-dungeon-after',
-      );
+      const { gohoubi_request_koujo_family } = require('./helpers/kojo-families');
       await gohoubi_request_koujo_family.call(kojo.key, { args: [CID] });
       assert.deepEqual(
         fixture.text_lines(),
@@ -934,7 +930,7 @@ test('SELF_KOJO 调教后自慰：尻穴狂档（TALENT:77）不再叠加淫乱�
       f.store.set(`cflag:${CID}:261`, 4); // 推进值取在本档上限
       f.store.set(`talent:${CID}:77`, 1); // 尻穴狂
     });
-    const { self_kojo_family } = fixture.load_module('kojo/kojo-system');
+    const { self_kojo_family } = require('./helpers/kojo-families');
     await self_kojo_family.call(kojo.key, { args: [] });
     assert.deepEqual(fixture.text_lines(), [
       '「主人……想被主人……疼爱后面……想和主人……更加的……亲热……」',

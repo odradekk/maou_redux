@@ -11,7 +11,10 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
-const { register_handlers } = require('./helpers/event-registration');
+const {
+  load_modules,
+  register_handlers,
+} = require('./helpers/event-registration');
 const { preset_chara_0, join_slave_chara } = require('./helpers/chara');
 
 // 世界底座：黑方片（素质 169 → GET_KOJO_NUM = 109 → 分发 key 9）入列调教
@@ -35,7 +38,7 @@ async function setup_k9(seed, selectcom = 0) {
     seed(fixture, era_flag);
   }
   register_handlers(fixture, 'kojo/kojo-system');
-  register_handlers(fixture, 'kojo/kojo-k9-diamond');
+  load_modules(fixture, 'kojo/kojo-k9-diamond');
   return fixture;
 }
 
@@ -164,14 +167,13 @@ test('20 个分发族全部注册了 K9（key 9）', async () => {
     public_exucution_koujo_family,
     grotesque_koujo_family,
     gobi_koujo_family,
-  } = fixture.load_module('kojo/kojo-system');
+  } = require('./helpers/kojo-families');
   const {
     gohoubi_after_koujo_family,
     osioski_koujo_family,
     gohoubi_request_koujo_family,
-  } = fixture.load_module('kojo/kojo-dungeon-after');
-  const { ryouzyoku_kojo_family, ryouzyoku_after_kojo_family } =
-    fixture.load_module('kojo/kojo-dungeon-ravish');
+  } = require('./helpers/kojo-families');
+  const { ryouzyoku_kojo_family, ryouzyoku_after_kojo_family } = require('./helpers/kojo-families');
   const families = [
     kojo_message_com_family,
     self_kojo_family,
@@ -203,7 +205,7 @@ test('20 个分发族全部注册了 K9（key 9）', async () => {
 // —— kojo_message_com_9：指令口上族 + 头部七道检查 ——
 
 async function speak_k9(fixture, rand) {
-  const { kojo_message_com_family } = fixture.load_module('kojo/kojo-system');
+  const { kojo_message_com_family } = require('./helpers/kojo-families');
   return kojo_message_com_family.call(9, { args: [rand] });
 }
 
@@ -362,8 +364,7 @@ test('KOJO_MESSAGE_PALAMCNG_9：P = PALAM:3 + UP:3 首次超过 PALAMLV:2 触发
   fixture.store.set('palam:20:3', 600);
   fixture.store.set('delta:20:3', 0);
   fixture.store.set('talent:20:85', 1);
-  const { kojo_message_palamcng_family } =
-    fixture.load_module('kojo/kojo-system');
+  const { kojo_message_palamcng_family } = require('./helpers/kojo-families');
   await kojo_message_palamcng_family.call(9, { args: [] });
   assert.equal(fixture.store.get('cflag:20:221'), 1, 'CFLAG:221 首超推进到 1');
 });
@@ -372,8 +373,7 @@ test('KOJO_MESSAGE_MARKCNG_9：苦痛刻印变动==3 且 CFLAG:297==0 触发苦�
   const fixture = await setup_k9();
   fixture.store.set('tflag:22', 3);
   fixture.store.set('talent:20:85', 1); // 爱慕
-  const { kojo_message_markcng_family } =
-    fixture.load_module('kojo/kojo-system');
+  const { kojo_message_markcng_family } = require('./helpers/kojo-families');
   await kojo_message_markcng_family.call(9, { args: [] });
   assert.deepEqual(fixture.text_lines(), [
     '「啊啊啊~…好痛~…好痛呜呜~！已、已经忍不了了…啊啊~…啊呜啊啊～！」',
@@ -389,7 +389,7 @@ test('SELF_KOJO_K9 TFLAG:13==1（自慰）崩坏分支：TALENT:9==1 时走崩�
   const fixture = await setup_k9((f) => f.store.set('talent:20:9', 1));
   const { game } = fixture.load_module('facade/game');
   game.train.初吻与自我口上 = 1;
-  const { self_kojo_family } = fixture.load_module('kojo/kojo-system');
+  const { self_kojo_family } = require('./helpers/kojo-families');
   await self_kojo_family.call(9, { args: [] });
   assert.equal(
     fixture.text_lines()[0],
@@ -426,7 +426,7 @@ test('DUNGEON_VICTORY_K9：随机三选一 + 体力低于五成追加台词', as
     f.store.set('base:20:1', 100);
     f.store.set('maxbase:20:1', 100);
   });
-  const { dungeon_victory_family } = fixture.load_module('kojo/kojo-system');
+  const { dungeon_victory_family } = require('./helpers/kojo-families');
   await dungeon_victory_family.call(9, { args: [() => 0] });
   assert.deepEqual(fixture.text_lines(), [
     '「哼、当然的结果嘛！」',
@@ -437,7 +437,7 @@ test('DUNGEON_VICTORY_K9：随机三选一 + 体力低于五成追加台词', as
 
 test('DUNGEON_ATTACK_K9：CFLAG:1（状态）区分侵攻/非侵攻文案', async () => {
   const fixture = await setup_k9((f) => f.store.set('cflag:20:1', 2));
-  const { dungeon_attack_family } = fixture.load_module('kojo/kojo-system');
+  const { dungeon_attack_family } = require('./helpers/kojo-families');
   await dungeon_attack_family.call(9, { args: [() => 0] });
   assert.deepEqual(fixture.text_lines(), ['「接招吧！」']);
 });
@@ -446,8 +446,7 @@ test('DUNGEON_RYOUZYOKU_K9 / AFTER_K9：迷宫败北与凌辱结束口上', asyn
   const fixture = await setup_k9((f) => {
     f.store.set('talent:20:0', 1); // 处女
   });
-  const { ryouzyoku_kojo_family, ryouzyoku_after_kojo_family } =
-    fixture.load_module('kojo/kojo-dungeon-ravish');
+  const { ryouzyoku_kojo_family, ryouzyoku_after_kojo_family } = require('./helpers/kojo-families');
   await ryouzyoku_kojo_family.call(9, { args: [] });
   assert.deepEqual(fixture.text_lines(), [
     '「不…不要…我是不会将第一次交给你们的！」',
@@ -469,9 +468,7 @@ test('DUNGEON_RYOUZYOKU_K9 / AFTER_K9：迷宫败北与凌辱结束口上', asyn
 
 test('GOHOUBI_REQUEST_KOUJO_K9：CFLAG:A:504==0 请求金钱', async () => {
   const fixture = await setup_k9();
-  const { gohoubi_request_koujo_family } = fixture.load_module(
-    'kojo/kojo-dungeon-after',
-  );
+  const { gohoubi_request_koujo_family } = require('./helpers/kojo-families');
   await gohoubi_request_koujo_family.call(9, { args: [20, undefined] });
   assert.deepEqual(fixture.text_lines(), [
     '「我想要金钱作为奖励呢。对呢，十万左右应该够了吧~」',
@@ -480,8 +477,7 @@ test('GOHOUBI_REQUEST_KOUJO_K9：CFLAG:A:504==0 请求金钱', async () => {
 
 test('GOHOUBI_AFTER_KOUJO_K9 / OSIOKI_KOUJO_K9：choice 显式形参', async () => {
   const fixture = await setup_k9();
-  const { gohoubi_after_koujo_family, osioski_koujo_family } =
-    fixture.load_module('kojo/kojo-dungeon-after');
+  const { gohoubi_after_koujo_family, osioski_koujo_family } = require('./helpers/kojo-families');
   await gohoubi_after_koujo_family.call(9, { args: [20, 0] });
   assert.deepEqual(fixture.text_lines(), ['「为、为什么啦！」']);
   const before = fixture.text_lines().length;
@@ -491,7 +487,7 @@ test('GOHOUBI_AFTER_KOUJO_K9 / OSIOKI_KOUJO_K9：choice 显式形参', async () 
 
 test('GOBI_KOUJO_K9：ARG:0 取语尾编号（返回文字，#570）', async () => {
   const fixture = await setup_k9();
-  const { gobi_koujo_family } = fixture.load_module('kojo/kojo-system');
+  const { gobi_koujo_family } = require('./helpers/kojo-families');
   const text = await gobi_koujo_family.call(9, { args: [3, () => 0] });
   assert.equal(text, '来的……。');
   assert.deepEqual(fixture.text_lines(), [], '语尾真身不得自行打印');
@@ -503,7 +499,7 @@ test('BENKI_KOUJO_K9：门面 game.train.肉便器行动 条件', async () => {
   });
   const { game } = fixture.load_module('facade/game');
   game.train.肉便器行动 = 0;
-  const { benki_koujo_family } = fixture.load_module('kojo/kojo-system');
+  const { benki_koujo_family } = require('./helpers/kojo-families');
   await benki_koujo_family.call(9, { args: [] });
   assert.deepEqual(fixture.text_lines(), ['「更加地…更加地…弄脏我吧~…♡」']);
 });
@@ -512,7 +508,7 @@ test('ENTERENEMY_KOUJO_K9：来袭口上按角色素质分岔', async () => {
   const fixture = await setup_k9((f) => {
     f.store.set('talent:20:76', 1);
   });
-  const { enterenemy_koujo_family } = fixture.load_module('kojo/kojo-system');
+  const { enterenemy_koujo_family } = require('./helpers/kojo-families');
   await enterenemy_koujo_family.call(9, { args: [] });
   assert.deepEqual(fixture.text_lines(), [
     '「只要去到魔王大人的房间的话、真的能被干了个爽吗~？」',
@@ -525,7 +521,7 @@ test('NTR_KOUJO_K9：P 分派编号 1（首次经 CFLAG:650 标记）', async ()
   const fixture = await setup_k9((f) => {
     f.store.set('talent:20:85', 1);
   });
-  const { ntr_koujo_family } = fixture.load_module('kojo/kojo-system');
+  const { ntr_koujo_family } = require('./helpers/kojo-families');
   await ntr_koujo_family.call(9, { args: [undefined, 1] });
   assert.equal(
     fixture.store.get('cflag:20:650'),
@@ -543,7 +539,7 @@ test('EXUCUTION / MUSEUM / BANISHMENT / PUBLIC_EXUCUTION_KOUJO_K9：注册且按
     banishment_koujo_family,
     public_exucution_koujo_family,
     grotesque_koujo_family,
-  } = fixture.load_module('kojo/kojo-system');
+  } = require('./helpers/kojo-families');
 
   await exucution_koujo_family.call(9, { args: [4] });
   assert.deepEqual(fixture.text_lines(), [
@@ -883,9 +879,7 @@ test('#623 奖赏请求：野兽名并入整行', async () => {
     const fixture = await setup_k9((f) => {
       f.store.set('cflag:20:504', item.要求);
     });
-    const { gohoubi_request_koujo_family } = fixture.load_module(
-      'kojo/kojo-dungeon-after',
-    );
+    const { gohoubi_request_koujo_family } = require('./helpers/kojo-families');
     await gohoubi_request_koujo_family.call(9, { args: [20, undefined] });
     assert.ok(
       fixture

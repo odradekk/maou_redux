@@ -794,7 +794,7 @@ test('CHILD_CARE_CHARA：可访问时进入育儿室，TARGET 指向该角色并
   fixture.store.set('flag:10005', ASSI);
 
   // 口上探针：口上族按 GET_KOJO_NUM() - 100 分发，素质 160 档 → 编号 100 → 族内 0
-  const { self_kojo_family } = fixture.load_module('kojo/kojo-system');
+  const { self_kojo_family } = require('./helpers/kojo-families');
   const { game } = fixture.load_module('facade/game');
   let seen_event = null;
   self_kojo_family.register(0, async () => {
