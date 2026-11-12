@@ -24,8 +24,8 @@ export default [
   make(
     7642,
     '私处感觉门槛抬高',
-    "  if (EraChara.get(cid).abl.vagina_feeling >= 5) {\n    await era.printAndWait(`${target_name}作为干部的情妇生活着。`);",
-    "  if (EraChara.get(cid).abl.vagina_feeling >= 6) {\n    await era.printAndWait(`${target_name}作为干部的情妇生活着。`);",
+    '  if (EraChara.get(cid).abl.vagina_feeling >= 5) {\n    await era.printAndWait(`${target_name}作为干部的情妇生活着。`);',
+    '  if (EraChara.get(cid).abl.vagina_feeling >= 6) {\n    await era.printAndWait(`${target_name}作为干部的情妇生活着。`);',
     '状态 × 种族 × 价格档 × 职业 × 叶子条件完整矩阵',
   ),
   make(
@@ -45,15 +45,15 @@ export default [
   make(
     7663,
     '淫乱十万档三十级门槛抬高',
-    "  if (EraChara.get(cid).cflag.level >= 30) {",
-    "  if (EraChara.get(cid).cflag.level >= 31) {",
+    '  if (EraChara.get(cid).cflag.level >= 30) {',
+    '  if (EraChara.get(cid).cflag.level >= 31) {',
     '状态 × 种族 × 价格档 × 职业 × 叶子条件完整矩阵',
   ),
   make(
     7664,
     '淫乱低价二十级门槛抬高',
-    "  if (EraChara.get(cid).cflag.level >= 20) {",
-    "  if (EraChara.get(cid).cflag.level >= 21) {",
+    '  if (EraChara.get(cid).cflag.level >= 20) {',
+    '  if (EraChara.get(cid).cflag.level >= 21) {',
     '状态 × 种族 × 价格档 × 职业 × 叶子条件完整矩阵',
   ),
 ];

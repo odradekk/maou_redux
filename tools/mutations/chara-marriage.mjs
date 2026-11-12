@@ -8,9 +8,9 @@ export default [
   {
     desc: 'M8861 CHECK_ABLE_TO_MARRIAGE 的侵攻状态码由 2 改成 3',
     file: 'ere/system/chara/chara-marriage.js',
-    find: "  if ((EraChara.get(arg).cflag.state || 0) === 2) return MARRIAGE_HERO;",
+    find: '  if ((EraChara.get(arg).cflag.get(1) || 0) === 2) return MARRIAGE_HERO;',
     replace:
-      "  if ((EraChara.get(arg).cflag.state || 0) === 3) return MARRIAGE_HERO;",
+      '  if ((EraChara.get(arg).cflag.get(1) || 0) === 3) return MARRIAGE_HERO;',
     tests: ['chara-marriage'],
     must_mention: 'check_able_to_marriage：侵攻中单独一档',
   },
@@ -42,9 +42,9 @@ export default [
   {
     desc: 'M8865 野狗的持有条件由 item:22 >= 1 改成 >= 2',
     file: 'ere/system/chara/chara-marriage.js',
-    find: "  if ((era.get('item:22') || 0) >= 1) {\n    print_choice('野狗', SPOUSE_DOG);",
+    find: "  if ((era_item.stray_dog.count || 0) >= 1) {\n    print_choice('野狗', SPOUSE_DOG);",
     replace:
-      "  if ((era.get('item:22') || 0) >= 2) {\n    print_choice('野狗', SPOUSE_DOG);",
+      "  if ((era_item.stray_dog.count || 0) >= 2) {\n    print_choice('野狗', SPOUSE_DOG);",
     tests: ['chara-marriage'],
     must_mention: '菜单按钮集',
   },
@@ -95,27 +95,27 @@ export default [
   {
     desc: 'M8871 [903] 与恋人分手时忘了清 CFLAG:606',
     file: 'ere/system/chara/chara-marriage.js',
-    find: "      EraChara.get(arg).cflag.lover = 0; // CFLAG:606 = 0（dungeon 域）",
+    find: '      EraChara.get(arg).cflag.set(606, 0); // CFLAG:606 = 0（dungeon 域）',
     replace:
-      "      EraChara.get(arg).cflag.lover = 1; // CFLAG:606 = 0（dungeon 域）",
+      '      EraChara.get(arg).cflag.set(606, 1); // CFLAG:606 = 0（dungeon 域）',
     tests: ['chara-marriage'],
     must_mention: '[903] 与恋人分手',
   },
   {
     desc: 'M8872 奴隶子菜单：侵攻中（状态 2）的拒绝条件改成状态 3',
     file: 'ere/system/chara/chara-marriage.js',
-    find: "    if ((EraChara.get(pick).cflag.state || 0) === 2) {\n      era.print(`${name_of(pick)}尚未在支配之下。`);",
+    find: '    if ((EraChara.get(pick).cflag.get(1) || 0) === 2) {\n      era.print(`${name_of(pick)}尚未在支配之下。`);',
     replace:
-      "    if ((EraChara.get(pick).cflag.state || 0) === 3) {\n      era.print(`${name_of(pick)}尚未在支配之下。`);",
+      '    if ((EraChara.get(pick).cflag.get(1) || 0) === 3) {\n      era.print(`${name_of(pick)}尚未在支配之下。`);',
     tests: ['chara-marriage'],
     must_mention: '奴隶子菜单的四条拒绝与返回',
   },
   {
     desc: 'M8873 奴隶子菜单：选中者已婚的拒绝条件读到 609 上（永远不拦）',
     file: 'ere/system/chara/chara-marriage.js',
-    find: "    if ((EraChara.get(pick).cflag.spouse || 0) !== 0) {\n      era.print(`${name_of(pick)}已婚了。`);",
+    find: '    if ((EraChara.get(pick).cflag.get(601) || 0) !== 0) {\n      era.print(`${name_of(pick)}已婚了。`);',
     replace:
-      "    if ((EraChara.get(pick).cflag.spouse_name || 0) !== 0) {\n      era.print(`${name_of(pick)}已婚了。`);",
+      '    if ((EraChara.get(pick).cflag.get(609) || 0) !== 0) {\n      era.print(`${name_of(pick)}已婚了。`);',
     tests: ['chara-marriage'],
     must_mention: '奴隶子菜单的四条拒绝与返回',
   },
@@ -131,17 +131,17 @@ export default [
   {
     desc: 'M8875 名槽互换写反（双方都记自己的名字编号）',
     file: 'ere/system/chara/chara-marriage.js',
-    find: "      `cflag:${partner}:${SPOUSE_NAME_SLOT}`,\n      EraChara.get(arg).cflag.random_name_index || 0,",
+    find: '      `cflag:${partner}:${SPOUSE_NAME_SLOT}`,\n      EraChara.get(arg).cflag.get(6) || 0,',
     replace:
-      "      `cflag:${partner}:${SPOUSE_NAME_SLOT}`,\n      EraChara.get(partner).cflag.random_name_index || 0,",
+      '      `cflag:${partner}:${SPOUSE_NAME_SLOT}`,\n      EraChara.get(partner).cflag.get(6) || 0,',
     tests: ['chara-marriage'],
     must_mention: '从奴隶中选',
   },
   {
     desc: 'M8876 被求婚方登记的对象由「你」改成野狗（901 写成 900）',
     file: 'ere/system/chara/chara-marriage.js',
-    find: "      EraChara.get(partner).cflag.spouse = SPOUSE_YOU;",
-    replace: "      EraChara.get(partner).cflag.spouse = SPOUSE_DOG;",
+    find: '      EraChara.get(partner).cflag.set(601, SPOUSE_YOU);',
+    replace: '      EraChara.get(partner).cflag.set(601, SPOUSE_DOG);',
     tests: ['chara-marriage'],
     must_mention: '从奴隶中选',
   },
@@ -156,17 +156,17 @@ export default [
   {
     desc: 'M8878 初吻：与你结婚那一档不再记魔王的初吻对象',
     file: 'ere/system/chara/chara-marriage.js',
-    find: "    if ((EraChara.get(0).cflag.first_kiss_partner ?? 0) === -1) {\n      // 調教者の初吻（NO:ARG + 1 编码）\n      EraChara.get(0).cflag.first_kiss_partner = arg + 1;",
+    find: '    if ((EraChara.get(0).cflag.get(16) ?? 0) === -1) {\n      // 調教者の初吻（NO:ARG + 1 编码）\n      EraChara.get(0).cflag.set(16, arg + 1);',
     replace:
-      "    if (false) {\n      // 調教者の初吻（NO:ARG + 1 编码）\n      EraChara.get(0).cflag.first_kiss_partner = arg + 1;",
+      '    if (false) {\n      // 調教者の初吻（NO:ARG + 1 编码）\n      EraChara.get(0).cflag.set(16, arg + 1);',
     tests: ['chara-marriage'],
     must_mention: '初吻的记录码按对象分档',
   },
   {
     desc: 'M8879 异种婚姻的经验门由 300 改成 301',
     file: 'ere/system/chara/chara-marriage.js',
-    find: "  if ((EraChara.get(arg).exp.interspecies_exp || 0) < 300) return;",
-    replace: "  if ((EraChara.get(arg).exp.interspecies_exp || 0) < 301) return;",
+    find: '  if ((EraChara.get(arg).exp.get(58) || 0) < 300) return;',
+    replace: '  if ((EraChara.get(arg).exp.get(58) || 0) < 301) return;',
     tests: ['chara-marriage'],
     must_mention: '异种婚姻（欲望 LV 5',
   },
@@ -183,24 +183,25 @@ export default [
   {
     desc: 'M9012 清旧账的门槛由 > 0 改成 > 1（配偶名槽 = 1 时整段不跑）',
     file: 'ere/system/chara/chara-marriage.js',
-    find: "  if ((EraChara.get(arg).cflag.get(SPOUSE_NAME_SLOT) || 0) > 0) {",
-    replace: "  if ((EraChara.get(arg).cflag.get(SPOUSE_NAME_SLOT) || 0) > 1) {",
+    find: '  if ((EraChara.get(arg).cflag.get(SPOUSE_NAME_SLOT) || 0) > 0) {',
+    replace:
+      '  if ((EraChara.get(arg).cflag.get(SPOUSE_NAME_SLOT) || 0) > 1) {',
     tests: ['chara-marriage'],
     must_mention: '婚前清旧账的两侧',
   },
   {
     desc: 'M9013 清旧账的内层条件整支短路（家族册上找得到人也不离）',
     file: 'ere/system/chara/chara-marriage.js',
-    find: "    if (!(EraChara.get(arg).ex_talent.offspring && found < 0)) {\n      divorce(found);\n    }",
-    replace: "    if (false) {\n      divorce(found);\n    }",
+    find: '    if (!(EraChara.get(arg).ex_talent.get(2) && found < 0)) {\n      divorce(found);\n    }',
+    replace: '    if (false) {\n      divorce(found);\n    }',
     tests: ['chara-marriage'],
     must_mention: '婚前清旧账的两侧',
   },
   {
     desc: 'M9025 已婚检查由 CFLAG:601 > 0 改成 > 1（登记值 1 时照办婚礼）',
     file: 'ere/system/chara/chara-marriage.js',
-    find: "    } else if ((EraChara.get(arg).cflag.spouse || 0) > 0) {",
-    replace: "    } else if ((EraChara.get(arg).cflag.spouse || 0) > 1) {",
+    find: '    } else if ((EraChara.get(arg).cflag.get(601) || 0) > 0) {',
+    replace: '    } else if ((EraChara.get(arg).cflag.get(601) || 0) > 1) {',
     tests: ['chara-marriage'],
     must_mention: '已婚后选别的对象报',
   },
@@ -224,8 +225,9 @@ export default [
   {
     desc: 'M9032 魔王配偶的判断由相等改成不等（普通婚礼显示成「你」）',
     file: 'ere/system/chara/chara-marriage.js',
-    find: `  if ((era.get('cflag:0:601') || 0) === (era.get(\`cflag:\${cid}:6\`) || 0)) {`,
-    replace: `  if ((era.get('cflag:0:601') || 0) !== (era.get(\`cflag:\${cid}:6\`) || 0)) {`,
+    find: '    (EraChara.get(0).cflag.get(601) || 0) ===\n    (EraChara.get(cid).cflag.get(6) || 0)',
+    replace:
+      '    (EraChara.get(0).cflag.get(601) || 0) !==\n    (EraChara.get(cid).cflag.get(6) || 0)',
     tests: ['chara-marriage'],
     must_mention: '取家族册上的名字',
   },
@@ -240,17 +242,17 @@ export default [
   {
     desc: 'M9035 恋人 = 实人的判定码由 200 改成 201',
     file: 'ere/system/chara/chara-marriage.js',
-    find: "    if ((EraChara.get(arg).cflag.lover || 0) === LOVER_IS_REAL_PERSON) {",
+    find: '    if ((EraChara.get(arg).cflag.get(606) || 0) === LOVER_IS_REAL_PERSON) {',
     replace:
-      "    if ((EraChara.get(arg).cflag.lover || 0) === LOVER_IS_REAL_PERSON + 1) {",
+      '    if ((EraChara.get(arg).cflag.get(606) || 0) === LOVER_IS_REAL_PERSON + 1) {',
     tests: ['chara-marriage'],
     must_mention: '恋人就是家族册上的实人',
   },
   {
     desc: 'M9036 异种婚姻的欲望门由 < 5 改成 < 6（欲望 LV 5 不再成婚）',
     file: 'ere/system/chara/chara-marriage.js',
-    find: "  if ((EraChara.get(arg).abl.lust || 0) < 5) return;",
-    replace: "  if ((EraChara.get(arg).abl.lust || 0) < 6) return;",
+    find: '  if ((EraChara.get(arg).abl.get(11) || 0) < 5) return;',
+    replace: '  if ((EraChara.get(arg).abl.get(11) || 0) < 6) return;',
     tests: ['chara-marriage'],
     must_mention: '异种婚姻',
   },

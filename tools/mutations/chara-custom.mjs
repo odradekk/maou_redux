@@ -330,17 +330,18 @@ export default [
   {
     desc: 'M8799 妊娠素质成立时的出产日 +10 改 +20',
     file: 'ere/system/chara/chara-custom2.js',
-    find: '            chara(cid).event.预产日 = era_flag.day_count + 10 + rand(6);',
+    find: '            EraChara.get(cid).cflag.set(110, era_flag.day_count + 10 + rand(6));',
     replace:
-      '            chara(cid).event.预产日 = era_flag.day_count + 20 + rand(6);',
+      '            EraChara.get(cid).cflag.set(110, era_flag.day_count + 20 + rand(6));',
     tests: ['chara-custom2'],
     must_mention: '预产日',
   },
   {
     desc: 'M8800 出产日的 RAND:6 上界改 5',
     file: 'ere/system/chara/chara-custom2.js',
-    find: 'chara(cid).event.预产日 = era_flag.day_count + 10 + rand(6);',
-    replace: 'chara(cid).event.预产日 = era_flag.day_count + 10 + rand(5);',
+    find: 'EraChara.get(cid).cflag.set(110, era_flag.day_count + 10 + rand(6));',
+    replace:
+      'EraChara.get(cid).cflag.set(110, era_flag.day_count + 10 + rand(5));',
     tests: ['chara-custom2'],
     must_mention: 'RAND:6 的上界',
   },
@@ -355,17 +356,17 @@ export default [
   {
     desc: 'M8802 初吻对象的「唇」判定 <100 改 <200（阴茎档被吞）',
     file: 'ere/system/chara/chara-custom2.js',
-    find: "        } else if (chara(cid).train.初吻对象 < 300) {\n          tail = '阴茎]';",
+    find: "        } else if ((EraChara.get(cid).cflag.get(16) || 0) < 300) {\n          tail = '阴茎]';",
     replace:
-      "        } else if (chara(cid).train.初吻对象 < 400) {\n          tail = '阴茎]';",
+      "        } else if ((EraChara.get(cid).cflag.get(16) || 0) < 400) {\n          tail = '阴茎]';",
     tests: ['chara-custom2'],
     must_mention: '按部位编码与部位词',
   },
   {
     desc: 'M8803 初始化的等级 CFLAG:9 写 2 而非 1',
     file: 'ere/system/chara/chara-custom2.js',
-    find: "          EraChara.get(cid).cflag.level = 1; // CFLAG:A:9",
-    replace: "          EraChara.get(cid).cflag.level = 2; // CFLAG:A:9",
+    find: '          EraChara.get(cid).cflag.set(9, 1); // CFLAG:A:9',
+    replace: '          EraChara.get(cid).cflag.set(9, 2); // CFLAG:A:9',
     tests: ['chara-custom2'],
     must_mention: '等级初始化',
   },

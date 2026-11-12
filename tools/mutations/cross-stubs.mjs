@@ -6,17 +6,18 @@ export default [
   {
     desc: 'M6562 SEARCH_FAMILY 村娘 A 标志改错',
     file: 'ere/system/chara/chara-family.js',
-    find: "  if (EraChara.get(cid).talent.village_girl_a) {\n    for (const candidate of added) {",
+    find: '  if (EraChara.get(cid).talent.get(165)) {\n    for (const candidate of added) {',
     replace:
-      "  if (EraChara.get(cid).talent.evil_woman) {\n    for (const candidate of added) {",
+      '  if (EraChara.get(cid).talent.get(166)) {\n    for (const candidate of added) {',
     tests: ['cross-stubs'],
     must_mention: '村娘 A/B 走专用互找分支',
   },
   {
     desc: 'M6563 SEARCH_FAMILY 村娘分支由最后匹配退化为首个匹配',
     file: 'ere/system/chara/chara-family.js',
-    find: "      if (EraChara.get(candidate).talent.village_girl_b) found = candidate;",
-    replace: "      if (EraChara.get(candidate).talent.village_girl_b) return candidate;",
+    find: '      if (EraChara.get(candidate).talent.get(171)) found = candidate;',
+    replace:
+      '      if (EraChara.get(candidate).talent.get(171)) return candidate;',
     tests: ['cross-stubs'],
     must_mention: '保留最后一个匹配',
   },

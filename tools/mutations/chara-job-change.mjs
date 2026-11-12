@@ -65,8 +65,8 @@ export default [
   {
     desc: 'M8828 转职后的等级归 1 改成归 2',
     file: 'ere/system/chara/chara-job-change.js',
-    find: "    EraChara.get(arg).cflag.level = 1; // CFLAG:9 = 1",
-    replace: "    EraChara.get(arg).cflag.level = 2; // CFLAG:9 = 1",
+    find: '    EraChara.get(arg).cflag.set(9, 1); // CFLAG:9 = 1',
+    replace: '    EraChara.get(arg).cflag.set(9, 2); // CFLAG:9 = 1',
     tests: ['chara-job-change'],
     must_mention: '转职实现——职业表先清后设',
   },
@@ -121,9 +121,9 @@ export default [
   {
     desc: 'M8835 契约魔兽的编号偏移 1（存进 CFLAG:570 的是下一只）',
     file: 'ere/system/chara/chara-job-change.js',
-    find: "      EraChara.get(arg).cflag.subjugated_monster = monster; // CFLAG:570（system 域）",
+    find: '      EraChara.get(arg).cflag.set(570, monster); // CFLAG:570（system 域）',
     replace:
-      "      EraChara.get(arg).cflag.subjugated_monster = monster + 1; // CFLAG:570（system 域）",
+      '      EraChara.get(arg).cflag.set(570, monster + 1); // CFLAG:570（system 域）',
     tests: ['chara-job-change'],
     must_mention: '魔物使转职后选契约魔兽',
   },
@@ -162,9 +162,9 @@ export default [
   {
     desc: 'M8840 神官/巫女的高信仰值 20 改成 21',
     file: 'ere/system/chara/chara-job-change.js',
-    find: "      EraChara.get(arg).cflag.faith = HIGH_FAITH; // 高い信仰値を持つ",
+    find: '      EraChara.get(arg).cflag.set(152, HIGH_FAITH); // 高い信仰値を持つ',
     replace:
-      "      EraChara.get(arg).cflag.faith = HIGH_FAITH + 1; // 高い信仰値を持つ",
+      '      EraChara.get(arg).cflag.set(152, HIGH_FAITH + 1); // 高い信仰値を持つ',
     tests: ['chara-job-change'],
     must_mention: '转职实现——职业表先清后设',
   },
@@ -172,9 +172,9 @@ export default [
   {
     desc: 'M9026 转职等级门由 < 50 改成 < 51（50 级不再够格）',
     file: 'ere/system/chara/chara-job-change.js',
-    find: "  if ((EraChara.get(arg).cflag.level || 0) < 50) return JOB_CHANGE_LOW_LEVEL;",
+    find: '  if ((EraChara.get(arg).cflag.get(9) || 0) < 50) return JOB_CHANGE_LOW_LEVEL;',
     replace:
-      "  if ((EraChara.get(arg).cflag.level || 0) < 51) return JOB_CHANGE_LOW_LEVEL;",
+      '  if ((EraChara.get(arg).cflag.get(9) || 0) < 51) return JOB_CHANGE_LOW_LEVEL;',
     tests: ['chara-job-change'],
     must_mention: '五档判定的先后与边界',
   },
@@ -245,8 +245,8 @@ export default [
   {
     desc: 'M9050 野狗物品号由 22 改成 23（常识改变的兽奸档条件跟着错）',
     file: 'ere/system/chara/chara-job-change.js',
-    find: 'const DOG_ITEM = 22;',
-    replace: 'const DOG_ITEM = 23;',
+    find: '(era_item.stray_dog.count || 0) === 0',
+    replace: '(era_item.straitjacket.count || 0) === 0',
     tests: ['chara-job-change'],
     must_mention: '常识',
   },

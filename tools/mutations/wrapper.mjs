@@ -21,7 +21,7 @@ export default [
   {
     desc: 'M111 寻址族拼错（portcflag 改 portflag——族缺名字表时实机直接崩溃）',
     file: 'ere/system/chara/chara-portcflag.js',
-    find: '  return era.set(`portcflag:${cid}:数据版本`, PORT_DATA_VERSION);',
+    find: '  return EraChara.get(cid).portcflag.set(0, PORT_DATA_VERSION);',
     replace: '  return era.set(`portflag:${cid}:数据版本`, PORT_DATA_VERSION);',
     tests: ['event-first', 'page-title'],
     must_mention: 'portcflag',
@@ -73,8 +73,7 @@ export default [
   {
     desc: 'M203 一人称直设删除（CSTR:60 = 我 / CFLAG:450 = 9，#383 起真身落在 chara-self-call.js）',
     file: 'ere/system/chara/chara-self-call.js',
-    find: `    era.set(\`cstr:\${cid}:60\`, '我');
-    chara(cid).chara.一人称档位 = 9;`,
+    find: "    EraChara.get(cid).cstr.set(60, '我')",
     replace: '    // 变异：一人称直设删除',
     tests: ['chara-self-call'],
     must_mention: 'CSTR:x:60 = 我',

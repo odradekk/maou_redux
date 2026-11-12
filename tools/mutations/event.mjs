@@ -3222,10 +3222,8 @@ export default [
   {
     desc: 'M15860 待机档归一变成空操作（0.1.0 存档里的状态 1 与苏生出来的角色都留在四个操作页之外，#814）',
     file: 'ere/system/chara/chara-init.js',
-    find: `  if (chara(cid).invasion.状态 === 1) {
-    chara(cid).invasion.状态 = 0;
-  }`,
-    replace: `  // 变异：漏掉待机档归一`,
+    find: '  if ((EraChara.get(cid).cflag.get(1) || 0) === 1) {\n    EraChara.get(cid).cflag.set(1, 0);\n  }',
+    replace: '  // 变异：漏掉待机档归一',
     tests: ['event-load', 'page-shop-labo'],
     must_mention: '待机档归 0（在城里可操作）',
   },

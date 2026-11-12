@@ -126,8 +126,8 @@ export default [
   make(
     6997,
     '后代错误获准加入手足家庭',
-    "if (EraChara.get(a).talent.elite) {",
-    "if (false && EraChara.get(a).talent.elite) {",
+    'if (EraChara.get(a).talent.get(220)) {',
+    'if (false && EraChara.get(a).talent.get(220)) {',
   ),
   make(
     6998,
@@ -173,14 +173,14 @@ export default [
   make(
     7004,
     '种族下标改错',
-    "let race_a = EraChara.get(a).talent.race || 0;",
-    "let race_a = EraChara.get(a).talent.pre_hero_life || 0;",
+    'let race_a = EraChara.get(a).talent.get(314) || 0;',
+    'let race_a = EraChara.get(a).talent.get(315) || 0;',
   ),
   make(
     7005,
     '原种族下标改错',
-    "if (race_a === 9) race_a = EraChara.get(a).talent.original_race || 0;",
-    "if (race_a === 9) race_a = EraChara.get(a).talent.family_structure || 0;",
+    'if (race_a === 9) race_a = EraChara.get(a).talent.get(321) || 0;',
+    'if (race_a === 9) race_a = EraChara.get(a).talent.get(320) || 0;',
   ),
   make(
     7006,
@@ -209,8 +209,8 @@ export default [
   make(
     7010,
     '家族登记不再过滤后代候选',
-    "if (EraChara.get(other).talent.elite) continue; // 后代",
-    "if (false && EraChara.get(other).talent.elite) continue; // 后代",
+    'if (EraChara.get(other).talent.get(220)) continue; // 后代',
+    'if (false && EraChara.get(other).talent.get(220)) continue; // 后代',
   ),
   make(
     7011,

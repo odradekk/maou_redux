@@ -1123,9 +1123,8 @@ export default [
   {
     desc: 'M16311 夹具 raw() 的视图不读平表（叶子一律 undefined，与 era.get 分叉）',
     file: 'test/helpers/era-fixture.js',
-    find: "  const raw_leaf_value = (key) =>\n    store.get(key) ??\n    (key.startsWith('global:')\n      ? global_constant(key.slice('global:'.length))\n      : undefined);",
-    replace:
-      '  // 变异：视图不读平表，叶子一律 undefined\n  const raw_leaf_value = (key) => undefined;',
+    find: '  const raw_leaf_value = (key) =>',
+    replace: '  // 变异：视图不读平表，叶子一律 undefined',
     tests: ['fixture-raw'],
     must_mention: 'era.set / era.add 写入后 raw() 读到同一槽',
   },
