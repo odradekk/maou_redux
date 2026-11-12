@@ -42,6 +42,7 @@
 'use strict';
 
 const era = require('#/era-electron');
+const EraChara = require('#/era-utils/era-chara');
 
 /** 堡垒攻略的选人屏页脚：上一页 [1000] / 返回 [999] / 下一页 [1001]（0-4 是堡垒） */
 const FORT_PREV_KEY = 1000;
@@ -49,7 +50,6 @@ const FORT_BACK_KEY = 999;
 const FORT_NEXT_KEY = 1001;
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
-const { chara } = require('#/facade/chara');
 const { print_button_grid } = require('#/utils/button-grid');
 const { change_screen } = require('#/utils/screen-change');
 const { game } = require('#/facade/game');
@@ -67,7 +67,7 @@ const { default_rand } = require('#/utils/numeric');
 
 /** 名字承载（#5 决议：SAVESTR:x ↔ callname:x:-1） */
 function name_of(cid) {
-  return era.get(`callname:${cid}:-1`) ?? '';
+  return EraChara.get(cid).name ?? '';
 }
 
 /** 每页候选数（#DIM NUM_PAGE = 26） */
@@ -82,20 +82,20 @@ const NUM_PAGE = 26;
  * @returns {boolean}
  */
 function is_candidate(cid, pregnant_ok) {
-  const state = chara(cid).invasion.状态;
+  const state = EraChara.get(cid).cflag.state;
   if (state !== 0 && state !== 7) {
     return false;
   }
   if (
-    (era.get(`talent:${cid}:85`) || 0) !== 1 &&
-    (era.get(`talent:${cid}:76`) || 0) !== 1
+    EraChara.get(cid).talent.in_love !== 1 &&
+    EraChara.get(cid).talent.lewd !== 1
   ) {
     return false;
   }
-  if ((era.get(`cflag:${cid}:0`) || 0) !== 2 || cid === 0) {
+  if (EraChara.get(cid).cflag.sale_and_assistant !== 2 || cid === 0) {
     return false;
   }
-  return pregnant_ok || (era.get(`talent:${cid}:153`) || 0) === 0;
+  return pregnant_ok || EraChara.get(cid).talent.pregnant === 0;
 }
 
 /**
@@ -106,7 +106,7 @@ function is_candidate(cid, pregnant_ok) {
  *   0 = 取消（撤退/无候选/已全破）
  */
 async function arcana_fort(rand = default_rand, move_ctx = {}) {
-  const settings = era.get('flag:5') || 0;
+  const settings = era_flag.game_settings;
   const stage = era_flag.arcana_fort_stage;
 
   // === 入场叙述 ===
@@ -287,9 +287,9 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
       if (index >= no_page * NUM_PAGE && index < (no_page + 1) * NUM_PAGE) {
         // 行文本（[可以攻击] 恒真并入，见文件头）
         era.printButton(
-          `${name_of(cid)} LV${era.get(`cflag:${cid}:9`) || 0} 攻击${
-            chara(cid).dungeon.攻击力
-          } 防御${chara(cid).dungeon.防御力} [可以攻击]`,
+          `${name_of(cid)} LV${EraChara.get(cid).cflag.level} 攻击${
+            EraChara.get(cid).cflag.attack
+          } 防御${EraChara.get(cid).cflag.defense} [可以攻击]`,
           index,
         );
       }
@@ -334,11 +334,11 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
   // === 東西南北の遭遇叙述 ===
   // 曾为勇者（TALENT:167-170）走「曾经的同伴」分支；CFLAG:40 == 0 全裸
   const former_hero =
-    (era.get(`talent:${y_arcana}:167`) || 0) !== 0 ||
-    (era.get(`talent:${y_arcana}:168`) || 0) !== 0 ||
-    (era.get(`talent:${y_arcana}:169`) || 0) !== 0 ||
-    (era.get(`talent:${y_arcana}:170`) || 0) !== 0;
-  const naked = (era.get(`cflag:${y_arcana}:40`) || 0) === 0;
+    EraChara.get(y_arcana).talent.gold_heart !== 0 ||
+    EraChara.get(y_arcana).talent.silver_spade !== 0 ||
+    EraChara.get(y_arcana).talent.black_diamond !== 0 ||
+    EraChara.get(y_arcana).talent.white_club !== 0;
+  const naked = EraChara.get(y_arcana).cflag.clothing_state === 0;
   const print_w = async (text) => {
     era.print(text);
     await era.waitAnyKey();
@@ -465,24 +465,25 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
   era.addCharacter(a_arcana); // 等 ADDCHARA 22
   await add_chara_ex(a_arcana); // 等 ADDCHARA_EX(CHARANUM-1)
   // SAVESTR:A = %NAME:A% 是 no-op（文件头）；CSTR:1 照写
-  chara(a_arcana).chara.加入时名字 = name_of(a_arcana); // 等 CSTR:A:1
+  EraChara.get(a_arcana).cstr.joined_name = name_of(a_arcana); // 等 CSTR:A:1
   if (tmp_arcana === 1) {
-    chara(a_arcana).train.自慰中毒 = 1; // ABL:A:31 = 1
-    chara(a_arcana).dungeon.自慰经验 = 30; // EXP:A:10 = 30
+    EraChara.get(a_arcana).abl.masturbation_addiction = 1; // ABL:A:31 = 1
+    EraChara.get(a_arcana).exp.masturbation_exp = 30; // EXP:A:10 = 30
   }
   if (tmp_arcana === 2) {
-    chara(a_arcana).dungeon.自慰经验 = 10; // EXP:A:10 = 10
+    EraChara.get(a_arcana).exp.masturbation_exp = 10; // EXP:A:10 = 10
   }
   if (tmp_arcana === 3) {
-    chara(a_arcana).dungeon.私处经验 = 20; // EXP:A:0 = 20
-    if ((era.get('flag:500') || 0) === 0 || (era.get('flag:500') || 0) === 2) {
+    EraChara.get(a_arcana).exp.vagina_exp = 20; // EXP:A:0 = 20
+    if (era_flag.crazylord_gender === 0 || era_flag.crazylord_gender === 2) {
       // 狂王が男か扶她ならば精液经验（EXP:A:5 = EXP:A:0）
-      chara(a_arcana).dungeon.性交经验 = chara(a_arcana).dungeon.私处经验;
+      EraChara.get(a_arcana).exp.intercourse_exp =
+        EraChara.get(a_arcana).exp.vagina_exp;
     }
-    chara(a_arcana).train.初体验对象 = 105; // 初体験の相手は狂王
+    EraChara.get(a_arcana).cflag.first_sex_partner = 105; // 初体験の相手は狂王
   }
-  chara(a_arcana).chara.武装 = knight.weapon; // 等 初期装備（三段编码累加）
-  chara(a_arcana).chara.随机名编号 = rand(80); // 名前決定
+  EraChara.get(a_arcana).cflag.weapon = knight.weapon; // 等 初期装備（三段编码累加）
+  EraChara.get(a_arcana).cflag.random_name_index = rand(80); // 名前決定
 
   // === 衣装与身体 ===
   // TARGET = A_ARCANA——全局换手被 wearing_cloth_able 的形参吸收
@@ -490,14 +491,15 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
   char_body_generate_wapped(a_arcana, rand);
 
   // === レベルアップ処理 ===
-  const level_ups = era.get('flag:60') || 0;
+  const level_ups = era_flag.hero_base_level_bonus;
   for (let i = 0; i < level_ups; i += 1) {
     st_up(a_arcana, rand);
   }
 
   // 体力/气力回满
-  chara(a_arcana).dungeon.体力 = era.get(`maxbase:${a_arcana}:0`) || 0;
-  chara(a_arcana).dungeon.气力 = era.get(`maxbase:${a_arcana}:1`) || 0;
+  EraChara.get(a_arcana).base.stamina = EraChara.get(a_arcana).maxbase.stamina;
+  EraChara.get(a_arcana).base.willpower =
+    EraChara.get(a_arcana).maxbase.willpower;
 
   // === 戦闘 ===
   const battle_result = await arcana_battle(y_arcana, a_arcana, rand, move_ctx);
@@ -507,7 +509,7 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
     era.drawLine();
     era.print(`圣灵骑士${name_of(a_arcana)}战败了…`);
     // 赏金（MONEY / EX_FLAG:4444 镜像）
-    const gain = 1000 * (era.get(`cflag:${a_arcana}:9`) || 0);
+    const gain = 1000 * EraChara.get(a_arcana).cflag.level;
     era_flag.money += gain;
     era_exflag.legit_money += gain;
     era.print(`获得了${gain}G！`);
@@ -538,23 +540,23 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
 
     // GETBIT(FLAG:5,12)||GETBIT(FLAG:5,15)：体型回写 451-457
     if (((settings >> 12) & 1) === 1 || ((settings >> 15) & 1) === 1) {
-      chara(a_arcana).chara.年龄 = size[0];
-      chara(a_arcana).chara.种族年龄 = size[1];
-      chara(a_arcana).chara.身高 = size[2];
-      chara(a_arcana).chara.体重 = size[3];
-      chara(a_arcana).chara.胸围 = size[4];
-      chara(a_arcana).chara.腰围 = size[5];
-      chara(a_arcana).chara.臀围 = size[6];
+      EraChara.get(a_arcana).cflag.age = size[0];
+      EraChara.get(a_arcana).cflag.race_age = size[1];
+      EraChara.get(a_arcana).cflag.height = size[2];
+      EraChara.get(a_arcana).cflag.weight = size[3];
+      EraChara.get(a_arcana).cflag.bust = size[4];
+      EraChara.get(a_arcana).cflag.waist = size[5];
+      EraChara.get(a_arcana).cflag.hip = size[6];
     }
   } else if (battle_result === 0) {
     // === 負け ===
     if ((settings & 128) !== 0) {
       // 狂王线：前回の助手・調教対象だった場合はフラグを空に
-      if (game.event.上次调教对象 === y_arcana) {
-        game.event.上次调教对象 = -1;
+      if (era_flag.last_train_target === y_arcana) {
+        era_flag.last_train_target = -1;
       }
-      if (game.event.上次助手 === y_arcana) {
-        game.event.上次助手 = -1;
+      if (era_flag.last_assistant === y_arcana) {
+        era_flag.last_assistant = -1;
       }
     }
     // 临时骑士移除（A_ARCANA = CHARANUM-1，扁平化直传预设号）

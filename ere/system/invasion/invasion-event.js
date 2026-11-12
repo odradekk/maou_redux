@@ -9,6 +9,7 @@
  */
 
 const era = require('#/era-electron');
+const EraChara = require('#/era-utils/era-chara');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { add_chara_ex } = require('#/system/chara/chara-ex');
@@ -16,7 +17,6 @@ const { char_make, name_reset } = require('#/system/chara/char-make');
 const { party_char_del } = require('#/system/dungeon/dungeon-party');
 const { print_progress_line } = require('#/system/invasion/invasion-progress');
 const { MAX_CHARANUM } = require('#/event/enter-enemy');
-const { chara } = require('#/facade/chara');
 const { chara_callname, chara_nickname } = require('#/utils/callname-utils');
 const { default_rand } = require('#/utils/numeric');
 
@@ -61,7 +61,7 @@ async function invasion_event(
 
 /** FLAG:5 位 7（128）：狂王俘虏线的开关（`FLAG:5 & 128`，31 位内位运算直接可用） */
 function captive_route() {
-  return ((era.get('flag:5') || 0) & 128) !== 0;
+  return (era_flag.game_settings & 128) !== 0;
 }
 
 /**
@@ -82,7 +82,7 @@ function captive_route() {
  */
 async function inv_death_check(arg0, arg1) {
   // 勇者死亡判定（判 arg1）
-  const elite_hp = era.get(`base:${arg1}:0`) || 0;
+  const elite_hp = EraChara.get(arg1).base.stamina;
   if (elite_hp <= 0) {
     era.print(
       `${chara_nickname(arg1)}被${chara_callname(arg0)}率领的魔王军消灭了………`,
@@ -97,19 +97,19 @@ async function inv_death_check(arg0, arg1) {
     era.println();
     return 2;
   }
-  if ((era.get(`base:${arg1}:1`) || 0) <= 0) {
+  if (EraChara.get(arg1).base.willpower <= 0) {
     era.print(`被魔王军包围的${chara_nickname(arg1)}失去战斗的意志投降了………`);
     era.println();
     return 2;
   }
 
   // 魔王側の生き残りを判定（判 arg0；四条 ELSEIF，顺序照旧）
-  const hero_hp = era.get(`base:${arg0}:0`) || 0;
-  const hero_mp = era.get(`base:${arg0}:1`) || 0;
+  const hero_hp = EraChara.get(arg0).base.stamina;
+  const hero_mp = EraChara.get(arg0).base.willpower;
   // 被狂王俘虏过（TALENT:280）且气力见底 → 抛下武器投降
   if (
     hero_mp <= 1000 &&
-    (era.get(`talent:${arg0}:280`) || 0) !== 0 &&
+    EraChara.get(arg0).talent.crazylord_captive !== 0 &&
     captive_route()
   ) {
     era.print(
@@ -117,7 +117,7 @@ async function inv_death_check(arg0, arg1) {
     );
     era.print(`${chara_nickname(arg1)}俘获了${chara_callname(arg0)}………`); // PRINTFORMW
     await era.waitAnyKey();
-    chara(arg0).invasion.状态 = 9; // （CFLAG(ARG:0) 的第 1 位）= 9
+    EraChara.get(arg0).cflag.state = 9; // （CFLAG(ARG:0) 的第 1 位）= 9
     era.drawLine();
     return 1;
   }
@@ -150,7 +150,7 @@ async function inv_death_check(arg0, arg1) {
   const taken = captive_route();
   era.print(collapse.head + (taken ? collapse.captured : collapse.escaped));
   await era.waitAnyKey(); // 等 PRINTFORMW 的 WAIT
-  chara(arg0).invasion.状态 = taken ? 9 : 0;
+  EraChara.get(arg0).cflag.state = taken ? 9 : 0;
   era.drawLine();
   return 1;
 }
@@ -231,16 +231,18 @@ async function seiei_battle(area, state, rand) {
   }
 
   // 勇者基礎レベル補正（FLAG:60 = 勇者基础等级校正）
-  const bonus = 10 * (era.get('flag:60') || 0);
-  chara(seiei).dungeon.攻击力 += era.get('flag:60') || 0; // CFLAG:SEIEI_I:11
-  chara(seiei).dungeon.防御力 += era.get('flag:60') || 0; // CFLAG:SEIEI_I:12
-  era.set(`maxbase:${seiei}:0`, (era.get(`maxbase:${seiei}:0`) || 0) + bonus);
-  era.set(`maxbase:${seiei}:1`, (era.get(`maxbase:${seiei}:1`) || 0) + bonus);
-  chara(seiei).dungeon.体力 += bonus; // BASE:SEIEI_I:0
-  chara(seiei).dungeon.气力 += bonus; // BASE:SEIEI_I:1
+  const bonus = 10 * era_flag.hero_base_level_bonus;
+  EraChara.get(seiei).cflag.attack += era_flag.hero_base_level_bonus;
+  EraChara.get(seiei).cflag.defense += era_flag.hero_base_level_bonus;
+  EraChara.get(seiei).maxbase.stamina =
+    EraChara.get(seiei).maxbase.stamina + bonus;
+  EraChara.get(seiei).maxbase.willpower =
+    EraChara.get(seiei).maxbase.willpower + bonus;
+  EraChara.get(seiei).base.stamina += bonus;
+  EraChara.get(seiei).base.willpower += bonus;
   // SINKOU 补正（加成到勇者的体力/气力上）
-  chara(yusya).dungeon.体力 += sinkou;
-  chara(yusya).dungeon.气力 += sinkou;
+  EraChara.get(yusya).base.stamina += sinkou;
+  EraChara.get(yusya).base.willpower += sinkou;
 
   for (let round = 0; round < SEIEI_ROUNDS; round += 1) {
     // 超时：战线维持不住，残余怪物不足十只，给 SINKOU/10 经验
@@ -258,7 +260,7 @@ async function seiei_battle(area, state, rand) {
       era.print('最终活着回来的怪物不到十只………'); // PRINTFORML
       era.println(); // PRINTL（空行）
       const gained = Math.trunc(sinkou / 10);
-      chara(yusya).dungeon.战斗经验 += gained; // EXP:YUSYA_I:80
+      EraChara.get(yusya).exp.battle_exp += gained;
       era.print(`${chara_callname(yusya)}获得了${gained}点经验值！`); // PRINTFORMW
       await era.waitAnyKey();
       await seiei_cleanup(seiei);
@@ -270,34 +272,34 @@ async function seiei_battle(area, state, rand) {
     era.print(`魔王军 ${chara_callname(yusya)}`);
     print_progress_line(
       'HP',
-      chara(yusya).dungeon.体力,
-      era.get(`maxbase:${yusya}:0`) || 0,
+      EraChara.get(yusya).base.stamina,
+      EraChara.get(yusya).maxbase.stamina,
     );
     print_progress_line(
       '气力',
-      chara(yusya).dungeon.气力,
-      era.get(`maxbase:${yusya}:1`) || 0,
+      EraChara.get(yusya).base.willpower,
+      EraChara.get(yusya).maxbase.willpower,
     );
     // 攻击值按 SINKOU/1024 的档位放大（整数除法）
     era.print(
-      `攻击${chara(yusya).dungeon.攻击力 * (Math.trunc(sinkou / 1024) + 1)}` +
-        ` 防御${chara(yusya).dungeon.防御力} 怪物的合计战力${sinkou}点`,
+      `攻击${EraChara.get(yusya).cflag.attack * (Math.trunc(sinkou / 1024) + 1)}` +
+        ` 防御${EraChara.get(yusya).cflag.defense} 怪物的合计战力${sinkou}点`,
     );
     era.print('VS'); // PRINTW
     await era.waitAnyKey();
     era.print(chara_nickname(seiei));
     print_progress_line(
       'HP',
-      chara(seiei).dungeon.体力,
-      era.get(`maxbase:${seiei}:0`) || 0,
+      EraChara.get(seiei).base.stamina,
+      EraChara.get(seiei).maxbase.stamina,
     );
     print_progress_line(
       '气力',
-      chara(seiei).dungeon.气力,
-      era.get(`maxbase:${seiei}:1`) || 0,
+      EraChara.get(seiei).base.willpower,
+      EraChara.get(seiei).maxbase.willpower,
     );
     era.print(
-      `攻击${chara(seiei).dungeon.攻击力} 防御${chara(seiei).dungeon.防御力}`,
+      `攻击${EraChara.get(seiei).cflag.attack} 防御${EraChara.get(seiei).cflag.defense}`,
     );
     await era.waitAnyKey(); // WAIT
     era.drawLine();
@@ -306,13 +308,15 @@ async function seiei_battle(area, state, rand) {
     // **两处的档位除数不同**：判定线是 `SINKOU/2048+1`、伤害式
     // 是 `SINKOU/1024+1`——不对称的既有行为，有意不统一。
     const strike =
-      chara(yusya).dungeon.攻击力 * (Math.trunc(sinkou / 1024) + 1);
+      EraChara.get(yusya).cflag.attack * (Math.trunc(sinkou / 1024) + 1);
     const guard_line =
-      chara(yusya).dungeon.攻击力 * (Math.trunc(sinkou / 2048) + 1);
-    if (chara(seiei).dungeon.防御力 < guard_line) {
+      EraChara.get(yusya).cflag.attack * (Math.trunc(sinkou / 2048) + 1);
+    if (EraChara.get(seiei).cflag.defense < guard_line) {
       const crit = rand(5) === 0; // RAND:5
-      const guard = chara(seiei).dungeon.防御力; // TMP2_I
-      chara(seiei).dungeon.防御力 = Math.trunc(chara(seiei).dungeon.防御力 / 2);
+      const guard = EraChara.get(seiei).cflag.defense; // TMP2_I
+      EraChara.get(seiei).cflag.defense = Math.trunc(
+        EraChara.get(seiei).cflag.defense / 2,
+      );
       const damage = strike - guard;
       if (crit) {
         era.print('迅猛的一击！');
@@ -320,21 +324,23 @@ async function seiei_battle(area, state, rand) {
       era.print(
         `${chara_callname(yusya)}率领魔王军的攻击使${chara_nickname(seiei)}受到了${damage * (crit ? 4 : 2)}点伤害！`,
       );
-      if ((era.get(`talent:${seiei}:251`) || 0) === 0) {
+      if (EraChara.get(seiei).talent.ninjutsu === 0) {
         // 无「忍术」时攻防也受损（÷100 向零截断）
-        chara(seiei).dungeon.攻击力 -= Math.trunc(damage / 100);
+        EraChara.get(seiei).cflag.attack -= Math.trunc(damage / 100);
       }
-      if (chara(seiei).dungeon.攻击力 < 1) {
-        chara(seiei).dungeon.攻击力 = 1;
+      if (EraChara.get(seiei).cflag.attack < 1) {
+        EraChara.get(seiei).cflag.attack = 1;
       }
-      chara(seiei).dungeon.体力 -= damage * (crit ? 4 : 2);
-      chara(seiei).dungeon.气力 -= damage * (crit ? 4 : 2);
+      EraChara.get(seiei).base.stamina -= damage * (crit ? 4 : 2);
+      EraChara.get(seiei).base.willpower -= damage * (crit ? 4 : 2);
       await era.waitAnyKey(); // WAIT
     } else {
       era.print(
         `${chara_nickname(seiei)}承受着${chara_callname(yusya)}的攻击。`,
       );
-      chara(seiei).dungeon.防御力 = Math.trunc(chara(seiei).dungeon.防御力 / 2);
+      EraChara.get(seiei).cflag.defense = Math.trunc(
+        EraChara.get(seiei).cflag.defense / 2,
+      );
     }
 
     // 精锐部队战斗的退场判定（领军勇者、精锐部队）：先判精锐部队的死线
@@ -342,7 +348,7 @@ async function seiei_battle(area, state, rand) {
     if (first_check === 2) {
       // 魔王侧获得胜利
       const gained = Math.trunc(sinkou / 5);
-      chara(yusya).dungeon.战斗经验 += gained;
+      EraChara.get(yusya).exp.battle_exp += gained;
       era.print(`${chara_callname(yusya)}获得了${gained}点经验值！`);
       await era.waitAnyKey();
       await seiei_cleanup(seiei);
@@ -354,30 +360,30 @@ async function seiei_battle(area, state, rand) {
     }
 
     // 精鋭部隊の攻撃（伤害 ×5，防御侧先折成三分之二）
-    if (chara(yusya).dungeon.防御力 < chara(seiei).dungeon.攻击力) {
-      const guard = chara(yusya).dungeon.防御力;
-      chara(yusya).dungeon.防御力 = Math.trunc(
-        Math.trunc(chara(yusya).dungeon.防御力 / 3) * 2,
+    if (EraChara.get(yusya).cflag.defense < EraChara.get(seiei).cflag.attack) {
+      const guard = EraChara.get(yusya).cflag.defense;
+      EraChara.get(yusya).cflag.defense = Math.trunc(
+        Math.trunc(EraChara.get(yusya).cflag.defense / 3) * 2,
       );
-      const damage = chara(seiei).dungeon.攻击力 - guard;
+      const damage = EraChara.get(seiei).cflag.attack - guard;
       era.print(
         `${chara_nickname(seiei)}发起进攻使${chara_callname(yusya)}率领的魔王军受到了${damage * 5}点伤害！`,
       );
-      if ((era.get(`talent:${yusya}:251`) || 0) === 0) {
-        chara(yusya).dungeon.攻击力 -= Math.trunc(damage / 100);
+      if (EraChara.get(yusya).talent.ninjutsu === 0) {
+        EraChara.get(yusya).cflag.attack -= Math.trunc(damage / 100);
       }
-      if (chara(yusya).dungeon.攻击力 < 1) {
-        chara(yusya).dungeon.攻击力 = 1;
+      if (EraChara.get(yusya).cflag.attack < 1) {
+        EraChara.get(yusya).cflag.attack = 1;
       }
-      chara(yusya).dungeon.体力 -= damage * 5;
-      chara(yusya).dungeon.气力 -= damage * 5;
+      EraChara.get(yusya).base.stamina -= damage * 5;
+      EraChara.get(yusya).base.willpower -= damage * 5;
       await era.waitAnyKey(); // WAIT
     } else {
       era.print(
         `${chara_callname(yusya)}率领的魔王军承受着${chara_nickname(seiei)}的攻击。`,
       );
-      chara(yusya).dungeon.防御力 = Math.trunc(
-        Math.trunc(chara(yusya).dungeon.防御力 / 3) * 2,
+      EraChara.get(yusya).cflag.defense = Math.trunc(
+        Math.trunc(EraChara.get(yusya).cflag.defense / 3) * 2,
       );
     }
 
@@ -434,10 +440,10 @@ async function invasion_event_seiei(
   rand = default_rand,
 ) {
   // SIF FLAG:SINDO != 0 → RETURN -1
-  if ((era.get(`flag:${sindo}`) || 0) !== 0) {
+  if (era_flag.get(sindo) !== 0) {
     return -1;
   }
-  const progress = era.get(`flag:${area}`) || 0; // FLAG:AREA
+  const progress = era_flag.get(area); // FLAG:AREA
   // FLAG:AREA == 0：狂王组织精锐部队的传闻（PRINTFORMW → 等键）
   if (progress === 0) {
     era.drawLine();
@@ -544,7 +550,7 @@ async function invasion_event_fort(
   // && INV_TYPE != 3`，而不是 C 式「&& 优先」的 `FLAG:SINDO || (...)`：
   // 2/3 两值恒不早退（已征服也进要塞事件），1 恒早退，0 才看 FLAG:SINDO。
   if (
-    ((era.get(`flag:${sindo}`) || 0) !== 0 || inv_type !== 0) &&
+    (era_flag.get(sindo) !== 0 || inv_type !== 0) &&
     inv_type !== 2 &&
     inv_type !== 3
   ) {
@@ -561,7 +567,7 @@ async function invasion_event_fort(
     fort: '',
     race: -1,
   };
-  const native = (era.get(`talent:${yusya}:314`) || 0) === info.race; // LOCAL:3
+  const native = EraChara.get(yusya).talent.race === info.race; // LOCAL:3
 
   // 选项（PRINTFORML 的 `[n]` 改 printButton，引擎自动拼前缀）
   let choice; // L_CHOICE
@@ -641,7 +647,9 @@ async function invasion_event_fort(
       era.print('');
       if (inv_type === 2) {
         fort_hero_reward(inv_type, state, 5);
-        chara(yusya).dungeon.体力 = Math.trunc(chara(yusya).dungeon.体力 / 2);
+        EraChara.get(yusya).base.stamina = Math.trunc(
+          EraChara.get(yusya).base.stamina / 2,
+        );
         era.print(`${chara_callname(yusya)}的体力减少了一半！`);
         // 注意：这里的 PRINTFORML 后没有 WAIT，等键由后面的 WAIT 承担
       }
@@ -657,8 +665,8 @@ async function invasion_event_fort(
     if (inv_type === 2) {
       era.print(`率领魔王军的${chara_nickname(yusya)}孤身一人逃了回来。`);
       era.println(); // PRINTL
-      chara(yusya).dungeon.体力 = Math.trunc(
-        (chara(yusya).dungeon.体力 * 3) / 10,
+      EraChara.get(yusya).base.stamina = Math.trunc(
+        (EraChara.get(yusya).base.stamina * 3) / 10,
       );
       era.print(`${chara_callname(yusya)}的体力减少了70%！`);
     } else {
@@ -666,7 +674,7 @@ async function invasion_event_fort(
     }
     era.print('侵攻中止。'); // PRINTFORMW
     await era.waitAnyKey();
-    chara(yusya).invasion.状态 = 0; // CFLAG:YUSYA_I:1 = 0
+    EraChara.get(yusya).cflag.state = 0; // CFLAG:YUSYA_I:1 = 0
     return 1;
   }
 
@@ -716,7 +724,7 @@ async function invasion_event_fort(
       era.print('魔王军不得已只好发动强攻，在鏖战后最终惨胜。');
       era.print(`侥幸获胜的魔王军，继续向${info.place}进发。`);
       era.print('');
-      chara(yusya).dungeon.体力 = 1;
+      EraChara.get(yusya).base.stamina = 1;
       era.print(`${chara_callname(yusya)}的体力归零`);
       state.sinkou = Math.trunc((state.sinkou * 7) / 10);
       era.print('怪物数量减少了30%');
@@ -734,7 +742,7 @@ async function invasion_event_fort(
     era.print('');
     era.print(`${chara_nickname(yusya)}被俘虏，侵攻中止。`); // PRINTFORMW
     await era.waitAnyKey();
-    chara(yusya).invasion.状态 = 9;
+    EraChara.get(yusya).cflag.state = 9;
     return 1;
   }
   if (choice === FORT_INFILTRATE_KEY && inv_type === 3) {
@@ -760,8 +768,8 @@ async function invasion_event_fort(
       era.print(`${chara_nickname(yusya)}杀出一条血路，勉强逃了回去。`); // PRINTFORMW
       await era.waitAnyKey();
       // 两段之间是纯空白行（不产生输出），ere 侧不打空行
-      chara(yusya).dungeon.体力 = 1;
-      chara(yusya).invasion.状态 = 0;
+      EraChara.get(yusya).base.stamina = 1;
+      EraChara.get(yusya).cflag.state = 0;
       return 1;
     }
     era.print(
@@ -772,7 +780,7 @@ async function invasion_event_fort(
     );
     await era.waitAnyKey();
     // 两段之间是纯空白行（不产生输出），ere 侧不打空行
-    chara(yusya).invasion.状态 = 9;
+    EraChara.get(yusya).cflag.state = 9;
     return 1;
   }
 
@@ -804,8 +812,8 @@ async function invasion_event_fort(
       era.print(
         `${chara_nickname(yusya)}绕开${info.fort}向${info.place}进发，因为路途遥远地形复杂耗费了一些体力。`,
       );
-      chara(yusya).dungeon.体力 = Math.trunc(
-        (chara(yusya).dungeon.体力 * 9) / 10,
+      EraChara.get(yusya).base.stamina = Math.trunc(
+        (EraChara.get(yusya).base.stamina * 9) / 10,
       );
       return 0;
     }
@@ -817,13 +825,13 @@ async function invasion_event_fort(
         `在一番激烈战斗后${chara_nickname(yusya)}还是被活捉了。`, // PRINTFORMW
       );
       await era.waitAnyKey();
-      chara(yusya).invasion.状态 = 9;
+      EraChara.get(yusya).cflag.state = 9;
     } else {
       era.print(
         `在一番激烈战斗后${chara_nickname(yusya)}终于逃了回来。`, // PRINTFORMW
       );
       await era.waitAnyKey();
-      chara(yusya).invasion.状态 = 0;
+      EraChara.get(yusya).cflag.state = 0;
     }
     return 1;
   }
@@ -860,7 +868,7 @@ function fort_hero_reward(inv_type, state, divisor) {
     return;
   }
   const gained = Math.trunc(state.sinkou / divisor);
-  chara(state.yusya_i).dungeon.战斗经验 += gained;
+  EraChara.get(state.yusya_i).exp.battle_exp += gained;
   era.print(`${chara_callname(state.yusya_i)}获得了${gained}点经验值！`);
 }
 
@@ -873,8 +881,8 @@ function fort_hero_reward(inv_type, state, divisor) {
  * @returns {boolean}
  */
 function has_wing(cid) {
-  const race = era.get(`talent:${cid}:314`) || 0;
-  return (era.get(`talent:${cid}:245`) || 0) !== 0 || race === 6 || race === 8;
+  const race = EraChara.get(cid).talent.race;
+  return EraChara.get(cid).talent.demon_wings !== 0 || race === 6 || race === 8;
 }
 
 /**
@@ -947,28 +955,38 @@ const CHALLENGE_AREAS = {
  */
 function hero_cap_reached() {
   const charanum = era.getAddedCharacters().length;
-  const f = (n) => era.get(`flag:${n}`) || 0;
-  if (f(82) === 0 && charanum > 60) {
-    return true;
-  }
-  if (f(87) === 0 && f(89) === 0 && f(91) === 0 && charanum > 65) {
+  if (era_flag.human_realm_fallen === 0 && charanum > 60) {
     return true;
   }
   if (
-    f(87) * f(89) === 0 &&
-    f(89) * f(91) === 0 &&
-    f(91) * f(87) === 0 &&
+    era_flag.elf_realm_conquered === 0 &&
+    era_flag.dragon_realm_conquered === 0 &&
+    era_flag.heaven_conquered === 0 &&
+    charanum > 65
+  ) {
+    return true;
+  }
+  if (
+    era_flag.elf_realm_conquered * era_flag.dragon_realm_conquered === 0 &&
+    era_flag.dragon_realm_conquered * era_flag.heaven_conquered === 0 &&
+    era_flag.heaven_conquered * era_flag.elf_realm_conquered === 0 &&
     charanum > 70
   ) {
     return true; // （原式三对乘积，加括号，无优先级歧义）
   }
-  if ((f(87) === 0 || f(89) === 0 || f(91) === 0) && charanum > 75) {
+  if (
+    (era_flag.elf_realm_conquered === 0 ||
+      era_flag.dragon_realm_conquered === 0 ||
+      era_flag.heaven_conquered === 0) &&
+    charanum > 75
+  ) {
     return true;
   }
-  if (f(92) < 15 && charanum > 80) {
+  if (era_flag.arcana_fort_stage < 15 && charanum > 80) {
     return true;
   }
-  if (f(94) === 0 && charanum > 90) {
+  // FLAG:94 没有登记进 yml（原实现在别处也不写它，恒 0），保留动态读法
+  if (era_flag.get(94) === 0 && charanum > 90) {
     return true;
   }
   return charanum >= MAX_CHARANUM;
@@ -1161,7 +1179,7 @@ async function invasion_event_challenge(
       era.addCharacter(job); // ADDCHARA LOCAL:12
       await add_chara_ex(job);
       await char_make(job, 0, info.race, rand); // CHARA_MAKE(…, LOCAL:10)
-      chara(job).invasion.状态 = 0; // CFLAG:A:1 = 0
+      EraChara.get(job).cflag.state = 0; // CFLAG:A:1 = 0
       era.print(`${chara_nickname(job)}被魔王抓住了。金钱-3000`); // PRINTFORMW
       await era.waitAnyKey();
       era_flag.money -= 3000;
@@ -1202,8 +1220,10 @@ async function invasion_event_challenge(
       era.print('');
       era.print('魔王魔力减少50%、魔王经验+500'); // PRINTFORMW
       await era.waitAnyKey();
-      chara(0).dungeon.气力 = Math.trunc(chara(0).dungeon.气力 / 2); // BASE:MASTER:1
-      chara(yusya).dungeon.战斗经验 += 500; // EXP:YUSYA_I:80
+      EraChara.get(0).base.willpower = Math.trunc(
+        EraChara.get(0).base.willpower / 2,
+      );
+      EraChara.get(yusya).exp.battle_exp += 500;
       return 0;
     }
     // 不开挂失败
@@ -1215,8 +1235,8 @@ async function invasion_event_challenge(
     era.print('');
     era.print('魔王体力魔力清空、侵攻中止'); // PRINTFORMW
     await era.waitAnyKey();
-    chara(0).dungeon.体力 = 0; // BASE:MASTER:0
-    chara(0).dungeon.气力 = 0; // BASE:MASTER:1
+    EraChara.get(0).base.stamina = 0;
+    EraChara.get(0).base.willpower = 0;
     return 1;
   }
 
@@ -1238,8 +1258,10 @@ async function invasion_event_challenge(
       era.print('');
       era.print(`${chara_nickname(yusya)}经验+500，体力-50%`); // PRINTFORMW
       await era.waitAnyKey();
-      chara(yusya).dungeon.战斗经验 += 500;
-      chara(yusya).dungeon.体力 = Math.trunc(chara(yusya).dungeon.体力 / 2);
+      EraChara.get(yusya).exp.battle_exp += 500;
+      EraChara.get(yusya).base.stamina = Math.trunc(
+        EraChara.get(yusya).base.stamina / 2,
+      );
       return 0;
     }
     if (roll < 6) {
@@ -1258,7 +1280,9 @@ async function invasion_event_challenge(
       era.print('');
       era.print(`${chara_nickname(yusya)}体力-90%`); // PRINTFORMW
       await era.waitAnyKey();
-      chara(yusya).dungeon.体力 = Math.trunc(chara(yusya).dungeon.体力 / 10);
+      EraChara.get(yusya).base.stamina = Math.trunc(
+        EraChara.get(yusya).base.stamina / 10,
+      );
       return 0;
     }
     // 奴隶失败 40%
@@ -1269,15 +1293,15 @@ async function invasion_event_challenge(
     era.print(`${info.foe}轻蔑的一笑，${info.leave}。`);
     if (inv_type === 2) {
       era.print('失去指挥官的魔王军只好撤退了。');
-    } else if (captive_route() && (era.get(`flag:${sindo}`) || 0) === 0) {
+    } else if (captive_route() && era_flag.get(sindo) === 0) {
       // `(FLAG:5 & 128) && !FLAG:SINDO`——纯 `&&` 链，无优先级歧义
       era.print(`晕过去的${chara_nickname(yusya)}成为了狂王的俘虏。`);
-      chara(yusya).invasion.状态 = 9;
+      EraChara.get(yusya).cflag.state = 9;
     } else {
       era.print(
         `不知道过了多久后才苏醒过来的${chara_nickname(yusya)}原路返回了。`,
       );
-      chara(yusya).invasion.状态 = 0;
+      EraChara.get(yusya).cflag.state = 0;
     }
     return 1;
   }

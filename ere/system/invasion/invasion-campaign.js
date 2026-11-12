@@ -16,6 +16,7 @@
  */
 
 const era = require('#/era-electron');
+const EraChara = require('#/era-utils/era-chara');
 const { is_state } = require('#/system/flow/game-state');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
@@ -33,7 +34,6 @@ const { invasion_ryouzyoku } = require('#/system/invasion/invasion-ravish');
 const { change_screen } = require('#/utils/screen-change');
 const { life_list_item } = require('#/page/page-life-list');
 const { get_enemy } = require('#/event/enter-enemy');
-const { chara } = require('#/facade/chara');
 const { chara_callname, chara_nickname } = require('#/utils/callname-utils');
 const { print_button_grid } = require('#/utils/button-grid');
 const { default_rand } = require('#/utils/numeric');
@@ -150,7 +150,7 @@ const MONSTER_CONQUERED_AREAS = [81, 86, 88, 90, 101];
  * @returns {number} 该地区的侵攻度（未声明下标按 0 处理，见 issue #13）
  */
 function region_progress(region) {
-  return era.get(`flag:${region.area}`) || 0;
+  return era_flag.get(region.area);
 }
 
 /**
@@ -162,8 +162,8 @@ function region_progress(region) {
  * @param {number} gained 本次增量（SINKOU，掠夺路线是 SINKOU / 20）
  */
 function add_region_progress(region, gained) {
-  const next = (era.get(`flag:${region.area}`) || 0) + gained;
-  era.set(`flag:${region.area}`, Math.min(next, 10000)); // 封顶
+  const next = era_flag.get(region.area) + gained;
+  era_flag.set(region.area, Math.min(next, 10000)); // 封顶
 }
 
 /** GETBIT(X, n)：FLAG:5 用到位 32+，位运算在 JS 里按 32 位截断会溢出，改算术 */
@@ -200,7 +200,7 @@ const MEDAL_TIERS = [
  * @returns {Promise<number>} 补正百分比（100-160）
  */
 async function medal_bonus(cid = 0) {
-  const medals = chara(cid).event.勋章经验; // EXP:cid:81
+  const medals = EraChara.get(cid).exp.medal_exp; // EXP:cid:81
   const tier = MEDAL_TIERS.find((t) => medals > t.over);
   if (tier === undefined) {
     return 100; // LOCAL = 100（无补正档）
@@ -277,21 +277,21 @@ async function apply_prestige_tier(sinkou) {
  * @returns {boolean} true = 不可派遣
  */
 function raid_rejected(cid) {
-  if ((era.get(`base:${cid}:0`) || 0) < 1) return true; // 体力为 0
+  if (EraChara.get(cid).base.stamina < 1) return true; // 体力为 0
   if (cid === 0) return true; // COUNT == 0（魔王自己）
-  if (chara(cid).invasion.状态 !== 0) return true; // CFLAG:1 != 0
+  if (EraChara.get(cid).cflag.state !== 0) return true; // CFLAG:1 != 0
   // 未驯服：CFLAG:0（出售与助手资格）为 0 且无魔之刻印（TALENT:254）
   if (
-    (era.get(`cflag:${cid}:0`) || 0) === 0 &&
-    (era.get(`talent:${cid}:254`) || 0) === 0
+    EraChara.get(cid).cflag.sale_and_assistant === 0 &&
+    EraChara.get(cid).talent.demon_seal === 0
   ) {
     return true;
   }
   // 孕妇（TALENT:153）且未开「怀孕时的迎击・临月调教」位（FLAG:5 位 10，
   // 配置页的 [10] 开关）
   if (
-    (era.get(`talent:${cid}:153`) || 0) === 1 &&
-    getbit(era.get('flag:5'), 10) === 0
+    EraChara.get(cid).talent.pregnant === 1 &&
+    getbit(era_flag.game_settings, 10) === 0
   ) {
     return true;
   }
@@ -312,22 +312,22 @@ function raid_rejected(cid) {
  */
 function brute_rejected(cid) {
   if (cid === 0) return true; // COUNT == 0（魔王自己）
-  if ((era.get(`base:${cid}:0`) || 0) < 1) return true; // 体力为 0
+  if (EraChara.get(cid).base.stamina < 1) return true; // 体力为 0
   // 只有助手可（CFLAG:0 == 2）能带队
-  if ((era.get(`cflag:${cid}:0`) || 0) !== 2) return true;
-  const status = era.get(`cflag:${cid}:1`) || 0; // CFLAG:1
+  if (EraChara.get(cid).cflag.sale_and_assistant !== 2) return true;
+  const status = EraChara.get(cid).cflag.state;
   if (status !== 0 && status !== 7) return true; // 待机 / 苗床之外一律淘汰
   // 爱慕（TALENT:85）或淫乱（TALENT:76）二者皆无
   if (
-    (era.get(`talent:${cid}:85`) || 0) !== 1 &&
-    (era.get(`talent:${cid}:76`) || 0) !== 1
+    EraChara.get(cid).talent.in_love !== 1 &&
+    EraChara.get(cid).talent.lewd !== 1
   ) {
     return true;
   }
   // 孕妇（TALENT:153）且未开「怀孕时的迎击・临月调教」位（FLAG:5 位 10）
   if (
-    (era.get(`talent:${cid}:153`) || 0) === 1 &&
-    getbit(era.get('flag:5'), 10) === 0
+    EraChara.get(cid).talent.pregnant === 1 &&
+    getbit(era_flag.game_settings, 10) === 0
   ) {
     return true;
   }
@@ -476,7 +476,7 @@ async function pick_hero(state, rejected) {
  * @param {(n: number) => number} rand RAND:N 随机源
  */
 async function monster_result_section(region, inkou, rand) {
-  const conquered = (era.get(`flag:${region.sindo}`) || 0) !== 0;
+  const conquered = era_flag.get(region.sindo) !== 0;
   let sinkou = inkou;
   era.drawLine();
   if (MONSTER_CONQUERED_AREAS.includes(region.area) && conquered) {
@@ -526,7 +526,7 @@ async function monster_result_section(region, inkou, rand) {
  * @param {number} inkou 侵攻点（SINKOU）
  */
 async function raid_result_section(region, yusya_i, inkou) {
-  const conquered = (era.get(`flag:${region.sindo}`) || 0) !== 0;
+  const conquered = era_flag.get(region.sindo) !== 0;
   let sinkou = inkou;
   era.print(
     `${chara_callname(yusya_i)}得到了魔王的力量！${region.name}被掠夺了。（善恶值:-5）`,
@@ -546,7 +546,7 @@ async function raid_result_section(region, yusya_i, inkou) {
   era_flag.money += sinkou; // MONEY += SINKOU
   era_exflag.legit_money += sinkou; // EX_FLAG:4444 +=
   const exp_gain = Math.floor(sinkou / 20); // SINKOU / 20
-  chara(yusya_i).dungeon.战斗经验 += exp_gain; // EXP:YUSYA_I:80
+  EraChara.get(yusya_i).exp.battle_exp += exp_gain;
   era.print(`${chara_callname(yusya_i)}获得了${exp_gain}点经验值！`);
   await era.waitAnyKey();
   // 侵攻度条 + DRAWLINE + WAIT（进度条一律读 FLAG:AREA）
@@ -575,7 +575,7 @@ async function raid_result_section(region, yusya_i, inkou) {
  * @param {(n: number) => number} rand RAND:N 随机源（凌辱旁白与 9% 抓捕）
  */
 async function brute_result_section(region, yusya_i, inkou, rand) {
-  const conquered = (era.get(`flag:${region.sindo}`) || 0) !== 0;
+  const conquered = era_flag.get(region.sindo) !== 0;
   let sinkou = inkou;
   era.print(
     `${chara_callname(yusya_i)}带着怪物到达了${region.name}，尽可能地施暴着。（善良值:-50）`,
@@ -609,7 +609,7 @@ async function brute_result_section(region, yusya_i, inkou, rand) {
       166,
       `${chara_callname(yusya_i)}把侵略时所抢夺的金银财宝都献给了${chara_callname(0)}………`,
     ],
-  ].find(([talent]) => (era.get(`talent:${yusya_i}:${talent}`) || 0) !== 0);
+  ].find(([talent]) => EraChara.get(yusya_i).talent.get(talent) !== 0);
   if (personality === undefined) {
     era.println(); // ELSE → PRINTL
   } else {
@@ -624,7 +624,7 @@ async function brute_result_section(region, yusya_i, inkou, rand) {
     era_flag.money += sinkou * 5;
     era_exflag.legit_money += sinkou * 5;
     const exp_gain = Math.trunc(sinkou / 2);
-    chara(yusya_i).dungeon.战斗经验 += exp_gain;
+    EraChara.get(yusya_i).exp.battle_exp += exp_gain;
     era.print(`${chara_callname(yusya_i)}获得了${exp_gain}点经验值！`);
     await era.waitAnyKey();
   } else {
@@ -634,7 +634,7 @@ async function brute_result_section(region, yusya_i, inkou, rand) {
     era_flag.money += sinkou * 5;
     era_exflag.legit_money += sinkou * 5;
     const exp_gain = Math.trunc(sinkou / 2);
-    chara(yusya_i).dungeon.战斗经验 += exp_gain;
+    EraChara.get(yusya_i).exp.battle_exp += exp_gain;
     era.print(`${chara_callname(yusya_i)}获得了${exp_gain}点经验值！`);
     await era.waitAnyKey();
   }
@@ -721,8 +721,8 @@ async function start_campaign(rand = default_rand, region = HUMAN_WORLD) {
     // MAXBASE:0:1（气力上限）直读：maxbase 无门面
     print_progress_line(
       '你的气力',
-      chara(0).dungeon.气力,
-      era.get('maxbase:0:1') || 0,
+      EraChara.get(0).base.willpower,
+      EraChara.get(0).maxbase.willpower,
     );
     era.drawLine();
     era.print(`你的怪物数量 ${mon_num}只`);
@@ -817,7 +817,7 @@ async function start_campaign(rand = default_rand, region = HUMAN_WORLD) {
       era.print('怪物的战斗力　' + sinkou + '点'); // PRINTFORMW
       await era.waitAnyKey();
       // 勇者补正（CFLAG:YUSYA_I:9 = 等级；这里是三格全角空格）
-      const brute_bonus = chara(yusya_i).chara.等级 + 100; // TMP2_I
+      const brute_bonus = EraChara.get(yusya_i).cflag.level + 100; // TMP2_I
       era.print(
         '勇者补正　　　x' +
           Math.floor(brute_bonus / 100) +
@@ -844,12 +844,14 @@ async function start_campaign(rand = default_rand, region = HUMAN_WORLD) {
       }
       yusya_i = picked; // YUSYA_I = RESULT
       // 掠夺的战力来源是魔王之力（BASE:0:1），与 [0]/[2] 的怪物无关
-      sinkou = Math.floor(chara(0).dungeon.气力 / 25);
-      chara(0).dungeon.气力 = Math.floor(chara(0).dungeon.气力 / 2);
+      sinkou = Math.floor(EraChara.get(0).base.willpower / 25);
+      EraChara.get(0).base.willpower = Math.floor(
+        EraChara.get(0).base.willpower / 2,
+      );
       era.print('魔王的力量　' + sinkou + '点'); // PRINTFORMW
       await era.waitAnyKey();
       // 勇者补正（CFLAG:YUSYA_I:9 = 等级）
-      const hero_bonus = chara(yusya_i).chara.等级 + 100; // TMP2_I
+      const hero_bonus = EraChara.get(yusya_i).cflag.level + 100; // TMP2_I
       era.print(
         '勇者补正　x' +
           Math.floor(hero_bonus / 100) +
@@ -864,8 +866,10 @@ async function start_campaign(rand = default_rand, region = HUMAN_WORLD) {
       // ===== [1] 魔力出兵 =====
       // SINKOU = BASE:0:1 / 25；随后 BASE:0:1 /= 2（失败也照减）。气力是
       // dungeon 域属主（#70 实测），跨域写走门面（#71）
-      sinkou = Math.floor(chara(0).dungeon.气力 / 25);
-      chara(0).dungeon.气力 = Math.floor(chara(0).dungeon.气力 / 2);
+      sinkou = Math.floor(EraChara.get(0).base.willpower / 25);
+      EraChara.get(0).base.willpower = Math.floor(
+        EraChara.get(0).base.willpower / 2,
+      );
       // 威望修正（失败档早退：PRINTW 侵攻失败 → RETURN 1）
       const tier = await apply_prestige_tier(sinkou);
       sinkou = tier.sinkou;
@@ -884,7 +888,7 @@ async function start_campaign(rand = default_rand, region = HUMAN_WORLD) {
 
   // ===== 共通処理 =====
   // 魔王补正：CFLAG:0:9 是百分比加成（+20 → x1.20），新档 0
-  const maou_bonus = (era.get('cflag:0:9') || 0) + 100;
+  const maou_bonus = EraChara.get(0).cflag.level + 100;
   era.print(
     '魔王补正　　　x' +
       Math.floor(maou_bonus / 100) +
@@ -894,17 +898,17 @@ async function start_campaign(rand = default_rand, region = HUMAN_WORLD) {
   await era.waitAnyKey();
   sinkou = Math.floor((sinkou * maou_bonus) / 100);
   // 知识补正（魔王的素质，新档均无）
-  if ((era.get('talent:0:325') || 0) === 1) {
+  if (EraChara.get(0).talent.demon_knowledge === 1) {
     era.print('魔界知识补正　x1.50');
     await era.waitAnyKey();
     sinkou = Math.floor((sinkou * 150) / 100);
   }
-  if ((era.get('talent:0:327') || 0) === 1) {
+  if (EraChara.get(0).talent.succubus_knowledge === 1) {
     era.print('淫魔知识补正　x1.20');
     await era.waitAnyKey();
     sinkou = Math.floor((sinkou * 120) / 100);
   }
-  if ((era.get('talent:0:328') || 0) === 1) {
+  if (EraChara.get(0).talent.bug_knowledge === 1) {
     era.print('魔虫知识补正　x1.10');
     await era.waitAnyKey();
     sinkou = Math.floor((sinkou * 110) / 100);
@@ -970,13 +974,13 @@ async function start_campaign(rand = default_rand, region = HUMAN_WORLD) {
     // 100000 封顶——五个地区的两分支只差封顶，经验同为 SINKOU/2）。战斗
     // 经验是 dungeon 域属主，跨域写走门面
     let exp_sinkou = sinkou;
-    if ((era.get(`flag:${region.sindo}`) || 0) !== 0) {
+    if (era_flag.get(region.sindo) !== 0) {
       exp_sinkou = Math.min(exp_sinkou, 10000 * 10);
     }
     const exp_gain = Math.floor(exp_sinkou / 2);
     era.print(`${chara_callname(0)}得到了${exp_gain}点经验值！`);
     await era.waitAnyKey();
-    chara(0).dungeon.战斗经验 += exp_gain; // EXP:0:80（魔王的侵略经验）
+    EraChara.get(0).exp.battle_exp += exp_gain; // EXP:0:80（魔王的侵略经验）
     era.drawLine();
     // 侵攻度条（读点一律是 FLAG 侧，见 region_progress）
     print_progress_line(region.result_label, region_progress(region), 10000);
