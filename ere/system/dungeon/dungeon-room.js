@@ -48,9 +48,9 @@
 'use strict';
 
 const era = require('#/era-electron');
+const EraChara = require('#/era-utils/era-chara');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
-const { chara } = require('#/facade/chara');
 // 改名避开 dungeon_hotel 里同名局部量（该处 karma 是读出来的善恶值）
 const { karma: apply_karma } = require('#/system/chara/chara-stats');
 const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
@@ -73,7 +73,7 @@ const campaign_room_extra_family = new DispatchFamily(
 
 /** 名字承载（#5 决议；savestr 通道不存在，文件头） */
 function name_of(cid) {
-  return era.get(`callname:${cid}:-1`) ?? '';
+  return EraChara.get(cid).name ?? '';
 }
 
 /**
@@ -124,13 +124,13 @@ async function dungeon_room(arg0, rand, ctx) {
   const rand_n = rand ?? default_rand;
 
   // 迎撃の場合、建設
-  if (chara(arg0).invasion.状态 === 3) {
+  if (EraChara.get(arg0).cflag.state === 3) {
     await dungeon_room_build(arg0, rand_n);
     return 0;
   }
 
   // 侵攻中の勇者？（2 = 侵攻 / 12 = 战役）
-  const place = chara(arg0).invasion.状态;
+  const place = EraChara.get(arg0).cflag.state;
   if (place !== 2 && place !== 12) {
     return 0;
   }
@@ -146,17 +146,17 @@ async function dungeon_room(arg0, rand, ctx) {
   let extra;
   if (place === 12) {
     // 戦役：campaign_room（战役族入口）/ campaign_room_extra（域内真身，#469 起）
-    room = await campaign_room(chara(arg0).dungeon.侵攻阶层);
-    extra = await campaign_room_extra(chara(arg0).dungeon.侵攻阶层);
+    room = await campaign_room(EraChara.get(arg0).cflag.invasion_floor);
+    extra = await campaign_room_extra(EraChara.get(arg0).cflag.invasion_floor);
   } else {
-    const room_id = chara(arg0).dungeon.侵攻阶层 + 349;
+    const room_id = EraChara.get(arg0).cflag.invasion_floor + 349;
     // 施設なし
-    if ((era.get(`flag:${room_id}`) || 0) <= 0) {
+    if (era_flag.get(room_id) <= 0) {
       return 0;
     }
-    room = era.get(`flag:${room_id}`) || 0;
+    room = era_flag.get(room_id);
     // 拡張（+10 槽）
-    extra = era.get(`flag:${room_id + 10}`) || 0;
+    extra = era_flag.get(room_id + 10);
   }
 
   // 八种设施分发
@@ -196,23 +196,23 @@ async function dungeon_room(arg0, rand, ctx) {
  * @returns {Promise<number>} 恒 return 0
  */
 async function dungeon_room_build(a, rand_n) {
-  const show = ((era.get('flag:5') || 0) & 32) !== 0;
+  const show = (era_flag.game_settings & 32) !== 0;
 
   // 命令チェック
-  if ((era.get(`cflag:${a}:500`) || 0) !== 3) {
+  if (EraChara.get(a).cflag.dungeon_action !== 3) {
     return 0;
   }
 
-  const room_id = chara(a).dungeon.侵攻阶层 + 349;
+  const room_id = EraChara.get(a).cflag.invasion_floor + 349;
 
   // 设施无
-  if ((era.get(`flag:${room_id}`) || 0) <= 0) {
+  if (era_flag.get(room_id) <= 0) {
     return 0;
   }
 
   // 设施番号 / 拡張
-  const room = era.get(`flag:${room_id}`) || 0;
-  const extra = era.get(`flag:${room_id + 10}`) || 0;
+  const room = era_flag.get(room_id);
+  const extra = era_flag.get(room_id + 10);
 
   // 確率を弄る場合ここのランダムを弄る
   if (rand_n(4) === 0) {
@@ -220,13 +220,13 @@ async function dungeon_room_build(a, rand_n) {
     if (extra & 1) {
       return 0;
     }
-    era.set(`flag:${room_id + 10}`, extra + 1); // FLAG:ROOMID += 1
+    era_flag.set(room_id + 10, extra + 1); // FLAG:ROOMID += 1
   } else if (rand_n(3) === 0) {
     // 拡張2
     if (extra & 2) {
       return 0;
     }
-    era.set(`flag:${room_id + 10}`, extra + 2); // FLAG:ROOMID += 2
+    era_flag.set(room_id + 10, extra + 2); // FLAG:ROOMID += 2
   } else {
     return 0;
   }
@@ -236,14 +236,14 @@ async function dungeon_room_build(a, rand_n) {
     era.println(); // PRINTL
     era.print(
       `${era.get(`itemname:${room}`) ?? ''}进行了扩张！扩张` +
-        `${(era.get(`flag:${room_id + 10}`) || 0) & 1 ? '：○' : '：×'}` +
-        `${(era.get(`flag:${room_id + 10}`) || 0) & 2 ? '：○' : '：×'}`,
+        `${era_flag.get(room_id + 10) & 1 ? '：○' : '：×'}` +
+        `${era_flag.get(room_id + 10) & 2 ? '：○' : '：×'}`,
     ); // 同一显示行
     era.print(`${name_of(a)}的工作变为内职了。`); // printformw
     await era.waitAnyKey();
   }
 
-  chara(a).stronghold.迷宫内行动 = 0; // （CFLAG:500 = 0，门面 #177 补名）
+  EraChara.get(a).cflag.dungeon_action = 0; // （CFLAG:500 = 0，门面 #177 补名）
   return 0;
 }
 
@@ -263,8 +263,8 @@ async function dungeon_room_day(rand) {
 
   // FOR ROOMID, 350, 359（FOR 区间 [350, 359) = 九层）
   for (let room_id = 350; room_id < 359; room_id += 1) {
-    const room = era.get(`flag:${room_id}`) || 0;
-    const extra = era.get(`flag:${room_id + 10}`) || 0;
+    const room = era_flag.get(room_id);
+    const extra = era_flag.get(room_id + 10);
 
     if (room === 500) {
       await dungeon_shop_day(extra, rand_n);
@@ -291,7 +291,7 @@ async function dungeon_room_day(rand) {
  * @returns {Promise<number>} 恒 return 0
  */
 async function dungeon_shop(a, extra, rand_n) {
-  const show = ((era.get('flag:5') || 0) & 32) !== 0;
+  const show = (era_flag.game_settings & 32) !== 0;
 
   // 设施头部
   if (show) {
@@ -302,7 +302,7 @@ async function dungeon_shop(a, extra, rand_n) {
   }
 
   // COST = 代金
-  let cost = (era.get(`cflag:${a}:9`) || 0) * 5 + 10;
+  let cost = EraChara.get(a).cflag.level * 5 + 10;
 
   if (extra & 1 && rand_n(3) === 0) {
     // 武器屋分岐
@@ -311,9 +311,9 @@ async function dungeon_shop(a, extra, rand_n) {
       await era.waitAnyKey();
     }
 
-    cost = (era.get(`cflag:${a}:9`) || 0) * 8 + 20;
+    cost = EraChara.get(a).cflag.level * 8 + 20;
 
-    if ((era.get(`cflag:${a}:580`) || 0) < cost) {
+    if (EraChara.get(a).cflag.money < cost) {
       if (show) {
         era.print(`${name_of(a)}带的钱不够，眼巴巴地看着橱窗发愁……`);
         await era.waitAnyKey();
@@ -331,7 +331,7 @@ async function dungeon_shop(a, extra, rand_n) {
     if (result > 0) {
       era_flag.money += cost;
       era_exflag.legit_money += cost;
-      chara(a).dungeon.所持金 -= cost;
+      EraChara.get(a).cflag.money -= cost;
     }
 
     return 0;
@@ -342,9 +342,9 @@ async function dungeon_shop(a, extra, rand_n) {
       await era.waitAnyKey();
     }
 
-    cost = (era.get(`cflag:${a}:9`) || 0) * 6 + 20;
+    cost = EraChara.get(a).cflag.level * 6 + 20;
 
-    if ((era.get(`cflag:${a}:580`) || 0) < cost) {
+    if (EraChara.get(a).cflag.money < cost) {
       if (show) {
         era.print(`${name_of(a)}带的钱不够，眼巴巴地看着橱窗发愁……`);
         await era.waitAnyKey();
@@ -362,14 +362,14 @@ async function dungeon_shop(a, extra, rand_n) {
     if (result > 0) {
       era_flag.money += cost;
       era_exflag.legit_money += cost;
-      chara(a).dungeon.所持金 -= cost;
+      EraChara.get(a).cflag.money -= cost;
     }
 
     return 0;
   }
 
   // 逛街档的钱检
-  if ((era.get(`cflag:${a}:580`) || 0) < cost) {
+  if (EraChara.get(a).cflag.money < cost) {
     if (show) {
       era.print(`${name_of(a)}带的钱不够，在商店街边走边叹气……`);
       await era.waitAnyKey();
@@ -379,9 +379,9 @@ async function dungeon_shop(a, extra, rand_n) {
 
   era_flag.money += cost;
   era_exflag.legit_money += cost;
-  chara(a).dungeon.所持金 -= cost;
-  chara(a).dungeon.体力 += 20; // BASE:A:0 += 20
-  chara(a).dungeon.气力 += 50; // BASE:A:1 += 50
+  EraChara.get(a).cflag.money -= cost;
+  EraChara.get(a).base.stamina += 20; // BASE:A:0 += 20
+  EraChara.get(a).base.willpower += 50; // BASE:A:1 += 50
 
   if (show) {
     era.print(`${name_of(a)}在商店街尽情地大吃大喝…（体力+20、气力+50）`);
@@ -406,10 +406,10 @@ async function dungeon_shop(a, extra, rand_n) {
  * @returns {Promise<number>} 恒 return 0
  */
 async function dungeon_shop_itemsell(a, rand_n = default_rand) {
-  const show = ((era.get('flag:5') || 0) & 32) !== 0;
+  const show = (era_flag.game_settings & 32) !== 0;
 
   // COST = 値段（最大 1000）
-  let cost = (era.get(`cflag:${a}:9`) || 0) * 6 + 50;
+  let cost = EraChara.get(a).cflag.level * 6 + 50;
   if (cost > 1000) {
     cost = 1000;
   }
@@ -422,35 +422,33 @@ async function dungeon_shop_itemsell(a, rand_n = default_rand) {
   }
 
   // 否定の珠売却
-  if ((era.get(`juel:${a}:100`) || 0) > 2000) {
+  if (EraChara.get(a).jewel.negation > 2000) {
     if (show) {
       era.print(`很反感魔王的${name_of(a)}从店主处拿到了赞助……（资金+500）`);
       await era.waitAnyKey();
     }
-    era.set(`juel:${a}:100`, (era.get(`juel:${a}:100`) || 0) - 500);
-    chara(a).dungeon.所持金 += 500;
+    EraChara.get(a).jewel.negation = EraChara.get(a).jewel.negation - 500;
+    EraChara.get(a).cflag.money += 500;
   }
 
   // 反発刻印売却
-  if ((era.get(`mark:${a}:3`) || 0) > 0) {
+  if (EraChara.get(a).mark.resistance_mark > 0) {
     if (show) {
       era.print(
-        `很讨厌魔王的${name_of(a)}从店主处获得了力量……（经验值+${(era.get(`mark:${a}:3`) || 0) * 1000}）`,
+        `很讨厌魔王的${name_of(a)}从店主处获得了力量……（经验值+${EraChara.get(a).mark.resistance_mark * 1000}）`,
       );
       await era.waitAnyKey();
     }
-    era.set(
-      `exp:${a}:80`,
-      (era.get(`exp:${a}:80`) || 0) + (era.get(`mark:${a}:3`) || 0) * 1000,
-    );
-    chara(a).system.反抗刻印 -= 1; // MARK:3 -= 1
+    EraChara.get(a).exp.battle_exp +=
+      EraChara.get(a).mark.resistance_mark * 1000;
+    EraChara.get(a).mark.resistance_mark -= 1; // MARK:3 -= 1
   }
 
   // アイテム売却（域内存根）
   ex_item_mod.sell_ex_item(a, rand_n);
 
   // 钱检
-  if ((era.get(`cflag:${a}:580`) || 0) < cost) {
+  if (EraChara.get(a).cflag.money < cost) {
     if (show) {
       era.print(`${name_of(a)}带的钱不够，眼巴巴地在店里转了一圈……`); // PRINTFORML（无读键）
     }
@@ -466,7 +464,7 @@ async function dungeon_shop_itemsell(a, rand_n = default_rand) {
   if (result > 0) {
     era_flag.money += cost;
     era_exflag.legit_money += cost;
-    chara(a).dungeon.所持金 -= cost;
+    EraChara.get(a).cflag.money -= cost;
   }
 
   return 0;
@@ -487,7 +485,7 @@ async function dungeon_shop_itemsell(a, rand_n = default_rand) {
  */
 async function dungeon_shop_day(extra, rand_n) {
   // INCOME = CFLAG:0:9 * (RAND:10 + 5)
-  const master_lv = era.get('cflag:0:9') || 0;
+  const master_lv = EraChara.get(0).cflag.level;
   let income = master_lv * (rand_n(10) + 5);
 
   // 拡張によって僅かに増える
@@ -539,7 +537,7 @@ async function dungeon_shop_day(extra, rand_n) {
  * @returns {Promise<number>} 恒 return 0
  */
 async function dungeon_swamp(a, extra) {
-  const show = ((era.get('flag:5') || 0) & 32) !== 0;
+  const show = (era_flag.game_settings & 32) !== 0;
 
   // 设施头部
   if (show) {
@@ -548,23 +546,23 @@ async function dungeon_swamp(a, extra) {
   }
 
   // DMG = ダメージ量
-  let dmg = (era.get('cflag:0:9') || 0) + 10;
+  let dmg = EraChara.get(0).cflag.level + 10;
 
   // 毒草（相手が強いほど強化）
   if (extra & 1) {
-    dmg += era.get(`cflag:${a}:9`) || 0;
+    dmg += EraChara.get(a).cflag.level;
   }
 
   // 毒蟲（陷阱レベルで強化）
   if (extra & 2) {
-    dmg += (era.get('flag:85') || 0) * 2;
+    dmg += era_flag.trap_level * 2;
   }
 
-  chara(a).dungeon.体力 -= dmg;
+  EraChara.get(a).base.stamina -= dmg;
 
   // 最低1は残るタイプ
-  if (chara(a).dungeon.体力 < 1) {
-    chara(a).dungeon.体力 = 1;
+  if (EraChara.get(a).base.stamina < 1) {
+    EraChara.get(a).base.stamina = 1;
   }
 
   if (show) {
@@ -716,7 +714,7 @@ async function dungeon_farm(extra, rand_n) {
 
   // 20160524改変
   // GETBIT FLAG:614,0 → LOG_OFF；GETBIT FLAG:614,1 → SELL_BABY
-  const flags614 = era.get('flag:614') || 0;
+  const flags614 = era_flag.ranch_display_settings;
   const log_off = (flags614 & 1) !== 0;
   const sell_baby = ((flags614 >> 1) & 1) !== 0;
 
@@ -733,7 +731,7 @@ async function dungeon_farm(extra, rand_n) {
   }
 
   // 竿役分岐（FLAG:613 == 1/2/3 且日志开着）
-  const pole_role = era.get('flag:613') || 0;
+  const pole_role = era_flag.ranch_stud;
   if (pole_role === 1 && !log_off) {
     era.print('「播种的大叔们好好努力让便器们怀孕啊~」');
     era.print('监督的淫魔踹着俘虏中年的腰，中年将腥臭的精液大量注入了肉便器……');
@@ -810,7 +808,7 @@ async function dungeon_farm(extra, rand_n) {
     era.print(
       `原本是勇者的扶她奴隶侵犯着肉便器，淫欲转化成了${meat_count}经验值。`,
     );
-    era.set('exp:0:80', (era.get('exp:0:80') || 0) + meat_count);
+    EraChara.get(0).exp.battle_exp += meat_count;
   }
 
   if (!log_off) {
@@ -832,7 +830,7 @@ async function dungeon_farm(extra, rand_n) {
  * @returns {Promise<number>} 恒 return 0
  */
 async function dungeon_farm_rescue(arg0) {
-  const show = ((era.get('flag:5') || 0) & 32) !== 0;
+  const show = (era_flag.game_settings & 32) !== 0;
 
   // 设施头部
   if (show) {
@@ -843,7 +841,7 @@ async function dungeon_farm_rescue(arg0) {
   }
 
   // 肉便器ないとダメ
-  if ((era.get('flag:83') || 0) <= 0) {
+  if (era_flag.meat_toilet_count <= 0) {
     return 0;
   }
 
@@ -853,7 +851,7 @@ async function dungeon_farm_rescue(arg0) {
   }
 
   // 战役中的勇者救走便器前先确认本人状态（CFLAG:1 == 12 不停留）
-  if ((era.get(`cflag:${arg0}:1`) || 0) !== 12) {
+  if (EraChara.get(arg0).cflag.state !== 12) {
     era_flag.meat_toilet_count -= 1;
   }
 
@@ -871,7 +869,7 @@ async function dungeon_farm_rescue(arg0) {
  * @returns {Promise<number>} 恒 return 0
  */
 async function dungeon_ice(a, extra, rand_n) {
-  const show = ((era.get('flag:5') || 0) & 32) !== 0;
+  const show = (era_flag.game_settings & 32) !== 0;
 
   // 设施头部
   if (show) {
@@ -884,25 +882,25 @@ async function dungeon_ice(a, extra, rand_n) {
   if (extra & 1 && rand_n(6) === 0) {
     // 吹雪（アイテム破壊）——LOCAL = RAND:5 + 560 的 CFLAG 槽
     const slot = rand_n(5) + 560;
-    if ((era.get(`cflag:${a}:${slot}`) || 0) > 0 && show) {
+    if (EraChara.get(a).cflag.get(slot) > 0 && show) {
       era.print(
-        `激烈的飞雪把${ex_item_mod.ex_item_name(era.get(`cflag:${a}:${slot}`) || 0)}破坏了……`,
+        `激烈的飞雪把${ex_item_mod.ex_item_name(EraChara.get(a).cflag.get(slot))}破坏了……`,
       ); // 拼行
       await era.waitAnyKey();
     }
-    era.set(`cflag:${a}:${slot}`, 0); // （破坏无条件）
+    EraChara.get(a).cflag.set(slot, 0); // （破坏无条件）
   }
 
   // デフォの攻撃値減少（CFLAG:11 *= 9 /= 10）
-  const atk = era.get(`cflag:${a}:11`) || 0;
-  era.set(`cflag:${a}:11`, Math.floor((atk * 9) / 10));
+  const atk = EraChara.get(a).cflag.attack;
+  EraChara.get(a).cflag.attack = Math.floor((atk * 9) / 10);
 
   // 積雪による精神ダメージ
   if (extra & 2) {
-    mdmg += (era.get('cflag:0:9') || 0) + 2;
+    mdmg += EraChara.get(0).cflag.level + 2;
   }
 
-  chara(a).dungeon.气力 -= mdmg;
+  EraChara.get(a).base.willpower -= mdmg;
 
   if (show) {
     era.print(
@@ -927,7 +925,7 @@ async function dungeon_ice(a, extra, rand_n) {
  * @returns {Promise<number>} 恒 return 0
  */
 async function dungeon_heat(a, extra, rand_n) {
-  const show = ((era.get('flag:5') || 0) & 32) !== 0;
+  const show = (era_flag.game_settings & 32) !== 0;
 
   // 设施头部
   if (show) {
@@ -937,26 +935,23 @@ async function dungeon_heat(a, extra, rand_n) {
 
   if (extra & 1 && rand_n(6) === 0) {
     // 回復点（诱惑的な効果）
-    chara(a).dungeon.气力 += 50;
-    const max_wp = era.get(`maxbase:${a}:1`) || 0;
-    if (chara(a).dungeon.气力 > max_wp) {
-      chara(a).dungeon.气力 = max_wp;
+    EraChara.get(a).base.willpower += 50;
+    const max_wp = EraChara.get(a).maxbase.willpower;
+    if (EraChara.get(a).base.willpower > max_wp) {
+      EraChara.get(a).base.willpower = max_wp;
     }
 
     if (show) {
       era.print('发现了绿洲………（气力50回复！亲密度上升！）'); // PRINTFORML（无读键）
-      era.print(`屈服点数+${(era.get('cflag:0:9') || 0) * 4}`);
+      era.print(`屈服点数+${EraChara.get(0).cflag.level * 4}`);
       await era.waitAnyKey();
     }
 
     // JUEL:TARGET:6 += CFLAG:0:9 * 4；CFLAG:TARGET:2 += 20
     // （TARGET 经 era_flag.target，run_dungeon 开头置位，文件头）
     const target = era_flag.target;
-    era.set(
-      `juel:${target}:6`,
-      (era.get(`juel:${target}:6`) || 0) + (era.get('cflag:0:9') || 0) * 4,
-    );
-    chara(target).chara.好感度 += 20; // CFLAG:TARGET:2 += 20
+    EraChara.get(target).jewel.submission += EraChara.get(0).cflag.level * 4;
+    EraChara.get(target).cflag.affection += 20; // CFLAG:TARGET:2 += 20
 
     return 0;
   }
@@ -964,19 +959,19 @@ async function dungeon_heat(a, extra, rand_n) {
   let dmg = 0;
 
   // 防御値減少（CFLAG:12 *= 9 /= 10）
-  const def = era.get(`cflag:${a}:12`) || 0;
-  era.set(`cflag:${a}:12`, Math.floor((def * 9) / 10));
+  const def = EraChara.get(a).cflag.defense;
+  EraChara.get(a).cflag.defense = Math.floor((def * 9) / 10);
 
   // 火柱によるダメージ
   if (extra & 2) {
-    dmg += (era.get('cflag:0:9') || 0) + 10;
+    dmg += EraChara.get(0).cflag.level + 10;
   }
 
-  chara(a).dungeon.体力 -= dmg;
+  EraChara.get(a).base.stamina -= dmg;
 
   // 最低1は残るタイプ
-  if (chara(a).dungeon.体力 < 1) {
-    chara(a).dungeon.体力 = 1;
+  if (EraChara.get(a).base.stamina < 1) {
+    EraChara.get(a).base.stamina = 1;
   }
 
   if (show) {
@@ -1004,7 +999,7 @@ async function dungeon_heat(a, extra, rand_n) {
  * @returns {Promise<number>} 恒 return 0
  */
 async function dungeon_mase(a, extra, rand_n, ctx) {
-  const show = ((era.get('flag:5') || 0) & 32) !== 0;
+  const show = (era_flag.game_settings & 32) !== 0;
 
   // 设施头部
   if (show) {
@@ -1042,7 +1037,7 @@ async function dungeon_mase(a, extra, rand_n, ctx) {
     await era.waitAnyKey(); // PRINTW
   }
 
-  era.set(`cflag:${a}:509`, 1);
+  EraChara.get(a).cflag.lost_state = 1;
   return 0;
 }
 
@@ -1058,7 +1053,7 @@ async function dungeon_mase(a, extra, rand_n, ctx) {
  * @returns {Promise<number>} 恒 return 0
  */
 async function dungeon_museum(a, extra, rand_n) {
-  const show = ((era.get('flag:5') || 0) & 32) !== 0;
+  const show = (era_flag.game_settings & 32) !== 0;
 
   // 设施头部
   if (show) {
@@ -1069,7 +1064,7 @@ async function dungeon_museum(a, extra, rand_n) {
   }
 
   // 石像と剥製ないとダメ
-  const exhibits = era.get('flag:84') || 0;
+  const exhibits = era_flag.exhibit_count;
   if (exhibits <= 0) {
     return 0;
   }
@@ -1082,7 +1077,7 @@ async function dungeon_museum(a, extra, rand_n) {
   }
 
   // 上限 MAXBASE:A:1 / 4
-  const max_wp = era.get(`maxbase:${a}:1`) || 0;
+  const max_wp = EraChara.get(a).maxbase.willpower;
   if (mdmg > Math.floor(max_wp / 4)) {
     mdmg = Math.floor(max_wp / 4);
   }
@@ -1103,23 +1098,23 @@ async function dungeon_museum(a, extra, rand_n) {
       era.print('远程攻击被柜子妨碍……（无法先发制人）');
       await era.waitAnyKey();
     }
-    if ((era.get(`cflag:${a}:503`) || 0) & 32) {
+    if (EraChara.get(a).cflag.rest_flag & 32) {
       if (show) {
         era.print('已经无法先发制人了。'); // PRINTL（无读键）
       }
     } else {
-      era.set(`cflag:${a}:503`, (era.get(`cflag:${a}:503`) || 0) + 32);
+      EraChara.get(a).cflag.rest_flag += 32;
     }
   }
 
-  chara(a).dungeon.气力 -= mdmg;
+  EraChara.get(a).base.willpower -= mdmg;
   if (dmg > 0) {
-    chara(a).dungeon.体力 -= dmg;
+    EraChara.get(a).base.stamina -= dmg;
   }
 
   // 最低1は残るタイプ
-  if (chara(a).dungeon.体力 < 1) {
-    chara(a).dungeon.体力 = 1;
+  if (EraChara.get(a).base.stamina < 1) {
+    EraChara.get(a).base.stamina = 1;
   }
 
   return 0;
@@ -1141,7 +1136,7 @@ async function dungeon_museum(a, extra, rand_n) {
  * @returns {Promise<number>} 恒 return 0
  */
 async function dungeon_hotel(a, extra) {
-  const show = ((era.get('flag:5') || 0) & 32) !== 0;
+  const show = (era_flag.game_settings & 32) !== 0;
 
   // 设施头部
   if (show) {
@@ -1153,29 +1148,29 @@ async function dungeon_hotel(a, extra) {
 
   // 判定（MENU = 1 正太控 / 2 萝莉控 / 3 男淫魔 / 4 女淫魔）
   let menu = 0;
-  const karma = era.get(`cflag:${a}:151`) || 0;
+  const karma = EraChara.get(a).cflag.karma;
   // カルマが低い非処女の場合（TALENT:0 处女位为 0）
-  if (karma < -20 && (era.get(`talent:${a}:0`) || 0) === 0) {
+  if (karma < -20 && EraChara.get(a).talent.virgin === 0) {
     menu = 3;
   }
   // カルマが低いレズっ気の場合（ABL:22）
-  if (karma < 0 && (era.get(`abl:${a}:22`) || 0) > 0) {
+  if (karma < 0 && EraChara.get(a).abl.lesbian_temper > 0) {
     menu = 4;
   }
   // カルマが低いふたなりの場合（TALENT:121）
-  if (karma < 30 && era.get(`talent:${a}:121`)) {
+  if (karma < 30 && EraChara.get(a).talent.futanari) {
     menu = 4;
   }
   // カルマが低いオトコの場合（TALENT:122）
-  if (karma < 10 && era.get(`talent:${a}:122`)) {
+  if (karma < 10 && EraChara.get(a).talent.male) {
     menu = 4;
   }
   // ショタコン（TALENT:143）
-  if (era.get(`talent:${a}:143`)) {
+  if (EraChara.get(a).talent.shotacon) {
     menu = 1;
   }
   // ロリコン（TALENT:142）
-  if (era.get(`talent:${a}:142`)) {
+  if (EraChara.get(a).talent.lolicon) {
     menu = 2;
   }
 
@@ -1188,7 +1183,7 @@ async function dungeon_hotel(a, extra) {
   }
 
   // COST = 代金
-  let cost = (era.get(`cflag:${a}:9`) || 0) * 8 + 150;
+  let cost = EraChara.get(a).cflag.level * 8 + 150;
 
   // オプション（TIMES COST, 1.1 两次，#176 截断同款）
   if (extra & 1) {
@@ -1199,7 +1194,7 @@ async function dungeon_hotel(a, extra) {
   }
 
   // 钱检
-  if ((era.get(`cflag:${a}:580`) || 0) < cost) {
+  if (EraChara.get(a).cflag.money < cost) {
     if (show) {
       era.print(`${name_of(a)}带的钱好像不够了…`);
       await era.waitAnyKey();
@@ -1228,7 +1223,7 @@ async function dungeon_hotel(a, extra) {
 
   era_flag.money += cost;
   era_exflag.legit_money += cost;
-  chara(a).dungeon.所持金 -= cost;
+  EraChara.get(a).cflag.money -= cost;
 
   // CALL karma, A, -1
   apply_karma(a, -1);
