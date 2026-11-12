@@ -59,9 +59,10 @@ async function execute_command_round(result) {
   await handle_com();
   // 12. 对应指令处理器；未实现 → 重新要求输入（见 train-loop.js 文件头）；
   // 返回 0 → 回合取消（不结算、不进 EVENTCOMEND、PREVCOM 不推——文件头第
-  // 12 步的取消语义，子菜单指令全出口返回 0）。
-  // 指针在 handle_com() 之后、指令体之前读一次：指令体不再各自读全局，
-  // 回合内看到的 target/player/assi 是同一份快照。
+  // 12 步的取消语义，子菜单指令全出口返回 0）
+  // 三个会话指针在这里读一次后随指令传下去（#877）：一回合内它们不变，
+  // 读一次与旧行为（每个指令函数各读一次）等价；指令函数只接收这份快照，
+  // 不再自己读全局，指针的来源因此只有回合循环一处。
   const com_context = {
     target: era_flag.target,
     player: era_flag.player,

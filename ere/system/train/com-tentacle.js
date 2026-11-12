@@ -68,7 +68,7 @@ const in_zooko_msg = (cid) =>
 
 const fetish = (cid) => era.get(`cstr:${cid}:7`) || '';
 
-/** JUMP COM{id}：目标未注册返回 COM_MISSING。 */
+/** JUMP COM{id}：目标未注册返回 COM_MISSING；目标指令的回合上下文一并透传。 */
 function jump_com(com_context, id, { rewrite_selectcom = false } = {}) {
   if (rewrite_selectcom) {
     era_flag.selectcom = id;

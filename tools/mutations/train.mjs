@@ -388,14 +388,13 @@ export default [
   {
     desc: 'M700 回调顺序：EVENTCOM 与指令处理器分发对调（步骤 11↔12）',
     file: 'ere/system/train/command-round.js',
-    find: `  // 11. 指令执行前的旗标清理（event/event-com.js，只有一个处理者：旧
-  // EVENTCOM 的机能，直接调用）
-  await handle_com();
+    find: `  await handle_com();
   // 12. 对应指令处理器；未实现 → 重新要求输入（见 train-loop.js 文件头）；
   // 返回 0 → 回合取消（不结算、不进 EVENTCOMEND、PREVCOM 不推——文件头第
-  // 12 步的取消语义，子菜单指令全出口返回 0）。
-  // 指针在 handle_com() 之后、指令体之前读一次：指令体不再各自读全局，
-  // 回合内看到的 target/player/assi 是同一份快照。
+  // 12 步的取消语义，子菜单指令全出口返回 0）
+  // 三个会话指针在这里读一次后随指令传下去（#877）：一回合内它们不变，
+  // 读一次与旧行为（每个指令函数各读一次）等价；指令函数只接收这份快照，
+  // 不再自己读全局，指针的来源因此只有回合循环一处。
   const com_context = {
     target: era_flag.target,
     player: era_flag.player,
@@ -2831,8 +2830,9 @@ export default [
   {
     desc: 'M914 com6 兽奸判定修正删（A -= 15 的数值怪癖，打印值仍 (10)）',
     file: 'ere/system/train/com-caress.js',
-    find: '    if (tequip(89) && !talent(136)) {\n      minus();\n      a -= 15;',
-    replace: '    if (tequip(89) && !talent(136)) {\n      // 变异：修正删除',
+    find: '    if (tequip(target, 89) && !talent(136)) {\n      minus();\n      a -= 15;',
+    replace:
+      '    if (tequip(target, 89) && !talent(136)) {\n      // 变异：修正删除',
     tests: ['com-caress'],
     must_mention: '兽奸',
   },
@@ -3781,11 +3781,11 @@ export default [
   {
     desc: 'M1110 com34/36 骑乘位衣物判定把目标号漏传（#222）',
     file: 'ere/system/train/com-service.js',
-    find: `  if (target_tequip(58) && !(era.get('item:13') || 0) && NOITEM.value === 0)
+    find: `  if (tequip_of(target, 58) && !(era.get('item:13') || 0) && NOITEM.value === 0)
     return 0;
   if (costume_blocked(target, 17)) return 0;
   if (special(target) === 79 && worn(target) & 64 && clothes_on()) return 0;`,
-    replace: `  if (target_tequip(58) && !(era.get('item:13') || 0) && NOITEM.value === 0)
+    replace: `  if (tequip_of(target, 58) && !(era.get('item:13') || 0) && NOITEM.value === 0)
     return 0;
   if (costume_blocked(17)) return 0; // 变异：误把位掩码当目标号
   if (special(target) === 79 && worn(target) & 64 && clothes_on()) return 0;`,
@@ -3814,8 +3814,8 @@ export default [
   {
     desc: 'M1115 com35 玩家执行时把标准污渍误写固定 0 号（#222）',
     file: 'ere/system/train/com-service.js',
-    find: '  set_standard_stain(era_flag.assiplay ? era_flag.assi : era_flag.player);',
-    replace: '  set_standard_stain(era_flag.assiplay ? era_flag.assi : 0);',
+    find: '  set_standard_stain(era_flag.assiplay ? assi : player);',
+    replace: '  set_standard_stain(era_flag.assiplay ? assi : 0);',
     tests: ['com-service'],
     must_mention: 'COM35：玩家执行时重置玩家',
   },
@@ -7391,11 +7391,10 @@ export default [
   {
     desc: 'M9529 com3 头部升格跳转删除（jump_advanced(3) 整段拿掉，PREVCOM 升格条件失效）',
     file: 'ere/system/train/com-caress.js',
-    find: 'async function com3() {\n  // 头部升格跳转（LOCAL = 3 → CASE 3：自慰 → 口交时自慰 → 125）\n  const jumped = await jump_advanced(3);\n  if (jumped !== false) {\n    return jumped;\n  }\n\n  const target = era_flag.target;\n  const player = era_flag.player;',
-    replace: `async function com3() {
+    find: 'async function com3(com_context) {\n  // 头部升格跳转（LOCAL = 3 → CASE 3：自慰 → 口交时自慰 → 125）\n  const jumped = await jump_advanced(3, com_context);\n  if (jumped !== false) {\n    return jumped;\n  }\n\n  const { target, player } = com_context;',
+    replace: `async function com3(com_context) {
   // 变异：升格跳转整段删除
-  const target = era_flag.target;
-  const player = era_flag.player;`,
+  const { target, player } = com_context;`,
     tests: ['com-caress'],
     must_mention: '升格跳转：PREVCOM ∈ {31,123,124,126,127}',
   },

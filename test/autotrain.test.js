@@ -24,6 +24,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { com_context } = require('./helpers/com-context');
 const { preset_gamebase } = require('./helpers/gamebase');
 const { com_context } = require('./helpers/com-context');
 
@@ -283,7 +284,9 @@ test('AUTOTRAIN: com0_auto 与手动爱抚读同一份 C/B 阶梯（同档源值
       const { com_family } = manual.fixture.load_module(
         'system/train/com-family',
       );
-      await com_family.call(0);
+      await com_family.call(0, {
+        args: [com_context(manual.era_flag)],
+      });
 
       for (const idx of [0, 3, 17]) {
         assert.equal(
