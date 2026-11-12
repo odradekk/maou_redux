@@ -27,6 +27,7 @@ const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { seed_train_world } = require('./helpers/train-world');
+const { com_context } = require('./helpers/com-context');
 
 const REPO = path.join(__dirname, '..');
 
@@ -57,7 +58,10 @@ function seed_world({ load_colosseum = false, load_caress = false } = {}) {
 /** 经族调用一条指令（真实循环里 selectcom 由 train-loop 先置——测试同位） */
 async function run_com(world, com, extra = {}) {
   world.era_flag.selectcom = com;
-  return world.com_family.call(com, extra);
+  return world.com_family.call(com, {
+    ...extra,
+    args: [com_context(world.era_flag), ...(extra.args ?? [])],
+  });
 }
 
 async function run_b(world, com) {

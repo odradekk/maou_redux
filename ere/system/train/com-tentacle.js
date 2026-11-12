@@ -65,16 +65,15 @@ const zooko_worn = (cid) =>
 const in_zooko_msg = (cid) =>
   (era.get(`cflag:${cid}:42`) || 0) === 11 &&
   ((era.get(`cflag:${cid}:40`) || 0) & 64) !== 0;
-const target_name = () => chara_callname(era_flag.target);
-const player_name = () => chara_callname(era_flag.player);
+
 const fetish = (cid) => era.get(`cstr:${cid}:7`) || '';
 
 /** JUMP COM{id}：目标未注册返回 COM_MISSING。 */
-function jump_com(id, { rewrite_selectcom = false } = {}) {
+function jump_com(com_context, id, { rewrite_selectcom = false } = {}) {
   if (rewrite_selectcom) {
     era_flag.selectcom = id;
   }
-  return com_family.call(id, { whenMissing: COM_MISSING });
+  return com_family.call(id, { whenMissing: COM_MISSING, args: [com_context] });
 }
 
 function scale_a_by_half_explv(cid, a) {
@@ -253,8 +252,7 @@ function able208() {
 // com100 / 108 / 150 / 208 与 JUMP 101-107/109
 // ============================================================
 
-async function com100() {
-  const target = era_flag.target;
+async function com100({ target }) {
   era.print('召唤触手');
   await train_message_b(); // —— 翻转之前
 
@@ -277,30 +275,29 @@ async function com100() {
   return 1;
 }
 
-function com101() {
-  return jump_com(11);
+function com101(com_context) {
+  return jump_com(com_context, 11);
 }
-function com102() {
-  return jump_com(13);
+function com102(com_context) {
+  return jump_com(com_context, 13);
 }
-function com103() {
-  return jump_com(14);
+function com103(com_context) {
+  return jump_com(com_context, 14);
 }
-function com104() {
-  return jump_com(15);
+function com104(com_context) {
+  return jump_com(com_context, 15);
 }
-function com105() {
-  return jump_com(16);
+function com105(com_context) {
+  return jump_com(com_context, 16);
 }
-function com106() {
-  return jump_com(44);
+function com106(com_context) {
+  return jump_com(com_context, 44);
 }
-function com107() {
-  return jump_com(46);
+function com107(com_context) {
+  return jump_com(com_context, 46);
 }
 
-async function com108() {
-  const target = era_flag.target;
+async function com108({ target }) {
   era.print('触手口辱');
   await train_message_b();
 
@@ -327,13 +324,11 @@ async function com108() {
   return 1;
 }
 
-function com109() {
-  return jump_com(17);
+function com109(com_context) {
+  return jump_com(com_context, 17);
 }
 
-async function com150() {
-  const target = era_flag.target;
-  const player = era_flag.player;
+async function com150({ target, player }) {
   era.print(`${fetish(target)}调教`);
   await train_message_b();
 
@@ -362,7 +357,7 @@ async function com150() {
   return 1;
 }
 
-async function com208(rand = default_rand) {
+async function com208({ target, player, assi }, rand = default_rand) {
   // 延迟读取：主启动图的死斗场族注册（COM200-207）仍仅由 com-colosseum
   // 自己负责；本族只在 COM208 真身里复用其死斗场结算 helper。顶层 require
   // 会让 main-loop 漏装时模块仍被间接拉进来，#274/#282 接入锁与 M1249
@@ -371,28 +366,27 @@ async function com208(rand = default_rand) {
     arena_slave_point,
     com_after_arena,
   } = require('#/system/train/com-colosseum');
-  const target = era_flag.target;
   era.print('触手');
   await train_message_b();
 
   add_lose(target, 0, 5);
   add_lose(target, 1, 100);
 
-  const slave_point = arena_slave_point();
+  const slave_point = arena_slave_point({ target });
   game.train.死斗场收入 += rand(slave_point); // TFLAG:402 += RAND:RESULT
   const threshold = 10 * (era.get('cflag:0:9') || 0); // 字面角色 0
   if (slave_point < threshold) {
-    era.print(`${target_name()}被触手弄的手足无措。`);
+    era.print(`${chara_callname(target)}被触手弄的手足无措。`);
     await era.waitAnyKey();
     add_lose(target, 0, 10);
     add_lose(target, 1, 200);
   } else {
-    era.print(`${target_name()}一瞬间就把触手打倒了。`);
+    era.print(`${chara_callname(target)}一瞬间就把触手打倒了。`);
     await era.waitAnyKey();
   }
 
   game.train.死斗场敌种 = 208; // TFLAG:400
-  const after = await com_after_arena();
+  const after = await com_after_arena({ target, player, assi });
   if (after === 0) {
     return 1; // 胜利跳过菜单
   }
@@ -410,17 +404,23 @@ async function com208(rand = default_rand) {
     const result = await era.input();
 
     if (result === 0) {
-      return jump_com(31, { rewrite_selectcom: true });
+      return jump_com({ target, player, assi }, 31, {
+        rewrite_selectcom: true,
+      });
     }
     if (result === 1) {
-      return jump_com(5, { rewrite_selectcom: true });
+      return jump_com({ target, player, assi }, 5, { rewrite_selectcom: true });
     }
     if (result === 2) {
       if (tal(target, 122)) return 0; // 男人双保险
-      return jump_com(21, { rewrite_selectcom: true });
+      return jump_com({ target, player, assi }, 21, {
+        rewrite_selectcom: true,
+      });
     }
     if (result === 3) {
-      return jump_com(27, { rewrite_selectcom: true });
+      return jump_com({ target, player, assi }, 27, {
+        rewrite_selectcom: true,
+      });
     }
     if (result === 999) {
       return 1; // 暂时放过落空后 RETURN 1
@@ -442,9 +442,9 @@ async function syokusyu_milk() {
     !tal(target, 116) &&
     !tal(target, 122)
   ) {
-    era.print(`在触手的挤奶动作下，${target_name()}流出了母乳。`);
+    era.print(`在触手的挤奶动作下，${chara_callname(target)}流出了母乳。`);
     chara(target).chara.母乳体质 = 1;
-    era.print(`${target_name()}获得了【母乳体质】！`);
+    era.print(`${chara_callname(target)}获得了【母乳体质】！`);
   }
   return 1;
 }
@@ -552,14 +552,16 @@ function zooko_prefix(cid) {
 train_message_b_family.register(100, async () => {
   const target = era_flag.target;
   if (tequip(target, 90)) {
-    era.print(`触手放开了${target_name()}的身体、回到原位了…`);
+    era.print(
+      `触手放开了${chara_callname(era_flag.target)}的身体、回到原位了…`,
+    );
     return;
   }
-  let line = `${player_name()}操控着异形的触手、`;
+  let line = `${chara_callname(era_flag.player)}操控着异形的触手、`;
   if (in_zooko_msg(target)) {
     line += clothtype_special_text(target);
   } else {
-    line += `将${target_name()}的身体`;
+    line += `将${chara_callname(era_flag.target)}的身体`;
   }
   era.print(`${line}缠上了…`);
 });
@@ -616,7 +618,7 @@ for (const [id, spec] of Object.entries(B_TOGGLE)) {
   const com = Number(id);
   train_message_b_family.register(com, async () => {
     const target = era_flag.target;
-    const n = target_name();
+    const n = chara_callname(era_flag.target);
     if (tequip(target, spec.bit)) {
       era.print(spec.off(n));
       return;
@@ -634,20 +636,20 @@ train_message_b_family.register(150, async () => {
   const f = fetish(target);
   let tail;
   if (f === '嗅觉') {
-    tail = `${target_name()}坚持不懈地熏陶着那个味道、似乎想要将味道烙进灵魂一般…`;
+    tail = `${chara_callname(era_flag.target)}坚持不懈地熏陶着那个味道、似乎想要将味道烙进灵魂一般…`;
   } else if (f === '腋') {
-    tail = `${target_name()}的侧胸不断地爱抚着、并舔起了腋下……`;
+    tail = `${chara_callname(era_flag.target)}的侧胸不断地爱抚着、并舔起了腋下……`;
   } else {
     tail = `${f}调教开始了…`;
   }
-  era.print(`${player_name()}向${tail}`); // PRINTFORM 链
+  era.print(`${chara_callname(era_flag.player)}向${tail}`); // PRINTFORM 链
   // 裸 PRINTL 只收尾上面那条拼行（前一条没有换行）——不是空行，
   // 这里不补 print（#595）
 });
 
 train_message_a_family.register(150, async () => {
   const target = era_flag.target;
-  const n = target_name();
+  const n = chara_callname(era_flag.target);
   const f = fetish(target);
   const smell = f === '嗅觉';
   const addict = abl(target, 40);
