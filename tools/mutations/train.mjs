@@ -2988,7 +2988,7 @@ export default [
   {
     desc: 'M1103 com22 爱慕三格乘数漏乘（SOURCE:7/16 不翻倍）（#221）',
     file: 'ere/system/train/com-sex.js',
-    find: `  const extra = player_skill_source(cid, false);
+    find: `  const extra = player_skill_source(com_context, cid, false);
   // EXPLV 槽零 >= 3：读数组槽零（0），恒不成立，保留。
   if (EXPLV[0] >= 3) add_src(cid, 1, extra);
   if (tal(cid, 85))
@@ -2997,7 +2997,7 @@ export default [
       [7, 2],
       [16, 2],
     ]);`,
-    replace: `  const extra = player_skill_source(cid, false);
+    replace: `  const extra = player_skill_source(com_context, cid, false);
   // EXPLV 槽零 >= 3：读数组槽零（0），恒不成立，保留。
   if (EXPLV[0] >= 3) add_src(cid, 1, extra);
   if (tal(cid, 85))
@@ -10515,10 +10515,10 @@ export default [
   {
     desc: 'M12903 升格跳转不执行目标真身（jump_to_advanced 恒 return 1——升格跳转语义被架空）',
     file: 'ere/system/train/com-sm.js',
-    find: `async function jump_to_advanced(com) {
-  return com_family.call(com, { whenMissing: 1 });
+    find: `async function jump_to_advanced(com_context, com) {
+  return com_family.call(com, { whenMissing: 1, args: [com_context] });
 }`,
-    replace: `async function jump_to_advanced(com) {
+    replace: `async function jump_to_advanced(com_context, com) {
   void com;
   return 1; // 变异：升格目标不执行
 }`,

@@ -140,8 +140,8 @@ const PBAND = 4;
  * @param {number} id 升格后的 COM 号
  * @returns {Promise<number>}
  */
-async function jump_to_advanced(id) {
-  return com_family.call(id, { whenMissing: 1 });
+async function jump_to_advanced(com_context, id) {
+  return com_family.call(id, { whenMissing: 1, args: [com_context] });
 }
 
 // ============================================================
@@ -409,14 +409,13 @@ function able90() {
  * 「実行できるかの判定」整段是死码（文件头注已说明），不镜像。
  * @returns {Promise<number>} 返回 1
  */
-async function com80() {
-  const target = era_flag.target;
-  const player = era_flag.player;
+async function com80(com_context) {
+  const { target, player } = com_context;
 
   // 头部升格检查（80 → 3P，见 adv_com_family.register(80)）
   const upgraded = await get_adv_com(80);
   if (upgraded !== 80) {
-    return jump_to_advanced(upgraded);
+    return jump_to_advanced(com_context, upgraded);
   }
 
   era.print('强制口交');
@@ -654,9 +653,7 @@ async function com80() {
 }
 
 /** com81：拳交。 */
-async function com81() {
-  const target = era_flag.target;
-  const player = era_flag.player;
+async function com81({ target, player }) {
   era.print('拳交');
   await train_message_b();
 
@@ -704,8 +701,7 @@ async function com81() {
 }
 
 /** com82：肛门拳交。 */
-async function com82() {
-  const target = era_flag.target;
+async function com82({ target }) {
   era.print('肛门拳交');
   await train_message_b();
 
@@ -830,8 +826,7 @@ async function com82() {
 }
 
 /** com83：两穴拳交。 */
-async function com83() {
-  const target = era_flag.target;
+async function com83({ target, player }) {
   era.print('双穴拳交');
   await train_message_b();
 
@@ -893,7 +888,7 @@ async function com83() {
     set(1, src(1) * 0.2);
     set(6, src(6) + 20000);
     set(11, src(11) + 2000);
-    if (!tal(era_flag.player, 122)) {
+    if (!tal(player, 122)) {
       chara(target).dungeon.异常经验 += 1;
       era.print(`${name_of('expname', 50)}＋１`);
     }
@@ -1079,10 +1074,7 @@ async function com83() {
 }
 
 /** com84：刺激G点。高级 COM，只经 8 号规则升格抵达。 */
-async function com84() {
-  const target = era_flag.target;
-  const player = era_flag.player;
-
+async function com84({ target, player }) {
   era.print('刺激Ｇ点');
   era_flag.selectcom = 84; // 升格抵达时回填号位
   await train_message_b();
@@ -1215,10 +1207,7 @@ async function com84() {
 }
 
 /** com85：放尿。 */
-async function com85() {
-  const target = era_flag.target;
-  const player = era_flag.player;
-
+async function com85({ target, player }) {
   let title = '';
   if (tequip(target, 53)) title += '公开';
   if (tequip(target, 54)) title += '野外';
@@ -1389,8 +1378,7 @@ function piercing_status_line(target) {
 }
 
 /** com87 判定段：装/取选择后返回 P（0 = 玩家取消） */
-async function piercing_choose_part() {
-  const target = era_flag.target;
+async function piercing_choose_part({ target }) {
   for (;;) {
     piercing_status_line(target);
     const worn = era.get(`cflag:${target}:7`) || 0;
@@ -1454,12 +1442,10 @@ async function piercing_choose_part() {
   }
 }
 
-async function com87() {
-  const target = era_flag.target;
-  const player = era_flag.player;
+async function com87({ target, player }) {
   era.print('穿环');
 
-  const p = await piercing_choose_part();
+  const p = await piercing_choose_part({ target });
   if (p === 0) return 0;
 
   const worn = era.get(`cflag:${target}:7`) || 0;
@@ -1685,8 +1671,7 @@ async function com87() {
 }
 
 /** com88：使役魔兽 PLAY 开关。*/
-async function com88() {
-  const target = era_flag.target;
+async function com88({ target }) {
   era.print('使役魔兽ＰＬＡＹ');
   const inum = era.get(`cflag:${target}:570`) || 0;
   monster_data(inum, 3, target, -1);
@@ -1702,11 +1687,10 @@ async function com88() {
 }
 
 /** com89：兽奸 PLAY 开关。 */
-async function com89() {
+async function com89({ target }) {
   era.print('兽奸ＰＬＡＹ');
   await train_message_b();
 
-  const target = era_flag.target;
   if (tequip(target, 89)) {
     era.set(`tequip:${target}:89`, 0);
   } else {
@@ -1963,8 +1947,7 @@ async function equip_com89() {
 }
 
 /** com90：乳房插入。 */
-async function com90() {
-  const target = era_flag.target;
+async function com90({ target, assi }) {
   if (!(await confirm_condom())) return 0;
 
   era.print('乳房插入');
@@ -2037,7 +2020,7 @@ async function com90() {
     set(6, src(6) * 0.1);
   }
 
-  if (era_flag.assiplay && tal(era_flag.assi, 121)) {
+  if (era_flag.assiplay && tal(assi, 121)) {
     set(17, src(17) * 2.5);
   }
 

@@ -4,6 +4,11 @@
  *
  * J11（issue #221）。COM20–23 是阴道性交，24/25 是目标侵犯调教者，26–29
  * 是肛交。没有 20–29 号的装备持续效果，故本文件不注册。
+ *
+ * 指令函数的第一参是回合上下文 `{ target, player, assi }`：回合循环在
+ * 指令前读一次全局指针后传入（command-round.js），本文件的指令与其调用的
+ * helper 都从它取值，不再各自读全局。TRAIN_MESSAGE / COM_ABLE 的处理函数
+ * 仍按各自族的调用点取全局指针。
  */
 
 const era = require('#/era-electron');
@@ -114,19 +119,8 @@ function reverse_lust_level(cid) {
  * @param {number} id 升格后的 COM 号
  * @returns {Promise<number>}
  */
-async function jump_to_advanced(id) {
-  // 本文件尚未接上下文形参；升格目标可能是别票已改造的指令（如 COM64），
-  // 故在此现取一次指针，时点与回合开始相同。
-  return com_family.call(id, {
-    whenMissing: 1,
-    args: [
-      {
-        target: era_flag.target,
-        player: era_flag.player,
-        assi: era_flag.assi,
-      },
-    ],
-  });
+async function jump_to_advanced(com_context, id) {
+  return com_family.call(id, { whenMissing: 1, args: [com_context] });
 }
 
 /** 阴道性交共通的 V 感觉初始 V 快感/情爱表。 */
@@ -137,7 +131,14 @@ function set_v_source(cid, table) {
 }
 
 /** 私处经验分档：V 快乐倍率、疼痛及首次助手异常经验。 */
-function vagina_experience_source(cid, rates, pains, add_abnormal) {
+function vagina_experience_source(
+  com_context,
+  cid,
+  rates,
+  pains,
+  add_abnormal,
+) {
+  const { player } = com_context;
   const value = exp(cid, 0);
   const index =
     value < EXPLV[1]
@@ -153,12 +154,7 @@ function vagina_experience_source(cid, rates, pains, add_abnormal) {
               : 5;
   set_src(cid, 1, times(src(cid, 1), rates[index]));
   set_src(cid, 6, pains[index]);
-  if (
-    index === 0 &&
-    add_abnormal &&
-    era_flag.assiplay &&
-    !tal(era_flag.player, 122)
-  ) {
+  if (index === 0 && add_abnormal && era_flag.assiplay && !tal(player, 122)) {
     chara(cid).dungeon.异常经验 += 1;
     era.print('异常经验＋１');
   }
@@ -211,14 +207,16 @@ function multiply_source(cid, entries) {
 }
 
 /** 阴道性交末尾的调教者阴核快感加算。 */
-function player_clit_source(cid) {
+function player_clit_source(com_context, cid) {
+  const { player } = com_context;
   // 单参 MIN 等于其参数本身，此处即两人技巧之和。
-  const local = 100 + 10 * (abl(cid, 12) + abl(era_flag.player, 12));
-  add_src(era_flag.player, 0, divide(150 * local, 100));
+  const local = 100 + 10 * (abl(cid, 12) + abl(player, 12));
+  add_src(player, 0, divide(150 * local, 100));
 }
 
 /** 调教者技巧对情爱/液体/阴核快感的表（22/23/28/29 共用）。 */
-function player_skill_source(cid, source10_assign) {
+function player_skill_source(com_context, cid, source10_assign) {
+  const { player } = com_context;
   const row = [
     [100, 0, 0],
     [150, 50, 0],
@@ -226,9 +224,9 @@ function player_skill_source(cid, source10_assign) {
     [300, 150, 50],
     [500, 250, 100],
     [800, 400, 300],
-  ][Math.min(abl(era_flag.player, 12), 5)];
+  ][Math.min(abl(player, 12), 5)];
   add_src(cid, 3, row[0]);
-  if (source10_assign && abl(era_flag.player, 12) === 0) {
+  if (source10_assign && abl(player, 12) === 0) {
     set_src(cid, 10, row[1]);
   } else {
     add_src(cid, 10, row[1]);
@@ -343,11 +341,18 @@ function vagina_obey_source(cid, table) {
   ]);
 }
 
-function vagina_common_source(cid, spec) {
+function vagina_common_source(com_context, cid, spec) {
+  const { assi } = com_context;
   set_v_source(cid, spec.table);
-  vagina_experience_source(cid, spec.exp_rates, spec.pains, spec.add_abnormal);
+  vagina_experience_source(
+    com_context,
+    cid,
+    spec.exp_rates,
+    spec.pains,
+    spec.add_abnormal,
+  );
   vagina_lube_source(cid, spec.lube);
-  if (era_flag.assiplay && tal(era_flag.assi, 121)) {
+  if (era_flag.assiplay && tal(assi, 121)) {
     set_src(cid, 1, times(src(cid, 1), 2.5));
   }
   vagina_body_pain(cid, spec.immature, spec.sturdy_rate);
@@ -385,12 +390,12 @@ function breast_clit_source(cid) {
   set_src(cid, 0, [40, 160, 500, 900, 1400, 2100][Math.min(abl(cid, 0), 5)]);
 }
 
-function source20() {
-  const cid = era_flag.target;
+function source20(com_context) {
+  const { target: cid } = com_context;
   add_lose(cid, 0, 50);
   add_lose(cid, 1, 100);
   set_src(cid, 12, 400);
-  vagina_common_source(cid, {
+  vagina_common_source(com_context, cid, {
     table: V20_TABLE,
     exp_rates: [0.2, 0.6, 1, 1.2, 1.3, 1.8],
     pains: [5500, 300, 50, 10, 0, 0],
@@ -406,15 +411,15 @@ function source20() {
     obey: V_OBEY_20,
     add_abnormal: false,
   });
-  player_clit_source(cid);
+  player_clit_source(com_context, cid);
 }
 
-function source21() {
-  const cid = era_flag.target;
+function source21(com_context) {
+  const { target: cid } = com_context;
   add_lose(cid, 0, 50);
   add_lose(cid, 1, 100);
   set_src(cid, 12, 800);
-  vagina_common_source(cid, {
+  vagina_common_source(com_context, cid, {
     table: V21_TABLE,
     exp_rates: [0.2, 0.6, 1, 1.2, 1.3, 1.8],
     pains: [5000, 220, 30, 5, 0, 0],
@@ -431,17 +436,18 @@ function source21() {
     obey: V_OBEY_20,
     add_abnormal: true,
   });
-  player_clit_source(cid);
+  player_clit_source(com_context, cid);
 }
 
-function source22() {
-  const cid = era_flag.target;
+function source22(com_context) {
+  const { target: cid, assi } = com_context;
   add_lose(cid, 0, 10);
   add_lose(cid, 1, 80);
   set_src(cid, 7, 100);
   set_src(cid, 12, 100);
   set_v_source(cid, V22_TABLE);
   vagina_experience_source(
+    com_context,
     cid,
     [0.2, 0.6, 1, 1.1, 1.2, 1.3],
     [3500, 250, 50, 10, 0, 0],
@@ -455,13 +461,13 @@ function source22() {
     [1.2, 0, 0.2],
     [1.5, 0, 0.1],
   ]);
-  if (era_flag.assiplay && tal(era_flag.assi, 121))
+  if (era_flag.assiplay && tal(assi, 121))
     set_src(cid, 1, times(src(cid, 1), 2.5));
   vagina_body_pain(cid, true);
   vagina_chastity_source(cid);
   vagina_lust_source(cid, V_LUST_22);
   vagina_obey_source(cid, V_OBEY_22);
-  const extra = player_skill_source(cid, false);
+  const extra = player_skill_source(com_context, cid, false);
   // EXPLV 槽零 >= 3：读数组槽零（0），恒不成立，保留。
   if (EXPLV[0] >= 3) add_src(cid, 1, extra);
   if (tal(cid, 85))
@@ -470,16 +476,17 @@ function source22() {
       [7, 2],
       [16, 2],
     ]);
-  player_clit_source(cid);
+  player_clit_source(com_context, cid);
 }
 
-function source23() {
-  const cid = era_flag.target;
+function source23(com_context) {
+  const { target: cid, assi } = com_context;
   add_lose(cid, 0, 20);
   add_lose(cid, 1, 150);
   set_src(cid, 12, 200);
   set_v_source(cid, V23_TABLE);
   vagina_experience_source(
+    com_context,
     cid,
     [0.2, 0.6, 1, 1.2, 1.4, 1.6],
     [3000, 240, 30, 5, 0, 0],
@@ -493,24 +500,23 @@ function source23() {
     [1.2, 0, 0.2],
     [1.6, 0, 0.1],
   ]);
-  if (era_flag.assiplay && tal(era_flag.assi, 121))
+  if (era_flag.assiplay && tal(assi, 121))
     set_src(cid, 1, times(src(cid, 1), 2.5));
   vagina_body_pain(cid, true);
   vagina_chastity_source(cid);
   vagina_lust_source(cid, V_LUST_23, true);
   vagina_obey_source(cid, V_OBEY_23);
-  const extra = player_skill_source(cid, true);
+  const extra = player_skill_source(com_context, cid, true);
   // EXPLV 槽十 >= 3：未定义 EXPLV 槽按 0，恒不成立。
   if ((EXPLV[10] || 0) >= 3) add_src(cid, 1, extra);
   if (tal(cid, 85)) set_src(cid, 3, times(src(cid, 3), 2));
-  player_clit_source(cid);
+  player_clit_source(com_context, cid);
 }
 
 // —— COM24/25：逆侵犯的实行值、源与事后处理 ——
 
-function check_reverse_sex(player_virgin_penalty) {
-  const cid = era_flag.target;
-  const player = era_flag.player;
+function check_reverse_sex(com_context, player_virgin_penalty) {
+  const { target: cid, player } = com_context;
   // com_order 会输出共通实行值明细；其 A/S 返回值必须接回后续累计。
   return com_order(0, 0).then(async ({ a, s }) => {
     const plus_level = (label, level, value) => {
@@ -591,10 +597,12 @@ function check_reverse_sex(player_virgin_penalty) {
   });
 }
 
-async function confirm_reverse_virgin() {
-  const player = era_flag.player;
+async function confirm_reverse_virgin(com_context) {
+  const { target, player } = com_context;
   if (!tal(player, 0)) return await confirm_condom2();
-  era.print(`${player_name()}的处女，要让${target_name()}夺走吗？`);
+  era.print(
+    `${chara_callname(player)}的处女，要让${chara_callname(target)}夺走吗？`,
+  );
   era.printButton('- 好的', 0);
   era.printButton('- 不好', 1);
   // 非 0/1 的键入值在 ere 的按钮白名单处被拒收，不会到达这里。
@@ -603,7 +611,8 @@ async function confirm_reverse_virgin() {
   return await confirm_condom2();
 }
 
-function reverse_source(cid) {
+function reverse_source(com_context) {
+  const { target: cid, player } = com_context;
   add_lose(cid, 0, 50);
   add_lose(cid, 1, 200);
   set_src(cid, 12, 220);
@@ -626,14 +635,14 @@ function reverse_source(cid) {
   set_src(cid, 0, times(src(cid, 0), 0.5));
   set_src(cid, 4, times(src(cid, 4), factor));
   set_src(cid, 5, times(src(cid, 5), factor));
-  if (!tal(cid, 122) && !tal(era_flag.player, 122)) {
+  if (!tal(cid, 122) && !tal(player, 122)) {
     const rate = [0.2, 0.4, 0.6, 0.8, 1, 1.2][Math.min(abl(cid, 22), 5)];
     multiply_source(cid, [
       [4, rate],
       [5, rate],
     ]);
   }
-  if (tal(cid, 122) && tal(era_flag.player, 122)) {
+  if (tal(cid, 122) && tal(player, 122)) {
     const rate = [0.2, 0.4, 0.6, 0.8, 1, 1.2][Math.min(abl(cid, 23), 5)];
     multiply_source(cid, [
       [4, rate],
@@ -644,24 +653,24 @@ function reverse_source(cid) {
 
 function reverse_same_sex_exp(cid, player) {
   if (!tal(cid, 122) && !tal(player, 122)) {
-    era.print(`${target_name()}与${player_name()}的百合经验+3`);
+    era.print(`${chara_callname(cid)}与${chara_callname(player)}的百合经验+3`);
     add(`exp:${cid}:40`, 3);
     add(`exp:${player}:40`, 3);
   } else if (tal(cid, 122) && tal(player, 122)) {
-    era.print(`${target_name()}与${player_name()}的断背经验+3`);
+    era.print(`${chara_callname(cid)}与${chara_callname(player)}的断背经验+3`);
     add(`exp:${cid}:41`, 3);
     add(`exp:${player}:41`, 3);
   }
 }
 
-function event_seitsu(cid, site) {
-  const player = era_flag.player;
+function event_seitsu(com_context, site) {
+  const { target: cid, player } = com_context;
   // 判断条件：无男性器（121/122 皆 0）或未熟（135 == 0）即返回。
   if ((!tal(cid, 121) && !tal(cid, 122)) || !tal(cid, 135)) return;
   if (abl(cid, 0) <= 4 || tq(cid, 90) || tq(cid, 89)) return;
   if (get(`relation:${cid}:${player}`) < 150) return;
   era.print(
-    `${player_name()}的${site}被侵犯着，${target_name()}开始精通这个了…`,
+    `${chara_callname(player)}的${site}被侵犯着，${chara_callname(cid)}开始精通这个了…`,
   );
   chara(cid).train.未熟 = 0;
 }
@@ -686,12 +695,11 @@ function reverse_love_exp(cid) {
   }
 }
 
-async function reverse_post24() {
-  const cid = era_flag.target;
-  const player = era_flag.player;
+async function reverse_post24(com_context) {
+  const { target: cid, player } = com_context;
   reverse_same_sex_exp(cid, player);
   chara(player).dungeon.私处经验 += 1;
-  event_seitsu(cid, '私处');
+  event_seitsu(com_context, '私处');
   reverse_love_exp(cid);
   if (tal(player, 0)) {
     await era.printAndWait('【处女丧失】');
@@ -700,7 +708,7 @@ async function reverse_post24() {
       // COM24 的玩家记录段只记录 TARGET + 1 与名字；近亲编码是其后目标
       // 童贞丧失分支专属，不能套用到玩家处女记录。
       chara(player).train.初体验对象 = cid + 1;
-      chara(player).train.初体验对象名 = target_name();
+      chara(player).train.初体验对象名 = chara_callname(cid);
     }
   }
   if (tal(cid, 1)) {
@@ -708,7 +716,7 @@ async function reverse_post24() {
     era.print('【童贞丧失】');
     if (!chara(cid).train.初体验对象) {
       chara(cid).train.初体验对象 = player + 1;
-      chara(cid).train.初体验对象名 = player_name();
+      chara(cid).train.初体验对象名 = chara_callname(player);
       const code = virgin_partner_code(get('tflag:14'), tal(player, 122));
       if (code !== undefined) chara(cid).train.初体验对象 = code;
     }
@@ -720,12 +728,11 @@ async function reverse_post24() {
   game.train.屈服刻印结算 = 2;
 }
 
-function reverse_post25() {
-  const cid = era_flag.target;
-  const player = era_flag.player;
+function reverse_post25(com_context) {
+  const { target: cid, player } = com_context;
   reverse_same_sex_exp(cid, player);
   chara(player).dungeon.肛门经验 += 1;
-  event_seitsu(cid, '直肠');
+  event_seitsu(com_context, '直肠');
   reverse_love_exp(cid);
   if (tal(cid, 119) || tal(cid, 121) || tal(cid, 122)) {
     set(`stain:${cid}:2`, get(`stain:${cid}:2`) | get(`stain:${player}:4`));
@@ -929,8 +936,8 @@ function anal_obey_source(cid, table = ANAL_OBEY, anal = false) {
   }
 }
 
-function source26() {
-  const cid = era_flag.target;
+function source26(com_context) {
+  const { target: cid, assi } = com_context;
   add_lose(cid, 0, 80);
   add_lose(cid, 1, 120);
   set_src(cid, 12, 400);
@@ -938,7 +945,7 @@ function source26() {
   anal_experience_source(cid, ANAL_EXP_26, true);
   anal_lube_source(cid);
   // 此处误乘 V 快感格而非肛快感格，按原样保留。
-  if (era_flag.assiplay && tal(era_flag.assi, 121))
+  if (era_flag.assiplay && tal(assi, 121))
     set_src(cid, 1, times(src(cid, 1), 2.5));
   anal_body_pain(cid);
   anal_chastity_source(cid);
@@ -947,8 +954,8 @@ function source26() {
   anal_sense_source(cid);
 }
 
-function source27() {
-  const cid = era_flag.target;
+function source27(com_context) {
+  const { target: cid, assi } = com_context;
   add_lose(cid, 0, 120);
   add_lose(cid, 1, 200);
   set_src(cid, 12, 1200);
@@ -958,7 +965,7 @@ function source27() {
   anal_experience_source(cid, ANAL_EXP_26, false);
   anal_lube_source(cid);
   anal_lust_source(cid);
-  if (era_flag.assiplay && tal(era_flag.assi, 121))
+  if (era_flag.assiplay && tal(assi, 121))
     set_src(cid, 2, times(src(cid, 2), 2.5));
   anal_body_pain(cid);
   anal_sense_source(cid);
@@ -966,8 +973,8 @@ function source27() {
     set_src(cid, 13, divide(src(cid, 13), 3));
 }
 
-function source28() {
-  const cid = era_flag.target;
+function source28(com_context) {
+  const { target: cid, assi } = com_context;
   add_lose(cid, 0, 60);
   add_lose(cid, 1, 80);
   set_src(cid, 3, 100);
@@ -978,14 +985,14 @@ function source28() {
   service_spirit_source(cid);
   anal_lube_source(cid);
   // 此处误乘 V 快感格而非肛快感格，按原样保留。
-  if (era_flag.assiplay && tal(era_flag.assi, 121))
+  if (era_flag.assiplay && tal(assi, 121))
     set_src(cid, 1, times(src(cid, 1), 2.5));
   anal_body_pain(cid);
   anal_sense_source(cid);
   anal_chastity_source(cid);
   anal_lust_source(cid);
   anal_obey_source(cid);
-  player_skill_source(cid, false);
+  player_skill_source(com_context, cid, false);
   if (tal(cid, 85))
     multiply_source(cid, [
       [3, 3],
@@ -994,8 +1001,8 @@ function source28() {
     ]);
 }
 
-function source29() {
-  const cid = era_flag.target;
+function source29(com_context) {
+  const { target: cid, assi } = com_context;
   add_lose(cid, 0, 70);
   add_lose(cid, 1, 90);
   set_src(cid, 12, 200);
@@ -1004,14 +1011,14 @@ function source29() {
   breast_clit_source(cid);
   anal_lube_source(cid);
   // 此处误乘 V 快感格而非肛快感格，按原样保留。
-  if (era_flag.assiplay && tal(era_flag.assi, 121))
+  if (era_flag.assiplay && tal(assi, 121))
     set_src(cid, 1, times(src(cid, 1), 2.5));
   anal_body_pain(cid);
   anal_sense_source(cid);
   anal_chastity_source(cid);
   anal_lust_source(cid, ANAL_SEAT_LUST, true);
   anal_obey_source(cid, ANAL_SEAT_OBEY, true);
-  const extra = player_skill_source(cid, true);
+  const extra = player_skill_source(com_context, cid, true);
   // EXPLV 槽一 >= 3：读数组槽一（1），恒不成立。
   if (EXPLV[1] >= 3) add_src(cid, 2, extra);
   if (tal(cid, 85)) set_src(cid, 3, times(src(cid, 3), 1.5));
@@ -1019,14 +1026,14 @@ function source29() {
 
 // —— com20–29 执行入口 ——
 
-async function com_vagina(id, label, calculate) {
+async function com_vagina(com_context, id, label, calculate) {
   if (!(await confirm_lost_virgin())) return 0;
   if (!(await confirm_condom())) return 0;
   const upgraded = await get_adv_com(id);
-  if (upgraded !== id) return jump_to_advanced(upgraded);
+  if (upgraded !== id) return jump_to_advanced(com_context, upgraded);
   era.print(label);
   await train_message_b();
-  const cid = era_flag.target;
+  const { target: cid } = com_context;
   set('tflag:19', 1);
   if (
     (id === 20 && !era_flag.assiplay && exp(cid, 0) === 0 && !tq(cid, 89)) ||
@@ -1043,69 +1050,69 @@ async function com_vagina(id, label, calculate) {
     set('tflag:20', 1);
   }
   await com_ejac_player_sex();
-  calculate();
+  calculate(com_context);
   await com_after_vagina_sex();
   return 1;
 }
 
-async function com20() {
-  return com_vagina(20, '正常位', source20);
+async function com20(com_context) {
+  return com_vagina(com_context, 20, '正常位', source20);
 }
-async function com21() {
-  return com_vagina(21, '背后位', source21);
+async function com21(com_context) {
+  return com_vagina(com_context, 21, '背后位', source21);
 }
-async function com22() {
-  return com_vagina(22, '对面座位', source22);
+async function com22(com_context) {
+  return com_vagina(com_context, 22, '对面座位', source22);
 }
-async function com23() {
-  return com_vagina(23, '背面座位', source23);
+async function com23(com_context) {
+  return com_vagina(com_context, 23, '背面座位', source23);
 }
 
-async function com24() {
+async function com24(com_context) {
   era.print('逆强奸');
-  if (!(await check_reverse_sex(true))) return 0;
-  if (!(await confirm_reverse_virgin())) return 0;
+  if (!(await check_reverse_sex(com_context, true))) return 0;
+  if (!(await confirm_reverse_virgin(com_context))) return 0;
   await train_message_b();
   await com_ejac_player_sex();
-  reverse_source(era_flag.target);
-  await reverse_post24();
+  reverse_source(com_context);
+  await reverse_post24(com_context);
   return 1;
 }
 
-async function com25() {
+async function com25(com_context) {
   era.print('逆肛门强奸');
-  if (!(await check_reverse_sex(false))) return 0;
+  if (!(await check_reverse_sex(com_context, false))) return 0;
   await train_message_b();
   await com_ejac_player_analsex();
-  reverse_source(era_flag.target);
-  reverse_post25();
+  reverse_source(com_context);
+  reverse_post25(com_context);
   return 1;
 }
 
-async function com_anal(id, label, calculate, advanced = false) {
+async function com_anal(com_context, id, label, calculate, advanced = false) {
   if (advanced) {
     const upgraded = await get_adv_com(id);
-    if (upgraded !== id) return jump_to_advanced(upgraded);
+    if (upgraded !== id) return jump_to_advanced(com_context, upgraded);
   }
   era.print(label);
   await train_message_b();
   await com_ejac_player_analsex();
-  calculate();
+  calculate(com_context);
   await com_after_anal_sex();
   return 1;
 }
 
-async function com26() {
-  return com_anal(26, '正常位肛交', source26, true);
+async function com26(com_context) {
+  return com_anal(com_context, 26, '正常位肛交', source26, true);
 }
-async function com27() {
-  return com_anal(27, '背后位肛交', source27, true);
+async function com27(com_context) {
+  return com_anal(com_context, 27, '背后位肛交', source27, true);
 }
-async function com28() {
-  return com_anal(28, '对面座位肛交', source28);
+async function com28(com_context) {
+  return com_anal(com_context, 28, '对面座位肛交', source28);
 }
-async function com29() {
-  return com_anal(29, '背面座位肛交', source29);
+async function com29(com_context) {
+  return com_anal(com_context, 29, '背面座位肛交', source29);
 }
 
 // —— able20–29：按 guard 顺序逐条保留 ——

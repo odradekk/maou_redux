@@ -7,6 +7,7 @@
  *   - get_adv_com CASE 135（口交时自慰升格）。
  */
 const assert = require('node:assert/strict');
+const { com_context } = require('./helpers/com-context');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
@@ -35,7 +36,9 @@ function seed_world() {
 
 async function run_com(world, com) {
   world.era_flag.selectcom = com;
-  return world.com_family.call(com);
+  return world.com_family.call(com, {
+    args: [com_context(world.era_flag)],
+  });
 }
 
 function enable_insert(fixture) {
@@ -101,7 +104,9 @@ test('able135：无头骑士（TALENT:314==4）；男人挡', async () => {
 test('com120：插入Ｇ点蹂躏，显式回填 SELECTCOM=120', async () => {
   const world = seed_world();
   world.era_flag.selectcom = 34;
-  const result = await world.com_family.call(120);
+  const result = await world.com_family.call(120, {
+    args: [com_context(world.era_flag)],
+  });
   assert.equal(result, 1);
   assert.equal(world.era_flag.selectcom, 120, '显式回填 selectcom = 120');
   assert.ok(world.fixture.text_lines().includes('骑乘位Ｇ点蹂躏'));
@@ -114,7 +119,9 @@ test('com120：默认档 SOURCE / TFLAG 与骑乘派生', async () => {
   world.fixture.store.set('abl:31:2', 3);
   world.fixture.store.set('exp:31:0', 4);
   world.fixture.store.set('palam:31:3', 500);
-  const result = await world.com_family.call(120);
+  const result = await world.com_family.call(120, {
+    args: [com_context(world.era_flag)],
+  });
   assert.equal(result, 1);
   assert.equal(world.fixture.store.get('tflag:19'), 1, '伴 V 经验旗');
   assert.equal(world.fixture.store.get('tflag:42'), 0, '三人 PLAY 持续清零');
@@ -128,7 +135,9 @@ test('com120：默认档 SOURCE / TFLAG 与骑乘派生', async () => {
   const riding = seed_world();
   riding.era_flag.prevcom = 34;
   riding.era_flag.selectcom = 34;
-  await riding.com_family.call(120);
+  await riding.com_family.call(120, {
+    args: [com_context(riding.era_flag)],
+  });
   assert.equal(riding.fixture.store.get('source:31:12'), 1300);
   assert.equal(riding.fixture.store.get('source:31:4'), 200);
   assert.equal(riding.fixture.store.get('deltabase:31:0'), -60);
@@ -139,7 +148,9 @@ test('com120 B/A：体位行与对准Ｇ点射精', async () => {
   world.era_flag.prevcom = 20;
   world.era_flag.selectcom = 20;
   world.fixture.store.set('callname:0:-1', '魔王');
-  await world.com_family.call(120);
+  await world.com_family.call(120, {
+    args: [com_context(world.era_flag)],
+  });
   const lines = world.fixture.text_lines();
   assert.ok(
     lines.includes(
@@ -168,7 +179,9 @@ test('com121：插入子宫口蹂躏，回填 SELECTCOM 与默认 SOURCE', async
   world.fixture.store.set('abl:31:2', 3);
   world.fixture.store.set('exp:31:0', 4);
   world.fixture.store.set('palam:31:3', 500);
-  const result = await world.com_family.call(121);
+  const result = await world.com_family.call(121, {
+    args: [com_context(world.era_flag)],
+  });
   assert.equal(result, 1);
   assert.equal(world.era_flag.selectcom, 121);
   assert.ok(world.fixture.text_lines().includes('正常位子宫口蹂躏'));
@@ -186,7 +199,9 @@ test('com121 B/A：子宫叩击行与直接注入精液', async () => {
   world.era_flag.prevcom = 20;
   world.era_flag.selectcom = 20;
   world.fixture.store.set('callname:0:-1', '魔王');
-  await world.com_family.call(121);
+  await world.com_family.call(121, {
+    args: [com_context(world.era_flag)],
+  });
   const lines = world.fixture.text_lines();
   assert.ok(
     lines.includes('抓住温妮的腰、往最深处突进、子宫被敲击着发出咚咚咚的声音…'),
@@ -264,7 +279,9 @@ test('com123：乳夹口交，回填 SELECTCOM 与默认 SOURCE', async () => {
   const world = seed_world();
   world.era_flag.selectcom = 32;
   world.fixture.store.set('abl:31:11', 36);
-  const result = await world.com_family.call(123);
+  const result = await world.com_family.call(123, {
+    args: [com_context(world.era_flag)],
+  });
   assert.equal(result, 1);
   assert.equal(world.era_flag.selectcom, 123, '显式回填 selectcom = 123');
   assert.ok(world.fixture.text_lines().includes('乳夹口交'));
@@ -283,7 +300,9 @@ test('com123：乳夹口交，回填 SELECTCOM 与默认 SOURCE', async () => {
 
 test('com123：实行值不足则取消回合', async () => {
   const world = seed_world();
-  const result = await world.com_family.call(123);
+  const result = await world.com_family.call(123, {
+    args: [com_context(world.era_flag)],
+  });
   assert.equal(result, 0);
   assert.equal(world.era_flag.selectcom, 123);
   // 源值由 addCharacterForTrain 按 Source.yml 的声明集预置 0；取消的回合不写它
@@ -297,7 +316,9 @@ test('com123：实行值不足则取消回合', async () => {
 test('com123 B/A：乳夹侍奉行与口中倾泻', async () => {
   const world = seed_world();
   world.fixture.store.set('abl:31:11', 36);
-  await world.com_family.call(123);
+  await world.com_family.call(123, {
+    args: [com_context(world.era_flag)],
+  });
   assert.ok(
     world.fixture.text_lines().includes('温妮用胸部夹着阴茎、舔舐刺激着…'),
   );
@@ -318,7 +339,9 @@ test('com124：深喉，回填 SELECTCOM 与默认 SOURCE', async () => {
   const world = seed_world();
   world.era_flag.selectcom = 31;
   world.fixture.store.set('abl:31:11', 40);
-  const result = await world.com_family.call(124);
+  const result = await world.com_family.call(124, {
+    args: [com_context(world.era_flag)],
+  });
   assert.equal(result, 1);
   assert.equal(world.era_flag.selectcom, 124, '显式回填 selectcom = 124');
   assert.ok(world.fixture.text_lines().includes('深喉'));
@@ -337,7 +360,9 @@ test('com124：深喉，回填 SELECTCOM 与默认 SOURCE', async () => {
 
 test('com124：实行值不足则取消回合', async () => {
   const world = seed_world();
-  const result = await world.com_family.call(124);
+  const result = await world.com_family.call(124, {
+    args: [com_context(world.era_flag)],
+  });
   assert.equal(result, 0);
   assert.equal(world.era_flag.selectcom, 124);
   // 源值由 addCharacterForTrain 按 Source.yml 的声明集预置 0；取消的回合不写它
@@ -351,7 +376,9 @@ test('com124：实行值不足则取消回合', async () => {
 test('com124 B/A：喉咙最深处与抓住头射出', async () => {
   const world = seed_world();
   world.fixture.store.set('abl:31:11', 40);
-  await world.com_family.call(124);
+  await world.com_family.call(124, {
+    args: [com_context(world.era_flag)],
+  });
   assert.ok(
     world.fixture.text_lines().includes('温妮用喉咙最深处对阴茎又吸又夹…'),
   );
@@ -370,7 +397,9 @@ test('com125：口交时自慰，显式回填 SELECTCOM=125', async () => {
   const world = seed_world();
   world.era_flag.selectcom = 31;
   world.fixture.store.set('abl:31:11', 50);
-  const result = await world.com_family.call(125);
+  const result = await world.com_family.call(125, {
+    args: [com_context(world.era_flag)],
+  });
   assert.equal(result, 1);
   assert.equal(world.era_flag.selectcom, 125, '显式回填 selectcom = 125');
   assert.ok(world.fixture.text_lines().includes('口交时自慰'));
@@ -379,7 +408,9 @@ test('com125：口交时自慰，显式回填 SELECTCOM=125', async () => {
 test('com125：默认档 SOURCE / TFLAG', async () => {
   const world = seed_world();
   world.fixture.store.set('abl:31:11', 50);
-  await world.com_family.call(125);
+  await world.com_family.call(125, {
+    args: [com_context(world.era_flag)],
+  });
   // ABL:0=0 → S0=15 ×0.30（技巧）=4；S12=2000 ×2.00（剃毛）=4000；
   // S13 被阴蒂感觉段覆写为 500。ABL:16=0 → S4 先 620 再被技巧覆写为 100 ×0.50=50；
   // S5=150 ×0.30=45；S8=100 ×4.00=400。
@@ -398,7 +429,9 @@ test('com125：默认档 SOURCE / TFLAG', async () => {
 
 test('com125：实行值不足则取消回合', async () => {
   const world = seed_world();
-  const result = await world.com_family.call(125);
+  const result = await world.com_family.call(125, {
+    args: [com_context(world.era_flag)],
+  });
   assert.equal(result, 0);
   assert.equal(world.era_flag.selectcom, 125);
   // 源值由 addCharacterForTrain 按 Source.yml 的声明集预置 0；取消的回合不写它
@@ -412,7 +445,9 @@ test('com125：实行值不足则取消回合', async () => {
 test('com125 B/A：吸啜自慰行与口中注入', async () => {
   const world = seed_world();
   world.fixture.store.set('abl:31:11', 50);
-  await world.com_family.call(125);
+  await world.com_family.call(125, {
+    args: [com_context(world.era_flag)],
+  });
   assert.ok(
     world.fixture
       .text_lines()
@@ -482,7 +517,9 @@ test('com126：手搓口交，回填 SELECTCOM 与默认 SOURCE', async () => {
   const world = seed_world();
   world.era_flag.selectcom = 31;
   world.fixture.store.set('abl:31:11', 40);
-  const result = await world.com_family.call(126);
+  const result = await world.com_family.call(126, {
+    args: [com_context(world.era_flag)],
+  });
   assert.equal(result, 1);
   assert.equal(world.era_flag.selectcom, 126, '显式回填 selectcom = 126');
   assert.ok(world.fixture.text_lines().includes('手搓口交'));
@@ -500,7 +537,9 @@ test('com126：手搓口交，回填 SELECTCOM 与默认 SOURCE', async () => {
 
 test('com126：实行值不足则取消回合', async () => {
   const world = seed_world();
-  const result = await world.com_family.call(126);
+  const result = await world.com_family.call(126, {
+    args: [com_context(world.era_flag)],
+  });
   assert.equal(result, 0);
   assert.equal(world.era_flag.selectcom, 126);
   // 源值由 addCharacterForTrain 按 Source.yml 的声明集预置 0；取消的回合不写它
@@ -514,7 +553,9 @@ test('com126：实行值不足则取消回合', async () => {
 test('com126 B/A：吸啜按摩行与口中注入', async () => {
   const world = seed_world();
   world.fixture.store.set('abl:31:11', 40);
-  await world.com_family.call(126);
+  await world.com_family.call(126, {
+    args: [com_context(world.era_flag)],
+  });
   assert.ok(
     world.fixture.text_lines().includes('温妮吸啜着阴茎、按摩着阴茎的根部。'),
   );
@@ -531,7 +572,9 @@ test('com127：真空口交，回填 SELECTCOM 与默认 SOURCE', async () => {
   const world = seed_world();
   world.era_flag.selectcom = 31;
   world.fixture.store.set('abl:31:11', 40);
-  const result = await world.com_family.call(127);
+  const result = await world.com_family.call(127, {
+    args: [com_context(world.era_flag)],
+  });
   assert.equal(result, 1);
   assert.equal(world.era_flag.selectcom, 127, '显式回填 selectcom = 127');
   assert.ok(world.fixture.text_lines().includes('真空口交'));
@@ -549,7 +592,9 @@ test('com127：真空口交，回填 SELECTCOM 与默认 SOURCE', async () => {
 
 test('com127：实行值不足则取消回合', async () => {
   const world = seed_world();
-  const result = await world.com_family.call(127);
+  const result = await world.com_family.call(127, {
+    args: [com_context(world.era_flag)],
+  });
   assert.equal(result, 0);
   assert.equal(world.era_flag.selectcom, 127);
   // 源值由 addCharacterForTrain 按 Source.yml 的声明集预置 0；取消的回合不写它
@@ -563,7 +608,9 @@ test('com127：实行值不足则取消回合', async () => {
 test('com127 B/A：吮吸行与口中开放精关', async () => {
   const world = seed_world();
   world.fixture.store.set('abl:31:11', 40);
-  await world.com_family.call(127);
+  await world.com_family.call(127, {
+    args: [com_context(world.era_flag)],
+  });
   assert.ok(
     world.fixture
       .text_lines()
@@ -588,7 +635,9 @@ test('com128：正常位・接吻，回填 SELECTCOM 与默认 SOURCE', async ()
   world.fixture.store.set('abl:31:2', 3);
   world.fixture.store.set('exp:31:0', 4);
   world.fixture.store.set('palam:31:3', 500);
-  const result = await world.com_family.call(128);
+  const result = await world.com_family.call(128, {
+    args: [com_context(world.era_flag)],
+  });
   assert.equal(result, 1);
   assert.equal(world.era_flag.selectcom, 128, '显式回填 selectcom = 128');
   assert.ok(world.fixture.text_lines().includes('正常位・接吻'));
@@ -611,7 +660,9 @@ test('com128：正常位・接吻，回填 SELECTCOM 与默认 SOURCE', async ()
 test('com128 B/A：接吻贯穿行与灌满余韵', async () => {
   const world = seed_world();
   world.fixture.store.set('callname:0:-1', '魔王');
-  await world.com_family.call(128);
+  await world.com_family.call(128, {
+    args: [com_context(world.era_flag)],
+  });
   assert.ok(
     world.fixture
       .text_lines()
@@ -639,7 +690,9 @@ test('com129：正常位・胸爱抚，回填 SELECTCOM 与默认 SOURCE', async
   world.fixture.store.set('abl:31:2', 3);
   world.fixture.store.set('exp:31:0', 4);
   world.fixture.store.set('palam:31:3', 500);
-  const result = await world.com_family.call(129);
+  const result = await world.com_family.call(129, {
+    args: [com_context(world.era_flag)],
+  });
   assert.equal(result, 1);
   assert.equal(world.era_flag.selectcom, 129, '显式回填 selectcom = 129');
   assert.ok(world.fixture.text_lines().includes('正常位・胸爱抚'));
@@ -658,7 +711,9 @@ test('com129：正常位・胸爱抚，回填 SELECTCOM 与默认 SOURCE', async
 test('com129 B/A：胸揉搓行与灌满余韵', async () => {
   const world = seed_world();
   world.fixture.store.set('callname:0:-1', '魔王');
-  await world.com_family.call(129);
+  await world.com_family.call(129, {
+    args: [com_context(world.era_flag)],
+  });
   assert.ok(
     world.fixture
       .text_lines()
@@ -684,7 +739,9 @@ test('com130：正常位ＳＰ，回填 SELECTCOM 与默认 SOURCE', async () =>
   world.fixture.store.set('abl:31:2', 3);
   world.fixture.store.set('exp:31:0', 4);
   world.fixture.store.set('palam:31:3', 500);
-  const result = await world.com_family.call(130);
+  const result = await world.com_family.call(130, {
+    args: [com_context(world.era_flag)],
+  });
   assert.equal(result, 1);
   assert.equal(world.era_flag.selectcom, 130, '显式回填 selectcom = 130');
   assert.ok(world.fixture.text_lines().includes('正常位ＳＰ'));
@@ -707,7 +764,9 @@ test('com130：正常位ＳＰ，回填 SELECTCOM 与默认 SOURCE', async () =>
 test('com130 B/A：接吻胸揉与子宫突进行', async () => {
   const world = seed_world();
   world.fixture.store.set('callname:0:-1', '魔王');
-  await world.com_family.call(130);
+  await world.com_family.call(130, {
+    args: [com_context(world.era_flag)],
+  });
   const lines = world.fixture.text_lines();
   assert.ok(
     lines.includes(
@@ -725,7 +784,9 @@ test('com131：背后位・胸爱抚，回填 SELECTCOM 与默认 SOURCE', async
   world.fixture.store.set('abl:31:2', 3);
   world.fixture.store.set('exp:31:0', 4);
   world.fixture.store.set('palam:31:3', 500);
-  const result = await world.com_family.call(131);
+  const result = await world.com_family.call(131, {
+    args: [com_context(world.era_flag)],
+  });
   assert.equal(result, 1);
   assert.equal(world.era_flag.selectcom, 131, '显式回填 selectcom = 131');
   assert.ok(world.fixture.text_lines().includes('背后位・胸爱抚'));
@@ -743,7 +804,9 @@ test('com131：背后位・胸爱抚，回填 SELECTCOM 与默认 SOURCE', async
 
 test('com131 B/A：从后揉胸行', async () => {
   const world = seed_world();
-  await world.com_family.call(131);
+  await world.com_family.call(131, {
+    args: [com_context(world.era_flag)],
+  });
   assert.ok(
     world.fixture
       .text_lines()
@@ -757,7 +820,9 @@ test('com132：背后位・打屁股，回填 SELECTCOM 与默认 SOURCE', async
   world.fixture.store.set('abl:31:2', 3);
   world.fixture.store.set('exp:31:0', 4);
   world.fixture.store.set('palam:31:3', 500);
-  const result = await world.com_family.call(132);
+  const result = await world.com_family.call(132, {
+    args: [com_context(world.era_flag)],
+  });
   assert.equal(result, 1);
   assert.equal(world.era_flag.selectcom, 132, '显式回填 selectcom = 132');
   assert.ok(world.fixture.text_lines().includes('背后位・打屁股'));
@@ -778,7 +843,9 @@ test('com132：背后位・打屁股，回填 SELECTCOM 与默认 SOURCE', async
 
 test('com132 B/A：打屁股痛苦行', async () => {
   const world = seed_world();
-  await world.com_family.call(132);
+  await world.com_family.call(132, {
+    args: [com_context(world.era_flag)],
+  });
   const lines = world.fixture.text_lines();
   assert.ok(lines.includes('温妮被从后侵犯着、颤抖着的屁股被打着…'));
   assert.ok(
@@ -794,7 +861,9 @@ test('com133：站立背后位，回填 SELECTCOM 与默认 SOURCE', async () =>
   world.fixture.store.set('abl:31:2', 3);
   world.fixture.store.set('exp:31:0', 4);
   world.fixture.store.set('palam:31:3', 500);
-  const result = await world.com_family.call(133);
+  const result = await world.com_family.call(133, {
+    args: [com_context(world.era_flag)],
+  });
   assert.equal(result, 1);
   assert.equal(world.era_flag.selectcom, 133, '显式回填 selectcom = 133');
   assert.ok(world.fixture.text_lines().includes('站立背后位'));
@@ -815,7 +884,9 @@ test('com133：站立背后位，回填 SELECTCOM 与默认 SOURCE', async () =>
 
 test('com133 B/A：上身仰起与深吻行', async () => {
   const world = seed_world();
-  await world.com_family.call(133);
+  await world.com_family.call(133, {
+    args: [com_context(world.era_flag)],
+  });
   const lines = world.fixture.text_lines();
   assert.ok(
     lines.includes('被贯穿的温妮上身上抬、向后仰起、晃动的胸部被揉着、'),
@@ -833,7 +904,9 @@ test('com134：背后位ＳＰ，回填 SELECTCOM 与默认 SOURCE', async () =>
   world.fixture.store.set('abl:31:2', 3);
   world.fixture.store.set('exp:31:0', 4);
   world.fixture.store.set('palam:31:3', 500);
-  const result = await world.com_family.call(134);
+  const result = await world.com_family.call(134, {
+    args: [com_context(world.era_flag)],
+  });
   assert.equal(result, 1);
   assert.equal(world.era_flag.selectcom, 134, '显式回填 selectcom = 134');
   assert.ok(world.fixture.text_lines().includes('背后位ＳＰ'));
@@ -855,7 +928,9 @@ test('com134：背后位ＳＰ，回填 SELECTCOM 与默认 SOURCE', async () =>
 test('com134 B/A：从后揉胸与子宫口蹂躏行', async () => {
   const world = seed_world();
   world.fixture.store.set('callname:0:-1', '魔王');
-  await world.com_family.call(134);
+  await world.com_family.call(134, {
+    args: [com_context(world.era_flag)],
+  });
   const lines = world.fixture.text_lines();
   assert.ok(lines.includes('温妮晃动的胸部被揉着、'));
   assert.ok(
