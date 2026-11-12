@@ -20,6 +20,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { seed_train_world } = require('./helpers/train-world');
+const { com_context } = require('./helpers/com-context');
 
 /** 世界底座：开火车表、指好 TARGET/PLAYER、装好重度调教族。 */
 function seed_world() {
@@ -45,7 +46,9 @@ function seed_world() {
 /** 经族调用一条指令（真实循环里 SELECTCOM 由 train-loop 先置——测试同位） */
 async function run_com(world, com) {
   world.era_flag.selectcom = com;
-  return world.com_family.call(com);
+  return world.com_family.call(com, {
+    args: [com_context(world.era_flag)],
+  });
 }
 
 // —— 80–90 号可用性检查 ——
@@ -330,7 +333,9 @@ test('com84：Ｇ点刺激（升格目标），私处经验＋1、显式回填 S
   fixture.store.set('talent:0:122', 1); // 调教者男人：走 EXP:41
   fixture.store.set('talent:31:122', 1); // 对象也是男人
   era_flag.selectcom = 8; // 玩家原选 8（升格链上游），com84 内部会自行回填 84
-  const result = await world.com_family.call(84);
+  const result = await world.com_family.call(84, {
+    args: [com_context(world.era_flag)],
+  });
   assert.equal(result, 1);
   assert.ok(fixture.text_lines().includes('刺激Ｇ点'));
   assert.equal(fixture.store.get('exp:31:0'), 1);
