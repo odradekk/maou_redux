@@ -4,8 +4,10 @@
  */
 
 const era = require('#/era-electron');
-const { chara } = require('#/facade/chara');
-const { game } = require('#/facade/game');
+const EraChara = require('#/era-utils/era-chara');
+const era_tflag = require('#/era-utils/era-tflag');
+const era_tstr = require('#/era-utils/era-tstr');
+const era_videoarchive = require('#/era-utils/era-videoarchive');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { chara_callname } = require('#/utils/callname-utils');
@@ -297,16 +299,18 @@ function apply_command(cid, assi, command, equipment, state) {
   if (state.video_assi === 1) state.extra[5] += 1;
 
   // 四条有额外素质条件的直线指令。
-  if (command === 4 && era.get(`talent:${cid}:121`)) state.extra[10] += 10;
-  if (command === 17 && !era.get(`talent:${cid}:121`)) state.extra[10] += 10;
-  if (command === 60 && !era.get(`talent:${assi}:122`)) {
+  if (command === 4 && EraChara.get(cid).talent.futanari) state.extra[10] += 10;
+  if (command === 17 && !EraChara.get(cid).talent.futanari)
+    state.extra[10] += 10;
+  if (command === 60 && !EraChara.get(assi).talent.male) {
     bonus_abl = 33;
     state.extra[9] += 3;
   }
-  if (command === 122 && !era.get(`talent:${cid}:121`)) state.extra[10] += 10;
+  if (command === 122 && !EraChara.get(cid).talent.futanari)
+    state.extra[10] += 10;
 
   if (bonus_abl !== 0) {
-    const level = era.get(`abl:${cid}:${bonus_abl}`) || 0;
+    const level = EraChara.get(cid).abl.get(bonus_abl) || 0;
     if (level > 5) score = times_trunc(score, 1.5);
     else if (level > 2) score = times_trunc(score, 1.2);
     else if (level > 0) score = times_trunc(score, 1.1);
@@ -325,17 +329,18 @@ function make_video_title(cid, state) {
     else title += '抖M';
   }
 
-  if (era.get(`talent:${cid}:140`)) title += '母控';
-  if (era.get(`talent:${cid}:141`)) title += '父控';
-  if (era.get(`talent:${cid}:142`)) title += '萝莉控';
-  if (era.get(`talent:${cid}:143`)) title += '正太控';
-  if (era.get(`talent:${cid}:157`)) title += '人妻';
-  if (era.get(`talent:${cid}:153`)) title += '孕妇';
+  if (EraChara.get(cid).talent.mother_complex) title += '母控';
+  if (EraChara.get(cid).talent.father_complex) title += '父控';
+  if (EraChara.get(cid).talent.lolicon) title += '萝莉控';
+  if (EraChara.get(cid).talent.shotacon) title += '正太控';
+  if (EraChara.get(cid).talent.married_woman) title += '人妻';
+  if (EraChara.get(cid).talent.pregnant) title += '孕妇';
 
-  const life = era.get(`talent:${cid}:315`) || 0; // 成为勇者前的生活
-  const lives = era.get(`talent:${cid}:122`) ? MALE_LIVES : FEMALE_LIVES;
+  const life = EraChara.get(cid).talent.pre_hero_life || 0; // 成为勇者前的生活
+  const lives = EraChara.get(cid).talent.male ? MALE_LIVES : FEMALE_LIVES;
   title += lives[life] || '奴隶';
-  if ((era.get(`abl:${cid}:17`) || 0) >= 4) title += chara_callname(cid);
+  if ((EraChara.get(cid).abl.exhibitionism || 0) >= 4)
+    title += chara_callname(cid);
   title += '的';
 
   if (state.extra[7] > 3) title += '野外';
@@ -347,7 +352,7 @@ function make_video_title(cid, state) {
 
   if (state.cbva[0] > 6) {
     title +=
-      era.get(`talent:${cid}:122`) || era.get(`talent:${cid}:121`)
+      EraChara.get(cid).talent.male || EraChara.get(cid).talent.futanari
         ? '阴茎蹂躏'
         : '阴蒂蹂躏';
   } else if (state.cbva[1] > 6) title += '乳房蹂躏';
@@ -364,14 +369,14 @@ function make_video_title(cid, state) {
 
 /** @returns {string} */
 function archive_title(index) {
-  return era.get(`videoarchive:${index}`) || '';
+  return era_videoarchive.get(index) || '';
 }
 
 /** 把给定片名写入首个空槽；满架时静默丢弃。 */
 function archive_first_empty(title) {
   for (let index = 0; index < ARCHIVE_SIZE; index += 1) {
     if (archive_title(index) === '') {
-      era.set(`videoarchive:${index}`, title);
+      era_videoarchive.set(index, title);
       return true;
     }
   }
@@ -383,7 +388,7 @@ function archive_first_empty(title) {
  * @param {number} cid
  */
 function video_backup(cid) {
-  const title = chara(cid).stronghold.录像标题;
+  const title = EraChara.get(cid).cstr.video_title || '';
   archive_first_empty(title);
 }
 
@@ -394,17 +399,17 @@ function video_backup(cid) {
 function save_temporary_video(cid) {
   // EX_FLAG:9000 第 2 位 = 水晶球录像保存开关。
   if ((era_exflag.mod_switch_bits & 4) !== 0) {
-    const stored = archive_first_empty(era.get('tstr:30') || '');
+    const stored = archive_first_empty(era_tstr.get(30) || '');
     if (
       stored &&
-      !era.get(`talent:${cid}:220`) &&
-      !era.get(`ex_talent:${cid}:2`)
+      !EraChara.get(cid).talent.elite &&
+      !EraChara.get(cid).ex_talent.offspring
     ) {
       era_exflag.crystal_ball_stock += 1;
     }
   }
   // TSTR:30 = 售卖物名暂存；开关关闭或书架已满也必须消费。
-  era.set('tstr:30', '');
+  era_tstr.set(30, '');
 }
 
 function video_maturo2(cid) {
@@ -460,12 +465,12 @@ function video_shelf(no_page, num_page, content_count) {
  */
 async function sell_video(cid = era_flag.target, assi = era_flag.assi) {
   if (!era.getAddedCharacters().includes(cid)) return 0;
-  const target = chara(cid);
+  const target = EraChara.get(cid);
 
   // 仍在录像时先退一份魔力源，再删去“录像结束”占用的一格计数。
-  if (target.train.录像摄影) game.train.水晶球魔力源 -= 1;
-  target.train.录像时间 -= 1;
-  if (target.train.录像时间 <= 0) return 0;
+  if (target.tequip.get(53)) era.set('item:28', (era.get('item:28') || 0) - 1); // 水晶球魔力源
+  target.cflag.set(491, target.cflag.get(491) - 1); // CFLAG:491 = 录像时间
+  if (target.cflag.get(491) <= 0) return 0;
 
   era.drawLine();
   const state = {
@@ -476,12 +481,12 @@ async function sell_video(cid = era_flag.target, assi = era_flag.assi) {
     video_assi: 0,
   };
   // CFLAG:90 = 拍摄开始时的装备位图；全库无写点，仍按此语义读取。
-  let equipment = era.get(`cflag:${cid}:90`) || 0;
+  let equipment = EraChara.get(cid).cflag.shoot_equipment_bits || 0;
   let score = 0;
 
   // 上界排他：录像时间已先减一，消费 CFLAG:460..(460+录像时间-1)。
-  for (let index = 0; index < target.train.录像时间; index += 1) {
-    const packed = era.get(`cflag:${cid}:${index + 460}`) || 0;
+  for (let index = 0; index < target.cflag.get(491); index += 1) {
+    const packed = EraChara.get(cid).cflag.get(index + 460) || 0;
     state.video_assi = Math.trunc(packed / 1000);
     const command = packed % 1000;
     const result = apply_command(cid, assi, command, equipment, state);
@@ -490,14 +495,14 @@ async function sell_video(cid = era_flag.target, assi = era_flag.assi) {
   }
 
   // TFLAG:32 = 录像内容位图；位 0 为处女丧失、位 1 为自我介绍。
-  if (game.kojo.录像内容 & 1) {
+  if (era_tflag.get(32) & 1) {
     score += 5000;
     era.print(`影像中记录了${chara_callname(cid)}丧失处女的画面`);
-    target.dungeon.异常经验 += 1;
+    target.exp.set(50, target.exp.get(50) + 1); // EXP:50 = 异常经验
     era.print(`${era.get('expname:50') || ''}＋１`);
   }
-  if (game.kojo.录像内容 & 2) {
-    const talking = era.get(`abl:${cid}:15`) || 0;
+  if (era_tflag.get(32) & 2) {
+    const talking = EraChara.get(cid).abl.talk_skill || 0;
     const rates = [0.9, 1, 1.05, 1.1, 1.15, 1.2, 1.25];
     score = times_trunc(score, rates[Math.min(talking, 6)]);
   }
@@ -524,10 +529,10 @@ async function sell_video(cid = era_flag.target, assi = era_flag.assi) {
     [135, 2],
   ];
   for (const [talent, rate] of talent_rates) {
-    if (era.get(`talent:${cid}:${talent}`)) score = times_trunc(score, rate);
+    if (EraChara.get(cid).talent.get(talent)) score = times_trunc(score, rate);
   }
   // 男人且非幼稚时的折价是二项组合，不能并入上面的单素质表。
-  if (era.get(`talent:${cid}:122`) && !era.get(`talent:${cid}:132`)) {
+  if (EraChara.get(cid).talent.male && !EraChara.get(cid).talent.childish) {
     score = times_trunc(score, 0.8);
   }
 
@@ -539,9 +544,9 @@ async function sell_video(cid = era_flag.target, assi = era_flag.assi) {
   const title = make_video_title(cid, state);
   if (score > 0) {
     await era.printAndWait(`调教时的视频有着${score}点的观赏价值。`);
-    if (assi > 0 && (era.get(`abl:${assi}:15`) || 0) !== 0) {
+    if (assi > 0 && (EraChara.get(assi).abl.talk_skill || 0) !== 0) {
       const edit_bonus = Math.trunc(
-        (score * (era.get(`abl:${assi}:15`) || 0) * 5) / 100,
+        (score * (EraChara.get(assi).abl.talk_skill || 0) * 5) / 100,
       );
       await era.printAndWait(
         `${chara_callname(assi)}的巧妙的编辑，令视频价值提高了${edit_bonus}点。`,
@@ -551,18 +556,21 @@ async function sell_video(cid = era_flag.target, assi = era_flag.assi) {
     era.print(`卖录像的${score}点到手了。`);
     era_flag.money += score;
     era_exflag.legit_money += score;
-    target.stronghold.录像价值 = score;
-    target.stronghold.录像标题 = title;
+    target.cflag.set(493, score); // CFLAG:493 = 录像价值
+    target.cstr.set(6, title); // CSTR:6 = 录像标题
     video_backup(cid);
-    target.stronghold.录像属性 = -1;
-    if (!era.get(`talent:${cid}:220`) && !era.get(`ex_talent:${cid}:1`)) {
+    target.cflag.set(498, -1); // CFLAG:498 = 录像属性
+    if (
+      !EraChara.get(cid).talent.elite &&
+      !EraChara.get(cid).ex_talent.royal_guard
+    ) {
       era_exflag.crystal_ball_stock += 1;
     }
   } else {
     era.print('录制的视频没有成为有用的东西。');
   }
 
-  target.train.录像时间 = 0;
+  target.cflag.set(491, 0);
   await era.waitAnyKey();
   return 0;
 }
@@ -574,12 +582,12 @@ async function sell_video(cid = era_flag.target, assi = era_flag.assi) {
 async function event_video_day(cid) {
   if (!era.getAddedCharacters().includes(cid)) return 0;
   // CFLAG:497 = 公开许可（只读）；0 时整段不推进。
-  if (!era.get(`cflag:${cid}:497`)) return 0;
+  if (!EraChara.get(cid).cflag.video_public) return 0;
 
-  const view = chara(cid).stronghold;
-  let viewers = Math.trunc(view.录像价值 / 10);
+  const view = EraChara.get(cid);
+  let viewers = Math.trunc(view.cflag.get(493) / 10);
   // CFLAG:494 = 狂热度；1..99 时降低浏览数，随后最低补 1。
-  const mania = era.get(`cflag:${cid}:494`) || 0;
+  const mania = EraChara.get(cid).cflag.video_mania || 0;
   if (mania > 0 && mania < 100) {
     viewers = Math.trunc((viewers * (100 - mania)) / 100) + 1;
   }
@@ -587,12 +595,12 @@ async function event_video_day(cid) {
   fans *= Math.trunc(mania / 2) + 1;
   if (fans > viewers) fans = viewers;
 
-  view.录像浏览数 += viewers;
-  view.录像粉丝信数 += fans;
+  view.cflag.set(495, view.cflag.get(495) + viewers); // CFLAG:495 = 录像浏览数
+  view.cflag.set(496, view.cflag.get(496) + fans); // CFLAG:496 = 录像粉丝信数
 
-  if (view.录像标题 !== '') {
+  if ((view.cstr.get(6) || '') !== '') {
     era.println();
-    era.print(`录制于水晶中的「${view.录像标题}」在黑市上流通了起来……`);
+    era.print(`录制于水晶中的「${view.cstr.get(6)}」在黑市上流通了起来……`);
     await era.printAndWait(
       fans > 0
         ? `收到了${viewers}点金钱，并收到了${fans}封粉丝信。`

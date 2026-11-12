@@ -31,14 +31,13 @@
 
 'use strict';
 
-const era = require('#/era-electron');
-const { chara } = require('#/facade/chara');
+const EraChara = require('#/era-utils/era-chara');
 const { gohoubi_request_koujo } = require('#/kojo/kojo-dungeon-after');
 const { default_rand } = require('#/utils/numeric');
 
 /** TALENT 读数缺省 0（#13） */
 function talent(cid, idx) {
-  return era.get(`talent:${cid}:${idx}`) || 0;
+  return EraChara.get(cid).talent.get(idx) || 0;
 }
 
 /**
@@ -69,7 +68,7 @@ async function gohoubi_request(arg0, rand = default_rand) {
     wish = 0;
   }
 
-  chara(select).stronghold.要求奖赏 = wish; // CFLAG:SELECT:504 = WISH（跨域写走属主门面）
+  EraChara.get(select).cflag.requested_reward = wish; // CFLAG:SELECT:504 = WISH（跨域写走属主门面）
   await gohoubi_request_koujo(select);
   return 0;
 }

@@ -14,9 +14,10 @@
  */
 
 const era = require('#/era-electron');
+const EraChara = require('#/era-utils/era-chara');
+const era_tstr = require('#/era-utils/era-tstr');
 const { estimate_chara } = require('#/system/stronghold/sale');
 const { video_maturo } = require('#/system/stronghold/sell-video');
-const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
 const { search_family } = require('#/system/chara/chara-family');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
@@ -31,8 +32,8 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
   let route = 0;
   let ending = '';
 
-  if (era.get(`mark:${cid}:3`) == 3) {
-    if (era.get(`talent:${cid}:314`) == 9) {
+  if (EraChara.get(cid).mark.resistance_mark == 3) {
+    if (EraChara.get(cid).talent.race == 9) {
       if (price >= 100000) {
         if (rand_n(2) == 0) {
           buyer = '食脑魔的诸侯';
@@ -47,7 +48,7 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
         await era.printAndWait(`…`);
 
         if (route == 1) {
-          if (era.get(`cflag:${cid}:9`) >= 50) {
+          if (EraChara.get(cid).cflag.level >= 50) {
             await era.printAndWait(
               `反抗心很强的${target_name}受到了好事之徒的喜爱。`,
             );
@@ -68,8 +69,8 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
           }
         } else if (route == 0) {
           if (
-            era.get(`talent:${cid}:202`) == 1 ||
-            era.get(`talent:${cid}:206`) == 1
+            EraChara.get(cid).talent.priest == 1 ||
+            EraChara.get(cid).talent.shrine_maiden == 1
           ) {
             await era.printAndWait(
               `反抗心很强的${target_name}成为了奇怪的教团的干部。`,
@@ -130,10 +131,10 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
         } else if (route == 0) {
           // TALENT 110/114/119/121 = 巨乳/爆乳/超乳/扶她：任一成立走奶罐末路。
           if (
-            era.get(`talent:${cid}:110`) == 1 ||
-            era.get(`talent:${cid}:114`) == 1 ||
-            era.get(`talent:${cid}:119`) == 1 ||
-            era.get(`talent:${cid}:121`) == 1
+            EraChara.get(cid).talent.large_breasts == 1 ||
+            EraChara.get(cid).talent.huge_breasts == 1 ||
+            EraChara.get(cid).talent.massive_breasts == 1 ||
+            EraChara.get(cid).talent.futanari == 1
           ) {
             await era.printAndWait(
               `反抗心很强的${target_name}被当作奶罐被饲养着畜舍里。`,
@@ -162,12 +163,12 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
       }
     } else {
       if (price >= 100000) {
-        if (era.get(`talent:${cid}:314`) == 5) {
+        if (EraChara.get(cid).talent.race == 5) {
           buyer = '高阶魔法研究所';
           route = 2;
         } else if (
-          era.get(`talent:${cid}:200`) == 1 ||
-          era.get(`talent:${cid}:203`) == 1
+          EraChara.get(cid).talent.warrior == 1 ||
+          EraChara.get(cid).talent.thief == 1
         ) {
           buyer = '兽人的佣兵团';
           route = 1;
@@ -195,7 +196,7 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
         } else if (route == 1) {
           await era.printAndWait(`${target_name}作为护卫剑士被雇佣了。`);
 
-          if (era.get(`cflag:${cid}:9`) >= 100) {
+          if (EraChara.get(cid).cflag.level >= 100) {
             await era.printAndWait(
               `靠着武艺高强和牙尖嘴利，${target_name}成为了兽人们大姐一样的角色。`,
             );
@@ -218,8 +219,8 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
           ending = '护卫剑士';
         } else if (route == 0) {
           if (
-            era.get(`talent:${cid}:202`) == 1 ||
-            era.get(`talent:${cid}:206`) == 1
+            EraChara.get(cid).talent.priest == 1 ||
+            EraChara.get(cid).talent.shrine_maiden == 1
           ) {
             await era.printAndWait(
               `反抗心很强的${target_name}，被吸血鬼所洗礼，成了暗黑之神的信徒。`,
@@ -282,10 +283,10 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
           }
         } else if (route == 0) {
           if (
-            era.get(`talent:${cid}:110`) == 1 ||
-            era.get(`talent:${cid}:114`) == 1 ||
-            era.get(`talent:${cid}:119`) == 1 ||
-            era.get(`talent:${cid}:119`) == 1
+            EraChara.get(cid).talent.large_breasts == 1 ||
+            EraChara.get(cid).talent.huge_breasts == 1 ||
+            EraChara.get(cid).talent.massive_breasts == 1 ||
+            EraChara.get(cid).talent.massive_breasts == 1
           ) {
             await era.printAndWait(
               `反抗心很强的${target_name}作为奶罐而被饲养着畜舍里。`,
@@ -312,24 +313,27 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
         }
       }
     }
-  } else if (era.get(`talent:${cid}:85`) || era.get(`talent:${cid}:76`)) {
-    if (era.get(`talent:${cid}:314`) == 9) {
+  } else if (
+    EraChara.get(cid).talent.in_love ||
+    EraChara.get(cid).talent.lewd
+  ) {
+    if (EraChara.get(cid).talent.race == 9) {
       if (price >= 1000000) {
         if (
-          era.get(`talent:${cid}:200`) == 1 ||
-          era.get(`talent:${cid}:203`) == 1
+          EraChara.get(cid).talent.warrior == 1 ||
+          EraChara.get(cid).talent.thief == 1
         ) {
           buyer = '暗黑龙';
           route = 3;
         } else if (
-          era.get(`talent:${cid}:205`) == 1 ||
-          era.get(`talent:${cid}:207`) == 1
+          EraChara.get(cid).talent.knight == 1 ||
+          EraChara.get(cid).talent.ninja == 1
         ) {
           buyer = '上级恶魔';
           route = 2;
         } else if (
-          era.get(`talent:${cid}:202`) == 1 ||
-          era.get(`talent:${cid}:206`) == 1
+          EraChara.get(cid).talent.priest == 1 ||
+          EraChara.get(cid).talent.shrine_maiden == 1
         ) {
           buyer = '异形之神的神殿';
           route = 1;
@@ -343,7 +347,7 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
         await era.printAndWait(`…`);
 
         if (route == 3) {
-          if (era.get(`talent:${cid}:75`) == 1) {
+          if (EraChara.get(cid).talent.sex_maniac == 1) {
             await era.printAndWait(
               `${target_name}成为了暗黑龙的新娘，在龙的洞穴里生活着。`,
             );
@@ -367,10 +371,10 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
           ending = '暗黑龙的新娘';
         } else if (route == 2) {
           if (
-            era.get(`talent:${cid}:110`) == 1 ||
-            era.get(`talent:${cid}:114`) == 1 ||
-            era.get(`talent:${cid}:119`) == 1 ||
-            era.get(`talent:${cid}:119`) == 1
+            EraChara.get(cid).talent.large_breasts == 1 ||
+            EraChara.get(cid).talent.huge_breasts == 1 ||
+            EraChara.get(cid).talent.massive_breasts == 1 ||
+            EraChara.get(cid).talent.massive_breasts == 1
           ) {
             await era.printAndWait(
               `有着伟岸胸部的${target_name}成为了上级恶魔的女仆。`,
@@ -396,7 +400,7 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
           }
           ending = '上级恶魔的女仆';
         } else if (route == 1) {
-          if (era.get(`talent:${cid}:77`) == 1) {
+          if (EraChara.get(cid).talent.anal_maniac == 1) {
             await era.printAndWait(
               `${target_name}在异形之神的神殿，照顾着变异的信徒。`,
             );
@@ -419,7 +423,7 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
           }
           ending = '异形之神的干事';
         } else if (route == 0) {
-          if (era.get(`abl:${cid}:15`) >= 5) {
+          if (EraChara.get(cid).abl.talk_skill >= 5) {
             await era.printAndWait(
               `${target_name}用巧妙的话语说服了魔兽研究所的研究人员，`,
             );
@@ -441,20 +445,20 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
         }
       } else if (price >= 500000) {
         if (
-          era.get(`talent:${cid}:200`) == 1 ||
-          era.get(`talent:${cid}:203`) == 1
+          EraChara.get(cid).talent.warrior == 1 ||
+          EraChara.get(cid).talent.thief == 1
         ) {
           buyer = '食人魔佣兵团';
           route = 3;
         } else if (
-          era.get(`talent:${cid}:205`) == 1 ||
-          era.get(`talent:${cid}:207`) == 1
+          EraChara.get(cid).talent.knight == 1 ||
+          EraChara.get(cid).talent.ninja == 1
         ) {
           buyer = '半人马的骑士团';
           route = 2;
         } else if (
-          era.get(`talent:${cid}:202`) == 1 ||
-          era.get(`talent:${cid}:206`) == 1
+          EraChara.get(cid).talent.priest == 1 ||
+          EraChara.get(cid).talent.shrine_maiden == 1
         ) {
           buyer = '牛头人祭司';
           route = 1;
@@ -468,7 +472,7 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
         await era.printAndWait(`…`);
 
         if (route == 3) {
-          if (era.get(`talent:${cid}:203`) == 1) {
+          if (EraChara.get(cid).talent.thief == 1) {
             await era.printAndWait(
               `${target_name}成为了食人魔佣兵团的一员，起到支援和后勤的作用。`,
             );
@@ -493,10 +497,10 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
           ending = '食人魔佣兵团员';
         } else if (route == 2) {
           if (
-            era.get(`talent:${cid}:110`) == 1 ||
-            era.get(`talent:${cid}:114`) == 1 ||
-            era.get(`talent:${cid}:119`) == 1 ||
-            era.get(`talent:${cid}:119`) == 1
+            EraChara.get(cid).talent.large_breasts == 1 ||
+            EraChara.get(cid).talent.huge_breasts == 1 ||
+            EraChara.get(cid).talent.massive_breasts == 1 ||
+            EraChara.get(cid).talent.massive_breasts == 1
           ) {
             await era.printAndWait(`${target_name}过着抚养半人马孩子的生活。`);
             await era.printAndWait(
@@ -523,7 +527,7 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
             ending = '半人马骑士侍从';
           }
         } else if (route == 1) {
-          if (era.get(`talent:${cid}:77`) == 1) {
+          if (EraChara.get(cid).talent.anal_maniac == 1) {
             await era.printAndWait(
               `${target_name}作为优秀的祭典活动人，受到牛头人祭司们的肯定。`,
             );
@@ -543,7 +547,7 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
             ending = '牛头人圣母';
           }
         } else if (route == 0) {
-          if (era.get(`talent:${cid}:204`) == 1) {
+          if (EraChara.get(cid).talent.cum_dump == 1) {
             await era.printAndWait(
               `作为宴客用肉便器，${target_name}在兽人的屋子里有着特殊的地位。`,
             );
@@ -572,20 +576,20 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
         }
       } else if (price >= 100000) {
         if (
-          era.get(`talent:${cid}:200`) == 1 ||
-          era.get(`talent:${cid}:203`) == 1
+          EraChara.get(cid).talent.warrior == 1 ||
+          EraChara.get(cid).talent.thief == 1
         ) {
           buyer = '六头海蛇的联防队';
           route = 3;
         } else if (
-          era.get(`talent:${cid}:205`) == 1 ||
-          era.get(`talent:${cid}:201`) == 1
+          EraChara.get(cid).talent.knight == 1 ||
+          EraChara.get(cid).talent.mage == 1
         ) {
           buyer = '黑暗精灵的学校';
           route = 2;
         } else if (
-          era.get(`talent:${cid}:202`) == 1 ||
-          era.get(`talent:${cid}:206`) == 1
+          EraChara.get(cid).talent.priest == 1 ||
+          EraChara.get(cid).talent.shrine_maiden == 1
         ) {
           buyer = '魔像的大农场';
           route = 1;
@@ -599,7 +603,7 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
         await era.printAndWait(`…`);
 
         if (route == 3) {
-          if (era.get(`talent:${cid}:75`) == 1) {
+          if (EraChara.get(cid).talent.sex_maniac == 1) {
             await era.printAndWait(
               `${target_name}作为六头海蛇联防队的外雇战士被雇佣了。`,
             );
@@ -629,10 +633,10 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
           ending = '六头海蛇的联防队外籍战士';
         } else if (route == 2) {
           if (
-            era.get(`talent:${cid}:110`) == 1 ||
-            era.get(`talent:${cid}:114`) == 1 ||
-            era.get(`talent:${cid}:119`) == 1 ||
-            era.get(`talent:${cid}:119`) == 1
+            EraChara.get(cid).talent.large_breasts == 1 ||
+            EraChara.get(cid).talent.huge_breasts == 1 ||
+            EraChara.get(cid).talent.massive_breasts == 1 ||
+            EraChara.get(cid).talent.massive_breasts == 1
           ) {
             await era.printAndWait(`${target_name}在黑暗精灵的中学做讲师。`);
             await era.printAndWait(
@@ -655,7 +659,7 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
             ending = '黑暗精灵学校的淫行老师';
           }
         } else if (route == 1) {
-          if (era.get(`talent:${cid}:77`) == 1) {
+          if (EraChara.get(cid).talent.anal_maniac == 1) {
             await era.printAndWait(
               `${target_name}在魔像的大农场里，从事着生产肥料的工作。`,
             );
@@ -679,7 +683,7 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
             ending = '魔像的生物部件';
           }
         } else if (route == 0) {
-          if (era.get(`talent:${cid}:204`) == 1) {
+          if (EraChara.get(cid).talent.cum_dump == 1) {
             await era.printAndWait(`${target_name}在狼人的赌场里，当肉便器。`);
             await era.printAndWait(
               `被改造成能怀上犬类的${target_name}，正出演着被狼人侵犯的表演。`,
@@ -701,20 +705,20 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
         }
       } else {
         if (
-          era.get(`talent:${cid}:200`) == 1 ||
-          era.get(`talent:${cid}:203`) == 1
+          EraChara.get(cid).talent.warrior == 1 ||
+          EraChara.get(cid).talent.thief == 1
         ) {
           buyer = '兽人佣兵团';
           route = 3;
         } else if (
-          era.get(`talent:${cid}:205`) == 1 ||
-          era.get(`talent:${cid}:207`) == 1
+          EraChara.get(cid).talent.knight == 1 ||
+          EraChara.get(cid).talent.ninja == 1
         ) {
           buyer = '巨魔的奴隶主';
           route = 2;
         } else if (
-          era.get(`talent:${cid}:202`) == 1 ||
-          era.get(`talent:${cid}:206`) == 1
+          EraChara.get(cid).talent.priest == 1 ||
+          EraChara.get(cid).talent.shrine_maiden == 1
         ) {
           buyer = '黑暗精灵的学者';
           route = 1;
@@ -728,7 +732,7 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
         await era.printAndWait(`…`);
 
         if (route == 3) {
-          if (era.get(`talent:${cid}:75`) == 1) {
+          if (EraChara.get(cid).talent.sex_maniac == 1) {
             await era.printAndWait(`${target_name}作为佣兵团的一员被招募了。`);
             await era.printAndWait(
               `喜欢性爱的${target_name}，经常在训练的时候偷偷给别的兽人口交。`,
@@ -742,10 +746,10 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
           ending = '兽人佣兵团员';
         } else if (route == 2) {
           if (
-            era.get(`talent:${cid}:110`) == 1 ||
-            era.get(`talent:${cid}:114`) == 1 ||
-            era.get(`talent:${cid}:119`) == 1 ||
-            era.get(`talent:${cid}:119`) == 1
+            EraChara.get(cid).talent.large_breasts == 1 ||
+            EraChara.get(cid).talent.huge_breasts == 1 ||
+            EraChara.get(cid).talent.massive_breasts == 1 ||
+            EraChara.get(cid).talent.massive_breasts == 1
           ) {
             await era.printAndWait(`${target_name}成为了巨魔苦力们的飞机杯。`);
             await era.printAndWait(
@@ -765,7 +769,7 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
           }
           ending = '巨魔的慰安妇';
         } else if (route == 1) {
-          if (era.get(`talent:${cid}:77`) == 1) {
+          if (EraChara.get(cid).talent.anal_maniac == 1) {
             await era.printAndWait(
               `${target_name}成为了新的性拷问研究用实验体。`,
             );
@@ -786,7 +790,7 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
           }
           ending = '黑暗精灵学者的实验体';
         } else if (route == 0) {
-          if (era.get(`talent:${cid}:204`) == 1) {
+          if (EraChara.get(cid).talent.cum_dump == 1) {
             await era.printAndWait(
               `${target_name}的肉体被淫秽地改造了，被全身赤裸地放在店里招揽客人。`,
             );
@@ -813,20 +817,20 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
     } else {
       if (price >= 1000000) {
         if (
-          era.get(`talent:${cid}:200`) == 1 ||
-          era.get(`talent:${cid}:203`) == 1
+          EraChara.get(cid).talent.warrior == 1 ||
+          EraChara.get(cid).talent.thief == 1
         ) {
           buyer = '堕天使的贵族';
           route = 3;
         } else if (
-          era.get(`talent:${cid}:205`) == 1 ||
-          era.get(`talent:${cid}:207`) == 1
+          EraChara.get(cid).talent.knight == 1 ||
+          EraChara.get(cid).talent.ninja == 1
         ) {
           buyer = '狮鹫快递';
           route = 2;
         } else if (
-          era.get(`talent:${cid}:202`) == 1 ||
-          era.get(`talent:${cid}:206`) == 1
+          EraChara.get(cid).talent.priest == 1 ||
+          EraChara.get(cid).talent.shrine_maiden == 1
         ) {
           buyer = '蛇妖的高级妓院';
           route = 1;
@@ -840,7 +844,7 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
         await era.printAndWait(`…`);
 
         if (route == 3) {
-          if (era.get(`talent:${cid}:75`) == 1) {
+          if (EraChara.get(cid).talent.sex_maniac == 1) {
             await era.printAndWait(
               `${target_name}成为了堕天使的贵族少年的性教育者。`,
             );
@@ -864,10 +868,10 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
           ending = '堕天使少年的私教';
         } else if (route == 2) {
           if (
-            era.get(`talent:${cid}:110`) == 1 ||
-            era.get(`talent:${cid}:114`) == 1 ||
-            era.get(`talent:${cid}:119`) == 1 ||
-            era.get(`talent:${cid}:119`) == 1
+            EraChara.get(cid).talent.large_breasts == 1 ||
+            EraChara.get(cid).talent.huge_breasts == 1 ||
+            EraChara.get(cid).talent.massive_breasts == 1 ||
+            EraChara.get(cid).talent.massive_breasts == 1
           ) {
             await era.printAndWait(`${target_name}成为了狮鹫的骑手。`);
             await era.printAndWait(
@@ -887,7 +891,7 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
           }
           ending = '狮鹫骑士';
         } else if (route == 1) {
-          if (era.get(`talent:${cid}:77`) == 1) {
+          if (EraChara.get(cid).talent.anal_maniac == 1) {
             await era.printAndWait(`${target_name}成为了专卖菊花的妓女。`);
             await era.printAndWait(
               `在各色各样异种族名流聚集的蛇妖妓院里，${target_name}拥有很高的人气。`,
@@ -909,7 +913,7 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
             ending = '异种奸娼妇';
           }
         } else if (route == 0) {
-          if (era.get(`abl:${cid}:15`) >= 5) {
+          if (EraChara.get(cid).abl.talk_skill >= 5) {
             await era.printAndWait(
               `${target_name}成为了哥布林们的偶像，现在也在大剧场里载歌载舞着。`,
             );
@@ -932,20 +936,20 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
         }
       } else if (price >= 500000) {
         if (
-          era.get(`talent:${cid}:207`) == 1 ||
-          era.get(`talent:${cid}:203`) == 1
+          EraChara.get(cid).talent.ninja == 1 ||
+          EraChara.get(cid).talent.thief == 1
         ) {
           buyer = '黑暗精灵的暗杀公会';
           route = 3;
         } else if (
-          era.get(`talent:${cid}:205`) == 1 ||
-          era.get(`talent:${cid}:200`) == 1
+          EraChara.get(cid).talent.knight == 1 ||
+          EraChara.get(cid).talent.warrior == 1
         ) {
           buyer = '六头海蛇的海盗船';
           route = 2;
         } else if (
-          era.get(`talent:${cid}:202`) == 1 ||
-          era.get(`talent:${cid}:206`) == 1
+          EraChara.get(cid).talent.priest == 1 ||
+          EraChara.get(cid).talent.shrine_maiden == 1
         ) {
           buyer = '大富豪蛇妖';
           route = 1;
@@ -959,7 +963,7 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
         await era.printAndWait(`…`);
 
         if (route == 3) {
-          if (era.get(`talent:${cid}:203`) == 1) {
+          if (EraChara.get(cid).talent.thief == 1) {
             await era.printAndWait(`${target_name}成为了暗杀公会的情报人员。`);
             await era.printAndWait(
               `过往成了谜，${target_name}从不同的炮友身上不断地窃取着信息。`,
@@ -980,10 +984,10 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
           }
         } else if (route == 2) {
           if (
-            era.get(`talent:${cid}:110`) == 1 ||
-            era.get(`talent:${cid}:114`) == 1 ||
-            era.get(`talent:${cid}:119`) == 1 ||
-            era.get(`talent:${cid}:119`) == 1
+            EraChara.get(cid).talent.large_breasts == 1 ||
+            EraChara.get(cid).talent.huge_breasts == 1 ||
+            EraChara.get(cid).talent.massive_breasts == 1 ||
+            EraChara.get(cid).talent.massive_breasts == 1
           ) {
             await era.printAndWait(
               `${target_name}成为了六头海蛇海贼团的船长。`,
@@ -1006,7 +1010,7 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
             ending = '女海贼团船员';
           }
         } else if (route == 1) {
-          if (era.get(`talent:${cid}:77`) == 1) {
+          if (EraChara.get(cid).talent.anal_maniac == 1) {
             await era.printAndWait(
               `${target_name}每晚都被喜欢百合的蛇妖欺负着。`,
             );
@@ -1030,7 +1034,7 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
             ending = '蛇妖的百合奴隶';
           }
         } else if (route == 0) {
-          if (era.get(`talent:${cid}:204`) == 1) {
+          if (EraChara.get(cid).talent.cum_dump == 1) {
             await era.printAndWait(
               `${target_name}全身都被刻上了奇怪的咒术刺青，在未开化的蛮族部落里生活着。`,
             );
@@ -1056,20 +1060,20 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
         }
       } else if (price >= 100000) {
         if (
-          era.get(`talent:${cid}:200`) == 1 ||
-          era.get(`talent:${cid}:203`) == 1
+          EraChara.get(cid).talent.warrior == 1 ||
+          EraChara.get(cid).talent.thief == 1
         ) {
           buyer = '魔界的植物园';
           route = 3;
         } else if (
-          era.get(`talent:${cid}:205`) == 1 ||
-          era.get(`talent:${cid}:201`) == 1
+          EraChara.get(cid).talent.knight == 1 ||
+          EraChara.get(cid).talent.mage == 1
         ) {
           buyer = '兽人骑士团';
           route = 2;
         } else if (
-          era.get(`talent:${cid}:202`) == 1 ||
-          era.get(`talent:${cid}:206`) == 1
+          EraChara.get(cid).talent.priest == 1 ||
+          EraChara.get(cid).talent.shrine_maiden == 1
         ) {
           buyer = '鹰身女妖的奴隶中介';
           route = 1;
@@ -1083,7 +1087,7 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
         await era.printAndWait(`…`);
 
         if (route == 3) {
-          if (era.get(`talent:${cid}:75`) == 1) {
+          if (EraChara.get(cid).talent.sex_maniac == 1) {
             await era.printAndWait(
               `${target_name}作为养分的供给，在培育着魔界的植物。`,
             );
@@ -1108,9 +1112,9 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
           }
         } else if (route == 2) {
           if (
-            era.get(`talent:${cid}:110`) == 1 ||
-            era.get(`talent:${cid}:114`) == 1 ||
-            era.get(`talent:${cid}:119`) == 1
+            EraChara.get(cid).talent.large_breasts == 1 ||
+            EraChara.get(cid).talent.huge_breasts == 1 ||
+            EraChara.get(cid).talent.massive_breasts == 1
           ) {
             await era.printAndWait(
               `${target_name}被兽人的骑士团拿来抚育和训练兽人的孩子。`,
@@ -1141,7 +1145,7 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
             ending = '兽人骑士团员';
           }
         } else if (route == 1) {
-          if (era.get(`talent:${cid}:77`) == 1) {
+          if (EraChara.get(cid).talent.anal_maniac == 1) {
             await era.printAndWait(
               `${target_name}被鹰身女妖富豪作为照顾生活的奴隶买下了。`,
             );
@@ -1165,7 +1169,7 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
             ending = '鹰身女妖的奴隶';
           }
         } else if (route == 0) {
-          if (era.get(`talent:${cid}:204`) == 1) {
+          if (EraChara.get(cid).talent.cum_dump == 1) {
             await era.printAndWait(
               `作为肉便器的${target_name}为了收集实验用的精液，成为了公众便器。`,
             );
@@ -1197,20 +1201,20 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
         }
       } else {
         if (
-          era.get(`talent:${cid}:200`) == 1 ||
-          era.get(`talent:${cid}:203`) == 1
+          EraChara.get(cid).talent.warrior == 1 ||
+          EraChara.get(cid).talent.thief == 1
         ) {
           buyer = '兽人的高级战士';
           route = 3;
         } else if (
-          era.get(`talent:${cid}:205`) == 1 ||
-          era.get(`talent:${cid}:207`) == 1
+          EraChara.get(cid).talent.knight == 1 ||
+          EraChara.get(cid).talent.ninja == 1
         ) {
           buyer = '蜥蜴人骑士';
           route = 2;
         } else if (
-          era.get(`talent:${cid}:202`) == 1 ||
-          era.get(`talent:${cid}:206`) == 1
+          EraChara.get(cid).talent.priest == 1 ||
+          EraChara.get(cid).talent.shrine_maiden == 1
         ) {
           buyer = '黑暗精灵的女神官';
           route = 1;
@@ -1224,7 +1228,7 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
         await era.printAndWait(`…`);
 
         if (route == 3) {
-          if (era.get(`talent:${cid}:75`) == 1) {
+          if (EraChara.get(cid).talent.sex_maniac == 1) {
             await era.printAndWait(`${target_name}与兽人的高级战士结婚了。`);
             await era.printAndWait(`迷上了兽人健壮的肉体，两人深深地相爱着。`);
             await era.printAndWait(
@@ -1238,9 +1242,9 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
           ending = '兽人高等战士的妻子';
         } else if (route == 2) {
           if (
-            era.get(`talent:${cid}:110`) == 1 ||
-            era.get(`talent:${cid}:114`) == 1 ||
-            era.get(`talent:${cid}:119`) == 1
+            EraChara.get(cid).talent.large_breasts == 1 ||
+            EraChara.get(cid).talent.huge_breasts == 1 ||
+            EraChara.get(cid).talent.massive_breasts == 1
           ) {
             await era.printAndWait(`${target_name}与蜥蜴人骑士结婚了。`);
             await era.printAndWait(`陌生的鳞片式肌肤，也没能阻止两人的爱。`);
@@ -1257,9 +1261,9 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
           ending = '蜥蜴人骑士的妻子';
         } else if (route == 1) {
           if (
-            era.get(`talent:${cid}:110`) == 1 ||
-            era.get(`talent:${cid}:114`) == 1 ||
-            era.get(`talent:${cid}:119`) == 1
+            EraChara.get(cid).talent.large_breasts == 1 ||
+            EraChara.get(cid).talent.huge_breasts == 1 ||
+            EraChara.get(cid).talent.massive_breasts == 1
           ) {
             await era.printAndWait(
               `${target_name}在黑暗精灵女神官的指引下修行着。`,
@@ -1284,7 +1288,7 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
             ending = '邪教的姐妹信徒';
           }
         } else if (route == 0) {
-          if (era.get(`talent:${cid}:204`) == 1) {
+          if (EraChara.get(cid).talent.cum_dump == 1) {
             await era.printAndWait(
               `在异种族的街道上，${target_name}作为公众便器被锁在公厕里。`,
             );
@@ -1311,23 +1315,23 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
       }
     }
   } else {
-    if (era.get(`talent:${cid}:314`) == 9) {
+    if (EraChara.get(cid).talent.race == 9) {
       if (price >= 500000) {
         if (
-          era.get(`talent:${cid}:200`) == 1 ||
-          era.get(`talent:${cid}:203`) == 1
+          EraChara.get(cid).talent.warrior == 1 ||
+          EraChara.get(cid).talent.thief == 1
         ) {
           buyer = '食人魔佣兵团';
           route = 3;
         } else if (
-          era.get(`talent:${cid}:205`) == 1 ||
-          era.get(`talent:${cid}:207`) == 1
+          EraChara.get(cid).talent.knight == 1 ||
+          EraChara.get(cid).talent.ninja == 1
         ) {
           buyer = '半人马的骑士团';
           route = 2;
         } else if (
-          era.get(`talent:${cid}:202`) == 1 ||
-          era.get(`talent:${cid}:206`) == 1
+          EraChara.get(cid).talent.priest == 1 ||
+          EraChara.get(cid).talent.shrine_maiden == 1
         ) {
           buyer = '牛头人祭司';
           route = 1;
@@ -1341,7 +1345,7 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
         await era.printAndWait(`…`);
 
         if (route == 3) {
-          if (era.get(`talent:${cid}:203`) == 1) {
+          if (EraChara.get(cid).talent.thief == 1) {
             await era.printAndWait(
               `${target_name}作为顾问，加入了食人魔佣兵团。`,
             );
@@ -1370,9 +1374,9 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
           }
         } else if (route == 2) {
           if (
-            era.get(`talent:${cid}:110`) == 1 ||
-            era.get(`talent:${cid}:114`) == 1 ||
-            era.get(`talent:${cid}:119`) == 1
+            EraChara.get(cid).talent.large_breasts == 1 ||
+            EraChara.get(cid).talent.huge_breasts == 1 ||
+            EraChara.get(cid).talent.massive_breasts == 1
           ) {
             await era.printAndWait(
               `${target_name}作为教职人员，加入了半人马的骑士团。`,
@@ -1403,7 +1407,7 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
             ending = '半人马的幼教';
           }
         } else if (route == 1) {
-          if (era.get(`talent:${cid}:77`) == 1) {
+          if (EraChara.get(cid).talent.anal_maniac == 1) {
             await era.printAndWait(
               `${target_name}每晚都在牛头人神官们的仪式上奉献着后庭。`,
             );
@@ -1428,7 +1432,7 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
             ending = '牛头人神殿的圣母';
           }
         } else if (route == 0) {
-          if (era.get(`talent:${cid}:204`) == 1) {
+          if (EraChara.get(cid).talent.cum_dump == 1) {
             await era.printAndWait(
               `${target_name}作为宴客用的肉便器，在屋子里像家畜似的被养着。`,
             );
@@ -1457,20 +1461,20 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
         }
       } else if (price >= 100000) {
         if (
-          era.get(`talent:${cid}:200`) == 1 ||
-          era.get(`talent:${cid}:203`) == 1
+          EraChara.get(cid).talent.warrior == 1 ||
+          EraChara.get(cid).talent.thief == 1
         ) {
           buyer = '六头海蛇的联防队';
           route = 3;
         } else if (
-          era.get(`talent:${cid}:205`) == 1 ||
-          era.get(`talent:${cid}:207`) == 1
+          EraChara.get(cid).talent.knight == 1 ||
+          EraChara.get(cid).talent.ninja == 1
         ) {
           buyer = '黑暗精灵的学校';
           route = 2;
         } else if (
-          era.get(`talent:${cid}:202`) == 1 ||
-          era.get(`talent:${cid}:206`) == 1
+          EraChara.get(cid).talent.priest == 1 ||
+          EraChara.get(cid).talent.shrine_maiden == 1
         ) {
           buyer = '魔像的大农场';
           route = 1;
@@ -1484,7 +1488,7 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
         await era.printAndWait(`…`);
 
         if (route == 3) {
-          if (era.get(`talent:${cid}:75`) == 1) {
+          if (EraChara.get(cid).talent.sex_maniac == 1) {
             await era.printAndWait(
               `${target_name}作为六头海蛇联防队的外雇战士被雇佣了。`,
             );
@@ -1508,9 +1512,9 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
           }
         } else if (route == 2) {
           if (
-            era.get(`talent:${cid}:110`) == 1 ||
-            era.get(`talent:${cid}:114`) == 1 ||
-            era.get(`talent:${cid}:119`) == 1
+            EraChara.get(cid).talent.large_breasts == 1 ||
+            EraChara.get(cid).talent.huge_breasts == 1 ||
+            EraChara.get(cid).talent.massive_breasts == 1
           ) {
             await era.printAndWait(
               `${target_name}在黑暗精灵的中学做保健老师。`,
@@ -1539,7 +1543,7 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
             ending = '黑暗精灵学校的保健老师';
           }
         } else if (route == 1) {
-          if (era.get(`talent:${cid}:77`) == 1) {
+          if (EraChara.get(cid).talent.anal_maniac == 1) {
             await era.printAndWait(
               `${target_name}在魔像的大农场里，从事着魔像维护的工作。`,
             );
@@ -1566,7 +1570,7 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
             ending = '农场保安';
           }
         } else if (route == 0) {
-          if (era.get(`talent:${cid}:204`) == 1) {
+          if (EraChara.get(cid).talent.cum_dump == 1) {
             await era.printAndWait(
               `为了让牛头人和半人马之类性欲旺盛的种族不造反。`,
             );
@@ -1592,20 +1596,20 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
         }
       } else {
         if (
-          era.get(`talent:${cid}:200`) == 1 ||
-          era.get(`talent:${cid}:203`) == 1
+          EraChara.get(cid).talent.warrior == 1 ||
+          EraChara.get(cid).talent.thief == 1
         ) {
           buyer = '兽人佣兵团';
           route = 3;
         } else if (
-          era.get(`talent:${cid}:205`) == 1 ||
-          era.get(`talent:${cid}:207`) == 1
+          EraChara.get(cid).talent.knight == 1 ||
+          EraChara.get(cid).talent.ninja == 1
         ) {
           buyer = '巨魔的奴隶主';
           route = 2;
         } else if (
-          era.get(`talent:${cid}:202`) == 1 ||
-          era.get(`talent:${cid}:206`) == 1
+          EraChara.get(cid).talent.priest == 1 ||
+          EraChara.get(cid).talent.shrine_maiden == 1
         ) {
           buyer = '黑暗精灵的学者';
           route = 1;
@@ -1619,7 +1623,7 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
         await era.printAndWait(`…`);
 
         if (route == 3) {
-          if (era.get(`abl:${cid}:2`) >= 5) {
+          if (EraChara.get(cid).abl.vagina_feeling >= 5) {
             await era.printAndWait(`${target_name}成为了兽人佣兵团的备品。`);
             await era.printAndWait(`她被绑在马车里，无休止地被侵犯着。`);
             ending = '兽人佣兵团的备品';
@@ -1634,9 +1638,9 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
           }
         } else if (route == 2) {
           if (
-            era.get(`talent:${cid}:110`) == 1 ||
-            era.get(`talent:${cid}:114`) == 1 ||
-            era.get(`talent:${cid}:119`) == 1
+            EraChara.get(cid).talent.large_breasts == 1 ||
+            EraChara.get(cid).talent.huge_breasts == 1 ||
+            EraChara.get(cid).talent.massive_breasts == 1
           ) {
             await era.printAndWait(
               `${target_name}在巨魔奴隶的工厂里作为慰安妇而工作着。`,
@@ -1661,7 +1665,7 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
             ending = '苦力巨魔的慰安妇';
           }
         } else if (route == 1) {
-          if (era.get(`abl:${cid}:3`) >= 3) {
+          if (EraChara.get(cid).abl.anal_feeling >= 3) {
             await era.printAndWait(`${target_name}成为了新媚药的实验体。`);
             await era.printAndWait(
               `肛门被涂上了烈性的新药，令人发疯的快感将她的一切思考能力都吹散了。`,
@@ -1675,7 +1679,7 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
             ending = '媚药实验体';
           }
         } else if (route == 0) {
-          if (era.get(`talent:${cid}:204`) == 1) {
+          if (EraChara.get(cid).talent.cum_dump == 1) {
             await era.printAndWait(
               `${target_name}作为魔族奴隶，在杂耍小屋里全裸地被戏弄着。`,
             );
@@ -1697,20 +1701,20 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
     } else {
       if (price >= 500000) {
         if (
-          era.get(`talent:${cid}:200`) == 1 ||
-          era.get(`talent:${cid}:203`) == 1
+          EraChara.get(cid).talent.warrior == 1 ||
+          EraChara.get(cid).talent.thief == 1
         ) {
           buyer = '食人魔佣兵团';
           route = 3;
         } else if (
-          era.get(`talent:${cid}:205`) == 1 ||
-          era.get(`talent:${cid}:207`) == 1
+          EraChara.get(cid).talent.knight == 1 ||
+          EraChara.get(cid).talent.ninja == 1
         ) {
           buyer = '半人马的骑士团';
           route = 2;
         } else if (
-          era.get(`talent:${cid}:202`) == 1 ||
-          era.get(`talent:${cid}:206`) == 1
+          EraChara.get(cid).talent.priest == 1 ||
+          EraChara.get(cid).talent.shrine_maiden == 1
         ) {
           buyer = '牛头人祭司';
           route = 1;
@@ -1724,7 +1728,7 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
         await era.printAndWait(`…`);
 
         if (route == 3) {
-          if (era.get(`talent:${cid}:75`) == 1) {
+          if (EraChara.get(cid).talent.sex_maniac == 1) {
             await era.printAndWait(
               `${target_name}作为高级性奴隶，加入了食人魔佣兵团。`,
             );
@@ -1753,9 +1757,9 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
           }
         } else if (route == 2) {
           if (
-            era.get(`talent:${cid}:110`) == 1 ||
-            era.get(`talent:${cid}:114`) == 1 ||
-            era.get(`talent:${cid}:119`) == 1
+            EraChara.get(cid).talent.large_breasts == 1 ||
+            EraChara.get(cid).talent.huge_breasts == 1 ||
+            EraChara.get(cid).talent.massive_breasts == 1
           ) {
             await era.printAndWait(
               `${target_name}作为教职人员，加入了半人马的骑士团。`,
@@ -1780,7 +1784,7 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
             ending = '半人马的幼教';
           }
         } else if (route == 1) {
-          if (era.get(`talent:${cid}:77`) == 1) {
+          if (EraChara.get(cid).talent.anal_maniac == 1) {
             await era.printAndWait(
               `${target_name}被牛头人神官作为祭品买回来了。`,
             );
@@ -1805,11 +1809,11 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
             ending = '牛头人的性祭品';
           }
         } else if (route == 0) {
-          if (era.get(`talent:${cid}:204`) == 1) {
+          if (EraChara.get(cid).talent.cum_dump == 1) {
             await era.printAndWait(
               `${target_name}作为宴客用的肉便器，在屋子里像家畜似得养着。`,
             );
-            if (era.get(`talent:${cid}:121`)) {
+            if (EraChara.get(cid).talent.futanari) {
               await era.printAndWait(
                 `身为扶她的${target_name}被改造出巨根，不停地侵犯着其它的奴隶。`,
               );
@@ -1837,20 +1841,20 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
         }
       } else if (price >= 100000) {
         if (
-          era.get(`talent:${cid}:200`) == 1 ||
-          era.get(`talent:${cid}:203`) == 1
+          EraChara.get(cid).talent.warrior == 1 ||
+          EraChara.get(cid).talent.thief == 1
         ) {
           buyer = '六头海蛇的联防队';
           route = 3;
         } else if (
-          era.get(`talent:${cid}:205`) == 1 ||
-          era.get(`talent:${cid}:207`) == 1
+          EraChara.get(cid).talent.knight == 1 ||
+          EraChara.get(cid).talent.ninja == 1
         ) {
           buyer = '黑暗精灵的学校';
           route = 2;
         } else if (
-          era.get(`talent:${cid}:202`) == 1 ||
-          era.get(`talent:${cid}:206`) == 1
+          EraChara.get(cid).talent.priest == 1 ||
+          EraChara.get(cid).talent.shrine_maiden == 1
         ) {
           buyer = '魔像的大农场';
           route = 1;
@@ -1864,7 +1868,7 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
         await era.printAndWait(`…`);
 
         if (route == 3) {
-          if (era.get(`abl:${cid}:2`) >= 5) {
+          if (EraChara.get(cid).abl.vagina_feeling >= 5) {
             await era.printAndWait(
               `${target_name}作为六头海蛇联防队的外雇战士被雇佣了。`,
             );
@@ -1883,9 +1887,9 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
           }
         } else if (route == 2) {
           if (
-            era.get(`talent:${cid}:110`) == 1 ||
-            era.get(`talent:${cid}:114`) == 1 ||
-            era.get(`talent:${cid}:119`) == 1
+            EraChara.get(cid).talent.large_breasts == 1 ||
+            EraChara.get(cid).talent.huge_breasts == 1 ||
+            EraChara.get(cid).talent.massive_breasts == 1
           ) {
             await era.printAndWait(`${target_name}在黑暗精灵的中学做备品。`);
             await era.printAndWait(
@@ -1900,7 +1904,7 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
             ending = '黑暗精灵中学的备品';
           }
         } else if (route == 1) {
-          if (era.get(`talent:${cid}:124`)) {
+          if (EraChara.get(cid).talent.animal_ears) {
             await era.printAndWait(
               `${target_name}因为外形接近动物，因此作为繁殖用家畜，被饲养在马厩里。`,
             );
@@ -1922,7 +1926,7 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
             ending = '家畜便器的管理员';
           }
         } else if (route == 0) {
-          if (era.get(`talent:${cid}:204`) == 1) {
+          if (EraChara.get(cid).talent.cum_dump == 1) {
             await era.printAndWait(
               `作为肉便器的${target_name}，主持着赌场里受欢迎的赌局。`,
             );
@@ -1946,20 +1950,20 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
         }
       } else {
         if (
-          era.get(`talent:${cid}:200`) == 1 ||
-          era.get(`talent:${cid}:203`) == 1
+          EraChara.get(cid).talent.warrior == 1 ||
+          EraChara.get(cid).talent.thief == 1
         ) {
           buyer = '兽人的公共澡堂';
           route = 3;
         } else if (
-          era.get(`talent:${cid}:205`) == 1 ||
-          era.get(`talent:${cid}:207`) == 1
+          EraChara.get(cid).talent.knight == 1 ||
+          EraChara.get(cid).talent.ninja == 1
         ) {
           buyer = '巨魔的奴隶主';
           route = 2;
         } else if (
-          era.get(`talent:${cid}:202`) == 1 ||
-          era.get(`talent:${cid}:206`) == 1
+          EraChara.get(cid).talent.priest == 1 ||
+          EraChara.get(cid).talent.shrine_maiden == 1
         ) {
           buyer = '黑暗精灵的大学生';
           route = 1;
@@ -1973,7 +1977,7 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
         await era.printAndWait(`…`);
 
         if (route == 3) {
-          if (era.get(`abl:${cid}:2`) >= 5) {
+          if (EraChara.get(cid).abl.vagina_feeling >= 5) {
             await era.printAndWait(`${target_name}在公共澡堂里为兽人们按摩。`);
             await era.printAndWait(
               `如果在${target_name}的手法下勃起了的话，只要加一点钱就能狠操${target_name}一顿。`,
@@ -1988,8 +1992,8 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
           }
         } else if (route == 2) {
           if (
-            era.get(`talent:${cid}:61`) == 1 ||
-            era.get(`talent:${cid}:62`) == 1
+            EraChara.get(cid).talent.tolerates_stench == 1 ||
+            EraChara.get(cid).talent.hates_stench == 1
           ) {
             await era.printAndWait(`${target_name}被当做巨魔奴隶的清洁工。`);
             await era.printAndWait(
@@ -2004,7 +2008,7 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
             ending = '苦力巨魔的慰安妇';
           }
         } else if (route == 1) {
-          if (era.get(`talent:${cid}:315`) == 1) {
+          if (EraChara.get(cid).talent.pre_hero_life == 1) {
             await era.printAndWait(
               `黑暗精灵的大学生，居然是${target_name}原来的同学。`,
             );
@@ -2018,7 +2022,7 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
             ending = '黑暗精灵学生的宿舍便器';
           }
         } else if (route == 0) {
-          if (era.get(`talent:${cid}:204`) == 1) {
+          if (EraChara.get(cid).talent.cum_dump == 1) {
             await era.printAndWait(
               `${target_name}作为生育便器被哥布林们宠爱着。`,
             );
@@ -2041,9 +2045,9 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
   }
 
   if (family_id >= 0) {
-    chara(family_id).event.家人末路 = `${ending}${target_name}`;
+    EraChara.get(family_id).cstr.family_fate = `${ending}${target_name}`;
   }
-  era.set('tstr:30', `${ending}${target_name}`);
+  era_tstr.set(30, `${ending}${target_name}`);
 
   await era.print('');
   await era.printAndWait(

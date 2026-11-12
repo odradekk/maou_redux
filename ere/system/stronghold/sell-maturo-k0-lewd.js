@@ -13,9 +13,10 @@
 'use strict';
 
 const era = require('#/era-electron');
+const EraChara = require('#/era-utils/era-chara');
 
 function she(id) {
-  return (era.get(`talent:${id}:122`) || 0) !== 0 ? '他' : '她';
+  return (EraChara.get(id).talent.male || 0) !== 0 ? '他' : '她';
 }
 
 /** lewd_matu_ge1m：淫乱 · 魔族 · 百万以上。 */
@@ -24,18 +25,21 @@ async function lewd_matu_ge1m(ctx) {
   let buyer = '';
   let route = 0;
   let ending = '';
-  if (era.get(`talent:${cid}:200`) == 1 || era.get(`talent:${cid}:203`) == 1) {
+  if (
+    EraChara.get(cid).talent.warrior == 1 ||
+    EraChara.get(cid).talent.thief == 1
+  ) {
     buyer = '魔界的谍报机关';
     route = 3;
   } else if (
-    era.get(`talent:${cid}:205`) == 1 ||
-    era.get(`talent:${cid}:207`) == 1
+    EraChara.get(cid).talent.knight == 1 ||
+    EraChara.get(cid).talent.ninja == 1
   ) {
     buyer = '魔界的高级妓院';
     route = 2;
   } else if (
-    era.get(`talent:${cid}:202`) == 1 ||
-    era.get(`talent:${cid}:206`) == 1
+    EraChara.get(cid).talent.priest == 1 ||
+    EraChara.get(cid).talent.shrine_maiden == 1
   ) {
     buyer = '堕落神的神官长';
     route = 1;
@@ -58,7 +62,7 @@ async function lewd_matu_ge1m(ctx) {
 /** lewd_matu_ge1m_spy_agency：魔界的谍报机关买下；结局 魔界的谍报员 / 谍报组织的提审官。 */
 async function lewd_matu_ge1m_spy_agency({ cid, target_name }) {
   let ending = '';
-  if (era.get(`cflag:${cid}:9`) >= 100) {
+  if (EraChara.get(cid).cflag.level >= 100) {
     await era.printAndWait(`${target_name}据闻和一个山间小国的君主结婚了。`);
     await era.printAndWait(
       `那国王在和${she(cid)}相处了一晚之后就马上发布了结婚的决定。`,
@@ -89,9 +93,9 @@ async function lewd_matu_ge1m_spy_agency({ cid, target_name }) {
 async function lewd_matu_ge1m_high_brothel({ cid, target_name }) {
   let ending = '';
   if (
-    era.get(`talent:${cid}:110`) == 1 ||
-    era.get(`talent:${cid}:114`) == 1 ||
-    era.get(`talent:${cid}:119`) == 1
+    EraChara.get(cid).talent.large_breasts == 1 ||
+    EraChara.get(cid).talent.huge_breasts == 1 ||
+    EraChara.get(cid).talent.massive_breasts == 1
   ) {
     await era.printAndWait(
       `${target_name}彻底堕落的身体让所有客人都很尽兴。从现在这个在男人身上淫乱不堪的样子，根本无法想象${she(cid)}曾经作为勇者挥剑战斗。`,
@@ -122,9 +126,9 @@ async function lewd_matu_ge1m_high_brothel({ cid, target_name }) {
 async function lewd_matu_ge1m_high_priest({ cid, target_name }) {
   let ending = '';
   if (
-    era.get(`talent:${cid}:110`) == 1 ||
-    era.get(`talent:${cid}:114`) == 1 ||
-    era.get(`talent:${cid}:119`) == 1
+    EraChara.get(cid).talent.large_breasts == 1 ||
+    EraChara.get(cid).talent.huge_breasts == 1 ||
+    EraChara.get(cid).talent.massive_breasts == 1
   ) {
     await era.printAndWait(`成熟了的淫乱魔族的肉体，是堕落神最好的祭品之一。`);
     await era.printAndWait(
@@ -150,7 +154,7 @@ async function lewd_matu_ge1m_high_priest({ cid, target_name }) {
 /** lewd_matu_ge1m_magnate：魔界大富豪买下；结局 妊娠便器 / 扩张奴隶。 */
 async function lewd_matu_ge1m_magnate({ cid, target_name }) {
   let ending = '';
-  if (era.get(`talent:${cid}:204`) == 1) {
+  if (EraChara.get(cid).talent.cum_dump == 1) {
     await era.printAndWait(
       `「知道主人为${she(cid)}花费了多少吗？」正当客人这样窃窃私语的时候，${target_name}在掌声中入场了。`,
     );
@@ -185,18 +189,21 @@ async function lewd_matu_ge500k(ctx) {
   let buyer = '';
   let route = 0;
   let ending = '';
-  if (era.get(`talent:${cid}:200`) == 1 || era.get(`talent:${cid}:203`) == 1) {
+  if (
+    EraChara.get(cid).talent.warrior == 1 ||
+    EraChara.get(cid).talent.thief == 1
+  ) {
     buyer = '魔王军的高级将校';
     route = 3;
   } else if (
-    era.get(`talent:${cid}:205`) == 1 ||
-    era.get(`talent:${cid}:207`) == 1
+    EraChara.get(cid).talent.knight == 1 ||
+    EraChara.get(cid).talent.ninja == 1
   ) {
     buyer = '魔界的高级酒吧';
     route = 2;
   } else if (
-    era.get(`talent:${cid}:202`) == 1 ||
-    era.get(`talent:${cid}:206`) == 1
+    EraChara.get(cid).talent.priest == 1 ||
+    EraChara.get(cid).talent.shrine_maiden == 1
   ) {
     buyer = '堕落神的神殿';
     route = 1;
@@ -219,7 +226,7 @@ async function lewd_matu_ge500k(ctx) {
 /** lewd_matu_ge500k_high_officer：魔王军的高级将校买下；结局 高级将校的保镖 / 高级将校的情人。 */
 async function lewd_matu_ge500k_high_officer({ cid, target_name }) {
   let ending = '';
-  if (era.get(`cflag:${cid}:9`) >= 50) {
+  if (EraChara.get(cid).cflag.level >= 50) {
     await era.printAndWait(`${target_name}现在作为主人的保镖兼情人生活着。`);
     await era.printAndWait(`即使已经堕落了，原勇者的战斗力也是不容小视的。`);
     await era.printAndWait(`发情生疼的淫靡肉体，也每晚都被主人疼爱着。`);
@@ -239,9 +246,9 @@ async function lewd_matu_ge500k_high_officer({ cid, target_name }) {
 async function lewd_matu_ge500k_high_bar({ cid, target_name }) {
   let ending = '';
   if (
-    era.get(`talent:${cid}:110`) == 1 ||
-    era.get(`talent:${cid}:114`) == 1 ||
-    era.get(`talent:${cid}:119`) == 1
+    EraChara.get(cid).talent.large_breasts == 1 ||
+    EraChara.get(cid).talent.huge_breasts == 1 ||
+    EraChara.get(cid).talent.massive_breasts == 1
   ) {
     await era.printAndWait(
       `${target_name}与其说是女服务员，不如说是恳求客人交欢的妓女。`,
@@ -268,9 +275,9 @@ async function lewd_matu_ge500k_high_bar({ cid, target_name }) {
 async function lewd_matu_ge500k_temple({ cid, target_name }) {
   let ending = '';
   if (
-    era.get(`talent:${cid}:110`) == 1 ||
-    era.get(`talent:${cid}:114`) == 1 ||
-    era.get(`talent:${cid}:119`) == 1
+    EraChara.get(cid).talent.large_breasts == 1 ||
+    EraChara.get(cid).talent.huge_breasts == 1 ||
+    EraChara.get(cid).talent.massive_breasts == 1
   ) {
     await era.printAndWait(
       `${target_name}每天从神殿开门到神殿关门，都被信徒们侵犯着。`,
@@ -296,7 +303,7 @@ async function lewd_matu_ge500k_temple({ cid, target_name }) {
 /** lewd_matu_ge500k_busybody：魔界的好事之徒买下；结局 肉便器 / 好事者的抱枕。 */
 async function lewd_matu_ge500k_busybody({ cid, target_name }) {
   let ending = '';
-  if (era.get(`talent:${cid}:204`) == 1) {
+  if (EraChara.get(cid).talent.cum_dump == 1) {
     await era.printAndWait(
       `作为肉便器被放置在屋子的厕所里，无论主人、客人还是佣人，男女老少都可以使用。`,
     );
@@ -322,18 +329,21 @@ async function lewd_matu_ge100k(ctx) {
   let buyer = '';
   let route = 0;
   let ending = '';
-  if (era.get(`talent:${cid}:200`) == 1 || era.get(`talent:${cid}:203`) == 1) {
+  if (
+    EraChara.get(cid).talent.warrior == 1 ||
+    EraChara.get(cid).talent.thief == 1
+  ) {
     buyer = '魔界的黑帮';
     route = 3;
   } else if (
-    era.get(`talent:${cid}:205`) == 1 ||
-    era.get(`talent:${cid}:207`) == 1
+    EraChara.get(cid).talent.knight == 1 ||
+    EraChara.get(cid).talent.ninja == 1
   ) {
     buyer = '魔界的妓院';
     route = 2;
   } else if (
-    era.get(`talent:${cid}:202`) == 1 ||
-    era.get(`talent:${cid}:206`) == 1
+    EraChara.get(cid).talent.priest == 1 ||
+    EraChara.get(cid).talent.shrine_maiden == 1
   ) {
     buyer = '魔界的黑酒吧';
     route = 1;
@@ -356,7 +366,7 @@ async function lewd_matu_ge100k(ctx) {
 /** lewd_matu_ge100k_gang：魔界的黑帮买下；结局 黑帮成员 / 黑社会的情妇。 */
 async function lewd_matu_ge100k_gang({ cid, target_name }) {
   let ending = '';
-  if (era.get(`cflag:${cid}:9`) >= 30) {
+  if (EraChara.get(cid).cflag.level >= 30) {
     await era.printAndWait(
       `${target_name}成为黑社会的一员了。因为原来的勇者经历，被委以重任了。`,
     );
@@ -386,9 +396,9 @@ async function lewd_matu_ge100k_gang({ cid, target_name }) {
 async function lewd_matu_ge100k_brothel({ cid, target_name }) {
   let ending = '';
   if (
-    era.get(`talent:${cid}:110`) == 1 ||
-    era.get(`talent:${cid}:114`) == 1 ||
-    era.get(`talent:${cid}:119`) == 1
+    EraChara.get(cid).talent.large_breasts == 1 ||
+    EraChara.get(cid).talent.huge_breasts == 1 ||
+    EraChara.get(cid).talent.massive_breasts == 1
   ) {
     await era.printAndWait(
       `${target_name}被放在橱窗里吸引客人。不知是否是妓院主人的爱好，${she(cid)}的丰满的乳房被画上了下流的图案，乳头也穿了几个乳环。`,
@@ -417,9 +427,9 @@ async function lewd_matu_ge100k_brothel({ cid, target_name }) {
 async function lewd_matu_ge100k_shady_bar({ cid, target_name }) {
   let ending = '';
   if (
-    era.get(`talent:${cid}:110`) == 1 ||
-    era.get(`talent:${cid}:114`) == 1 ||
-    era.get(`talent:${cid}:119`) == 1
+    EraChara.get(cid).talent.large_breasts == 1 ||
+    EraChara.get(cid).talent.huge_breasts == 1 ||
+    EraChara.get(cid).talent.massive_breasts == 1
   ) {
     await era.printAndWait(`贩毒的黑帮在自己经营的黑酒吧里，也流通着毒品。`);
     await era.printAndWait(
@@ -446,7 +456,7 @@ async function lewd_matu_ge100k_shady_bar({ cid, target_name }) {
 /** lewd_matu_ge100k_casino：魔界的赌场买下；结局 赌场的肉便器 / 赌场的赠品。 */
 async function lewd_matu_ge100k_casino({ cid, target_name }) {
   let ending = '';
-  if (era.get(`talent:${cid}:204`) == 1) {
+  if (EraChara.get(cid).talent.cum_dump == 1) {
     await era.printAndWait(
       `赌场为了安抚那些输了很多的客人，就会把他们带到一个侍奉房间里。`,
     );
@@ -480,18 +490,21 @@ async function lewd_matu_lt100k(ctx) {
   let buyer = '';
   let route = 0;
   let ending = '';
-  if (era.get(`talent:${cid}:200`) == 1 || era.get(`talent:${cid}:203`) == 1) {
+  if (
+    EraChara.get(cid).talent.warrior == 1 ||
+    EraChara.get(cid).talent.thief == 1
+  ) {
     buyer = '魔界的酒吧';
     route = 3;
   } else if (
-    era.get(`talent:${cid}:205`) == 1 ||
-    era.get(`talent:${cid}:207`) == 1
+    EraChara.get(cid).talent.knight == 1 ||
+    EraChara.get(cid).talent.ninja == 1
   ) {
     buyer = '乞丐';
     route = 2;
   } else if (
-    era.get(`talent:${cid}:202`) == 1 ||
-    era.get(`talent:${cid}:206`) == 1
+    EraChara.get(cid).talent.priest == 1 ||
+    EraChara.get(cid).talent.shrine_maiden == 1
   ) {
     buyer = '触手小屋';
     route = 1;
@@ -514,7 +527,7 @@ async function lewd_matu_lt100k(ctx) {
 /** lewd_matu_lt100k_bar：魔界的酒吧买下；结局 酒吧的赠品。 */
 async function lewd_matu_lt100k_bar({ cid, target_name }) {
   let ending = '';
-  if (era.get(`cflag:${cid}:9`) >= 20) {
+  if (EraChara.get(cid).cflag.level >= 20) {
     await era.printAndWait(`周末，这种酒吧都会搞一些特别的活动。`);
     await era.printAndWait(
       `${target_name}作为飞镖的靶子，参加了特别的飞镖比赛。特别的魔法，让${she(cid)}被射中的痛楚都会转变为快感。`,
@@ -540,9 +553,9 @@ async function lewd_matu_lt100k_bar({ cid, target_name }) {
 async function lewd_matu_lt100k_beggar({ cid, target_name }) {
   let ending = '';
   if (
-    era.get(`talent:${cid}:110`) == 1 ||
-    era.get(`talent:${cid}:114`) == 1 ||
-    era.get(`talent:${cid}:119`) == 1
+    EraChara.get(cid).talent.large_breasts == 1 ||
+    EraChara.get(cid).talent.huge_breasts == 1 ||
+    EraChara.get(cid).talent.massive_breasts == 1
   ) {
     await era.printAndWait(
       `晚上在主人的巢穴里被疼爱着，白天则被租给主人的乞丐朋友，为主人换取喝酒钱。`,
@@ -570,9 +583,9 @@ async function lewd_matu_lt100k_beggar({ cid, target_name }) {
 async function lewd_matu_lt100k_tentacle_hut({ cid, target_name }) {
   let ending = '';
   if (
-    era.get(`talent:${cid}:110`) == 1 ||
-    era.get(`talent:${cid}:114`) == 1 ||
-    era.get(`talent:${cid}:119`) == 1
+    EraChara.get(cid).talent.large_breasts == 1 ||
+    EraChara.get(cid).talent.huge_breasts == 1 ||
+    EraChara.get(cid).talent.massive_breasts == 1
   ) {
     await era.printAndWait(`${target_name}被安排在量产触手的触手小屋里，`);
     await era.printAndWait(`不知培养了多少触手，也许成百上千了。`);
@@ -594,7 +607,7 @@ async function lewd_matu_lt100k_tentacle_hut({ cid, target_name }) {
 /** lewd_matu_lt100k_toilet：公厕买下；结局 公众便所 / 公众肉便器。 */
 async function lewd_matu_lt100k_toilet({ cid, target_name }) {
   let ending = '';
-  if (era.get(`talent:${cid}:204`) == 1) {
+  if (EraChara.get(cid).talent.cum_dump == 1) {
     await era.printAndWait(
       `被锁在公厕里的${target_name}，作为公众肉便器开始了无休止的侍奉。`,
     );
@@ -624,18 +637,21 @@ async function lewd_other_ge1m(ctx) {
   let buyer = '';
   let route = 0;
   let ending = '';
-  if (era.get(`talent:${cid}:200`) == 1 || era.get(`talent:${cid}:203`) == 1) {
+  if (
+    EraChara.get(cid).talent.warrior == 1 ||
+    EraChara.get(cid).talent.thief == 1
+  ) {
     buyer = '魔界的间谍培训机构';
     route = 3;
   } else if (
-    era.get(`talent:${cid}:205`) == 1 ||
-    era.get(`talent:${cid}:207`) == 1
+    EraChara.get(cid).talent.knight == 1 ||
+    EraChara.get(cid).talent.ninja == 1
   ) {
     buyer = '魔界的高级妓院';
     route = 2;
   } else if (
-    era.get(`talent:${cid}:202`) == 1 ||
-    era.get(`talent:${cid}:206`) == 1
+    EraChara.get(cid).talent.priest == 1 ||
+    EraChara.get(cid).talent.shrine_maiden == 1
   ) {
     buyer = '堕落神的神官长';
     route = 1;
@@ -658,7 +674,7 @@ async function lewd_other_ge1m(ctx) {
 /** lewd_other_ge1m_spy_school：魔界的间谍培训机构买下；结局 魔界的间谍 / 间谍教材。 */
 async function lewd_other_ge1m_spy_school({ cid, target_name }) {
   let ending = '';
-  if (era.get(`cflag:${cid}:9`) >= 100) {
+  if (EraChara.get(cid).cflag.level >= 100) {
     await era.printAndWait(
       `${target_name}在人间界被保护了的消息，你是知道的。`,
     );
@@ -694,9 +710,9 @@ async function lewd_other_ge1m_spy_school({ cid, target_name }) {
 async function lewd_other_ge1m_high_brothel({ cid, target_name }) {
   let ending = '';
   if (
-    era.get(`talent:${cid}:110`) == 1 ||
-    era.get(`talent:${cid}:114`) == 1 ||
-    era.get(`talent:${cid}:119`) == 1
+    EraChara.get(cid).talent.large_breasts == 1 ||
+    EraChara.get(cid).talent.huge_breasts == 1 ||
+    EraChara.get(cid).talent.massive_breasts == 1
   ) {
     await era.printAndWait(
       `作为完全调教的奴隶而被买入的${target_name}，马上就被客人指名了。`,
@@ -725,9 +741,9 @@ async function lewd_other_ge1m_high_brothel({ cid, target_name }) {
 async function lewd_other_ge1m_high_priest({ cid, target_name }) {
   let ending = '';
   if (
-    era.get(`talent:${cid}:110`) == 1 ||
-    era.get(`talent:${cid}:114`) == 1 ||
-    era.get(`talent:${cid}:119`) == 1
+    EraChara.get(cid).talent.large_breasts == 1 ||
+    EraChara.get(cid).talent.huge_breasts == 1 ||
+    EraChara.get(cid).talent.massive_breasts == 1
   ) {
     await era.printAndWait(
       `彻底被调教开发的淫乱肉体，是堕落神最好的祭品之一。`,
@@ -754,7 +770,7 @@ async function lewd_other_ge1m_high_priest({ cid, target_name }) {
 /** lewd_other_ge1m_magnate：魔界大富豪买下；结局 肉便器 / 大富豪的收藏品。 */
 async function lewd_other_ge1m_magnate({ cid, target_name }) {
   let ending = '';
-  if (era.get(`talent:${cid}:204`) == 1) {
+  if (EraChara.get(cid).talent.cum_dump == 1) {
     await era.printAndWait(`被做了手术，${target_name}作为肉便器被放在屋里。`);
     await era.printAndWait(
       `手脚都被切掉了，身子和一根铁管连在一起一动也不能动。`,
@@ -791,18 +807,21 @@ async function lewd_other_ge500k(ctx) {
   let buyer = '';
   let route = 0;
   let ending = '';
-  if (era.get(`talent:${cid}:200`) == 1 || era.get(`talent:${cid}:203`) == 1) {
+  if (
+    EraChara.get(cid).talent.warrior == 1 ||
+    EraChara.get(cid).talent.thief == 1
+  ) {
     buyer = '魔王军的高级将校';
     route = 3;
   } else if (
-    era.get(`talent:${cid}:205`) == 1 ||
-    era.get(`talent:${cid}:207`) == 1
+    EraChara.get(cid).talent.knight == 1 ||
+    EraChara.get(cid).talent.ninja == 1
   ) {
     buyer = '魔界的高级酒吧';
     route = 2;
   } else if (
-    era.get(`talent:${cid}:202`) == 1 ||
-    era.get(`talent:${cid}:206`) == 1
+    EraChara.get(cid).talent.priest == 1 ||
+    EraChara.get(cid).talent.shrine_maiden == 1
   ) {
     buyer = '堕落神的神殿';
     route = 1;
@@ -825,7 +844,7 @@ async function lewd_other_ge500k(ctx) {
 /** lewd_other_ge500k_high_officer：魔王军的高级将校买下；结局 魔界的士官 / 高级将校的奴隶。 */
 async function lewd_other_ge500k_high_officer({ cid, target_name }) {
   let ending = '';
-  if (era.get(`cflag:${cid}:9`) >= 50) {
+  if (EraChara.get(cid).cflag.level >= 50) {
     await era.printAndWait(
       `${target_name}被主人卓越的调教弄得彻底堕落了，然后被编入了魔界军。`,
     );
@@ -849,9 +868,9 @@ async function lewd_other_ge500k_high_officer({ cid, target_name }) {
 async function lewd_other_ge500k_high_bar({ cid, target_name }) {
   let ending = '';
   if (
-    era.get(`talent:${cid}:110`) == 1 ||
-    era.get(`talent:${cid}:114`) == 1 ||
-    era.get(`talent:${cid}:119`) == 1
+    EraChara.get(cid).talent.large_breasts == 1 ||
+    EraChara.get(cid).talent.huge_breasts == 1 ||
+    EraChara.get(cid).talent.massive_breasts == 1
   ) {
     await era.printAndWait(
       `${target_name}的乳头被打入了好几根乳钉，穿着露乳服装接待着客人。`,
@@ -880,9 +899,9 @@ async function lewd_other_ge500k_high_bar({ cid, target_name }) {
 async function lewd_other_ge500k_temple({ cid, target_name }) {
   let ending = '';
   if (
-    era.get(`talent:${cid}:110`) == 1 ||
-    era.get(`talent:${cid}:114`) == 1 ||
-    era.get(`talent:${cid}:119`) == 1
+    EraChara.get(cid).talent.large_breasts == 1 ||
+    EraChara.get(cid).talent.huge_breasts == 1 ||
+    EraChara.get(cid).talent.massive_breasts == 1
   ) {
     await era.printAndWait(
       `${target_name}每天从神殿开门到神殿关门，都被信徒们侵犯着。`,
@@ -910,7 +929,7 @@ async function lewd_other_ge500k_temple({ cid, target_name }) {
 /** lewd_other_ge500k_busybody：魔界的好事之徒买下；结局 马厩的肉便器 / 好事者的抱枕。 */
 async function lewd_other_ge500k_busybody({ cid, target_name }) {
   let ending = '';
-  if (era.get(`talent:${cid}:204`) == 1) {
+  if (EraChara.get(cid).talent.cum_dump == 1) {
     await era.printAndWait(`作为男仆们和女仆们的肉便器被绑在马厩里。`);
     await era.printAndWait(
       `当然，马到了发情期的时候，会狠狠地侵犯${target_name}。`,
@@ -938,18 +957,21 @@ async function lewd_other_ge100k(ctx) {
   let buyer = '';
   let route = 0;
   let ending = '';
-  if (era.get(`talent:${cid}:200`) == 1 || era.get(`talent:${cid}:203`) == 1) {
+  if (
+    EraChara.get(cid).talent.warrior == 1 ||
+    EraChara.get(cid).talent.thief == 1
+  ) {
     buyer = '魔界的黑帮';
     route = 3;
   } else if (
-    era.get(`talent:${cid}:205`) == 1 ||
-    era.get(`talent:${cid}:207`) == 1
+    EraChara.get(cid).talent.knight == 1 ||
+    EraChara.get(cid).talent.ninja == 1
   ) {
     buyer = '魔界的妓院';
     route = 2;
   } else if (
-    era.get(`talent:${cid}:202`) == 1 ||
-    era.get(`talent:${cid}:206`) == 1
+    EraChara.get(cid).talent.priest == 1 ||
+    EraChara.get(cid).talent.shrine_maiden == 1
   ) {
     buyer = '魔界的黑酒吧';
     route = 1;
@@ -972,7 +994,7 @@ async function lewd_other_ge100k(ctx) {
 /** lewd_other_ge100k_gang：魔界的黑帮买下；结局 黑社会的情妇。 */
 async function lewd_other_ge100k_gang({ cid, target_name }) {
   let ending = '';
-  if (era.get(`abl:${cid}:2`) >= 5) {
+  if (EraChara.get(cid).abl.vagina_feeling >= 5) {
     await era.printAndWait(`${target_name}作为干部的情妇生活着。`);
     await era.printAndWait(
       `${target_name}在干部的卓越调教下堕落了，利用${she(cid)}来操纵着部下。`,
@@ -996,9 +1018,9 @@ async function lewd_other_ge100k_gang({ cid, target_name }) {
 async function lewd_other_ge100k_brothel({ cid, target_name }) {
   let ending = '';
   if (
-    era.get(`talent:${cid}:110`) == 1 ||
-    era.get(`talent:${cid}:114`) == 1 ||
-    era.get(`talent:${cid}:119`) == 1
+    EraChara.get(cid).talent.large_breasts == 1 ||
+    EraChara.get(cid).talent.huge_breasts == 1 ||
+    EraChara.get(cid).talent.massive_breasts == 1
   ) {
     await era.printAndWait(`${target_name}隔着橱窗招揽客人。`);
     await era.printAndWait(
@@ -1030,9 +1052,9 @@ async function lewd_other_ge100k_brothel({ cid, target_name }) {
 async function lewd_other_ge100k_shady_bar({ cid, target_name }) {
   let ending = '';
   if (
-    era.get(`talent:${cid}:110`) == 1 ||
-    era.get(`talent:${cid}:114`) == 1 ||
-    era.get(`talent:${cid}:119`) == 1
+    EraChara.get(cid).talent.large_breasts == 1 ||
+    EraChara.get(cid).talent.huge_breasts == 1 ||
+    EraChara.get(cid).talent.massive_breasts == 1
   ) {
     await era.printAndWait(`贩毒的黑帮在自己经营的黑酒吧里，也流通着毒品。`);
     await era.printAndWait(
@@ -1059,7 +1081,7 @@ async function lewd_other_ge100k_shady_bar({ cid, target_name }) {
 /** lewd_other_ge100k_casino：魔界的赌场买下；结局 赌场的肉便器 / 赌场的赠品。 */
 async function lewd_other_ge100k_casino({ cid, target_name }) {
   let ending = '';
-  if (era.get(`talent:${cid}:204`) == 1) {
+  if (EraChara.get(cid).talent.cum_dump == 1) {
     await era.printAndWait(
       `赌场为了安抚那些输了很多的客人，就会把他们带到一个侍奉房间里。`,
     );
@@ -1091,18 +1113,21 @@ async function lewd_other_lt100k(ctx) {
   let buyer = '';
   let route = 0;
   let ending = '';
-  if (era.get(`talent:${cid}:200`) == 1 || era.get(`talent:${cid}:203`) == 1) {
+  if (
+    EraChara.get(cid).talent.warrior == 1 ||
+    EraChara.get(cid).talent.thief == 1
+  ) {
     buyer = '魔界的酒吧';
     route = 3;
   } else if (
-    era.get(`talent:${cid}:205`) == 1 ||
-    era.get(`talent:${cid}:207`) == 1
+    EraChara.get(cid).talent.knight == 1 ||
+    EraChara.get(cid).talent.ninja == 1
   ) {
     buyer = '乞丐';
     route = 2;
   } else if (
-    era.get(`talent:${cid}:202`) == 1 ||
-    era.get(`talent:${cid}:206`) == 1
+    EraChara.get(cid).talent.priest == 1 ||
+    EraChara.get(cid).talent.shrine_maiden == 1
   ) {
     buyer = '触手小屋';
     route = 1;
@@ -1125,7 +1150,7 @@ async function lewd_other_lt100k(ctx) {
 /** lewd_other_lt100k_bar：魔界的酒吧买下；结局 酒吧的赠品。 */
 async function lewd_other_lt100k_bar({ cid, target_name }) {
   let ending = '';
-  if (era.get(`abl:${cid}:2`) >= 5) {
+  if (EraChara.get(cid).abl.vagina_feeling >= 5) {
     await era.printAndWait(`周末，这种酒吧都会搞一些特别的竞赛。`);
     await era.printAndWait(
       `${target_name}作为飞镖的靶子，参加了特别的飞镖比赛。特别的魔法，让${she(cid)}被射中都不会留下伤口，而是转变为一种电击似的痛楚。`,
@@ -1150,9 +1175,9 @@ async function lewd_other_lt100k_bar({ cid, target_name }) {
 async function lewd_other_lt100k_beggar({ cid, target_name }) {
   let ending = '';
   if (
-    era.get(`talent:${cid}:110`) == 1 ||
-    era.get(`talent:${cid}:114`) == 1 ||
-    era.get(`talent:${cid}:119`) == 1
+    EraChara.get(cid).talent.large_breasts == 1 ||
+    EraChara.get(cid).talent.huge_breasts == 1 ||
+    EraChara.get(cid).talent.massive_breasts == 1
   ) {
     await era.printAndWait(
       `${target_name}晚上在主人的巢穴里被疼爱着，白天则被租给主人的乞丐朋友，为主人换取喝酒钱。`,
@@ -1179,9 +1204,9 @@ async function lewd_other_lt100k_beggar({ cid, target_name }) {
 async function lewd_other_lt100k_tentacle_hut({ cid, target_name }) {
   let ending = '';
   if (
-    era.get(`talent:${cid}:110`) == 1 ||
-    era.get(`talent:${cid}:114`) == 1 ||
-    era.get(`talent:${cid}:119`) == 1
+    EraChara.get(cid).talent.large_breasts == 1 ||
+    EraChara.get(cid).talent.huge_breasts == 1 ||
+    EraChara.get(cid).talent.massive_breasts == 1
   ) {
     await era.printAndWait(`${target_name}被安排在量产触手的触手小屋里，`);
     await era.printAndWait(`被不知道几万的触手侵犯过，头脑都变得不正常了。`);
@@ -1198,7 +1223,7 @@ async function lewd_other_lt100k_tentacle_hut({ cid, target_name }) {
 /** lewd_other_lt100k_toilet：公厕买下；结局 公众肉便器。 */
 async function lewd_other_lt100k_toilet({ cid, target_name }) {
   let ending = '';
-  if (era.get(`talent:${cid}:204`) == 1) {
+  if (EraChara.get(cid).talent.cum_dump == 1) {
     await era.printAndWait(
       `被锁在公厕里的${target_name}，作为公众肉便器开始了无休止的侍奉。`,
     );
