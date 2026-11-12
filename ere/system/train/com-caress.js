@@ -298,7 +298,13 @@ async function jump_advanced(n) {
   if (adv === n) {
     return false;
   }
-  return com_family.call(adv, { whenMissing: COM_MISSING });
+  // 升格目标指令从参数取上下文；本函数没有上下文，跳转处按当前指针现取。
+  return com_family.call(adv, {
+    whenMissing: COM_MISSING,
+    args: [
+      { target: era_flag.target, player: era_flag.player, assi: era_flag.assi },
+    ],
+  });
 }
 
 /**

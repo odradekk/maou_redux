@@ -74,7 +74,13 @@ function jump_com(id, { rewrite_selectcom = false } = {}) {
   if (rewrite_selectcom) {
     era_flag.selectcom = id;
   }
-  return com_family.call(id, { whenMissing: COM_MISSING });
+  // 被调指令从参数取上下文；本函数没有上下文，跳转处按当前指针现取。
+  return com_family.call(id, {
+    whenMissing: COM_MISSING,
+    args: [
+      { target: era_flag.target, player: era_flag.player, assi: era_flag.assi },
+    ],
+  });
 }
 
 function scale_a_by_half_explv(cid, a) {

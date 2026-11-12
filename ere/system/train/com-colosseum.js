@@ -235,7 +235,13 @@ function assi_can_penetrate(assi) {
  */
 function call_insult_com(com) {
   era_flag.selectcom = com;
-  return com_family.call(com, { whenMissing: 0 });
+  // 被调指令从参数取上下文；本函数没有上下文，跳转处按当前指针现取。
+  return com_family.call(com, {
+    whenMissing: 0,
+    args: [
+      { target: era_flag.target, player: era_flag.player, assi: era_flag.assi },
+    ],
+  });
 }
 
 /**

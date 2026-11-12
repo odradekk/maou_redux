@@ -2751,9 +2751,8 @@ export default [
   {
     desc: 'M1038 com207 的 JUMP com51 尾调用改不设 SELECTCOM',
     file: 'ere/system/train/com-colosseum.js',
-    find: 'function call_insult_com(com) {\n  era_flag.selectcom = com;\n  return com_family.call(com, { whenMissing: 0 });\n}',
-    replace:
-      'function call_insult_com(com) {\n  return com_family.call(com, { whenMissing: 0 }); // 变异：SELECTCOM 不设\n}',
+    find: 'function call_insult_com(com) {\n  era_flag.selectcom = com;',
+    replace: 'function call_insult_com(com) { // 变异：SELECTCOM 不设',
     tests: ['com-colosseum'],
     must_mention: 'SELECTCOM = 51',
   },
