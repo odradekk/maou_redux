@@ -537,7 +537,7 @@ export default [
     file: 'ere/system/chara/chara-make.js',
     find: '      EraChara.get(newchara).cflag.set(1, 0); // CFLAG:1 初始位置',
     replace:
-      '      chara(era.getAddedCharacters().length - 1).invasion.状态 = 0; // 变异',
+      '      EraChara.get(era.getAddedCharacters().length - 1).cflag.set(1, 0); // 变异：写到「已加入数 - 1」',
     tests: ['chara-name'],
     must_mention: 'CFLAG:1 归零',
   },
@@ -641,7 +641,7 @@ export default [
     file: 'ere/system/chara/chara-make.js',
     find: '        newchara = inport_cid; // 新角色的角色号',
     replace:
-      '        newchara = inport_cid; // 新角色的角色号\n        if (game.event.上次调教对象 === newchara) game.event.上次调教对象 = -1;\n        if (game.event.上次助手 === newchara) game.event.上次助手 = -1;\n        if (game.event.上次调教对象 > newchara) {\n          game.event.上次调教对象 -= 1; // 变异：异国也跑搬迁\n        }\n        if (game.event.上次助手 > newchara) {\n          game.event.上次助手 -= 1; // 变异：异国也跑搬迁\n        }',
+      '        newchara = inport_cid; // 新角色的角色号\n        if (era_flag.last_train_target === newchara) era_flag.last_train_target = -1;\n        if (era_flag.last_assistant === newchara) era_flag.last_assistant = -1;\n        if (era_flag.last_train_target > newchara) {\n          era_flag.last_train_target -= 1; // 变异：异国也跑搬迁\n        }\n        if (era_flag.last_assistant > newchara) {\n          era_flag.last_assistant -= 1; // 变异：异国也跑搬迁\n        }',
     tests: ['chara-name'],
     must_mention: 'FLAG:2 未前移（搬迁段未执行）',
   },
@@ -824,7 +824,7 @@ export default [
     desc: 'M15708 chara-make 的抖Ｓ气质预设写到半角属性名（门面不再收，abl:20 静默保持 0）',
     file: 'ere/system/chara/chara-make.js',
     find: 'EraChara.get(cid).abl.set(20, 3);',
-    replace: 'chara(cid).train.抖S气质 = 3;',
+    replace: '// 变异：抖S气质预设不写（ABL:20 静默保持 0）',
     tests: ['chara-make'],
     must_mention: '抖S气质（train 门面）',
   },
