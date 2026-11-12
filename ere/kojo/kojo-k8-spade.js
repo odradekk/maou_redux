@@ -35,8 +35,8 @@
  *
  * CFLAG:201/370/650/202/203/204/301-400 一族走 chara(cid).kojo；CFLAG:16/40/41
  * 走 chara(cid).train（初吻对象/着衣状态/上衣类型，跨域已有名）；CFLAG:42
- * 走 chara(cid).chara（特别服装类型）。FLAG:7/108 走 game.kojo（口上开关/
- * 口上存在_8）；FLAG:37/500 走 game.system（着衣系统/狂王性别）；FLAG:62
+ * 走 chara(cid).chara（特别服装类型）。FLAG:7 走 game.kojo（口上开关；FLAG:108
+ * 那个「口上存在」槽随 #859 删除了读写）；FLAG:37/500 走 game.system（着衣系统/狂王性别）；FLAG:62
  * 走 game.train（肉便器行动）；TFLAG:899/13/20/3/400 走 game.train；
  * TFLAG:150/21/22/23/24 走 game.system；TFLAG:60 走 game.event。处刑五族的
  * 处分方式/展品编号由分发体作为实参传入（#817），不再经 tflag。

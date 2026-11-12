@@ -64,6 +64,9 @@ function make_family(hook) {
      */
     register(id, fn) {
       overrides.set(id, fn);
+      // 入口（run_kojo）只认**工厂实例**上的钩子，所以探针同时装到实例上：
+      // 用例的意图是「把这个编号这一档换成探针」，入口路径也必须看见它
+      require('#/kojo/kojo-factory').get_kojo(id)[hook] = fn;
     },
     /**
      * 调该编号的钩子。

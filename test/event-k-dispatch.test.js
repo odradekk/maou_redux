@@ -27,7 +27,6 @@ const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
 
 const REPO = path.resolve(__dirname, '..');
 const KOJO_DIR = path.join(REPO, 'ere', 'kojo');
-const ERE_DIR = path.join(REPO, 'ere');
 
 /**
  * 世界底座：玛奥（17）入列、口上总开关开、无性格素质（由各用例自行 seed）。
@@ -77,8 +76,7 @@ test('ATTACK_KOUJO_B：TARGET 置为 B 侧对象、分发 DUNGEON_ATTACK_K{LOCAL
   const fixture = setup_kojo();
   seed_noble(fixture); // 高貴 163 → LOCAL 103 → 键 3
   const era_flag = fixture.load_module('era-utils/era-flag');
-  const { attack_koujo_b, dungeon_attack_family } =
-    fixture.load_module('kojo/kojo-system');
+  const { attack_koujo_b, dungeon_attack_family } = kojo_system(fixture);
   const seen = [];
   let target_during = null;
   dungeon_attack_family.register(3, async (...args) => {
@@ -102,7 +100,7 @@ test('ATTACK_KOUJO_B：TARGET 置为 B 侧对象、分发 DUNGEON_ATTACK_K{LOCAL
 test('ATTACK_KOUJO_B：缺席目标静默（TRYCALLFORM 落空，#565 返工）', async () => {
   const fixture = setup_kojo();
   seed_noble(fixture); // 高貴 163 → 键 3，不注册 handler
-  const { attack_koujo_b } = fixture.load_module('kojo/kojo-system');
+  const { attack_koujo_b } = kojo_system(fixture);
   await attack_koujo_b(17, always);
   assert.deepEqual(
     fixture.text_lines(),
@@ -117,7 +115,7 @@ test('KOJO_MESSAGE_PALAMCNG：存在判定的 EX_FLAG 分支——EX 口上不�
   const fixture = setup_kojo();
   seed_ex(fixture); // LOCAL 1002；存在标志是 EX_FLAG:102，FLAG:1002 不在册
   const { kojo_message_palamcng, kojo_message_palamcng_family } =
-    fixture.load_module('kojo/kojo-system');
+    kojo_system(fixture);
   const seen = [];
   kojo_message_palamcng_family.register(902, probe(seen));
   const rand = always;
@@ -134,7 +132,7 @@ test('KOJO_MESSAGE_MARKCNG：无存在判定（存在判定行是注释态）→
   const fixture = setup_kojo();
   fixture.store.set('talent:17:163', 1); // FLAG:103 特意不置
   const { kojo_message_markcng, kojo_message_markcng_family } =
-    fixture.load_module('kojo/kojo-system');
+    kojo_system(fixture);
   const seen = [];
   kojo_message_markcng_family.register(3, probe(seen));
   const rand = always;
@@ -148,8 +146,10 @@ test('GOHOUBI_REQUEST_KOUJO：签名 (cid) 由 #397 冻结，函数体真分发�
   const fixture = setup_kojo();
   seed_noble(fixture);
   const era_flag = fixture.load_module('era-utils/era-flag');
-  const { gohoubi_request_koujo, gohoubi_request_koujo_family } =
-    fixture.load_module('kojo/kojo-dungeon-after');
+  const { gohoubi_request_koujo } = fixture.load_module(
+    'kojo/kojo-dungeon-after',
+  );
+  const { gohoubi_request_koujo_family } = require('./helpers/kojo-families');
   assert.equal(
     gohoubi_request_koujo.length,
     1,
@@ -183,36 +183,6 @@ test('GOHOUBI_REQUEST_KOUJO：缺席目标静默（TRYCALLFORM 落空，#565 返
   );
 });
 
-test('GOHOUBI_REQUEST 族单实例：K 模块声明的注册号全部落进 dungeon-after 的那一族', async () => {
-  // 期望集从源码扫出（不手写名单）：任何 kojo-k*.js 里
-  // gohoubi_request_koujo_family.register(N 都是声明
-  const expected = new Set();
-  for (const name of fs.readdirSync(KOJO_DIR)) {
-    if (!/^kojo-k.*\.js$/.test(name)) {
-      continue;
-    }
-    const src = fs.readFileSync(path.join(KOJO_DIR, name), 'utf8');
-    for (const m of src.matchAll(
-      /gohoubi_request_koujo_family\.register\((\d+)/g,
-    )) {
-      expected.add(Number(m[1]));
-    }
-  }
-  assert.ok(expected.size >= 10, '扫描器自身不许漂成空集');
-
-  const fixture = create_era_fixture();
-  fixture.load_module('system/flow/main-loop');
-  const { gohoubi_request_koujo_family } = require('./helpers/kojo-families');
-  const missing = [...expected].filter(
-    (id) => !gohoubi_request_koujo_family.has(id),
-  );
-  assert.deepEqual(
-    missing,
-    [],
-    '注册进了另一个同名实例（分发侧永远看不到）——#403 实测的缺陷形式',
-  );
-});
-
 // —— 处刑首五族与迷宫凌辱两族 ——
 
 // 入口 → 族。五族同构：LOCAL = GET_KOJO_NUM() → 检查 →
@@ -231,9 +201,9 @@ test('处刑首五族：分发到 <族>_K{LOCAL-100}、处分编号透传、不�
     const fixture = setup_kojo();
     seed_noble(fixture); // 高貴 163 → LOCAL 103 → 键 3
     const era_flag = fixture.load_module('era-utils/era-flag');
-    const kojo = fixture.load_module('kojo/kojo-system');
+    const kojo = kojo_system(fixture);
     const seen = [];
-    kojo[`${entry}_family`].register(3, async (...args) => {
+    fam(`${entry}_family`).register(3, async (...args) => {
       seen.push(args);
       return 0;
     });
@@ -249,10 +219,10 @@ test('处刑首五族：K0（键 0）与其余键收同一个处分编号', asyn
   for (const [label, entry] of EXECUTION_DISPATCH) {
     const fixture = setup_kojo();
     fixture.store.set('talent:17:160', 1); // 慈愛 → LOCAL 100 → 键 0
-    const kojo = fixture.load_module('kojo/kojo-system');
+    const kojo = kojo_system(fixture);
     const rand = always;
     const seen = [];
-    kojo[`${entry}_family`].register(0, async (...args) => {
+    fam(`${entry}_family`).register(0, async (...args) => {
       seen.push(args);
       return 0;
     });
@@ -265,9 +235,9 @@ test('处刑首五族：K0（键 0）与其余键收同一个处分编号', asyn
 test('处刑首五族：无性格编号（键 -1）→ 静默（TRYCALL 落空）', async () => {
   for (const [label, entry] of EXECUTION_DISPATCH) {
     const fixture = setup_kojo();
-    const kojo = fixture.load_module('kojo/kojo-system');
+    const kojo = kojo_system(fixture);
     const seen = [];
-    kojo[`${entry}_family`].register(3, probe(seen));
+    fam(`${entry}_family`).register(3, probe(seen));
     await kojo[entry](17, 42, always);
     assert.deepEqual(seen, [], label);
     assert.deepEqual(fixture.text_lines(), [], `${label}：静默`);
@@ -281,8 +251,14 @@ test('DUNGEON_RYOUZYOKU/DUNGEON_RYOUZYOKU_AFTER：读当前 TARGET 分发、无�
   const ravish = fixture.load_module('kojo/kojo-dungeon-ravish');
   const seen_before = [];
   const seen_after = [];
-  ravish.ryouzyoku_kojo_family.register(3, probe(seen_before));
-  ravish.ryouzyoku_after_kojo_family.register(3, probe(seen_after));
+  require('./helpers/kojo-families').ryouzyoku_kojo_family.register(
+    3,
+    probe(seen_before),
+  );
+  require('./helpers/kojo-families').ryouzyoku_after_kojo_family.register(
+    3,
+    probe(seen_after),
+  );
 
   era_flag.target = 17;
   assert.equal(await ravish.dungeon_ryouzyoku(), 0);
@@ -296,7 +272,10 @@ test('迷宫凌辱两族：无性格编号时静默（TRYCALL 落空）', async 
   const fixture = setup_kojo();
   const ravish = fixture.load_module('kojo/kojo-dungeon-ravish');
   const seen = [];
-  ravish.ryouzyoku_kojo_family.register(3, probe(seen));
+  require('./helpers/kojo-families').ryouzyoku_kojo_family.register(
+    3,
+    probe(seen),
+  );
   await ravish.dungeon_ryouzyoku();
   assert.deepEqual(seen, []);
   assert.deepEqual(fixture.text_lines(), []);
@@ -307,6 +286,29 @@ test('迷宫凌辱两族：无性格编号时静默（TRYCALL 落空）', async 
 function table_rows() {
   return create_era_fixture().load_module('kojo/kojo-system')
     .EVENT_K_DISPATCH_TABLE;
+}
+
+/**
+ * kojo-system 的入口 + 测试用的族形对象（#859：族已删，族形对象在 helpers 里）。
+ * 用例大量按「入口 + 同名族」一起解构，这里保留那种取法。
+ * @param {object} fixture 夹具
+ * @returns {object} 合并后的对象
+ */
+function kojo_system(fixture) {
+  return {
+    ...fixture.load_module('kojo/kojo-system'),
+    ...require('./helpers/kojo-families'),
+  };
+}
+
+/**
+ * #859：分发族删除后，探针注册改为「取出与已删族同形的对象再 register」
+ * （test/helpers/kojo-families.js）。名字仍是 `<钩子>_family`。
+ * @param {string} name 族名
+ * @returns {object} 族形对象
+ */
+function fam(name) {
+  return require('./helpers/kojo-families')[name];
 }
 
 /** 实参名 → 取值（驱动方上下文）。 */
@@ -357,11 +359,18 @@ async function drive_row(row, { key = 3, seed = () => {} } = {}) {
   assert.equal(typeof entry, 'function', `${row.entry} 在 ${row.module} 导出`);
   const seen = [];
   let target_during = null;
-  mod[row.family].register(key, async (...args) => {
+  // #859：分发族已删除，探针装在工厂实例上（入口 run_kojo → 实例钩子）。
+  // 每个时机各是一个钩子名，这里统一装上同一个探针，谁被调用就记谁。
+  const { get_kojo } = fixture.load_module('kojo/kojo-factory');
+  const instance = get_kojo(key);
+  const probe = async (...args) => {
     seen.push(args);
     target_during = era_flag.target;
     return 0;
-  });
+  };
+  for (const hook of require('./helpers/kojo-families').HOOKS) {
+    instance[hook] = probe;
+  }
   fixture.set_inputs(...Array(4).fill(0)); // 预置输入：入口里若有等键调用也不会卡住
   const ctx = { cid, rand };
   const result = await entry(...row.call.map((name) => arg_value(name, ctx)));
@@ -402,7 +411,7 @@ test('GET_KOJO_NUM 素质扫描全范围：160-179 逐格 → LOCAL 100-119', as
     const era_flag = fixture.load_module('era-utils/era-flag');
     era_flag.target = 17;
     fixture.store.set(`talent:17:${talent}`, 1);
-    const { get_kojo_num } = fixture.load_module('kojo/kojo-system');
+    const { get_kojo_num } = kojo_system(fixture);
     assert.equal(
       get_kojo_num(17),
       talent - 60,
@@ -421,49 +430,6 @@ test('21 行逐条驱动（EX 分支）：EX_TALENT:102 → LOCAL 1002 → 键 9
       seen,
       [row.handler.map((name) => arg_value(name, { cid, rand }))],
       `${row.entry}：检查的 LOCAL > 1000 分支可达`,
-    );
-  }
-});
-
-test('族 call 的落空值契约：21 行都在 options 里声明 whenMissing = 0，实参同表', async () => {
-  // whenMissing 是**契约注记**：这些入口一律 return 0（TRYCALLFORM 的 RESULT
-  // 不读），所以 0 从返回值上与合法值分不开——只能在分发缝上钉住它（#403
-  // 二轮验收点名「whenMissing 的 0」与「家族 call 的键」这一类哨兵值）。
-  // 包一层族对象的 call 记录 options：命中 handler 的那些行照样走 call。
-  for (const row of table_rows()) {
-    const cid = 17;
-    const rand = always;
-    const fixture = create_era_fixture();
-    const era_flag = fixture.load_module('era-utils/era-flag');
-    era_flag.target = cid;
-    fixture.store.set('flag:7', 2);
-    seed_noble(fixture, cid); // LOCAL 103 → 键 3
-    fixture.era.beginTrain(0, cid); // SELF_KOJO 的检查会写 TFLAG:15
-    const mod = fixture.load_module(row.module);
-    const family = mod[row.family];
-    const recorded = [];
-    const real_call = family.call.bind(family);
-    family.call = async (id, options) => {
-      recorded.push([id, options]);
-      return real_call(id, options);
-    };
-    family.register(3, async () => 0);
-
-    fixture.set_inputs(...Array(4).fill(0)); // 预置输入：入口里若有等键调用也不会卡住
-    const ctx = { cid, rand };
-    await mod[row.entry](...row.call.map((name) => arg_value(name, ctx)));
-
-    assert.equal(recorded.length, 1, `${row.entry}：命中 handler 时经族 call`);
-    assert.equal(recorded[0][0], 3, `${row.entry}：键 = LOCAL - 100`);
-    assert.equal(
-      recorded[0][1].whenMissing,
-      0,
-      `${row.entry}：落空值声明 0（TRYCALL 落空的 RESULT）`,
-    );
-    assert.deepEqual(
-      recorded[0][1].args,
-      row.handler.map((name) => arg_value(name, ctx)),
-      `${row.entry}：实参透传与表一致`,
     );
   }
 });
@@ -589,7 +555,7 @@ test('TARGET 暂存/还原：七处置/还原成对（分发期间 = 传入对�
     const mod = fixture.load_module(module_name);
     const seen = [];
     let target_during = null;
-    mod[family_name].register(3, async (...args) => {
+    fam(family_name).register(3, async (...args) => {
       seen.push(args);
       target_during = era_flag.target;
       return 0;
@@ -626,10 +592,10 @@ test('TARGET 置位检查的两侧：cid 缺省（undefined / 负数）吃当前
       const fixture = setup_kojo();
       seed_noble(fixture); // 当前 TARGET 17 的性格 → 键 3
       const era_flag = fixture.load_module('era-utils/era-flag');
-      const kojo = fixture.load_module('kojo/kojo-system');
+      const kojo = kojo_system(fixture);
       const seen = [];
       let target_during = null;
-      kojo[family_name].register(3, async (...args) => {
+      fam(family_name).register(3, async (...args) => {
         seen.push(args);
         target_during = era_flag.target;
         return 0;
@@ -668,10 +634,10 @@ test('TARGET 置位检查的两侧：cid 缺省（undefined / 负数）吃当前
     seed_noble(fixture); // TARGET 17 的性格 → 键 3
     fixture.store.set('talent:0:160', 1); // 0 号自己的性格（慈愛）→ 键 0
     const era_flag = fixture.load_module('era-utils/era-flag');
-    const kojo = fixture.load_module('kojo/kojo-system');
+    const kojo = kojo_system(fixture);
     const seen = [];
     let target_during = null;
-    kojo[family_name].register(0, async (...args) => {
+    fam(family_name).register(0, async (...args) => {
       seen.push(args);
       target_during = era_flag.target;
       return 0;
@@ -695,41 +661,22 @@ test('TARGET 置位检查的两侧：cid 缺省（undefined / 负数）吃当前
   }
 });
 
-// —— 族名唯一（#403 实测缺陷的形式锁） ——
+// —— 口上目录里不再有分发族（#859 的回归锁） ——
 
-test('DispatchFamily 族名全库唯一：同名两实例会让一边的注册永远分不到', () => {
-  const names = new Map(); // 族名 → [文件…]
-  const walk = (dir) => {
-    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-      const full = path.join(dir, entry.name);
-      if (entry.isDirectory()) {
-        walk(full);
-        continue;
-      }
-      if (!entry.name.endsWith('.js') || entry.name === 'era-electron.js') {
-        continue;
-      }
-      const src = fs
-        .readFileSync(full, 'utf8')
-        // 注释里的示例（dispatch-family.js 头注的用法样例）不算声明
-        .replace(/\/\*[\s\S]*?\*\//g, '')
-        .replace(/^\s*\/\/.*$/gm, '');
-      for (const m of src.matchAll(/new DispatchFamily\(\s*'([^']+)'/g)) {
-        const list = names.get(m[1]) ?? [];
-        list.push(path.relative(REPO, full));
-        names.set(m[1], list);
-      }
-    }
-  };
-  walk(ERE_DIR);
-
-  assert.ok(names.size >= 20, '扫描器自身不许漂成空集');
-  const dup = [...names.entries()].filter(([, files]) => files.length > 1);
+test('口上模块不再声明 DispatchFamily：分发只走工厂（#859 删除后的回归锁）', () => {
+  const leftovers = [];
+  for (const name of fs.readdirSync(KOJO_DIR)) {
+    if (!name.endsWith('.js')) continue;
+    const src = fs
+      .readFileSync(path.join(KOJO_DIR, name), 'utf8')
+      // 注释里的说明不算声明
+      .replace(/\/\*[\s\S]*?\*\//g, '')
+      .replace(/^\s*\/\/.*$/gm, '');
+    if (/new\s+DispatchFamily\(/.test(src)) leftovers.push(name);
+  }
   assert.deepEqual(
-    dup,
+    leftovers,
     [],
-    '同一个族名出现两份 new DispatchFamily（#403 实测：GOHOUBI_REQUEST_KOUJO ' +
-      '曾在 kojo-system 与 kojo-dungeon-after 各有一份，六个 K 模块的注册落在' +
-      '分发侧看不到的那一份上）',
+    '口上目录里又出现了 DispatchFamily 实例：分发应只经 kojo-factory + run_kojo',
   );
 });

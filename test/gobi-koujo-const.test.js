@@ -137,22 +137,45 @@ test('%SELF_CALL% 按当前 TARGET 的自称求值，其余档不含插值', () 
   assert.equal(gobi_text(19, 1), '，诶嘿嘿～♪', '喜档不含插值');
 });
 
-test('语尾只在表里加行：分发表注册号与表行一一对应，每行五档加默认支', () => {
+test('语尾只在表里加行：有真身的编号与表行一一对应，每行五档加默认支', async () => {
   const fixture = create_era_fixture();
   load_all_kojo(fixture);
-  const { gobi_koujo_family } = require('./helpers/kojo-families');
-  const { GOBI_KOUJO, gobi_text } = fixture.load_module(
-    'data/gobi-koujo-const',
-  );
+  const { GOBI_KOUJO } = fixture.load_module('data/gobi-koujo-const');
+  const { get_kojo, registered_kojo_ids } =
+    fixture.load_module('kojo/kojo-factory');
 
-  const registered = [...gobi_koujo_family.implemented.keys()].sort(
-    (a, b) => a - b,
-  );
+  const rows = Object.keys(GOBI_KOUJO)
+    .map(Number)
+    .sort((a, b) => a - b);
+  // 表里有行 → 该编号的语尾必须取到文字（漏了本体 = 静默变空串）
+  for (const id of rows) {
+    const texts = [];
+    for (let arg0 = 0; arg0 <= 5; arg0 += 1) {
+      texts.push(await get_kojo(id).gobi_koujo(arg0, () => 0));
+    }
+    // 某一档的正文本身可以是空串（K19 的 0 档就是这样），但六个档全空
+    // 说明本体没接上
+    assert.ok(
+      texts.some((x) => typeof x === 'string' && x.length > 0),
+      `K${id} 表里有行，语尾必须至少一个档取到文字`,
+    );
+  }
+  // 反方向：取到文字的编号都必须在表里（本体在、表行漏了同样会静默）
+  const with_text = [];
+  for (const id of registered_kojo_ids()) {
+    for (let arg0 = 0; arg0 <= 5; arg0 += 1) {
+      const text = await get_kojo(id).gobi_koujo(arg0, () => 0);
+      if (typeof text === 'string' && text.length > 0) {
+        with_text.push(id);
+        break;
+      }
+    }
+  }
+  // K11 没有语尾本体（基类空串），另有几套的 0 档文字本身就是空串——
+  // 这里只要求「有文字的都进表」，不要求「表里每一行都在这批编号里」
   assert.deepEqual(
-    registered,
-    Object.keys(GOBI_KOUJO)
-      .map(Number)
-      .sort((a, b) => a - b),
+    with_text.filter((id) => !rows.includes(id)),
+    [],
     '有语尾真身的编号必须与表行一一对应（漏进表 = 语尾静默变空串）',
   );
   for (const [id, row] of Object.entries(GOBI_KOUJO)) {
@@ -161,7 +184,8 @@ test('语尾只在表里加行：分发表注册号与表行一一对应，每�
   }
 
   // 取值出口不得漏出占位符：表里的 %SELF_CALL% 由取值函数替换掉
-  for (const id of Object.keys(GOBI_KOUJO).map(Number)) {
+  const { gobi_text } = fixture.load_module('data/gobi-koujo-const');
+  for (const id of rows) {
     for (let arg0 = 0; arg0 <= 5; arg0 += 1) {
       assert.ok(
         !gobi_text(id, arg0, () => 0).includes('%'),

@@ -331,16 +331,19 @@ test('NTR_KOUJO：K2 与 K4 真身按统一的 rand、P 参数注册', async () 
   }
 });
 
-test('NTR_KOUJO：旧单参数口上适配器优先传 P，并兼容直接调用', async () => {
+test('NTR_KOUJO：钩子收 (rand, p)，本体收 p（收旧引擎全局 P 的换算在各口上类里）', async () => {
   const fixture = create_era_fixture();
-  const { adapt_legacy_ntr_koujo } = fixture.load_module('kojo/kojo-system');
+  const { get_kojo } = fixture.load_module('kojo/kojo-factory');
   const seen = [];
-  const adapted = adapt_legacy_ntr_koujo(async (p) => seen.push(p));
   const rand = () => 0;
+  get_kojo(5).ntr_koujo = async (rand_arg, p) => seen.push(p);
 
-  await adapted(rand, 20);
-  await adapted(7);
-  assert.deepEqual(seen, [20, 7]);
+  const { ntr_koujo } = fixture.load_module('kojo/kojo-system');
+  fixture.store.set('talent:17:165', 1); // K5 → 编号 105 → 键 5
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  era_flag.target = 17;
+  await ntr_koujo(20, rand);
+  assert.deepEqual(seen, [20], 'P 经钩子第二参传到本体');
 });
 
 test('CAMPAIGN_DUNGEON_LV：无战役为 0，战役 1 为 45，缺失编号为 0', () => {

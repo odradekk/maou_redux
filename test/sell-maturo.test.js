@@ -743,9 +743,9 @@ test('SELL_MATURO_K0：14 个活动口上的成熟出售事件均进入市场真
     fixture.set_inputs(999);
     fixture.load_module(module_name);
 
-    await fixture
-      .load_module('kojo/kojo-system')
-      .self_kojo_family.call(kojo_id, { args: [seq([0])] });
+    await require('./helpers/kojo-families').self_kojo_family.call(kojo_id, {
+      args: [seq([0])],
+    });
 
     assert(
       fixture.text_lines().includes('要卖到哪个市场？'),

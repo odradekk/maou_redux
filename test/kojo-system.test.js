@@ -371,24 +371,15 @@ test('#213 契约：七道头部检查对已注册的全部 handler 逐条跳过
   // 对 family 里已注册的每个 handler × 每道检查：置位 → 直调 → 返回 0。
   // 跳过类检查不得等待、不得出台词；死斗场/兽奸岔去专用口上——K5 死斗场
   // 已随 #236 换真台词、兽奸静默；K2 死斗场已随 #233 换真台词、兽奸仍静默；
-  const { kojo_message_com_family } = require('./helpers/kojo-families');
-  // 只跑本用例播种的三个性格：其余编号在 K5 的世界里没有意义
-  const handlers = [2, 3, 5].map((id) => [
-    id,
-    kojo_message_com_family.implemented.get(id),
-  ]);
-  assert.ok(
-    handlers.every(([, handler]) => typeof handler === 'function'),
-    '契约至少要覆盖已注册的 K2/K3/K5',
-  );
-  for (const [num] of handlers) {
+  // 只跑本用例播种的三个性格：其余编号在 K5 的世界里没有意义。
+  // 直调工厂实例的模板方法（头部检查 + 指令分支），与入口同一份钩子。
+  for (const num of [2, 3, 5]) {
     for (const [name, seed_guard] of KOJO_GUARD_STATES) {
       const fixture = await setup_kojo();
       const flag = fixture.load_module('era-utils/era-flag');
       seed_guard(fixture, flag);
-      const { kojo_message_com_family } = require('./helpers/kojo-families');
-      const handler = kojo_message_com_family.implemented.get(num);
-      const result = await handler();
+      const { get_kojo } = fixture.load_module('kojo/kojo-factory');
+      const result = await get_kojo(num).kojo_message_com();
       assert.equal(result, 0, `KOJO_MESSAGE_COM_${num} 检查「${name}」返回 0`);
       if (num === 2 && name.startsWith('TEQUIP:55')) {
         assert.ok(

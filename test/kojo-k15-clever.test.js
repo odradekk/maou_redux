@@ -2200,8 +2200,10 @@ test('DUNGEON_RYOUZYOKU 处女それ以外；AFTER 处女', async () => {
   const after = await setup_k15((f) => {
     f.store.set(`talent:${CID}:0`, 1);
   });
-  const after_fams = await ravish_k15(after);
-  await after_fams.ryouzyoku_after_kojo_family.call(KEY, { args: [] });
+  await require('./helpers/kojo-families').ryouzyoku_after_kojo_family.call(
+    KEY,
+    { args: [] },
+  );
   assert.ok(
     after.text_lines().some((l) => l.includes('处女还在')),
     '凌辱后处女',

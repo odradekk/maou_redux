@@ -2743,9 +2743,10 @@ function gobi_tier_world() {
   const fixture = create_era_fixture();
   const mod = fixture.load_module('system/chara/look');
   // 素质 164（性格 K4 冷徹）→ get_kojo_num = 104 → 语尾族键 4
-  fixture
-    .load_module('kojo/kojo-system')
-    .gobi_koujo_family.register(4, async (arg0) => `〈${arg0}〉`);
+  require('./helpers/kojo-families').gobi_koujo_family.register(
+    4,
+    async (arg0) => `〈${arg0}〉`,
+  );
   const cid = 800;
   mod.look_set(cid, 0, always);
   // look_set 掷出来的外观（300-314）与其它干扰素质逐项清零（315/316 除外，
