@@ -19,6 +19,7 @@ const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
+const { with_com_context } = require('./helpers/com-context');
 
 // 初始化调教临时表、TARGET/PLAYER 与 com0，返回测试夹具及指令族。
 function seed_caress_world() {
@@ -36,7 +37,14 @@ function seed_caress_world() {
   const { com_family, com_able_family } = fixture.load_module(
     'system/train/com-family',
   );
-  return { fixture, era_flag, com_family, com_able_family };
+  // 指令函数自 #877 起接收回合循环读出的 {target, player, assi}；用例没有
+  // 回合循环，按当前指针现取（时点与改动前指令函数自己读指针相同）。
+  return {
+    fixture,
+    era_flag,
+    com_family: with_com_context(com_family, era_flag),
+    com_able_family,
+  };
 }
 
 // ABL:0/1 分档取值表：六档 × 两个源。逐档断言，
