@@ -303,9 +303,9 @@ test('MUSEUM：家族末路、装备回收、威望与造型王实绩一并结�
   await museum(31, seq([0]));
 
   assert.equal(fixture.store.get('cstr:32:5'), '标本');
-  assert.equal(fixture.store.get('item:306'), 1, '武器退回库存');
-  assert.equal(fixture.store.get('item:345'), 1, '装饰退回库存');
-  assert.equal(fixture.store.get('item:347'), 1, '装饰2退回库存');
+  assert.equal(fixture.store.get('item:hold:306'), 1, '武器退回库存');
+  assert.equal(fixture.store.get('item:hold:345'), 1, '装饰退回库存');
+  assert.equal(fixture.store.get('item:hold:347'), 1, '装饰2退回库存');
   assert.equal(fixture.store.get('cflag:31:550'), -1);
   assert.equal(fixture.store.get('cflag:31:551'), -1);
   assert.equal(fixture.store.get('cflag:31:552'), -1);

@@ -80,7 +80,7 @@ function join_selectable_slave(fixture, id) {
 
 test('面板入口 500/501/504/505：切换 FLAG:36，重绘即反馈（各面板真身内容）', async () => {
   const fixture = create_shop_fixture();
-  fixture.store.set('item:60', 1); // 落穴：给 draw_have_traps 一个可见标记
+  fixture.store.set('item:hold:60', 1); // 落穴：给 draw_have_traps 一个可见标记
   fixture.store.set('itemname:60', '落穴'); // 夹具不读 yml/，名字表须显式播种
   fixture.set_inputs(501, 504, 505, 500);
   const { run_shop } = fixture.load_module('page/page-shop');

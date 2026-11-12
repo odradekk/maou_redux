@@ -83,7 +83,7 @@ async function run_corrupt_path() {
   // 初始化灌肠道具与经验（COM_ABLE:46 条件：ITEM:15 > 0, EXP:1 > 25, 顺从+欲望+露出 >= 10）
   // 注：真实调教中由珠升级能力走 ABLUP 真身；此处直调 COM 分发，能力值直接播种——
   // 顺从+欲望+露出 ABL 在初态暂未达到 10。
-  fixture.store.set('item:15', 1);
+  fixture.store.set('item:hold:15', 1);
   fixture.store.set('exp:17:1', 30);
   fixture.store.set('abl:17:10', 1); // 顺从 1
   fixture.store.set('abl:17:11', 1); // 欲望 1

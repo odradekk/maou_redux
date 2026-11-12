@@ -262,7 +262,7 @@ test('道具商店换屏：陷阱等级与戒指退还的尾段输出在换屏�
   {
     const fixture = create_era_fixture();
     seed_item_shop(fixture);
-    fixture.store.set('item:300', 99);
+    fixture.store.set('item:hold:300', 99);
     const { purchase } = fixture.load_module('page/page-item-shop');
     const { change_screen } = fixture.load_module('utils/screen-change');
     fixture.set_inputs(1); // 数量选择：买一件
@@ -396,7 +396,7 @@ test('怪物商店换屏：种族屏与商品屏反复重画，行数不增长�
 test('怪物商店换屏：祭品屏与召唤确认屏反复重画，行数不增长（#724）', async () => {
   const fixture = create_era_fixture();
   // 狗头人（101）三只、等级 5：凑满 202 号的 15 级祭品
-  seed_monster_shop(fixture, { 'item:101': 3 });
+  seed_monster_shop(fixture, { 'item:hold:101': 3 });
   const rows = track_input_rows(fixture);
   const { monster_shop } = fixture.load_module('page/page-monster-shop');
 

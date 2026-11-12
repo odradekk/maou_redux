@@ -1376,12 +1376,12 @@ test('#401 AUTO_BUYING：三个开关位各自的可达条件与边界', async (
   fixture.store.set('exflag:4444', 1234);
   await auto_buying();
   assert.equal(money(), 1000, 'FLAG:34 == 0 时零动作');
-  assert.equal(fixture.store.get('item:25') ?? 0, 0);
+  assert.equal(fixture.store.get('item:hold:25') ?? 0, 0);
 
   // 位 1：润滑液（200 点，已有则不买）
   fixture.store.set('flag:34', 1);
   await auto_buying();
-  assert.equal(fixture.store.get('item:25'), 1);
+  assert.equal(fixture.store.get('item:hold:25'), 1);
   assert.equal(money(), 800, '扣 200');
   assert.equal(legit(), 1034, 'EX_FLAG:4444 同步扣 200');
   await auto_buying();
@@ -1393,7 +1393,7 @@ test('#401 AUTO_BUYING：三个开关位各自的可达条件与边界', async (
   exact.store.set('flag:34', 1);
   exact.store.set('flag:10004', 200);
   await buy_exact();
-  assert.equal(exact.store.get('item:25'), 1, '恰好 200 点买得起');
+  assert.equal(exact.store.get('item:hold:25'), 1, '恰好 200 点买得起');
   assert.equal(exact.store.get('flag:10004'), 0);
 
   const poor = create_era_fixture();
@@ -1402,7 +1402,7 @@ test('#401 AUTO_BUYING：三个开关位各自的可达条件与边界', async (
   poor.store.set('flag:10004', 199);
   await buy_poor();
   assert.equal(
-    poor.store.get('item:25') ?? 0,
+    poor.store.get('item:hold:25') ?? 0,
     0,
     '199 点买不起 200 点的润滑液',
   );
@@ -1415,13 +1415,13 @@ test('#401 AUTO_BUYING：三个开关位各自的可达条件与边界', async (
   tape.store.set('exflag:4444', 1234);
   await buy_tape();
   assert.equal(
-    tape.store.get('item:28') ?? 0,
+    tape.store.get('item:hold:28') ?? 0,
     0,
     '没有水晶球（ITEM:6 == 0）不买',
   );
-  tape.store.set('item:6', 1);
+  tape.store.set('item:hold:6', 1);
   await buy_tape();
-  assert.equal(tape.store.get('item:28'), 1);
+  assert.equal(tape.store.get('item:hold:28'), 1);
   assert.equal(tape.store.get('flag:10004'), 500);
 
   // 位 8：安全套（100 点，REPEAT 10 逐个买，钱不够或到上限 10 即停）
@@ -1430,7 +1430,7 @@ test('#401 AUTO_BUYING：三个开关位各自的可达条件与边界', async (
   broke.store.set('flag:34', 8);
   broke.store.set('flag:10004', 950); // 只够 9 个
   await buy_broke();
-  assert.equal(broke.store.get('item:24'), 9, '钱限 点只买到 9 个');
+  assert.equal(broke.store.get('item:hold:24'), 9, '钱限 点只买到 9 个');
   assert.equal(broke.store.get('flag:10004'), 50, '剩下的 50 点不够再买');
 
   // 钱管够时一次买满 10 个（REPEAT 的次数与 ITEM:24 < 10 的上限各钉一处：
@@ -1440,16 +1440,20 @@ test('#401 AUTO_BUYING：三个开关位各自的可达条件与边界', async (
   capped.store.set('flag:34', 8);
   capped.store.set('flag:10004', 5000);
   await buy_capped();
-  assert.equal(capped.store.get('item:24'), 10, '上限 10 且循环 10 次：买满');
+  assert.equal(
+    capped.store.get('item:hold:24'),
+    10,
+    '上限 10 且循环 10 次：买满',
+  );
   assert.equal(capped.store.get('flag:10004'), 4000, '实扣 10 × 100');
 
   const nearly = create_era_fixture();
   const { auto_buying: buy_nearly } = nearly.load_module('event/event-turnend');
   nearly.store.set('flag:34', 8);
   nearly.store.set('flag:10004', 5000);
-  nearly.store.set('item:24', 9); // 已有 9 个 → 本轮最多再买 1 个
+  nearly.store.set('item:hold:24', 9); // 已有 9 个 → 本轮最多再买 1 个
   await buy_nearly();
-  assert.equal(nearly.store.get('item:24'), 10, '已有 9 个时只再买 1 个');
+  assert.equal(nearly.store.get('item:hold:24'), 10, '已有 9 个时只再买 1 个');
   assert.equal(nearly.store.get('flag:10004'), 4900, '实扣 1 × 100');
 });
 

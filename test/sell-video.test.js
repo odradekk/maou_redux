@@ -163,7 +163,7 @@ test('EVENT_VIDEO_DAY：空标题仍累计浏览与粉丝，但不输出也不�
 test('SELL_VIDEO：消费有效录像，按内容与境遇生成片名并同步入账', async () => {
   const { fixture, video } = seed_world();
   fixture.store.set('tequip:31:53', 1); // 录像仍在拍摄
-  fixture.store.set('item:28', 2); // 水晶球魔力源
+  fixture.store.set('item:hold:28', 2); // 水晶球魔力源
   fixture.store.set('cflag:31:491', 2); // 结束计数后剩一帧
   fixture.store.set('cflag:31:460', 0); // 爱抚
   fixture.store.set('talent:31:140', 1); // 母控标题只追加一次
@@ -172,7 +172,11 @@ test('SELL_VIDEO：消费有效录像，按内容与境遇生成片名并同步�
 
   await video.sell_video(31, 0);
 
-  assert.equal(fixture.store.get('item:28'), 1, '拍摄中到结算点先扣一份魔力源');
+  assert.equal(
+    fixture.store.get('item:hold:28'),
+    1,
+    '拍摄中到结算点先扣一份魔力源',
+  );
   assert.equal(fixture.store.get('cflag:31:491'), 0, '结算后清录像帧');
   assert.equal(fixture.store.get('cflag:31:493'), 25, '记录本次录像价值');
   assert.equal(fixture.store.get('cflag:31:498'), -1, '录像属性为不纯');
@@ -448,12 +452,12 @@ test('SELL_VIDEO：处女片段、逐步 TIMES 与助手剪辑均在最终价值
 test('SELL_VIDEO：无有效帧时在减计数后早退，不画线也不等待', async () => {
   const { fixture, video } = seed_world();
   fixture.store.set('cflag:31:491', 1);
-  fixture.store.set('item:28', 3);
+  fixture.store.set('item:hold:28', 3);
   fixture.store.set('tequip:31:53', 1);
 
   await video.sell_video(31, 0);
 
-  assert.equal(fixture.store.get('item:28'), 2);
+  assert.equal(fixture.store.get('item:hold:28'), 2);
   assert.equal(fixture.store.get('cflag:31:491'), 0);
   assert.deepEqual(fixture.lines, []);
   assert.equal(fixture.waits.length, 0);

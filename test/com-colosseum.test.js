@@ -67,7 +67,7 @@ function seed_colosseum_world({ assi = false } = {}) {
   fixture.store.set('base:31:1', 0);
   fixture.store.set('maxbase:31:1', 1000);
   fixture.store.set('cflag:0:9', 10);
-  fixture.store.set('item:35', 3);
+  fixture.store.set('item:hold:35', 3);
   fixture.store.set('maxbase:0:4', 10000);
   return { fixture, era_flag, com_family, com_able_family };
 }
@@ -92,9 +92,9 @@ test('200 号可用性检查：观战券必备；自动调教与持续装备互�
 
   assert.equal(await com_able_family.call(200), 1, '持券且无装备 → 放行');
 
-  fixture.store.set('item:35', 0); // 无观战券
+  fixture.store.set('item:hold:35', 0); // 无观战券
   assert.equal(await com_able_family.call(200), 0, '无观战券不可');
-  fixture.store.set('item:35', 3);
+  fixture.store.set('item:hold:35', 3);
 
   fixture.store.set('tflag:224', 555); // 自动不可（调教菜单实行中）
   assert.equal(await com_able_family.call(200), 0);
@@ -261,7 +261,7 @@ test('com200 进入：置 TEQUIP:55、清陷落旗标、按素质缩放的损耗
   assert.equal(fixture.store.get('deltabase:31:1'), -200);
   assert.equal(fixture.store.get('delta:31:10'), 2000, 'UP:10（恐怖）');
   assert.equal(fixture.store.get('source:31:14'), 500);
-  assert.equal(fixture.store.get('item:35'), 3, '进入不扣券');
+  assert.equal(fixture.store.get('item:hold:35'), 3, '进入不扣券');
 });
 
 test('com200 进入的素质缩放：胆怯 ×2 / 感情淡薄 ×0.6（A = 100 → 120）', async () => {
@@ -284,7 +284,7 @@ test('com200 退出：清 TEQUIP:55、扣一张观战券', async () => {
 
   assert.equal(await com_family.call(200), 1);
   assert.equal(fixture.store.get('tequip:31:55'), 0);
-  assert.equal(fixture.store.get('item:35'), 2, 'ITEM:35 -= 1');
+  assert.equal(fixture.store.get('item:hold:35'), 2, 'ITEM:35 -= 1');
   assert.equal(fixture.store.get('tflag:401'), 1, '退出支不动陷落旗标');
 });
 
@@ -569,7 +569,7 @@ test('com201 假阳具持有者（ITEM:PBAND == 1）可插入；收入吃 rand',
   fixture.store.set('base:32:1', 1000);
   fixture.store.set('cflag:32:13', 100);
   fixture.store.set('cflag:32:14', 100);
-  fixture.store.set('item:4', 1); // ITEM:PBAND（假阳具）
+  fixture.store.set('item:hold:4', 1); // ITEM:PBAND（假阳具）
   era_flag.assiplay = 1;
   era_flag.player = 32;
   era_flag.selectcom = 201;

@@ -201,9 +201,9 @@ test('able64：助手在场 + 两根阴茎；男人/未熟/震动器各挡一条
 
   fixture.store.set(`talent:${ASSI}:122`, 0);
   assert.equal(await com_able_family.call(64), 0, '只剩一根');
-  fixture.store.set('item:4', 1);
+  fixture.store.set('item:hold:4', 1);
   assert.equal(await com_able_family.call(64), 1, '假阳具补第二根');
-  fixture.store.set('item:4', 0);
+  fixture.store.set('item:hold:4', 0);
   fixture.store.set(`talent:${ASSI}:122`, 1);
 
   fixture.store.set(`talent:${TARGET}:122`, 1);

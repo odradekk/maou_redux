@@ -101,7 +101,7 @@ test('在售的道具必须登记在 Item.yml（点亮的 ITEMSALES 序号 ⊆ i
   // 持有摄像机一并置上的那轮点亮的在售位最多
   const seeds = [
     {},
-    { 'talent:0:55': 1, 'talent:0:325': 1, 'item:6': 1, 'abl:0:12': 1 },
+    { 'talent:0:55': 1, 'talent:0:325': 1, 'item:hold:6': 1, 'abl:0:12': 1 },
   ];
   const offenders = new Set();
   for (const seed of seeds) {

@@ -77,7 +77,7 @@ test('弱召唤保留 -1 实参：基础五轮折半为两轮并增加对应怪�
 
   await summon_monster(-1, seq([0, 0, 0, 0, 0, 0]));
 
-  assert.equal(fixture.store.get('item:100'), 2);
+  assert.equal(fixture.store.get('item:hold:100'), 2);
   assert.equal(
     fixture.lines_history.filter((line) => line.text === '史莱姆召唤出1只')
       .length,
@@ -95,7 +95,7 @@ test('魔界公主（TALENT:35:1254）：菲娅在场时每轮召唤数 ×1.5（
   await plain
     .load_module('system/dungeon/monster-summon')
     .summon_monster(0, rand);
-  assert.equal(plain.store.get('item:100'), 65, '5 轮 × 13 只');
+  assert.equal(plain.store.get('item:hold:100'), 65, '5 轮 × 13 只');
 
   const princess = create_era_fixture();
   princess.store.set('itemname:100', '史莱姆');
@@ -104,7 +104,11 @@ test('魔界公主（TALENT:35:1254）：菲娅在场时每轮召唤数 ×1.5（
   await princess
     .load_module('system/dungeon/monster-summon')
     .summon_monster(0, rand);
-  assert.equal(princess.store.get('item:100'), 95, '13 → 19 只，5 轮共 95');
+  assert.equal(
+    princess.store.get('item:hold:100'),
+    95,
+    '13 → 19 只，5 轮共 95',
+  );
 
   // 有素质但菲娅不在场：不加成（GETCHARA(35) <= 0 的分支）。
   const absent = create_era_fixture();
@@ -113,12 +117,12 @@ test('魔界公主（TALENT:35:1254）：菲娅在场时每轮召唤数 ×1.5（
   await absent
     .load_module('system/dungeon/monster-summon')
     .summon_monster(0, rand);
-  assert.equal(absent.store.get('item:100'), 65, '不在场的角色不计');
+  assert.equal(absent.store.get('item:hold:100'), 65, '不在场的角色不计');
 });
 
 test('怪物抽选跳过已满种类，仍有容量时重抽', () => {
   const fixture = create_era_fixture();
-  fixture.store.set('item:100', 999);
+  fixture.store.set('item:hold:100', 999);
   const { rand_monster_number } = fixture.load_module(
     'system/dungeon/monster-summon',
   );
@@ -133,10 +137,10 @@ test('怪物总数只统计 100-184 的 45 个离散槽，全部满时允许返�
   );
   for (let tier = 0; tier < 9; tier += 1) {
     for (let kind = 0; kind < 5; kind += 1) {
-      fixture.store.set(`item:${100 + tier * 10 + kind}`, 999);
+      fixture.store.set(`item:hold:${100 + tier * 10 + kind}`, 999);
     }
   }
-  fixture.store.set('item:189', 5000);
+  fixture.store.set('item:hold:189', 5000);
 
   assert.equal(monster_total_count(), 44_955);
   assert.equal(rand_monster_number(seq([8, 4])), 184);
@@ -155,8 +159,8 @@ test('生产怪物仅在实际入库分支追加双胞胎，且双胞胎文本�
 
   await summon_monster(1, seq([0, 0, 0, 1, 0]));
 
-  assert.equal(fixture.store.get('item:100'), 1);
-  assert.equal(fixture.store.get('item:172'), 1);
+  assert.equal(fixture.store.get('item:hold:100'), 1);
+  assert.equal(fixture.store.get('item:hold:172'), 1);
   assert.ok(
     fixture.lines_history.some(
       (line) => line.text === '哦呀？！生了双胞胎呢！生了一只吸血鬼',
@@ -172,19 +176,19 @@ test('生产怪物仅在实际入库分支追加双胞胎，且双胞胎文本�
   await departed
     .load_module('system/dungeon/monster-summon')
     .summon_monster(1, seq([0, 0, 0, 1]));
-  assert.equal(departed.store.get('item:100'), undefined);
-  assert.equal(departed.store.get('item:172'), undefined);
+  assert.equal(departed.store.get('item:hold:100'), undefined);
+  assert.equal(departed.store.get('item:hold:172'), undefined);
 });
 
 test('魔王生产固定近卫怪物并钳到库存上限；自跳缺陷以明确错误终止', () => {
   const fixture = create_era_fixture();
   fixture.store.set('callname:0:-1', '魔王');
   fixture.store.set('itemname:193', '近卫');
-  fixture.store.set('item:193', 998);
+  fixture.store.set('item:hold:193', 998);
   const summon = fixture.load_module('system/dungeon/monster-summon');
 
   assert.equal(summon.summon_monster_master(0, seq([2, 2])), 0);
-  assert.equal(fixture.store.get('item:193'), 999);
+  assert.equal(fixture.store.get('item:hold:193'), 999);
   assert.throws(() => summon.pregnancy_master(), /无限尾调用/);
 });
 
@@ -1556,7 +1560,7 @@ test('端到端：怪物妊娠从发觉、临月推进到生产并清理状态',
 
   fixture.store.set('flag:10000', 24);
   await pregnancy.ninsin_main(rand);
-  assert.equal(fixture.store.get('item:100'), 1);
+  assert.equal(fixture.store.get('item:hold:100'), 1);
   assert.equal(fixture.store.get('talent:1:153'), 0);
   assert.equal(fixture.store.get('cflag:1:110'), 0);
   assert.equal(fixture.store.get('cflag:1:1'), 0);

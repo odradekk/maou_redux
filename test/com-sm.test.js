@@ -82,20 +82,20 @@ test('41/42 号可用性检查：要持鞭/针；NOITEM 非零时免持；助手
 
   assert.equal(await com_able_family.call(41), 0, '无鞭（ITEM:10 == 0）');
   assert.equal(await com_able_family.call(42), 0, '无针（ITEM:11 == 0）');
-  fixture.store.set('item:10', 1);
-  fixture.store.set('item:11', 1);
+  fixture.store.set('item:hold:10', 1);
+  fixture.store.set('item:hold:11', 1);
   assert.equal(await com_able_family.call(41), 1);
   assert.equal(await com_able_family.call(42), 1);
 
   // NOITEM ≠ 0（道具无视模式）——noitem-const 的开关被拨起来时免持
-  fixture.store.set('item:10', 0);
+  fixture.store.set('item:hold:10', 0);
   fixture.seed_noitem(1);
   assert.equal(await com_able_family.call(41), 1, 'NOITEM 放行持有检查');
   fixture.seed_noitem(0);
   assert.equal(await com_able_family.call(41), 0);
 
   // 助手条件：41/42 是 ABL:ASSI:20 < 3
-  fixture.store.set('item:10', 1);
+  fixture.store.set('item:hold:10', 1);
   era_flag.assiplay = 1;
   fixture.store.set('abl:17:10', 3);
   fixture.store.set('abl:17:20', 2);
@@ -114,19 +114,19 @@ test('43 号可用性检查：失神挡、解除随时、要 ITEM:5', async () =
   assert.equal(await com_able_family.call(43), 0, '无眼罩');
 
   fixture.store.set('tflag:899', 1); // 失神中
-  fixture.store.set('item:5', 1);
+  fixture.store.set('item:hold:5', 1);
   assert.equal(await com_able_family.call(43), 0);
   fixture.store.set('tflag:899', 0);
   assert.equal(await com_able_family.call(43), 1);
 
   // 解除随时可（无道具也行）
-  fixture.store.set('item:5', 0);
+  fixture.store.set('item:hold:5', 0);
   fixture.store.set('tequip:31:43', 1);
   assert.equal(await com_able_family.call(43), 1);
 
   // 着ぐるみ + FLAG:37（43 的判断条件带 FLAG:37，与 45 互异）
   fixture.store.set('tequip:31:43', 0);
-  fixture.store.set('item:5', 1);
+  fixture.store.set('item:hold:5', 1);
   fixture.store.set('cflag:31:42', 11);
   fixture.store.set('cflag:31:40', 64);
   assert.equal(await com_able_family.call(43), 1, '着衣设定关 → 不挡');
@@ -136,7 +136,7 @@ test('43 号可用性检查：失神挡、解除随时、要 ITEM:5', async () =
 
 test('44 号可用性检查：调教者技巧 ≥3；助手要 ≥5；解除随时', async () => {
   const { fixture, era_flag, com_able_family } = seed_world({ assi: 17 });
-  fixture.store.set('item:14', 1);
+  fixture.store.set('item:hold:14', 1);
 
   assert.equal(
     await com_able_family.call(44),
@@ -154,14 +154,14 @@ test('44 号可用性检查：调教者技巧 ≥3；助手要 ≥5；解除随�
 
   // 解除随时可（无道具、无技巧也行）
   fixture.store.set('tequip:31:44', 1);
-  fixture.store.set('item:14', 0);
+  fixture.store.set('item:hold:14', 0);
   fixture.store.set('abl:0:12', 0);
   assert.equal(await com_able_family.call(44), 1);
 });
 
 test('45 号可用性检查：触手口辱挡、着ぐるみ挡（无 FLAG:37 分支）、助手技巧 ≥3', async () => {
   const { fixture, era_flag, com_able_family } = seed_world({ assi: 17 });
-  fixture.store.set('item:9', 1);
+  fixture.store.set('item:hold:9', 1);
   assert.equal(await com_able_family.call(45), 1);
 
   fixture.store.set('tequip:31:98', 1); // 触手口辱
@@ -183,7 +183,7 @@ test('45 号可用性检查：触手口辱挡、着ぐるみ挡（无 FLAG:37 �
 
 test('46 号可用性检查：服装三挡、肛门经验 > 25、三和 ≥ 10、与肛具互斥', async () => {
   const { fixture, com_able_family } = seed_world();
-  fixture.store.set('item:15', 1);
+  fixture.store.set('item:hold:15', 1);
   fixture.store.set('exp:31:1', 26);
   fixture.store.set('abl:31:10', 4);
   fixture.store.set('abl:31:11', 3);
@@ -224,13 +224,13 @@ test('46 号可用性检查：服装三挡、肛门经验 > 25、三和 ≥ 10�
 
   // 解除随时可
   fixture.store.set('tequip:31:46', 1);
-  fixture.store.set('item:15', 0);
+  fixture.store.set('item:hold:15', 0);
   assert.equal(await com_able_family.call(46), 1);
 });
 
 test('47 号可用性检查：只能助手穿（assiplay && ASSI ≥ 1）且抖S ≥ 2', async () => {
   const { fixture, era_flag, com_able_family } = seed_world({ assi: 17 });
-  fixture.store.set('item:23', 1);
+  fixture.store.set('item:hold:23', 1);
   assert.equal(await com_able_family.call(47), 0, '主人执行不可');
 
   era_flag.assiplay = 1;
@@ -241,12 +241,12 @@ test('47 号可用性检查：只能助手穿（assiplay && ASSI ≥ 1）且抖S
   // 解除随时可（无道具、非助手也行）
   fixture.store.set('tequip:31:47', 1);
   era_flag.assiplay = 0;
-  fixture.store.set('item:23', 0);
+  fixture.store.set('item:hold:23', 0);
   assert.equal(await com_able_family.call(47), 1);
 
   // 助手限定独立于抖S条件：主人执行、助手抖S 已达标 → 仍不可
   fixture.store.set('tequip:31:47', 0);
-  fixture.store.set('item:23', 1);
+  fixture.store.set('item:hold:23', 1);
   assert.equal(
     await com_able_family.call(47),
     0,
@@ -274,7 +274,7 @@ test('49 号可用性检查：要 ITEM:21；与灌肠互斥；解除随时', asy
   const { fixture, com_able_family } = seed_world();
   assert.equal(await com_able_family.call(49), 0, '无电极');
 
-  fixture.store.set('item:21', 1);
+  fixture.store.set('item:hold:21', 1);
   assert.equal(await com_able_family.call(49), 1);
 
   fixture.store.set('tequip:31:46', 1); // 普通の浣腸使用中
@@ -286,7 +286,7 @@ test('49 号可用性检查：要 ITEM:21；与灌肠互斥；解除随时', asy
   fixture.store.set('tequip:31:58', 0);
 
   fixture.store.set('tequip:31:49', 1);
-  fixture.store.set('item:21', 0);
+  fixture.store.set('item:hold:21', 0);
   assert.equal(await com_able_family.call(49), 1, '解除随时可');
 });
 
@@ -1150,7 +1150,7 @@ test('com40 的跳转目标：升格目标已注册 → 执行 COM132 真身；�
   world.fixture.load_module('system/train/com-advanced'); // COM132 真身注册
   world.era_flag.prevcom = 21; // 命中升格
   world.era_flag.selectcom = 21; // COM132 真身的确认早退种子（同 com-advanced 用例）
-  world.fixture.store.set('item:4', 1); // PBAND：insert_able 的男根判断条件
+  world.fixture.store.set('item:hold:4', 1); // PBAND：insert_able 的男根判断条件
   world.fixture.store.set('abl:31:14', 2); // able132 的技巧条件：目标技巧 >= 2
   world.fixture.store.set('exp:31:0', 4);
   world.fixture.store.set('palam:31:3', 500);

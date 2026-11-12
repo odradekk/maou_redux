@@ -380,7 +380,7 @@ test('SELF_KOJO 通过 peek_aftertrain_q 读取 Q：野狗妄想分支可达', a
     f.store.set(`abl:${CID}:31`, 2);
     f.store.set(`abl:${CID}:39`, 4);
     f.store.set(`base:${CID}:0`, 1000);
-    f.store.set('item:22', 1);
+    f.store.set('item:hold:22', 1);
   });
   const after = fixture.load_module('event/event-aftertrain');
   await after.aftertrain_masturbation_check(0, 0, () => 2);
@@ -678,7 +678,7 @@ test('#625 COLOSSEUM_KOJO_903 SC31/21/27：武器名与前后文同一行（三�
   ];
   const tiers = [
     { weapon: '阴茎', seed: (f) => f.store.set(`talent:${CID}:121`, 1) },
-    { weapon: '假阳具', seed: (f) => f.store.set('item:4', 1) }, // ITEM:PBAND
+    { weapon: '假阳具', seed: (f) => f.store.set('item:hold:4', 1) }, // ITEM:PBAND
     { weapon: '', seed: undefined },
   ];
   for (const { selectcom, quote, head, tail } of cases) {

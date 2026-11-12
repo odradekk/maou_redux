@@ -327,9 +327,9 @@ test('肉便器税：两处门槛（> 0 才收）与卖春税的三件道具字�
 
   // 淫魔卖春税：ITEM:143/152/182 各 ×2，另加 20 的固定项
   const whores = await run_tax({
-    'item:143': 1, // 女巫
-    'item:152': 2, // 魅魔
-    'item:182': 3, // 莉莉丝
+    'item:hold:143': 1, // 女巫
+    'item:hold:152': 2, // 魅魔
+    'item:hold:182': 3, // 莉莉丝
   });
   assert.equal(value_after(whores, '└ 淫魔卖春税 '), 2 + 4 + 6 + 20);
   assert.equal(tax2(whores), 32);
@@ -338,9 +338,9 @@ test('肉便器税：两处门槛（> 0 才收）与卖春税的三件道具字�
   const all = await run_tax({
     'flag:84': 3,
     'flag:83': 2,
-    'item:143': 1,
-    'item:152': 1,
-    'item:182': 1,
+    'item:hold:143': 1,
+    'item:hold:152': 1,
+    'item:hold:182': 1,
   });
   assert.deepEqual(
     all
@@ -360,9 +360,9 @@ test('肉便器税：FLAG:350-358 等于 507 的娼馆各乘 1.1（截断，逐�
   const seed = {
     'flag:84': 3,
     'flag:83': 2,
-    'item:143': 1,
-    'item:152': 1,
-    'item:182': 1,
+    'item:hold:143': 1,
+    'item:hold:152': 1,
+    'item:hold:182': 1,
   };
 
   // 一个都不命中：76

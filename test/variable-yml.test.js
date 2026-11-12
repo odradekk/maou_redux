@@ -134,8 +134,8 @@ engine_test(
       global: {},
       extendedTables: {},
     };
-    fake_this.data.item.hold[4] = 1; // 助手持有假阳具（era.set('item:4', 1)）
-    assert.equal(engine.set_var.call(fake_this, 'item:4'), 1);
+    fake_this.data.item.hold[4] = 1; // 助手持有假阳具（era.set('item:hold:4', 1)）
+    assert.equal(engine.set_var.call(fake_this, 'item:hold:4'), 1);
     assert.equal(
       engine.set_var.call(fake_this, 'item:PBAND'),
       undefined,

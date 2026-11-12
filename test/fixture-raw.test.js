@@ -302,6 +302,67 @@ test('预置只做在读面：store 仍是「写了没」，raw()/era.get 是引
 const engine = load_engine_bundle();
 const engine_test = engine ? test : test.skip;
 
+engine_test(
+  '引擎比对：item:<N> 与 item:hold:<N> 是同一个槽，data.item 不出现数字子键',
+  () => {
+    const fixture = create_era_fixture();
+    const engine_data = create_engine_data({
+      static_data: engine_static_data(fixture),
+    });
+    engine_data.reset_data();
+
+    // 引擎：两段式 item:90 落 default 支的 hold，三段式读回同一个槽
+    engine_data.set_var('item:hold:90', 5);
+    const engine_raw = engine_data.raw().data;
+    assert.equal(
+      engine_raw.item.hold[90],
+      5,
+      '引擎：item:90 写进 data.item.hold[90]',
+    );
+    assert.equal(
+      engine_data.set_var('item:hold:90'),
+      5,
+      '引擎：item:hold:90 读回同一槽',
+    );
+    engine_data.set_var('item:hold:91', 7);
+    assert.equal(
+      engine_data.set_var('item:hold:91'),
+      7,
+      '引擎：item:91 也读三段式写的槽',
+    );
+    assert.deepEqual(
+      Object.keys(engine_raw.item),
+      ['bought', 'hold', 'price', 'sales'],
+      '引擎的 data.item 只有四个子表',
+    );
+
+    // 夹具：同一组写入必须落同一处，顶层键与引擎逐键一致
+    fixture.era.set('item:hold:90', 5);
+    const fixture_raw = fixture.era.raw().data;
+    assert.equal(
+      fixture_raw.item.hold[90],
+      5,
+      '夹具：era.set(item:90) 写进 data.item.hold[90]',
+    );
+    assert.equal(
+      fixture.era.get('item:hold:90'),
+      5,
+      '夹具：item:hold:90 读回同一槽',
+    );
+    fixture.era.set('item:hold:91', 7);
+    assert.equal(
+      fixture.era.get('item:hold:91'),
+      7,
+      '夹具：item:91 读三段式写的槽',
+    );
+    assert.deepEqual(
+      Object.keys(fixture_raw.item),
+      Object.keys(engine_raw.item),
+      '夹具的 data.item 顶层键与引擎一致（没有数字子键）',
+    );
+  },
+);
+
 /**
  * 与实机同源的引擎静态表 + 一个角色预设。夹具的数据层结构与静态表登记了
  * 多少序号无关，所以这里只在预填会用到的表上装真数据。

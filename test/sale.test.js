@@ -395,7 +395,7 @@ test('SELL_FIGHTMONEY：扣观战卷、收入钳上限后结算并清零', async
   const fixture = create_era_fixture();
   const era_flag = seed_world(fixture);
   fixture.store.set('tequip:31:55', 1);
-  fixture.store.set('item:35', 2);
+  fixture.store.set('item:hold:35', 2);
   fixture.store.set('tflag:402', 13000);
   era_flag.money = 500;
   fixture.store.set('exflag:4444', 1000);
@@ -403,7 +403,7 @@ test('SELL_FIGHTMONEY：扣观战卷、收入钳上限后结算并清零', async
   const { sell_fightmoney } = fixture.load_module('system/stronghold/sale');
   await sell_fightmoney();
 
-  assert.equal(fixture.store.get('item:35'), 1);
+  assert.equal(fixture.store.get('item:hold:35'), 1);
   assert.equal(fixture.store.get('tflag:402'), 0);
   assert.equal(era_flag.money, 60500);
   assert.equal(fixture.store.get('exflag:4444'), 61000);
@@ -415,13 +415,13 @@ test('SELL_FIGHTMONEY：无收入时仍消耗观战卷，不改写负收入', as
   const fixture = create_era_fixture();
   seed_world(fixture);
   fixture.store.set('tequip:31:55', 1);
-  fixture.store.set('item:35', 0);
+  fixture.store.set('item:hold:35', 0);
   fixture.store.set('tflag:402', -1);
 
   const { sell_fightmoney } = fixture.load_module('system/stronghold/sale');
   await sell_fightmoney();
 
-  assert.equal(fixture.store.get('item:35'), -1);
+  assert.equal(fixture.store.get('item:hold:35'), -1);
   assert.equal(fixture.store.get('tflag:402'), -1);
   assert.deepEqual(fixture.text_lines(), []);
 });

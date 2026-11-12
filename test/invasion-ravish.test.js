@@ -43,7 +43,7 @@ async function run_plain(fixture, name, area, point, rand) {
 
 test('分发：三列各抽一怪、写 E: 列、按凌辱类型调旁白、列间空行', async () => {
   const fixture = create_era_fixture();
-  fixture.store.set('item:110', 1); // 兽人（110-199 段的第一个），持有 1 只
+  fixture.store.set('item:hold:110', 1); // 兽人（110-199 段的第一个），持有 1 只
   fixture.store.set('itemname:110', '兽人');
   const mod = fixture.load_module('system/invasion/invasion-ravish');
   const r = await mod.invasion_ryouzyoku(1, 0, knob({ 9: 0, 5: 0 }));
@@ -95,7 +95,7 @@ test('分发：全灭回退到骷髅 190（凌辱类型 0）时不打印开场�
 test('分发：侵攻点 ÷5000 归一——门槛按归一后的档位开合', async () => {
   const make = () => {
     const fixture = create_era_fixture();
-    fixture.store.set('item:110', 1);
+    fixture.store.set('item:hold:110', 1);
     fixture.store.set('itemname:110', '兽人');
     return fixture;
   };

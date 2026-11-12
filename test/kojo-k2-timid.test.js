@@ -480,7 +480,7 @@ test('#625 COLOSSEUM_KOJO_2：SC31/21/27 武器名与前后文同一行（三种
   ];
   const tiers = [
     { weapon: '阴茎', seed: (f) => f.store.set('talent:17:121', 1) },
-    { weapon: '假阳具', seed: (f) => f.store.set('item:4', 1) }, // ITEM:PBAND
+    { weapon: '假阳具', seed: (f) => f.store.set('item:hold:4', 1) }, // ITEM:PBAND
     { weapon: '', seed: undefined },
   ];
   for (const { selectcom, quote, head, tail } of cases) {

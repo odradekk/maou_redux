@@ -1932,7 +1932,7 @@ test('死斗场口交 PRINT 拼接 + 假阳具持有位；背后位巨魔 TFLAG:
     f.store.set(`tequip:${CID}:55`, 1);
     // ITEM:PBAND（内建非角色变量，4 号 = 假阳具）
     // = ITEM:4（#552）
-    f.store.set('item:4', 1);
+    f.store.set('item:hold:4', 1);
     era_flag.assi = CID;
     era_flag.assiplay = 1;
   }, 31);
@@ -2346,7 +2346,7 @@ test('#625 死斗场口交：武器名与前后文是同一行（阴茎 / 假阳
   // 是一整行（#625）。三档各断言整行
   const cases = [
     ['阴茎', (f) => f.store.set(`talent:${CID}:121`, 1)],
-    ['假阳具', (f) => f.store.set('item:4', 1)],
+    ['假阳具', (f) => f.store.set('item:hold:4', 1)],
     ['', undefined],
   ];
   for (const [weapon, seed] of cases) {

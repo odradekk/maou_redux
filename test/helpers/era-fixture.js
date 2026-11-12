@@ -151,7 +151,7 @@ function create_era_fixture() {
   // 的 clear 处理只删行，returnFromButton 才重置 rule）。era.input 消费
   // 预置值时按它校验，见「输入」段
   const input_rules = [];
-  const store = new Map(); // 变量存储
+  const store = new Map(); // 变量存储（item 的槽统一写 item:hold:N，见 normalize_address）
 
   // —— Row 记账（#68）：一次输出调用 = 一个 Row，与引擎标准一致 ——
   //
@@ -752,6 +752,17 @@ function create_era_fixture() {
       ) {
         segments[2] = translate_name(table, segments[2]);
       }
+    } else if (
+      segments.length === 2 &&
+      table === 'item' &&
+      segments[1] !== 'bought'
+    ) {
+      // 引擎把 `item:<N>` 别名到 hold[N]：寻址层的 `switch (a.substring(4))` 对
+      // 两段式取到空串，落 default 支 `a = "hold"`，与 `item:hold:<N>` 是同一个
+      // 槽（实测：写完 item:90 后 data.item.hold[90] 是 5，data.item 没有 '90'
+      // 子键）。不归一的话夹具会多出引擎没有的 item[N] 子键，era_item 的具名访问
+      // 器永远读不到值，与写 item:N 的代码各看各的。
+      return `item:hold:${translate_name('item', segments[1])}`;
     } else if (
       segments.length === 2 &&
       !table.endsWith('name') &&
@@ -2166,7 +2177,7 @@ function create_era_fixture() {
     var_reads,
     /** 变量写记录 [{name, value}] */
     var_writes,
-    /** 变量存储 Map，可预置状态、可直接断言 */
+    /** 变量存储 Map，可预置状态、可直接断言（item 的槽是 `item:hold:N`） */
     store,
     /** logger 记录 [{level, msg}] */
     logs,

@@ -58,7 +58,7 @@ test('#612 com-condom：四组确认菜单的按钮正文都带「- 」', async 
   // 每次确认且有套：主人位 [0]戴 [1]不戴 [2]今后都直接 [3]今后都戴
   const master = seed_world();
   arm_player(master.fixture);
-  master.fixture.store.set('item:24', 1);
+  master.fixture.store.set('item:hold:24', 1);
   master.fixture.set_inputs(1);
   await master.condom.confirm_condom();
   assert.deepEqual(
@@ -75,7 +75,7 @@ test('#612 com-condom：四组确认菜单的按钮正文都带「- 」', async 
   // 助手位：同一位置的「使用/不使用」两个标签
   const assi = seed_world();
   arm_player(assi.fixture);
-  assi.fixture.store.set('item:24', 1);
+  assi.fixture.store.set('item:hold:24', 1);
   assi.era_flag.assiplay = 1;
   assi.fixture.set_inputs(1);
   await assi.condom.confirm_condom();
@@ -102,7 +102,7 @@ test('#612 com-condom：四组确认菜单的按钮正文都带「- 」', async 
   // confirm_condom2 的有套两键
   const bare = seed_world();
   bare.fixture.store.set('talent:31:122', 1); // 对象侧的男性器
-  bare.fixture.store.set('item:24', 2);
+  bare.fixture.store.set('item:hold:24', 2);
   bare.fixture.set_inputs(1);
   await bare.condom.confirm_condom2();
   assert.deepEqual(rendered_buttons(bare.fixture), [
@@ -205,12 +205,12 @@ test('已戴着（主人位 35 / 助手位 36）→ 放行且不重复消耗', a
   ]) {
     const { fixture, era_flag, condom } = seed_world();
     fixture.store.set(key, 1);
-    fixture.store.set('item:24', 2);
+    fixture.store.set('item:hold:24', 2);
     arm_player(fixture);
     era_flag.assiplay = assiplay;
     fixture.set_inputs();
     assert.equal(await condom.confirm_condom(), 1, key);
-    assert.equal(fixture.store.get('item:24'), 2, `${key}：不消耗`);
+    assert.equal(fixture.store.get('item:hold:24'), 2, `${key}：不消耗`);
   }
 });
 
@@ -218,22 +218,22 @@ test('已戴着（主人位 35 / 助手位 36）→ 放行且不重复消耗', a
 
 test('每次问 + 有套 + [0] 戴：消耗一枚、主人位 35（event 门面）、放行', async () => {
   const { fixture, condom } = seed_world();
-  fixture.store.set('item:24', 3);
+  fixture.store.set('item:hold:24', 3);
   arm_player(fixture);
   fixture.set_inputs(0);
   assert.equal(await condom.confirm_condom(), 1);
-  assert.equal(fixture.store.get('item:24'), 2);
+  assert.equal(fixture.store.get('item:hold:24'), 2);
   assert.equal(fixture.store.get('tequip:31:35'), 1, 'tequip:35 经门面写');
   assert.ok(fixture.text_lines().includes('魔王戴着套。'));
 });
 
 test('每次问 + 有套 + [1] 不戴：不消耗、放行', async () => {
   const { fixture, condom } = seed_world();
-  fixture.store.set('item:24', 3);
+  fixture.store.set('item:hold:24', 3);
   arm_player(fixture);
   fixture.set_inputs(1);
   assert.equal(await condom.confirm_condom(), 1);
-  assert.equal(fixture.store.get('item:24'), 3);
+  assert.equal(fixture.store.get('item:hold:24'), 3);
   // TEQUIP:35 由 addCharacterForTrain 按声明集预置 0，这里不应被写成 1
   assert.equal(fixture.store.get('tequip:31:35'), 0);
 });
@@ -248,29 +248,29 @@ test('每次问 + 无套：两段 IF 均不进（静默返回 1——不问也�
 
 test('每次问 + 有套 + [2] 今后都直接：改设后重走，按设定 2 放行', async () => {
   const { fixture, condom } = seed_world();
-  fixture.store.set('item:24', 3);
+  fixture.store.set('item:hold:24', 3);
   arm_player(fixture);
   fixture.set_inputs(2);
   assert.equal(await condom.confirm_condom(), 1);
   assert.equal(fixture.store.get('cflag:31:61'), 2);
   assert.ok(fixture.text_lines().includes('今后和温妮做都是直接来。'));
-  assert.equal(fixture.store.get('item:24'), 3, '不消耗');
+  assert.equal(fixture.store.get('item:hold:24'), 3, '不消耗');
 });
 
 test('每次问 + 有套 + [3] 今后都戴：改设后重走自动用（消耗并戴上）', async () => {
   const { fixture, condom } = seed_world();
-  fixture.store.set('item:24', 3);
+  fixture.store.set('item:hold:24', 3);
   arm_player(fixture);
   fixture.set_inputs(3);
   assert.equal(await condom.confirm_condom(), 1);
   assert.equal(fixture.store.get('cflag:31:61'), 1);
-  assert.equal(fixture.store.get('item:24'), 2, '自动用段消耗一枚');
+  assert.equal(fixture.store.get('item:hold:24'), 2, '自动用段消耗一枚');
   assert.equal(fixture.store.get('tequip:31:35'), 1);
 });
 
 test('助手调教（assiplay）+ 每次问：问句与戴上位切换（36 直写）', async () => {
   const { fixture, era_flag, condom } = seed_world();
-  fixture.store.set('item:24', 1);
+  fixture.store.set('item:hold:24', 1);
   arm_player(fixture);
   era_flag.assiplay = 1;
   fixture.set_inputs(0);
@@ -285,11 +285,11 @@ test('助手调教（assiplay）+ 每次问：问句与戴上位切换（36 直�
 test('设定 1 + 有套：直接消耗并戴上（无输入）', async () => {
   const { fixture, condom } = seed_world();
   fixture.store.set('cflag:31:61', 1);
-  fixture.store.set('item:24', 1);
+  fixture.store.set('item:hold:24', 1);
   arm_player(fixture);
   fixture.set_inputs();
   assert.equal(await condom.confirm_condom(), 1);
-  assert.equal(fixture.store.get('item:24'), 0);
+  assert.equal(fixture.store.get('item:hold:24'), 0);
   assert.equal(fixture.store.get('tequip:31:35'), 1);
 });
 
@@ -347,18 +347,18 @@ test('设定 1 + 无套 + 技巧 < Lv5：直接插入（笨魔王条款）', asy
 test('CONFIRM2：对象有男性器 + 未戴 + 有套 → 两键；[0] 用（37 + 消耗）', async () => {
   const { fixture, condom } = seed_world();
   fixture.store.set('talent:31:122', 1); // 对象侧的男性器
-  fixture.store.set('item:24', 2);
+  fixture.store.set('item:hold:24', 2);
   fixture.set_inputs(0);
   assert.equal(await condom.confirm_condom2(), 1);
   assert.equal(fixture.store.get('tequip:31:37'), 1);
-  assert.equal(fixture.store.get('item:24'), 1);
+  assert.equal(fixture.store.get('item:hold:24'), 1);
   assert.ok(fixture.text_lines().includes('温妮戴着套'));
 });
 
 test('CONFIRM2：[1] 这次直接 → MASTER 的 CFLAG:61 = 2（不是 TARGET 行）', async () => {
   const { fixture, condom } = seed_world();
   fixture.store.set('talent:31:121', 1); // 扶她也算
-  fixture.store.set('item:24', 2);
+  fixture.store.set('item:hold:24', 2);
   fixture.set_inputs(1);
   assert.equal(await condom.confirm_condom2(), 1);
   assert.equal(fixture.store.get('cflag:0:61'), 2);
@@ -368,7 +368,7 @@ test('CONFIRM2：[1] 这次直接 → MASTER 的 CFLAG:61 = 2（不是 TARGET �
 test('CONFIRM2：主人已设定不用（CFLAG:MASTER:61 = 2）→ 不问', async () => {
   const { fixture, condom } = seed_world();
   fixture.store.set('talent:31:122', 1);
-  fixture.store.set('item:24', 2);
+  fixture.store.set('item:hold:24', 2);
   fixture.store.set('cflag:0:61', 2);
   fixture.set_inputs();
   assert.equal(await condom.confirm_condom2(), 1);
@@ -377,9 +377,9 @@ test('CONFIRM2：主人已设定不用（CFLAG:MASTER:61 = 2）→ 不问', asyn
 
 test('CONFIRM2：对象无男性器 / 已戴（37）/ 无套 → 均不问', async () => {
   for (const seed of [
-    (f) => f.store.set('item:24', 1),
+    (f) => f.store.set('item:hold:24', 1),
     (f) => {
-      f.store.set('item:24', 1);
+      f.store.set('item:hold:24', 1);
       f.store.set('talent:31:122', 1);
       f.store.set('tequip:31:37', 1);
     },

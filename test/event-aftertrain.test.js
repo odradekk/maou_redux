@@ -672,7 +672,7 @@ test('AFTERTRAIN: aftertrain_masturbation_check 妄想对象 q=2 野狗分支', 
   fixture.store.set('abl:17:11', 2);
   fixture.store.set('abl:17:31', 2);
   fixture.store.set('abl:17:39', 4); // 兽奸中毒
-  fixture.store.set('item:22', 1); // 野狗
+  fixture.store.set('item:hold:22', 1); // 野狗
   fixture.store.set('base:17:0', 1000);
   // 无爱慕 + abl39 > rand(5) + 有野狗 → q=2
   const res = await aftertrain_masturbation_check(0, 0, () => 2);
@@ -780,7 +780,7 @@ test('AFTERTRAIN: aftertrain_beastsex_check 兽奸检查', async () => {
 
   // 2. 满足兽奸条件
   fixture.store.set('exp:17:56', 60); // 兽奸经验 >= 50
-  fixture.store.set('item:22', 1); // 狗
+  fixture.store.set('item:hold:22', 1); // 狗
   fixture.store.set('base:17:0', 1000);
   fixture.store.set('abl:17:39', 3); // 兽奸中毒 3
   fixture.store.set('talent:17:124', 1); // 动物耳
@@ -805,7 +805,7 @@ test('AFTERTRAIN: aftertrain_beastsex_check 逐道门槛负例', async () => {
       },
     ],
     ['贞操封印 CFLAG:273', (f) => f.store.set('cflag:17:273', 1)],
-    ['无野狗 ITEM:22==0', (f) => f.store.set('item:22', 0)],
+    ['无野狗 ITEM:22==0', (f) => f.store.set('item:hold:22', 0)],
     ['濒死 BASE:0<500', (f) => f.store.set('base:17:0', 499)],
     [
       'B≤0（兽奸中毒 0 → -2 + 高姿态 -1 + 克制 -1）',
@@ -818,7 +818,7 @@ test('AFTERTRAIN: aftertrain_beastsex_check 逐道门槛负例', async () => {
   ];
   const base_setup = (f) => {
     f.store.set('exp:17:56', 60);
-    f.store.set('item:22', 1);
+    f.store.set('item:hold:22', 1);
     f.store.set('base:17:0', 1000);
     f.store.set('abl:17:39', 3);
     f.store.set('palam:17:5', 5000);
@@ -843,7 +843,7 @@ test('AFTERTRAIN: aftertrain_beastsex_check 兽奸次数与牝犬加成', async 
     'event/event-aftertrain',
   );
   fixture.store.set('exp:17:56', 60);
-  fixture.store.set('item:22', 1);
+  fixture.store.set('item:hold:22', 1);
   fixture.store.set('base:17:0', 1000);
   fixture.store.set('abl:17:39', 3); // b += 1
   fixture.store.set('talent:17:124', 1); // +1（动物耳条件后）
@@ -862,7 +862,7 @@ test('AFTERTRAIN: aftertrain_beastsex_check 报告分支（顺从+露出+抖M≥
     'event/event-aftertrain',
   );
   fixture.store.set('exp:17:56', 60);
-  fixture.store.set('item:22', 1);
+  fixture.store.set('item:hold:22', 1);
   fixture.store.set('base:17:0', 1000);
   fixture.store.set('abl:17:39', 3);
   fixture.store.set('talent:17:124', 1);
@@ -1031,7 +1031,7 @@ test('AFTERTRAIN: 兽奸报告二次累加按兽奸回数结算，与显示一�
   assert.equal(fixture.store.get('exp:17:10'), 9);
 
   fixture.store.set('exp:17:56', 60);
-  fixture.store.set('item:22', 1);
+  fixture.store.set('item:hold:22', 1);
   fixture.store.set('abl:17:39', 3); // B += 1
   fixture.store.set('talent:17:124', 1); // 后置 +1 → B = 2
   fixture.store.set('palam:17:5', 5000);

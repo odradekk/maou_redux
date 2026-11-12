@@ -340,14 +340,14 @@ test('FI_CULC_BITCH：ABLE 可不可判定（体力门槛/ORAL 接吻/SEX 处女
   // ANIMAL：无野狗道具（ITEM:22 == 0）→ 不可
   const { mod: m6 } = setup_bitch((f) => {
     f.store.set('base:31:0', 500);
-    f.store.set('item:22', 0);
+    f.store.set('item:hold:22', 0);
   });
   assert.equal(m6.fi_culc_bitch(31, 'ABLE', 'ANIMAL'), 0);
 
   // ANIMAL：有野狗道具 → 可
   const { mod: m7 } = setup_bitch((f) => {
     f.store.set('base:31:0', 500);
-    f.store.set('item:22', 1);
+    f.store.set('item:hold:22', 1);
     f.store.set('talent:31:0', 0);
     f.store.set('talent:31:122', 0);
   });
@@ -734,7 +734,7 @@ test('#624 SELF_BITCH：分档文本、扶她追加与收行同属一行', async
     [
       '兽支',
       (f) => {
-        f.store.set('item:22', 1);
+        f.store.set('item:hold:22', 1);
         f.store.set('abl:31:39', 10);
       },
       '陷入了跟野兽交尾的幻想',

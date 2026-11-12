@@ -40,11 +40,11 @@ function setup_world() {
   // 陷阱库存（Item.yml 等价预置）：落穴 60 ×3、毒箭 61 ×2
   fixture.store.set('itemname:60', '落穴');
   fixture.store.set('itemname:61', '毒箭');
-  fixture.store.set('item:60', 3);
-  fixture.store.set('item:61', 2);
+  fixture.store.set('item:hold:60', 3);
+  fixture.store.set('item:hold:61', 2);
   // 宝物库存：剑 300 ×1
   fixture.store.set('itemname:300', '剑');
-  fixture.store.set('item:300', 1);
+  fixture.store.set('item:hold:300', 1);
   // 设施名（500-507 的 Item.yml 登记名）
   fixture.store.set('itemname:500', '商店街');
   fixture.store.set('itemname:501', '沼泽');
@@ -536,13 +536,13 @@ test('INFO2：部下状态总览（10）走 ENEMY_EXIST2，[100-199] 进 MONSTER
   const fixture = setup_world();
   const { dungeon_info2 } = load(fixture, 'page/page-dungeon-info2');
   seed_invasion_party(fixture);
-  fixture.store.set('item:104', 7); // 第 1 层的已声明魔物
+  fixture.store.set('item:hold:104', 7); // 第 1 层的已声明魔物
   fixture.store.set('itemname:104', '狗头人');
-  fixture.store.set('item:114', 2); // 第 2 层的已声明魔物
+  fixture.store.set('item:hold:114', 2); // 第 2 层的已声明魔物
   fixture.store.set('itemname:114', '史莱姆');
   // 嘉德暴走会给未声明的格子写入库存；总览应跳过这些格子。
-  fixture.store.set('item:105', 30);
-  fixture.store.set('item:115', 30);
+  fixture.store.set('item:hold:105', 30);
+  fixture.store.set('item:hold:115', 30);
   fixture.set_inputs(10, 104, 999, 999, 999);
   await dungeon_info2();
   const lines = fixture.lines_history;
@@ -644,7 +644,7 @@ test('DRAW_DUNGEON_OVERVIEW：头行读数、逐层按钮与统计行', async ()
   fixture.store.set('flag:85', 7); // 陷阱 Lv
   fixture.store.set('flag:60', 2); // 勇者初期 Lv 修正
   fixture.store.set('flag:350', 500); // 第 1 层商店街
-  fixture.store.set('item:105', 4); // 第 1 层 5 号格 4 只
+  fixture.store.set('item:hold:105', 4); // 第 1 层 5 号格 4 只
   fixture.store.set('flag:83', 6); // 肉便器
   fixture.store.set('flag:84', 9); // 展品
   await draw_dungeon_overview();

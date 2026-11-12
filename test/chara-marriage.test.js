@@ -413,7 +413,7 @@ test('marriage：菜单按钮集——野狗/恋人三项/离婚的可选性随 
     ],
     [
       '有狗有恋人已婚',
-      { 'item:22': 1, 'cflag:1:606': 3, 'cflag:1:601': 900 },
+      { 'item:hold:22': 1, 'cflag:1:606': 3, 'cflag:1:601': 900 },
       [
         ['野狗', 900],
         ['你', 901],
@@ -522,7 +522,7 @@ test('marriage：登记一位是 9（家族册上的人）时名字从家族册�
 test('marriage：选怪物 → monster_data 取陵辱类型 → 对应种族典礼——表驱动走完十二族', async () => {
   for (const [id, ritual, marker] of RITUAL_BY_MONSTER) {
     const fixture = seed();
-    fixture.store.set(`item:${id}`, 1);
+    fixture.store.set(`item:hold:${id}`, 1);
     fixture.store.set(`itemname:${id}`, '怪物');
     fixture.set_inputs(id);
 
@@ -536,14 +536,14 @@ test('marriage：选怪物 → monster_data 取陵辱类型 → 对应种族典�
     assert.ok(texts(fixture).includes(marker), `${ritual}：本族典礼正文`);
     assert.equal(fixture.store.get('cflag:1:601'), id, `${ritual}：登记对象`);
     assert.equal(fixture.store.get('cflag:1:602'), 0, `${ritual}：爱情度归零`);
-    assert.equal(fixture.store.get(`item:${id}`), 1, '持有数没被消耗');
+    assert.equal(fixture.store.get(`item:hold:${id}`), 1, '持有数没被消耗');
   }
 });
 
 test('marriage：选野狗与选你——两支特殊典礼，登记为 900/901', async () => {
   {
     const fixture = seed();
-    fixture.store.set('item:22', 1);
+    fixture.store.set('item:hold:22', 1);
     fixture.set_inputs(900);
     assert.equal(await load(fixture).marriage(1, () => 0), 1);
     assert.ok(texts(fixture).includes('角色1和野狗结婚了。'));
@@ -670,7 +670,7 @@ test('marriage：已婚后选别的对象报「已婚了」，选当前对象报
   {
     const fixture = seed();
     fixture.store.set('cflag:1:601', 900);
-    fixture.store.set(`item:${MONSTER}`, 1);
+    fixture.store.set(`item:hold:${MONSTER}`, 1);
     fixture.store.set(`itemname:${MONSTER}`, '怪物');
     fixture.set_inputs(MONSTER);
     assert.equal(await load(fixture).marriage(1, () => 0), 0);
@@ -680,7 +680,7 @@ test('marriage：已婚后选别的对象报「已婚了」，选当前对象报
   {
     const fixture = seed();
     fixture.store.set('cflag:1:601', MONSTER);
-    fixture.store.set(`item:${MONSTER}`, 1);
+    fixture.store.set(`item:hold:${MONSTER}`, 1);
     fixture.store.set(`itemname:${MONSTER}`, '怪物');
     fixture.set_inputs(MONSTER);
     assert.equal(await load(fixture).marriage(1, () => 0), 0);
@@ -691,7 +691,7 @@ test('marriage：已婚后选别的对象报「已婚了」，选当前对象报
     // 条件写成 `> 1` 会让登记值 1 一路走到婚礼，所以这里测边界。
     const fixture = seed();
     fixture.store.set('cflag:1:601', 1);
-    fixture.store.set(`item:${MONSTER}`, 1);
+    fixture.store.set(`item:hold:${MONSTER}`, 1);
     fixture.store.set(`itemname:${MONSTER}`, '怪物');
     fixture.set_inputs(MONSTER);
     assert.equal(await load(fixture).marriage(1, () => 0), 0);
@@ -743,7 +743,7 @@ test('marriage：婚前清旧账——cflag:609 有值但家族册上找不到�
   // divorce(-1)——只把发起方自己清干净（文件头的例外条）
   {
     const fixture = seed();
-    fixture.store.set(`item:${MONSTER}`, 1);
+    fixture.store.set(`item:hold:${MONSTER}`, 1);
     fixture.store.set(`itemname:${MONSTER}`, '怪物');
     fixture.store.set('cflag:1:609', 42);
     fixture.set_inputs(MONSTER);
@@ -758,7 +758,7 @@ test('marriage：婚前清旧账——cflag:609 有值但家族册上找不到�
   {
     // ex_talent:2 且找不到人时那支是空体：不清旧账，直接办婚礼
     const fixture = seed();
-    fixture.store.set(`item:${MONSTER}`, 1);
+    fixture.store.set(`item:hold:${MONSTER}`, 1);
     fixture.store.set(`itemname:${MONSTER}`, '怪物');
     fixture.store.set('cflag:1:609', 42);
     fixture.store.set('ex_talent:1:2', 1);
@@ -776,11 +776,11 @@ test('marriage：处女丧失的记录码按对象分档（你 1 / 野狗 103 / 
   // [标签, 输入, 预置, 期望 cflag:15]
   const table = [
     ['与你结婚 → 1', 901, {}, 1],
-    ['与野狗结婚 → 103', 900, { 'item:22': 1 }, 103],
+    ['与野狗结婚 → 103', 900, { 'item:hold:22': 1 }, 103],
     [
       '与怪物结婚 → 104',
       MONSTER,
-      { [`item:${MONSTER}`]: 1, [`itemname:${MONSTER}`]: '怪物' },
+      { [`item:hold:${MONSTER}`]: 1, [`itemname:${MONSTER}`]: '怪物' },
       104,
     ],
   ];
@@ -812,7 +812,7 @@ test('marriage：处女丧失的四道检查——特殊服装 79 / 素质 273 /
     const fixture = seed();
     add_chara(fixture, 2, '乙');
     fixture.store.set('talent:1:0', 1);
-    fixture.store.set(`item:${MONSTER}`, 1);
+    fixture.store.set(`item:hold:${MONSTER}`, 1);
     fixture.store.set(`itemname:${MONSTER}`, '怪物');
     for (const [key, value] of Object.entries(preset)) {
       fixture.store.set(key, value);
@@ -839,7 +839,7 @@ test('marriage：虫/史莱姆/植物婚的处女骰上界是 9，掷 3 破处�
     ]) {
       const fixture = seed();
       fixture.store.set('talent:1:0', 1);
-      fixture.store.set(`item:${id}`, 1);
+      fixture.store.set(`item:hold:${id}`, 1);
       fixture.store.set(`itemname:${id}`, '怪物');
       fixture.set_inputs(id);
       const bounds = [];
@@ -876,11 +876,11 @@ test('marriage：初吻的记录码按对象分档（你 1 / 野狗 998 / 其它
   // [标签, 输入, 预置, 期望 cflag:16]
   const table = [
     ['与你结婚 → 1', 901, {}, 1],
-    ['与野狗结婚 → 998', 900, { 'item:22': 1 }, 998],
+    ['与野狗结婚 → 998', 900, { 'item:hold:22': 1 }, 998],
     [
       '与怪物结婚 → 994',
       MONSTER,
-      { [`item:${MONSTER}`]: 1, [`itemname:${MONSTER}`]: '怪物' },
+      { [`item:hold:${MONSTER}`]: 1, [`itemname:${MONSTER}`]: '怪物' },
       994,
     ],
   ];
@@ -912,7 +912,7 @@ test('marriage：初吻的记录码按对象分档（你 1 / 野狗 998 / 其它
 test('marriage：初吻只在未初始化（-1）时落一次', async () => {
   const fixture = seed();
   fixture.store.set('cflag:1:16', 5); // 已经有初吻对象
-  fixture.store.set(`item:${MONSTER}`, 1);
+  fixture.store.set(`item:hold:${MONSTER}`, 1);
   fixture.store.set(`itemname:${MONSTER}`, '怪物');
   fixture.set_inputs(MONSTER);
 
@@ -945,7 +945,7 @@ test('marriage：异种婚姻（欲望 LV 5 + 异种奸经验 300 + 主从逆转
   ];
   for (const [label, preset, triggered] of table) {
     const fixture = seed();
-    fixture.store.set(`item:${MONSTER}`, 1);
+    fixture.store.set(`item:hold:${MONSTER}`, 1);
     fixture.store.set(`itemname:${MONSTER}`, '怪物');
     fixture.store.set('talentname:159', '异种婚姻');
     for (const [key, value] of Object.entries(preset)) {
@@ -1041,7 +1041,7 @@ test('marriage：婚姻编码的进位——已婚（位 1）与离婚（位 2�
   ];
   for (const [label, before, after] of table) {
     const fixture = seed();
-    fixture.store.set(`item:${MONSTER}`, 1);
+    fixture.store.set(`item:hold:${MONSTER}`, 1);
     fixture.store.set(`itemname:${MONSTER}`, '怪物');
     fixture.store.set('talent:1:320', before);
     fixture.set_inputs(MONSTER);
@@ -1174,7 +1174,7 @@ test('marriage：婚前清旧账的两侧——家族册上找得到人时先解
   // 解析，家族构成（320）同为 0——这正是「登记丢了、名槽还在」的语义。
   const fixture = seed();
   add_chara(fixture, 2, '乙');
-  fixture.store.set(`item:${MONSTER}`, 1);
+  fixture.store.set(`item:hold:${MONSTER}`, 1);
   fixture.store.set(`itemname:${MONSTER}`, '怪物');
   fixture.store.set('cflag:1:6', 42); // 名字编号
   fixture.store.set('cflag:1:601', 0); // 压缩数据 0 = 走清旧账
@@ -1193,7 +1193,7 @@ test('marriage：婚前清旧账的两侧——家族册上找得到人时先解
   // 对照：名槽是 0 时整段不跑（另一侧）
   {
     const bare = seed();
-    bare.store.set(`item:${MONSTER}`, 1);
+    bare.store.set(`item:hold:${MONSTER}`, 1);
     bare.store.set(`itemname:${MONSTER}`, '怪物');
     bare.store.set('cflag:1:609', 0);
     bare.set_inputs(MONSTER);

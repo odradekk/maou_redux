@@ -347,11 +347,11 @@ test('summon_trap：弱召唤真身入库、高难度时体力损耗', async () 
   const { summon_trap } = load(fixture);
   assert.equal(await summon_trap(1, seq(1)), 1, 'Z>0 破坏阵（未作动）');
   await summon_trap(1, seq(0)); // 召唤
-  assert.equal(fixture.store.get('item:100'), 2, '-1 实参触发两轮弱召唤');
+  assert.equal(fixture.store.get('item:hold:100'), 2, '-1 实参触发两轮弱召唤');
   assert.equal(fixture.store.get('base:1:0'), 2000, 'FLAG:85=0 无魔力冲击');
   fixture.store.set('flag:85', 2);
   await summon_trap(1, seq(0));
-  assert.equal(fixture.store.get('item:100'), 4);
+  assert.equal(fixture.store.get('item:hold:100'), 4);
   assert.equal(fixture.store.get('base:1:0'), 2000 - 20, '体力 -= FLAG:85×10');
 });
 
@@ -798,7 +798,7 @@ test('主循环：A 槽分发落穴——库存消耗、513 记忆、尾部 WAIT
   const fixture = setup_world();
   const { dungeon_trap } = load(fixture);
   fixture.store.set('flag:300', 60); // 本层 A 槽 = 落穴
-  fixture.store.set('item:60', 3);
+  fixture.store.set('item:hold:60', 3);
   const waits0 = fixture.waits.length;
   await dungeon_trap(1, 0, seq(19, 99, 39), { d20: 50 });
   // 回避判定 20 < 19 假 → PIT：DICE=99 ≥ 80 → (39+1)×2 = 80
@@ -807,7 +807,7 @@ test('主循环：A 槽分发落穴——库存消耗、513 记忆、尾部 WAIT
     2000 - 80,
     '落穴伤害经分发落变量',
   );
-  assert.equal(fixture.store.get('item:60'), 2, '作动消耗一个库存');
+  assert.equal(fixture.store.get('item:hold:60'), 2, '作动消耗一个库存');
   // B/C 空槽的 TRAP_ID = 0 也走「作动」路径（无差别写记忆）——
   // 末槽覆盖 513 = 0；A 槽的 60 只在 B/C 置 -1 的世界里可见（提前出）
   assert.equal(fixture.store.get('cflag:1:513') || 0, 0, '空槽覆盖记忆');
@@ -824,9 +824,9 @@ test('主循环：A 空查 B（FLAG:310）、C 槽默认（FLAG:320）', async (
   fixture.store.set('flag:300', -1);
   fixture.store.set('flag:310', -1);
   fixture.store.set('flag:320', 61); // C 槽 = 射箭
-  fixture.store.set('item:61', 1);
+  fixture.store.set('item:hold:61', 1);
   await dungeon_trap(1, 0, seq(19, 50), { d20: 50 });
-  assert.equal(fixture.store.get('item:61'), 0, 'C 槽的陷阱被消耗');
+  assert.equal(fixture.store.get('item:hold:61'), 0, 'C 槽的陷阱被消耗');
   assert.equal(fixture.store.get('base:1:0'), 2000 - 50, '射箭伤害（Z=50）');
   assert.equal(fixture.store.get('cflag:1:513'), 61, '末槽的记忆');
   // 三槽全空 → RETURN 0（不经 WAIT）
@@ -852,7 +852,7 @@ test('主循环：同一陷阱连击回避链（512 累计 → 印回避、不�
   const { dungeon_trap } = load(fixture);
   fixture.store.set('flag:5', 32); // 印行在日志检查内
   fixture.store.set('flag:300', 60);
-  fixture.store.set('item:60', 5);
+  fixture.store.set('item:hold:60', 5);
   fixture.store.set('cflag:1:512', 6);
   fixture.store.set('cflag:1:513', 60); // 上次发动的是同一个陷阱
   await dungeon_trap(1, 0, seq(15), { d20: 50 });
@@ -865,7 +865,11 @@ test('主循环：同一陷阱连击回避链（512 累计 → 印回避、不�
   );
   // 回避分支无 RETURN → TRAP_NOUSE = 0（保险值）——回避也算作动：
   // 消耗一个、写记忆（只有一方通行与弹射可能 RETURN 1）
-  assert.equal(fixture.store.get('item:60'), 4, '回避也消耗（TRAP_NOUSE = 0）');
+  assert.equal(
+    fixture.store.get('item:hold:60'),
+    4,
+    '回避也消耗（TRAP_NOUSE = 0）',
+  );
   assert.equal(fixture.store.get('cflag:1:513') || 0, 0, 'B/C 空槽覆盖记忆');
   // 512 逐步账：A 槽 6+1=7、回避 -1 = 6；B 槽（513=60≠0，ITEM<1）-1 = 5；
   // C 槽（513=0==trap_id 的 +1 与 ==0 的 -1 相抵，ITEM<1）-1 = 4
@@ -879,13 +883,13 @@ test('主循环：自动补货（FLAG:5 位 6）按价扣金库', async () => {
   const { dungeon_trap } = load(fixture);
   fixture.store.set('flag:5', 64);
   fixture.store.set('flag:300', 69); // 召唤陷阱（1000G）
-  fixture.store.set('item:69', 1);
+  fixture.store.set('item:hold:69', 1);
   fixture.store.set('flag:85', 0);
   const money0 = era_flag.money;
   const legit0 = era_exflag.legit_money;
   era_flag.money = money0 + 5000;
   await dungeon_trap(1, 0, seq(19, 0), { d20: 50 }); // Z=0 → 召唤
-  assert.equal(fixture.store.get('item:69'), 1, '消耗 0 → 补 1');
+  assert.equal(fixture.store.get('item:hold:69'), 1, '消耗 0 → 补 1');
   assert.equal(era_flag.money, money0 + 5000 - 1000, 'MONEY -= trap_price');
   assert.equal(era_exflag.legit_money, legit0 - 1000, 'EX_FLAG:4444 同扣');
 });
@@ -893,7 +897,7 @@ test('主循环：自动补货（FLAG:5 位 6）按价扣金库', async () => {
 test('主循环：teleport_trap 的 D:20 写回经 ctx（run_dungeon 集成）', async () => {
   const fixture = setup_world();
   fixture.store.set('flag:300', 62); // 传送陷阱
-  fixture.store.set('item:62', 2);
+  fixture.store.set('item:hold:62', 2);
   // FLAG:5 位 4（无敌人开关）：跳过战斗分支，让陷阱那条收线成为 D:20 的唯一
   // 来源。战斗分支里 dungeon.js 的 `walk20 = move_ctx.d20` 在 MAGIC 落
   // 真身后同样会写出 1（teleport_magic 与陷阱 teleport_trap 是同一个值），两条
@@ -905,7 +909,7 @@ test('主循环：teleport_trap 的 D:20 写回经 ctx（run_dungeon 集成）',
   // 收线删掉时 walk20 停在 7（= WALK 累加值），故本断言两态可分。
   await run_dungeon(1, () => 1);
   assert.equal(fixture.store.get('cflag:1:502'), 1, 'CFLAG:502 = D:20 = 1');
-  assert.equal(fixture.store.get('item:62'), 1, '传送陷阱被消耗');
+  assert.equal(fixture.store.get('item:hold:62'), 1, '传送陷阱被消耗');
 });
 
 // —— slave_trap_set（迎击方补充）——
@@ -917,19 +921,19 @@ test('slave_trap_set：库存 < 99 补一个、≥ 99 按价换金', async () =>
   fixture.store.set('cflag:1:1', 3); // 迎击中
   fixture.store.set('cflag:1:500', 2); // 补充行动
   fixture.store.set('flag:300', 60);
-  fixture.store.set('item:60', 5);
+  fixture.store.set('item:hold:60', 5);
   fixture.store.set('flag:310', 61);
-  fixture.store.set('item:61', 99); // 满 → 换金
+  fixture.store.set('item:hold:61', 99); // 满 → 换金
   const money0 = era_flag.money;
   const ctx = await dungeon_trap(1, 0, seq(), { d20: 50 });
-  assert.equal(fixture.store.get('item:60'), 6, '库存 5 → 补 1');
+  assert.equal(fixture.store.get('item:hold:60'), 6, '库存 5 → 补 1');
   assert.equal(era_flag.money - money0, 50, '满仓按 trap_price(61) 换金');
   assert.equal(ctx.d20, 50, '迎击者在补充后直接返回');
   // 非补充行动（CFLAG:500 != 2）→ 不补
   fixture.store.set('cflag:1:500', 5);
-  fixture.store.set('item:60', 5);
+  fixture.store.set('item:hold:60', 5);
   await dungeon_trap(1, 0, seq(), { d20: 50 });
-  assert.equal(fixture.store.get('item:60'), 5, '非补充行动不动库存');
+  assert.equal(fixture.store.get('item:hold:60'), 5, '非补充行动不动库存');
 });
 
 // —— campaign_trap（#469 起真身）——

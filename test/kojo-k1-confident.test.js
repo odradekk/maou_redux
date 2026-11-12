@@ -805,7 +805,7 @@ test('COLOSSEUM SC21 背后位·助手在场：同属一行（#622）', async ()
       era_flag.assi = 5;
       era_flag.assiplay = 1;
       join_slave_chara(f, 5, '奴隶5');
-      f.store.set('item:4', 1); // 假阳具
+      f.store.set('item:hold:4', 1); // 假阳具
     }),
   );
   await speak_k1(fixture);
@@ -822,7 +822,7 @@ test('COLOSSEUM SC27 背后位アナル·助手在场：同属一行（#622）',
       era_flag.assi = 5;
       era_flag.assiplay = 1;
       join_slave_chara(f, 5, '奴隶5');
-      f.store.set('item:4', 1);
+      f.store.set('item:hold:4', 1);
     }),
   );
   await speak_k1(fixture);

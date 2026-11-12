@@ -144,16 +144,16 @@ test('get_equip_num 与 equip_get：道具号换算、入包 +1 上限 99', () =
   lookup.get_equip_num(clamp);
   assert.equal(clamp.存储编号, 0);
 
-  fixture.store.set('item:306', 98);
+  fixture.store.set('item:hold:306', 98);
   lookup.equip_get({ 存储编号: 6 });
-  assert.equal(fixture.store.get('item:306'), 99);
+  assert.equal(fixture.store.get('item:hold:306'), 99);
   lookup.equip_get({ 存储编号: 6 });
-  assert.equal(fixture.store.get('item:306'), 99, '上限 99');
+  assert.equal(fixture.store.get('item:hold:306'), 99, '上限 99');
   lookup.equip_get({ 存储编号: -1 });
-  assert.equal(fixture.store.get('item:300'), undefined, '负编号不入包');
+  assert.equal(fixture.store.get('item:hold:300'), undefined, '负编号不入包');
   // 武器入包（id 45 → item:345）
   lookup.equip_get({ 存储编号: 45 });
-  assert.equal(fixture.store.get('item:345'), 1);
+  assert.equal(fixture.store.get('item:hold:345'), 1);
 });
 
 test('print：前缀 + 名 + 强度后缀共一行，LightSalmon；未知识别号重置', () => {
@@ -239,23 +239,23 @@ test('curse_equip_ring：库存耗尽 0；逐个消耗装饰戒指并按阶梯�
   assert.equal(fixture.text_lines().length, 0);
 
   // 库存 2：两次制造（D = 0 → 死之戒指 id 13 → item:313），第三轮耗尽返回 0
-  store.set('item:300', 2);
+  store.set('item:hold:300', 2);
   assert.equal(await curse.curse_equip_ring(() => 0), 0);
-  assert.equal(store.get('item:300'), 0);
-  assert.equal(store.get('item:313'), 2);
+  assert.equal(store.get('item:hold:300'), 0);
+  assert.equal(store.get('item:hold:313'), 2);
   const texts = fixture.text_lines();
   assert.equal(
     texts.filter((l) => l === '你把装饰戒指制造成死亡戒指了').length,
     2,
   );
   // D = 50 → 试炼戒指 id 19（阶梯的 <60 段）
-  store.set('item:300', 1);
+  store.set('item:hold:300', 1);
   await curse.curse_equip_ring(() => 50);
-  assert.equal(store.get('item:319'), 1);
+  assert.equal(store.get('item:hold:319'), 1);
   // D = 85 → 钝重戒指 id 12（<90 段）
-  store.set('item:300', 1);
+  store.set('item:hold:300', 1);
   await curse.curse_equip_ring(() => 85);
-  assert.equal(store.get('item:312'), 1);
+  assert.equal(store.get('item:hold:312'), 1);
 });
 
 test('equip_select：宝箱检查、道具消耗、换装与早退各分支', async () => {
@@ -270,13 +270,13 @@ test('equip_select：宝箱检查、道具消耗、换装与早退各分支', as
   // 道具号为装备但库存 0 → 早退（发现文本不打）
   store.set('cflag:31:501', 1); // 阶层 1 → FLAG:340
   store.set('flag:340', 306);
-  store.set('item:306', 0);
+  store.set('item:hold:306', 0);
   assert.equal(await select.equip_select(31), 0);
   assert.ok(!fixture.text_lines().includes('勇者发现了宝箱！'));
 
   // 战役中（CFLAG:1 == 12）走 CAMPAIGN_EQUIP_SELECT，FLAG:400 未置位恒 0 早退
   store.set('cflag:31:1', 12);
-  store.set('item:306', 5);
+  store.set('item:hold:306', 5);
   assert.equal(await select.equip_select(31), 0);
   assert.ok(!fixture.text_lines().includes('勇者发现了宝箱！'));
   store.set('cflag:31:1', 0);
@@ -287,7 +287,7 @@ test('equip_select：宝箱检查、道具消耗、换装与早退各分支', as
   const seq = [7, 0];
   let drawn = 0;
   assert.equal(await select.equip_select(31, (n) => seq[drawn++] % n), 0);
-  assert.equal(store.get('item:306'), 4, '宝箱道具要消耗一件');
+  assert.equal(store.get('item:hold:306'), 4, '宝箱道具要消耗一件');
   assert.equal(store.get('cflag:31:551'), 8 + 2 * 1000, '装到装饰槽 551');
   assert.ok(
     fixture.text_lines().includes('勇者把强韧戒指+2装备上了。'),
@@ -298,12 +298,12 @@ test('equip_select：宝箱检查、道具消耗、换装与早退各分支', as
   const no_swap = setup_equip();
   no_swap.fixture.store.set('cflag:31:501', 1);
   no_swap.fixture.store.set('flag:340', 306);
-  no_swap.fixture.store.set('item:306', 3);
+  no_swap.fixture.store.set('item:hold:306', 3);
   no_swap.fixture.store.set('cflag:31:551', 5 * 1000 + 9); // 支配戒指+5（强度 5 ≥ 1）
   no_swap.fixture.store.set('cflag:31:552', 5 * 1000 + 9);
   await no_swap.select.equip_select(31);
   assert.ok(no_swap.fixture.text_lines().includes('似乎没什么好东西。'));
-  assert.equal(no_swap.fixture.store.get('item:306'), 2, '道具仍被消耗');
+  assert.equal(no_swap.fixture.store.get('item:hold:306'), 2, '道具仍被消耗');
 });
 
 test('equip_select：空槽也要过「强度 < 阶层」检查（左结合求值）', async () => {
@@ -316,7 +316,7 @@ test('equip_select：空槽也要过「强度 < 阶层」检查（左结合求�
   const store = fixture.store;
   store.set('cflag:31:501', 0); // 阶层 0 → FLAG:339
   store.set('flag:339', 306); // 欲望戒指（诅咒品）
-  store.set('item:306', 3);
+  store.set('item:hold:306', 3);
   store.set('cflag:31:551', -1); // 两枚装饰槽都空
   store.set('cflag:31:552', -1);
   store.set('talent:31:202', 1); // 神官（解咒必成，排除随机）
@@ -324,13 +324,13 @@ test('equip_select：空槽也要过「强度 < 阶层」检查（左结合求�
   assert.equal(store.get('cflag:31:551'), -1, '阶层 0 → 空槽 551 不换装');
   assert.equal(store.get('cflag:31:552'), -1, '阶层 0 → 空槽 552 不换装');
   assert.ok(fixture.text_lines().includes('似乎没什么好东西。'));
-  assert.equal(store.get('item:306'), 2, '宝箱道具仍被消耗');
+  assert.equal(store.get('item:hold:306'), 2, '宝箱道具仍被消耗');
 
   // 阶层 1 时同一世界就该换装（上门的另一边）
   const one = setup_equip();
   one.fixture.store.set('cflag:31:501', 1);
   one.fixture.store.set('flag:340', 306);
-  one.fixture.store.set('item:306', 3);
+  one.fixture.store.set('item:hold:306', 3);
   one.fixture.store.set('cflag:31:551', -1);
   one.fixture.store.set('cflag:31:552', -1);
   one.fixture.store.set('talent:31:202', 1);

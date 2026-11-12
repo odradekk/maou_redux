@@ -432,7 +432,7 @@ test('job_change_benki：[0] 战斗常识三档循环；[1] 日常常识六档�
   for (const [label, start, talent, dog, expected] of table) {
     const fixture = create_era_fixture();
     seed_able(fixture);
-    if (dog) fixture.store.set('item:22', 1);
+    if (dog) fixture.store.set('item:hold:22', 1);
     fixture.store.set(`talent:1:${talent}`, start);
     fixture.set_inputs(talent === 281 ? 0 : 1, 999);
 
@@ -445,7 +445,7 @@ test('job_change_benki：[0] 战斗常识三档循环；[1] 日常常识六档�
 test('chara_info_job_change：魔物使转职后选契约魔兽——编号写入 CFLAG:570 并播报怪物名', async () => {
   const fixture = create_era_fixture();
   seed_able(fixture);
-  fixture.store.set('item:110', 1); // 持有 110 号怪物
+  fixture.store.set('item:hold:110', 1); // 持有 110 号怪物
   fixture.store.set('itemname:110', '哥布林');
   fixture.set_inputs(12, 110);
 

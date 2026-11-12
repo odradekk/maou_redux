@@ -247,11 +247,11 @@ test('mon_check：兵力判断条件、越界档、清格副作用', () => {
   const { fixture, labo, labo_map } = setup_labo();
   // lv 3 → item 130..134；兵力合计 21 > 20 → 在场
   labo.db_set(5, 5, 3);
-  fixture.store.set('item:130', 21);
+  fixture.store.set('item:hold:130', 21);
   assert.equal(labo_map.mon_check(5, 5), 3, '兵力 21 > 20：怪物在场');
   // 兵力 20（不 > 20）：清格返回 0
   labo.db_set(6, 6, 3);
-  fixture.store.set('item:130', 20);
+  fixture.store.set('item:hold:130', 20);
   assert.equal(labo_map.mon_check(6, 6), 0, '兵力 20 不满足 > 20');
   assert.equal(labo.db_get(6, 6), 0, '兵力不足的格子被扫掉');
   assert.equal(labo.db_get(5, 5), 3, '在场格不受别格扫描影响');
@@ -287,7 +287,7 @@ test('chip_draw：五级优先级', () => {
   seed_unit(fixture, 1, '甲', 2, 2, 3); // 侵攻中红 @
   seed_unit(fixture, 2, '乙', 3, 2, 4); // 迎击中素色 @
   labo.db_set(6, 5, 4); // 怪物 lv 4 在 (5,6)
-  fixture.store.set('item:140', 21); // lv 4 → item 140..144
+  fixture.store.set('item:hold:140', 21); // lv 4 → item 140..144
   labo.dc_set(8, 7, 1); // 村庄在 (7,8)
   labo.da_set(10, 9, 200); // 地形档 200/32 = 6 在 (9,10)
 
@@ -492,7 +492,7 @@ test('unit_move：撞怪物不发生战斗，移动停止（该分支已删，#6
   const { fixture, labo, labo_dungeon_map } = setup_labo();
   seed_unit(fixture, 1, '甲', 2, 11, 11);
   labo.db_set(12, 12, 3); // 甲的落点是怪物
-  fixture.store.set('item:130', 21); // 兵力足够
+  fixture.store.set('item:hold:130', 21); // 兵力足够
   await labo_dungeon_map.unit_move(1, 89, rand_max);
   assert.equal(
     fixture.text_lines().some((line) => line.includes('DUNGEON_BATTLE')),

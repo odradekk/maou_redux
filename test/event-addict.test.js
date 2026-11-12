@@ -91,7 +91,7 @@ test('APHRODISIAC_ADDICT：媚药中毒 + 无豁免标记时触发禁断症状�
   fixture.store.set('flag:10000', 6);
   fixture.store.set('cflag:31:31', 20);
   fixture.store.set('talent:31:46', 1);
-  fixture.store.set('item:26', 1); // 走喂药支线，避免深入随机结算
+  fixture.store.set('item:hold:26', 1); // 走喂药支线，避免深入随机结算
 
   fixture.set_inputs(1); // 拒绝喂药 → 落到侵攻中判定（本例非侵攻中）
   await aphrodisiac_addict(31, seq([0]));
@@ -250,7 +250,7 @@ test('APHRODISIAC_ADDICT：已持有对应素质时不重复取得/不重复触�
 test('PRECIPITATE_WITHDRAWAL：喂媚药（非侵攻中）直接返场，残留度 +1 道具 -1', async () => {
   const fixture = seed_world();
   const { precipitate_withdrawal } = fixture.load_module('event/event-addict');
-  fixture.store.set('item:26', 2);
+  fixture.store.set('item:hold:26', 2);
   fixture.store.set('cflag:31:31', 5);
   fixture.set_inputs(0);
 
@@ -258,13 +258,13 @@ test('PRECIPITATE_WITHDRAWAL：喂媚药（非侵攻中）直接返场，残留�
 
   assert.equal(result, 0);
   assert.equal(fixture.store.get('cflag:31:31'), 6);
-  assert.equal(fixture.store.get('item:26'), 1);
+  assert.equal(fixture.store.get('item:hold:26'), 1);
 });
 
 test('PRECIPITATE_WITHDRAWAL：喂媚药且侵攻中时直接陷落退出侵攻', async () => {
   const fixture = seed_world();
   const { precipitate_withdrawal } = fixture.load_module('event/event-addict');
-  fixture.store.set('item:26', 1);
+  fixture.store.set('item:hold:26', 1);
   fixture.store.set('cflag:31:1', 2); // 侵攻中
   fixture.store.set('cflag:31:9', 3); // 等级，决定金钱奖励
   const era_flag = fixture.load_module('era-utils/era-flag');
@@ -286,14 +286,14 @@ test('PRECIPITATE_WITHDRAWAL：喂媚药且侵攻中时直接陷落退出侵攻'
 test('PRECIPITATE_WITHDRAWAL：拒绝喂药（按钮 1），落到后续检查', async () => {
   const fixture = seed_world();
   const { precipitate_withdrawal } = fixture.load_module('event/event-addict');
-  fixture.store.set('item:26', 1);
+  fixture.store.set('item:hold:26', 1);
   fixture.store.set('cflag:31:1', 2); // 侵攻中，拒绝后走独自捱过分支
   fixture.set_inputs(1);
 
   const result = await precipitate_withdrawal(31, seq([0]));
 
   assert.equal(result, 0);
-  assert.equal(fixture.store.get('item:26'), 1, '未消耗道具');
+  assert.equal(fixture.store.get('item:hold:26'), 1, '未消耗道具');
   assert.deepEqual(
     fixture.lines_history
       .filter((line) => line.type === 'button')

@@ -173,7 +173,7 @@ test('able87：无穿孔工具且未穿任何环则不可；助手检查/顺从 
   const { fixture, com_able_family } = seed_world();
   assert.equal(await com_able_family.call(87), 0, '无 ITEM:34 且未穿任何环');
 
-  fixture.store.set('item:34', 1);
+  fixture.store.set('item:hold:34', 1);
   fixture.store.set('abl:31:10', 3);
   assert.equal(await com_able_family.call(87), 1);
 
@@ -181,7 +181,7 @@ test('able87：无穿孔工具且未穿任何环则不可；助手检查/顺从 
   assert.equal(await com_able_family.call(87), 0, '顺从不足 3');
   fixture.store.set('abl:31:10', 3);
 
-  fixture.store.set('item:34', 0);
+  fixture.store.set('item:hold:34', 0);
   fixture.store.set('cflag:31:7', 1); // 已穿一环，即使无库存也可开面板（取环）
   assert.equal(await com_able_family.call(87), 1);
 });
@@ -203,7 +203,7 @@ test('able89：需阴茎袋或无道具设定；使役 PLAY 中互斥', async ()
   const { fixture, com_able_family } = seed_world();
   assert.equal(await com_able_family.call(89), 0, '无 ITEM:22');
 
-  fixture.store.set('item:22', 1);
+  fixture.store.set('item:hold:22', 1);
   assert.equal(await com_able_family.call(89), 1);
 
   fixture.store.set('tequip:31:88', 1);
@@ -226,7 +226,7 @@ test('able90：爱抚滤镜/决斗/使役/需男人扶她或 PBAND/胸罩上装�
 
   fixture.store.set('talent:0:122', 0);
   assert.equal(await com_able_family.call(90), 0, '既无男性器也无 PBAND');
-  fixture.store.set('item:4', 1); // PBAND
+  fixture.store.set('item:hold:4', 1); // PBAND
   assert.equal(await com_able_family.call(90), 1);
 });
 
@@ -356,7 +356,7 @@ test('com85：放尿，EXP:31（经门面写）＋2、污渍位 STAIN:2/3、TFLA
 test('com87：#710 三层穿环菜单都是按钮（装/取、部位、算了）', async () => {
   const world = seed_world();
   const { fixture } = world;
-  fixture.store.set('item:34', 3);
+  fixture.store.set('item:hold:34', 3);
   fixture.set_inputs(0, 0); // [0] 装上环 → [0] 乳头
   await run_com(world, 87);
   assert.deepEqual(
@@ -409,14 +409,14 @@ test('com87：#710 三层穿环菜单都是按钮（装/取、部位、算了）
 test('com87：装环成功（绳子紧缚免判定）写 CFLAG:7 位与消耗 ITEM:34，双份消耗（乳头 2 个）', async () => {
   const world = seed_world();
   const { fixture } = world;
-  fixture.store.set('item:34', 3);
+  fixture.store.set('item:hold:34', 3);
   fixture.store.set('tequip:31:44', 1); // 绳子紧缚：auto_success，跳过判定
   fixture.set_inputs(0, 0); // [0] 装上环 → [0] 乳头
   const result = await run_com(world, 87);
   assert.equal(result, 1);
   assert.equal((fixture.store.get('cflag:31:7') || 0) & 1, 1, '乳头位已置');
   assert.equal(
-    fixture.store.get('item:34'),
+    fixture.store.get('item:hold:34'),
     1,
     '乳头消耗 2 个（door 判定前 1 + p===1 再扣 1）',
   );

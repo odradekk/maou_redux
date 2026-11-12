@@ -3865,7 +3865,7 @@ test('COLOSSEUM_KOJO_8 SC31/21/27 助手无 121/122 且持假阳具（item:4）�
   for (const { selectcom, lines } of cases) {
     const fixture = await setup_k8((f, ef) => {
       join_slave_chara(f, 5, '奴隶5');
-      f.store.set('item:4', 1); // ITEM:PBAND（助手持有假阳具）
+      f.store.set('item:hold:4', 1); // ITEM:PBAND（助手持有假阳具）
       ef.assi = 5;
       ef.assiplay = 1;
     }, selectcom);

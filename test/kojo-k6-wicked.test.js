@@ -498,7 +498,7 @@ test('COLOSSEUM_KOJO_6：SC31/21/27 助手无 121/122 且持假阳具（item:4�
   for (const { selectcom, assi_penis, line } of cases) {
     const fixture = await setup_k6((f) => {
       join_slave_chara(f, 17, '玛奥');
-      f.store.set('item:4', 1); // ITEM:PBAND（助手持有假阳具）
+      f.store.set('item:hold:4', 1); // ITEM:PBAND（助手持有假阳具）
       if (assi_penis) f.store.set('talent:17:121', 1);
       const era_flag = f.load_module('era-utils/era-flag');
       era_flag.assi = 17;

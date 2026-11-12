@@ -351,7 +351,7 @@ test('SABBATH_DAY：user=0 且持有「野良犬」道具走兽奸仪式', async
   const fixture = seed_world();
   const { sabbath_day } = fixture.load_module('event/event-sabbath');
   seed_sabbath_day_ready(fixture);
-  fixture.store.set('item:22', 1);
+  fixture.store.set('item:hold:22', 1);
 
   await sabbath_day(31, seq([0, 0]));
 

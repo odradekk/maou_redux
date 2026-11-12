@@ -158,7 +158,7 @@ test('30-38 号可用性检查：默认门槛与各自一条阻断条件', async
   fixture.store.set('talent:0:121', 1);
   fixture.store.set('palam:31:3', 2000);
   fixture.store.set('exp:31:1', 10);
-  fixture.store.set('item:13', 1);
+  fixture.store.set('item:hold:13', 1);
   fixture.store.set('tequip:31:58', 1);
   // 32 号可用性检查：非巨乳/爆乳/超乳时，技巧至少为 3。
   fixture.store.set('abl:31:12', 3);
@@ -183,7 +183,7 @@ test('30-38 号可用性检查：默认门槛与各自一条阻断条件', async
   assert.equal(await com_able_family.call(34), 0, '34 号可用性检查被下装阻断');
   fixture.store.set('cflag:31:40', 0);
   fixture.store.set('flag:37', 0);
-  fixture.store.set('item:13', 0);
+  fixture.store.set('item:hold:13', 0);
   assert.equal(
     await com_able_family.call(33),
     0,

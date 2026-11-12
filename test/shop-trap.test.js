@@ -286,18 +286,18 @@ test('item_shop_trap：日期行两态（TIME 0 午前 / 1 午后）与日号 = 
 
 test('item_shop_trap：陷阱网格 60-91、戒指网格 300-320，5 格一行', async () => {
   const fixture = await run_item_shop_trap({
-    'item:59': 1, // 段外（陷阱段从 60 起）
-    'item:60': 3,
-    'item:61': 1,
-    'item:62': 1,
-    'item:63': 2,
-    'item:69': 5, // 第 5 格 → 满行
-    'item:72': 7, // 第 6 格 → 第二行
-    'item:92': 1, // 段外（陷阱段到 91 止）
-    'item:299': 1, // 段外（戒指段从 300 起）
-    'item:300': 2,
-    'item:320': 4,
-    'item:321': 1, // 段外（戒指段到 320 止）
+    'item:hold:59': 1, // 段外（陷阱段从 60 起）
+    'item:hold:60': 3,
+    'item:hold:61': 1,
+    'item:hold:62': 1,
+    'item:hold:63': 2,
+    'item:hold:69': 5, // 第 5 格 → 满行
+    'item:hold:72': 7, // 第 6 格 → 第二行
+    'item:hold:92': 1, // 段外（陷阱段到 91 止）
+    'item:hold:299': 1, // 段外（戒指段从 300 起）
+    'item:hold:300': 2,
+    'item:hold:320': 4,
+    'item:hold:321': 1, // 段外（戒指段到 320 止）
     'itemname:60': '落穴',
     'itemname:61': '射箭陷阱',
     'itemname:62': '传送陷阱',
@@ -335,14 +335,14 @@ test('item_shop_trap：网格段两端都算数（陷阱 60/91、戒指 300/320 
   // 段界只在两端可见：#396 自钉变异实测「上界 92 → 91」在旧用例里零反应
   // （那时只造了 60-72 的持有）——两端各钉一枚。
   const fixture = await run_item_shop_trap({
-    'item:59': 1,
-    'item:60': 1,
-    'item:91': 1,
-    'item:92': 1,
-    'item:299': 1,
-    'item:300': 1,
-    'item:320': 1,
-    'item:321': 1,
+    'item:hold:59': 1,
+    'item:hold:60': 1,
+    'item:hold:91': 1,
+    'item:hold:92': 1,
+    'item:hold:299': 1,
+    'item:hold:300': 1,
+    'item:hold:320': 1,
+    'item:hold:321': 1,
     'itemname:59': '段外甲',
     'itemname:60': '段内甲',
     'itemname:91': '段内乙',
@@ -372,30 +372,30 @@ test('item_shop_trap：网格三种情况——空段不打行、恰好满行、
 
   // 恰好 5 格：一行，行尾就是第 5 格（不再多补一个空行）
   const exact = await run_item_shop_trap({
-    'item:60': 1,
-    'item:61': 1,
-    'item:62': 1,
-    'item:63': 1,
-    'item:64': 1,
+    'item:hold:60': 1,
+    'item:hold:61': 1,
+    'item:hold:62': 1,
+    'item:hold:63': 1,
+    'item:hold:64': 1,
   });
   const exact_rows = rows_between(exact, '[陷阱]', '[戒指]');
   assert.equal(exact_rows.length, 1);
 
   // 6 格：第二行收尾（余数 1）
   const over = await run_item_shop_trap({
-    'item:60': 1,
-    'item:61': 1,
-    'item:62': 1,
-    'item:63': 1,
-    'item:64': 1,
-    'item:65': 1,
+    'item:hold:60': 1,
+    'item:hold:61': 1,
+    'item:hold:62': 1,
+    'item:hold:63': 1,
+    'item:hold:64': 1,
+    'item:hold:65': 1,
   });
   const over_rows = rows_between(over, '[陷阱]', '[戒指]');
   assert.equal(over_rows.length, 2);
 
   // 持有数 0 或负都不占格（只在 `== 0` 时跳过，负值照打——既有行为照旧）
   const negative = await run_item_shop_trap({
-    'item:60': -2,
+    'item:hold:60': -2,
     'itemname:60': '落穴',
   });
   assert.deepEqual(rows_between(negative, '[陷阱]', '[戒指]'), [
@@ -448,7 +448,7 @@ test('陷阱商店里的购买：点中陷阱走同一套 purchase（两个商�
   fixture.set_inputs(998, 60, 1, 999);
   await run_loop(fixture);
 
-  assert.equal(fixture.store.get('item:60'), 1, '陷阱 +1 件');
+  assert.equal(fixture.store.get('item:hold:60'), 1, '陷阱 +1 件');
   assert.equal(
     era_flag.money,
     990,
@@ -471,6 +471,6 @@ test('陷阱商店里的取消：数量选 0 时钱与陷阱都不动', async ()
   fixture.set_inputs(998, 60, 0, 999);
   await run_loop(fixture);
 
-  assert.equal(fixture.store.get('item:60') ?? 0, 0, '取消不给货');
+  assert.equal(fixture.store.get('item:hold:60') ?? 0, 0, '取消不给货');
   assert.equal(era_flag.money, 1000, '取消不扣钱');
 });

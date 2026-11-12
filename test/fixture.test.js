@@ -820,7 +820,7 @@ test('名字表读取（#739）：用例显式播种的名字键算作已声明'
 
 test('名字表序号：包含 yml 声明和用例显式播种的名字，不包含未声明库存', () => {
   const fixture = create_era_fixture();
-  fixture.store.set('item:359', 1);
+  fixture.store.set('item:hold:359', 1);
   fixture.store.set('itemname:999', '测试道具');
   const ids = fixture.era.get('itemkeys');
   assert.ok(ids.includes(352));
