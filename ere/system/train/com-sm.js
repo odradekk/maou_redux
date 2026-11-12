@@ -302,15 +302,14 @@ function pain_source(cid, com) {
  * com40：打屁股。头部带升格跳转（→ CASE 40）。
  * @returns {Promise<number>} 返回 1（升格时为跳转目标的返回值）
  */
-async function com40() {
-  const target = era_flag.target;
-  const player = era_flag.player;
+async function com40(com_context) {
+  const { target, player } = com_context;
 
   // 头部升格跳转——规则在 adv_com_family 的 40 号注册（文件尾），升格目标
   // 为 132；跳转通过 com_family 分发，返回值由调用方透传。
   const upgraded = await get_adv_com(40);
   if (upgraded !== 40) {
-    return jump_to_advanced(upgraded);
+    return jump_to_advanced(com_context, upgraded);
   }
 
   era.print('打屁股'); // 指令名标题行
@@ -339,10 +338,7 @@ async function com40() {
  * com41：鞭。
  * @returns {Promise<number>} 返回 1
  */
-async function com41() {
-  const target = era_flag.target;
-  const player = era_flag.player;
-
+async function com41({ target, player }) {
   era.print('鞭');
   await train_message_b();
 
@@ -366,10 +362,7 @@ async function com41() {
  * com42：针。
  * @returns {Promise<number>} 返回 1
  */
-async function com42() {
-  const target = era_flag.target;
-  const player = era_flag.player;
-
+async function com42({ target, player }) {
   era.print('针');
   await train_message_b();
 
@@ -395,8 +388,8 @@ async function com42() {
  * @param {number} com 升格后的 COM 号
  * @returns {Promise<number>}
  */
-async function jump_to_advanced(com) {
-  return com_family.call(com, { whenMissing: 1 });
+async function jump_to_advanced(com_context, com) {
+  return com_family.call(com, { whenMissing: 1, args: [com_context] });
 }
 
 // —— com43：眼罩 ——
@@ -419,9 +412,7 @@ function obey_maso_chain(cid, base) {
  * com43：眼罩。装着/解除切换（TEQUIP:43 取反）。
  * @returns {Promise<number>} 返回 1
  */
-async function com43() {
-  const target = era_flag.target;
-
+async function com43({ target }) {
   era.print('眼罩');
   await train_message_b();
 
@@ -458,9 +449,7 @@ async function com43() {
  * com44：绳子。装着/解除切换（TEQUIP:44 取反）。
  * @returns {Promise<number>} 返回 1
  */
-async function com44() {
-  const target = era_flag.target;
-
+async function com44({ target }) {
   // 触手紧缚/绳 二支
   era.print(tq(target, 90) ? '触手紧缚' : '绳');
   await train_message_b();
@@ -505,9 +494,7 @@ async function com44() {
  * TEQUIP:45 && SELECTCOM != 45 时跳过口上；本指令负责切换装备位。
  * @returns {Promise<number>} 返回 1
  */
-async function com45() {
-  const target = era_flag.target;
-
+async function com45({ target }) {
   era.print('口塞');
   await train_message_b();
 
@@ -564,9 +551,7 @@ const MASO_WIDE_LADDER = [
  * com46：灌肠+肛塞。装着/解除切换（TEQUIP:46 取反）。
  * @returns {Promise<number>} 返回 1
  */
-async function com46() {
-  const target = era_flag.target;
-
+async function com46({ target }) {
   // 触手灌肠/灌肠＋肛塞 二支
   era.print(tq(target, 90) ? '触手灌肠' : '灌肠＋肛塞');
   await train_message_b();
@@ -684,9 +669,7 @@ async function com46() {
  * SAVESTR:ASSI。解除时提前返回，不追加修正。
  * @returns {Promise<number>} 返回 1
  */
-async function com47() {
-  const target = era_flag.target;
-
+async function com47({ target }) {
   era.print('束缚衣');
   await train_message_b();
 
@@ -726,9 +709,8 @@ const MASO_PAIR_LADDER = [
  * com48：践踏。
  * @returns {Promise<number>} 返回 1
  */
-async function com48() {
-  const target = era_flag.target;
-  const player = era_flag.player;
+async function com48(com_context) {
+  const { target, player } = com_context;
 
   era.print('践踏');
   await train_message_b();
@@ -763,7 +745,7 @@ async function com48() {
   same_sex_exp(target, player, 3); // 百合/断背 +3
 
   // 足交精通检查由本族的 event_seitsu_ashikoki 处理
-  await event_seitsu_ashikoki();
+  await event_seitsu_ashikoki(com_context);
 
   // 爱情经验：男人（TALENT:122）E = 2、其余 E = 1，无抖M条件
   love_exp(target, tal(target, 122) ? 2 : 1);
@@ -777,9 +759,8 @@ async function com48() {
  * 关系（RELATION）≥ 150 → 精通文本 + 解除未熟。
  * @returns {Promise<number>} 返回 0/1
  */
-async function event_seitsu_ashikoki() {
-  const target = era_flag.target;
-  const player = era_flag.player;
+async function event_seitsu_ashikoki(com_context) {
+  const { target, player } = com_context;
 
   // 关系表以调教者 ID 为键；性别与未熟条件检查的是
   // TARGET：男人或扶她、且未熟（与 48 号可用性检查的对象条件一致）
@@ -830,9 +811,7 @@ const ANAL_EXP_LADDER = [
  * com49：肛门电极。装着/解除切换（TEQUIP:49 取反）。
  * @returns {Promise<number>} 返回 1
  */
-async function com49() {
-  const target = era_flag.target;
-
+async function com49({ target }) {
   era.print('肛门电极');
   await train_message_b();
 

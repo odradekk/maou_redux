@@ -20,6 +20,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { seed_train_world } = require('./helpers/train-world');
+const { com_context } = require('./helpers/com-context');
 
 /** 世界底座：开火车表、指好 TARGET/PLAYER、装好 SM 族。 */
 function seed_world({ assi = -1 } = {}) {
@@ -38,7 +39,9 @@ function seed_world({ assi = -1 } = {}) {
 /** 经族调用一条指令（真实循环里 selectcom 由 train-loop 先置——测试同位） */
 async function run_com(world, com) {
   world.era_flag.selectcom = com;
-  return world.com_family.call(com);
+  return world.com_family.call(com, {
+    args: [com_context(world.era_flag)],
+  });
 }
 
 // —— 可用性检查：条件逐条 ——
@@ -1154,7 +1157,9 @@ test('com40 的跳转目标：升格目标已注册 → 执行 COM132 真身；�
   world.fixture.store.set('abl:31:14', 2); // able132 的技巧条件：目标技巧 >= 2
   world.fixture.store.set('exp:31:0', 4);
   world.fixture.store.set('palam:31:3', 500);
-  const result = await world.com_family.call(40);
+  const result = await world.com_family.call(40, {
+    args: [com_context(world.era_flag)],
+  });
   assert.equal(result, 1);
   assert.ok(
     world.fixture.text_lines().includes('背后位・打屁股'),
@@ -1168,7 +1173,7 @@ test('com40 的跳转目标：升格目标已注册 → 执行 COM132 真身；�
 
   const w2 = seed_world();
   w2.era_flag.selectcom = 40;
-  await w2.com_family.call(40);
+  await w2.com_family.call(40, { args: [com_context(w2.era_flag)] });
   assert.ok(w2.fixture.text_lines().includes('打屁股'));
 });
 
@@ -1183,7 +1188,7 @@ test('口塞装上（COM45 真身）→ K3 检查跳过；selectcom = 45 豁免�
     world.fixture.load_module('kojo/kojo-k3-noble');
 
   world.era_flag.selectcom = 45;
-  await world.com_family.call(45);
+  await world.com_family.call(45, { args: [com_context(world.era_flag)] });
   assert.equal(world.fixture.store.get('tequip:31:45'), 1);
 
   world.era_flag.selectcom = 0;

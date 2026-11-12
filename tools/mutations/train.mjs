@@ -10517,10 +10517,10 @@ export default [
   {
     desc: 'M12903 升格跳转不执行目标真身（jump_to_advanced 恒 return 1——升格跳转语义被架空）',
     file: 'ere/system/train/com-sm.js',
-    find: `async function jump_to_advanced(com) {
-  return com_family.call(com, { whenMissing: 1 });
+    find: `async function jump_to_advanced(com_context, com) {
+  return com_family.call(com, { whenMissing: 1, args: [com_context] });
 }`,
-    replace: `async function jump_to_advanced(com) {
+    replace: `async function jump_to_advanced(com_context, com) {
   void com;
   return 1; // 变异：升格目标不执行
 }`,
