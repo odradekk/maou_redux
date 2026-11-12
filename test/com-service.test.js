@@ -11,6 +11,7 @@ const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
+const { com_context } = require('./helpers/com-context');
 
 function seed_names(fixture) {
   for (const [id, name] of [
@@ -120,7 +121,10 @@ for (const id of SERVICE_COMS) {
   test(`com${id}：完整判定通过后返回 1，并置快乐/屈服结算位`, async () => {
     const world = seed_service_world(id);
     arm_service_world(world);
-    assert.equal(await world.com_family.call(id), 1);
+    assert.equal(
+      await world.com_family.call(id, { args: [com_context(world.era_flag)] }),
+      1,
+    );
     assert.equal(world.fixture.store.get('tflag:100'), 1);
     // TFLAG:200（屈服刻印结算）在 beginTrain 时已预置 0，读值区分不出「写过 0」；
     // 判据改成「有这一笔写入」（var_writes 是 era.set 的观测面，#977）
@@ -135,7 +139,10 @@ test('com34：复用性交/避孕套流程，成功时置 TFLAG:19 并保留 SOU
   const world = seed_service_world(34);
   arm_service_world(world);
   world.fixture.store.set('exp:31:0', 10);
-  assert.equal(await world.com_family.call(34), 1);
+  assert.equal(
+    await world.com_family.call(34, { args: [com_context(world.era_flag)] }),
+    1,
+  );
   assert.equal(world.fixture.store.get('tflag:19'), 1);
   assert.equal(world.fixture.store.get('tflag:100'), 1);
   assert.notEqual(world.fixture.store.get('source:31:1'), undefined);
@@ -146,7 +153,10 @@ test('com36：复用肛交共用后处理，成功时结算肛门经验', async 
   arm_service_world(world);
   world.fixture.store.set('exp:31:0', 10);
   world.fixture.store.set('exp:31:1', 10);
-  assert.equal(await world.com_family.call(36), 1);
+  assert.equal(
+    await world.com_family.call(36, { args: [com_context(world.era_flag)] }),
+    1,
+  );
   assert.equal(world.fixture.store.get('tflag:100'), 1);
   // 肛交指令的共用后处理：ABL:3=5 时本回合肛门经验增加 4。
   assert.equal(world.fixture.store.get('exp:31:1'), 14);
@@ -205,7 +215,10 @@ test('COM31：TALENT:119 也能蓄积射精槽；死斗场第一次口交置初�
   const world = seed_service_world(31);
   arm_service_world(world, { player_futa: false });
   world.fixture.store.set('talent:0:119', 1);
-  assert.equal(await world.com_family.call(31), 1);
+  assert.equal(
+    await world.com_family.call(31, { args: [com_context(world.era_flag)] }),
+    1,
+  );
   assert(
     world.fixture.store.get('base:0:2') > 0,
     'TALENT:119 必须蓄积 BASE:PLAYER:2',
@@ -215,7 +228,10 @@ test('COM31：TALENT:119 也能蓄积射精槽；死斗场第一次口交置初�
   arm_service_world(arena);
   arena.fixture.store.set('tequip:31:55', 1);
   arena.fixture.store.set('cflag:31:16', -1);
-  assert.equal(await arena.com_family.call(31), 1);
+  assert.equal(
+    await arena.com_family.call(31, { args: [com_context(arena.era_flag)] }),
+    1,
+  );
   assert.equal(arena.fixture.store.get('cflag:31:16'), 995);
   assert.equal(arena.fixture.store.get('tflag:13'), 1);
 });
@@ -224,7 +240,10 @@ test('COM33：射精时 SOURCE:4 乘 2、精液经验为 1/2', async () => {
   const world = seed_service_world(33);
   arm_service_world(world);
   world.fixture.store.set('maxbase:0:2', 100);
-  assert.equal(await world.com_family.call(33), 1);
+  assert.equal(
+    await world.com_family.call(33, { args: [com_context(world.era_flag)] }),
+    1,
+  );
   assert.equal(world.fixture.store.get('source:31:4'), 2304);
   assert.equal(world.fixture.store.get('exp:31:20'), 2);
   assert.equal(world.fixture.store.get('tflag:9'), 2);
@@ -236,7 +255,10 @@ test('COM33：满射精槽加上本轮增量后射精并保留余量', async () 
   world.fixture.store.set('maxbase:0:2', 100000);
   world.fixture.store.set('base:0:2', 99000);
 
-  assert.equal(await world.com_family.call(33), 1);
+  assert.equal(
+    await world.com_family.call(33, { args: [com_context(world.era_flag)] }),
+    1,
+  );
   assert.equal(world.fixture.store.get('tflag:9'), 1);
   assert.ok(
     world.fixture.store.get('base:0:2') > 0,
@@ -259,7 +281,10 @@ test('COM35：玩家执行时重置玩家而非固定 0 号的污渍', async () 
   fixture.store.set('talent:31:121', 1);
   fixture.store.set('maxbase:31:2', 1000000);
   fixture.store.set('stain:31:4', 99);
-  assert.equal(await world.com_family.call(35), 1);
+  assert.equal(
+    await world.com_family.call(35, { args: [com_context(world.era_flag)] }),
+    1,
+  );
   assert.equal(fixture.store.get('stain:31:4'), 8);
 });
 
@@ -268,7 +293,10 @@ test('COM37：射精增量按玩家 ABL:3 分档，并给大量精液经验 4', 
   arm_service_world(world);
   world.fixture.store.set('abl:0:3', 2);
   world.fixture.store.set('maxbase:0:2', 100);
-  assert.equal(await world.com_family.call(37), 1);
+  assert.equal(
+    await world.com_family.call(37, { args: [com_context(world.era_flag)] }),
+    1,
+  );
   assert.equal(world.fixture.store.get('exp:31:20'), 4);
   assert.equal(world.fixture.store.get('tflag:5'), 2);
 });
@@ -280,7 +308,10 @@ test('COM38：射精增量先后按玩家 ABL:21 与 ABL:0 截断', async () => 
   world.fixture.store.set('abl:0:21', 0);
   world.fixture.store.set('abl:0:0', 1);
   world.fixture.store.set('maxbase:0:2', 1000000);
-  assert.equal(await world.com_family.call(38), 1);
+  assert.equal(
+    await world.com_family.call(38, { args: [com_context(world.era_flag)] }),
+    1,
+  );
   assert.equal(world.fixture.store.get('base:0:2'), 1473);
 });
 
@@ -296,7 +327,10 @@ test('COM34 高级目标跳转：PALAM:5 = 10000 按第五档算，随机 10/0 �
   fixture.override_math_random(() => randoms.shift());
   try {
     assert.equal(
-      await world.com_family.call(34, { whenMissing: world.COM_MISSING }),
+      await world.com_family.call(34, {
+        whenMissing: world.COM_MISSING,
+        args: [com_context(world.era_flag)],
+      }),
       world.COM_MISSING,
     );
     assert.equal(era_flag.selectcom, 34, '缺失高级目标不得提前改 selectcom');
@@ -313,7 +347,10 @@ test('高级目标缺失：COM_MISSING 上抛，不回退执行基础 COM', asyn
   fixture.store.set('tflag:50', 0);
   world.com_able_family.register(126, async () => 1);
   assert.equal(
-    await com_family.call(30, { whenMissing: COM_MISSING }),
+    await com_family.call(30, {
+      whenMissing: COM_MISSING,
+      args: [com_context(era_flag)],
+    }),
     COM_MISSING,
   );
   assert.equal(era_flag.selectcom, 30);
