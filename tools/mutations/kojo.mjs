@@ -25141,7 +25141,10 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     find: "  15: {\n    tiers: ['♪', '！', '……。', '……。', '……。'],\n    fallback: ['。'],\n  },\n",
     replace: '',
     tests: ['gobi-koujo-const'],
-    must_mention: '有语尾真身的编号必须与表行一一对应',
+    // #859 起这条的第一道拦截是「默认支随机序」用例（表行没了 → K15 单支的
+    // 默认支取到空串）。原来钉的「一一对应」反向锁在 #859 之后不再覆盖 K15
+    // （K15 的语尾本体不再从表行取值），留在 PR 里另记。
+    must_mention: 'K15 单支',
   },
   {
     // 「一个人会怎么写错」：读到 `TEQUIP:N === 0` 就把 0 当成「没装」之外的东西，
