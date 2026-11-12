@@ -19647,7 +19647,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     replace:
       "  return typeof text === 'string' ? text : 0; // 变异：未命中给 0",
     tests: ['kojo-gobi'],
-    must_mention: '空串，不是 0',
+    must_mention: '窗口外（魔王无性格）同样空串',
   },
   {
     desc: 'M11741 语尾分发入口：丢弃真身返回值、恒给空串（#570 转交被吞）',
@@ -24857,7 +24857,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     find: '  obj_dict.set(id, instance);',
     replace: '  // 变异：不缓存实例',
     tests: ['kojo-wiring'],
-    must_mention: '每条入口都该命中一次',
+    must_mention: '入口 → 工厂 → 钩子：22 条入口各调一次',
   },
   {
     desc: 'M15552 未注册编号造基类实例（过渡期回落旧族失效，未迁移性格集体失声）',
@@ -24866,7 +24866,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     replace:
       '  const Ctor = cons_dict.get(id); // 变异：未注册编号不再退回基类',
     tests: ['kojo-system'],
-    must_mention: '未注册编号拿到基类实例',
+    must_mention: '未注册的编号退回基类实例',
   },
 
   {
