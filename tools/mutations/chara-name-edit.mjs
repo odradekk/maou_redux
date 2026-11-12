@@ -53,8 +53,8 @@ export default [
   {
     desc: 'M7981 缺省 NID 不再回读 CFLAG:6（改名链的入口断掉）',
     file: 'ere/system/chara/chara-name.js',
-    find: '    name_id = era.get(`cflag:${cid}:6`) || 0;',
-    replace: '    name_id = 0;',
+    find: "    name_id = EraChara.get(cid).cflag.random_name_index || 0;",
+    replace: "    name_id = 0;",
     tests: ['chara-name'],
     must_mention: '默认（NID = -1）',
   },
@@ -380,26 +380,26 @@ export default [
   {
     desc: 'M8023 双亲选亲本的两侧倒接（RAND:2 的取舍反了）',
     file: 'ere/system/chara/chara-make-inherit.js',
-    find: '    const value = rand(2)\n      ? era.get(`talent:${parent_a}:${index}`)\n      : era.get(`talent:${parent_b}:${index}`);',
+    find: "    const value = rand(2)\n      ? EraChara.get(parent_a).talent.get(index)\n      : EraChara.get(parent_b).talent.get(index);",
     replace:
-      '    const value = rand(2)\n      ? era.get(`talent:${parent_b}:${index}`)\n      : era.get(`talent:${parent_a}:${index}`);',
+      "    const value = rand(2)\n      ? EraChara.get(parent_b).talent.get(index)\n      : EraChara.get(parent_a).talent.get(index);",
     tests: ['chara-make-inherit'],
     must_mention: 'RAND:2',
   },
   {
     desc: 'M8024 母性情结的掷骰真值支反过来（恋母情结方向错）',
     file: 'ere/system/chara/chara-make-inherit.js',
-    find: '    if (era.get(`talent:${parent}:155`) && rand(2)) {\n      era.set(`talent:${child}:140`, 1); // 恋母情结',
+    find: "    if (EraChara.get(parent).talent.maternal && rand(2)) {",
     replace:
-      '    if (era.get(`talent:${parent}:155`) && !rand(2)) {\n      era.set(`talent:${child}:140`, 1); // 恋母情结',
+      "    if (EraChara.get(parent).talent.maternal && !rand(2)) {",
     tests: ['chara-make-inherit'],
     must_mention: '母性',
   },
   {
     desc: 'M8025 人妻分支的条件 == 1 改成 != 1',
     file: 'ere/system/chara/chara-make-inherit.js',
-    find: '    if (era.get(`talent:${parent}:157`) && rand(3) === 1) {',
-    replace: '    if (era.get(`talent:${parent}:157`) && rand(3) !== 1) {',
+    find: "    if (EraChara.get(parent).talent.married_woman && rand(3) === 1) {",
+    replace: "    if (EraChara.get(parent).talent.married_woman && rand(3) !== 1) {",
     tests: ['chara-make-inherit'],
     must_mention: '人妻',
   },
@@ -423,9 +423,9 @@ export default [
   {
     desc: 'M8028 冲突检查只消左侧（RAND:2 的方向丢掉）',
     file: 'ere/system/chara/chara-make-inherit.js',
-    find: '      if (rand(2)) {\n        era.set(`talent:${child}:${left}`, 0);\n      } else {\n        era.set(`talent:${child}:${right}`, 0);\n      }',
+    find: "        EraChara.get(child).talent.set(left, 0)",
     replace:
-      '      if (rand(2)) {\n        era.set(`talent:${child}:${right}`, 0);\n      } else {\n        era.set(`talent:${child}:${right}`, 0);\n      }',
+      "        EraChara.get(child).talent.set(right, 0)",
     tests: ['chara-make-inherit'],
     must_mention: 'cmi_conflict_check',
   },
@@ -458,8 +458,8 @@ export default [
   {
     desc: 'M8032 rand_chara_make 的收下分支不再清 CFLAG:1',
     file: 'ere/system/chara/chara-make.js',
-    find: '      chara(newchara).invasion.状态 = 0; // CFLAG:1 初始位置',
-    replace: '      chara(newchara).invasion.状态 = 2; // CFLAG:1 初始位置',
+    find: "      EraChara.get(newchara).cflag.state = 0; // CFLAG:1 初始位置",
+    replace: "      EraChara.get(newchara).cflag.state = 2; // CFLAG:1 初始位置",
     tests: ['chara-name'],
     must_mention: 'CFLAG:1 归零',
   },
@@ -505,27 +505,27 @@ export default [
   {
     desc: 'M8276 讨厌男人检查的素质号 82 改 83（检查失效，情结段照跑）',
     file: 'ere/system/chara/chara-make-inherit.js',
-    find: 'if (era.get(`talent:${parent}:82`) && (child_male || child_futa)) {',
+    find: "if (EraChara.get(parent).talent.hates_men && (child_male || child_futa)) {",
     replace:
-      'if (era.get(`talent:${parent}:83`) && (child_male || child_futa)) {',
+      "if (EraChara.get(parent).talent.sadist && (child_male || child_futa)) {",
     tests: ['chara-make-inherit'],
     must_mention: '第一支直接跳过',
   },
   {
     desc: 'M8277 男人婆检查的素质号 79 改 78（同上，第二支）',
     file: 'ere/system/chara/chara-make-inherit.js',
-    find: '} else if (era.get(`talent:${parent}:79`) && !child_male && !child_futa) {',
+    find: "} else if (EraChara.get(parent).talent.tomboy && !child_male && !child_futa) {",
     replace:
-      '} else if (era.get(`talent:${parent}:78`) && !child_male && !child_futa) {',
+      "} else if (EraChara.get(parent).talent.breast_maniac && !child_male && !child_futa) {",
     tests: ['chara-make-inherit'],
     must_mention: '第二支直接跳过',
   },
   {
     desc: 'M8278 讨厌男人检查的「孩子是男」条件倒置（整支改成反例才跳过）',
     file: 'ere/system/chara/chara-make-inherit.js',
-    find: 'if (era.get(`talent:${parent}:82`) && (child_male || child_futa)) {',
+    find: "if (EraChara.get(parent).talent.hates_men && (child_male || child_futa)) {",
     replace:
-      'if (era.get(`talent:${parent}:82`) && !(child_male || child_futa)) {',
+      "if (EraChara.get(parent).talent.hates_men && !(child_male || child_futa)) {",
     tests: ['chara-make-inherit'],
     must_mention: '第一支直接跳过',
   },

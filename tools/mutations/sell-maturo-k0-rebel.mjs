@@ -59,15 +59,15 @@ export default [
   make(
     7618,
     '反抗支五十级门槛抬高',
-    '  if (EraChara.get(cid).cflag.level >= 50) {\n    await era.printAndWait(`${target_name}作为死斗场的角斗士在战斗着。`);',
-    '  if (EraChara.get(cid).cflag.level >= 51) {\n    await era.printAndWait(`${target_name}作为死斗场的角斗士在战斗着。`);',
+    "  if (EraChara.get(cid).cflag.level >= 50) {\n    await era.printAndWait(`${target_name}作为死斗场的角斗士在战斗着。`);",
+    "  if (EraChara.get(cid).cflag.level >= 51) {\n    await era.printAndWait(`${target_name}作为死斗场的角斗士在战斗着。`);",
     '反抗刻印路线覆盖五次随机调用的两侧与全部特殊路由',
   ),
   make(
     7619,
     '反抗支一百级门槛抬高',
-    '  await era.printAndWait(`${target_name}作为死斗场的角斗士在战斗着。`);\n\n  if (EraChara.get(cid).cflag.level >= 100) {',
-    '  await era.printAndWait(`${target_name}作为死斗场的角斗士在战斗着。`);\n\n  if (EraChara.get(cid).cflag.level >= 101) {',
+    "  await era.printAndWait(`${target_name}作为死斗场的角斗士在战斗着。`);\n\n  if (EraChara.get(cid).cflag.level >= 100) {",
+    "  await era.printAndWait(`${target_name}作为死斗场的角斗士在战斗着。`);\n\n  if (EraChara.get(cid).cflag.level >= 101) {",
     '反抗刻印路线覆盖五次随机调用的两侧与全部特殊路由',
   ),
   make(

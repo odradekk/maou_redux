@@ -18,6 +18,8 @@
  */
 
 const era = require('#/era-electron');
+const EraChara = require('#/era-utils/era-chara');
+const era_flag = require('#/era-utils/era-flag');
 // wearing_cloth_able 自 #215（J5）起为真身（ere/system/train/cloth.js）
 const { wearing_cloth_able } = require('#/system/train/cloth');
 const { random_self_call } = require('#/system/chara/chara-self-call'); // #383 起真身
@@ -49,16 +51,16 @@ async function char_init(cid, rand) {
   // 体力/气力拉满到上限。菲娅 CFLAG:35:9 = 1（不 > 1）不可达；
   // st_up 自 #179（H10）起为真身
   if (
-    (era.get(`cflag:${cid}:9`) || 0) > 1 &&
-    (era.get(`cflag:${cid}:11`) || 0) === 0
+    (EraChara.get(cid).cflag.get(9) || 0) > 1 &&
+    (EraChara.get(cid).cflag.get(11) || 0) === 0
   ) {
-    const lv = era.get(`cflag:${cid}:9`) || 0; // CFLAG:9 = 等级
+    const lv = EraChara.get(cid).cflag.get(9) || 0; // CFLAG:9 = 等级
     for (let i = 0; i < lv; i += 1) {
       st_up(cid, rand_n);
     }
-    era.set(`cflag:${cid}:9`, lv); // 等级钳回原值
-    chara(cid).dungeon.体力 = era.get(`maxbase:${cid}:0`) || 0;
-    chara(cid).dungeon.气力 = era.get(`maxbase:${cid}:1`) || 0;
+    EraChara.get(cid).cflag.set(9, lv); // 等级钳回原值
+    EraChara.get(cid).base.set(0, EraChara.get(cid).maxbase.get(0) || 0);
+    EraChara.get(cid).base.set(1, EraChara.get(cid).maxbase.get(1) || 0);
   }
 
   // 着替え装着——wearing_cloth_able 自 #215（J5）起为真身
@@ -71,11 +73,11 @@ async function char_init(cid, rand) {
   // 年齢/身長显示设定（FLAG:5 位 12/15）且身体数据缺失（CFLAG:451
   // == 0 || CFLAG:453 == 0）时生成。FLAG:5 是开局设置位图，窄路径恒 0；真身
   // 自 #385 起在 ere/system/chara/chara-body.js
-  const settings = era.get('flag:5') || 0; // FLAG:5 开局设置位图
+  const settings = era_flag.game_settings || 0; // FLAG:5 开局设置位图
   if (((settings >> 12) & 1) !== 0 || ((settings >> 15) & 1) !== 0) {
     if (
-      (era.get(`cflag:${cid}:451`) || 0) === 0 ||
-      (era.get(`cflag:${cid}:453`) || 0) === 0
+      (EraChara.get(cid).cflag.get(451) || 0) === 0 ||
+      (EraChara.get(cid).cflag.get(453) || 0) === 0
     ) {
       char_body_generate_wapped(cid, rand_n);
     }
@@ -84,13 +86,13 @@ async function char_init(cid, rand) {
   // 能力者技能：五系全无时各以 rand_n(40) 独立掷 2.5% 获得。
   // ere 无全局随机序列（#117 决议），逐系独立掷，注入点显式传随机源
   const has_element = [275, 276, 277, 278, 279].some(
-    (talent) => (era.get(`talent:${cid}:${talent}`) || 0) !== 0,
+    (talent) => (EraChara.get(cid).talent.get(talent) || 0) !== 0,
   );
   if (!has_element) {
     for (const talent of [275, 276, 277, 278, 279]) {
       if (rand_n(40) === 0) {
         // TALENT:x:275-279 = 火/冰/雷/光/暗之能力者（素质名表）
-        era.set(`talent:${cid}:${talent}`, 1);
+        EraChara.get(cid).talent.set(talent, 1);
       }
     }
   }
@@ -112,8 +114,8 @@ async function char_init(cid, rand) {
  * @param {number} cid 角色 ID
  */
 function normalize_idle_status(cid) {
-  if (chara(cid).invasion.状态 === 1) {
-    chara(cid).invasion.状态 = 0;
+  if ((EraChara.get(cid).cflag.get(1) || 0) === 1) {
+    EraChara.get(cid).cflag.set(1, 0);
   }
 }
 

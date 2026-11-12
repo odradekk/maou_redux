@@ -37,6 +37,7 @@
  */
 
 const era = require('#/era-electron');
+const EraChara = require('#/era-utils/era-chara');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { karma } = require('#/system/chara/chara-stats');
@@ -65,7 +66,7 @@ const T_SPONSOR = 290;
 
 /** 状态（CFLAG:1；invasion 域，写经门面、读可裸寻址） */
 function state_of(cid) {
-  return era.get(`cflag:${cid}:1`) || 0;
+  return EraChara.get(cid).cflag.get(1) || 0;
 }
 
 /**
@@ -94,7 +95,8 @@ function print_bar(label, value, max) {
  */
 function check_able_to_temptation(arg) {
   if (state_of(arg) !== 2) return TEMPTATION_NOT_HERO;
-  if (chara(arg).system.特殊角色标记 === 4) return TEMPTATION_CRAZY_KING;
+  if ((EraChara.get(arg).cflag.get(800) || 0) === 4)
+    return TEMPTATION_CRAZY_KING;
   return 0;
 }
 
@@ -123,29 +125,33 @@ async function temptation(arg, rand = default_rand) {
     return 0; // （狂王那一档的收尾）
   }
 
-  if ((chara(0).dungeon.气力 || 0) < TEMPTATION_MP_COST) {
+  if ((EraChara.get(0).base.get(1) || 0 || 0) < TEMPTATION_MP_COST) {
     // 気力減衰
     era.print('*你的魔力耗尽了*');
     return 0;
   }
-  chara(0).dungeon.气力 -= TEMPTATION_MP_COST;
+  EraChara.get(0).base.set(1, EraChara.get(0).base.get(1) - TEMPTATION_MP_COST);
 
   await temptation_try(arg, rand);
   await era.waitAnyKey(); // WAIT
 
   // 結果表示
-  print_bar('好感度', era.get(`cflag:${arg}:2`) || 0, TEMPTATION_FALL);
+  print_bar('好感度', EraChara.get(arg).cflag.get(2) || 0, TEMPTATION_FALL);
   // MAXBASE:1 属 dungeon 域；门面生成器只产出了 MAXBASE:0（体力上限），
   // 这个下标仍用裸寻址（chara-dungeon.js 手写区注释同款）
-  print_bar('你的魔力', chara(0).dungeon.气力, era.get('maxbase:0:1') || 0);
+  print_bar(
+    '你的魔力',
+    EraChara.get(0).base.get(1) || 0,
+    EraChara.get(0).maxbase.get(1) || 0,
+  );
   await era.waitAnyKey(); // WAIT
 
-  if ((era.get(`cflag:${arg}:2`) || 0) >= TEMPTATION_FALL) {
+  if ((EraChara.get(arg).cflag.get(2) || 0) >= TEMPTATION_FALL) {
     // 陥落：投诚
     era.print('*勇者被你诱惑，投诚了！*');
-    chara(arg).invasion.状态 = 0; // CFLAG:1 = 0
-    chara(arg).invasion.新人 = 1; // CFLAG:506 = 1
-    chara(arg).invasion.回城标志 = 0; // CFLAG:507 = 0
+    EraChara.get(arg).cflag.set(1, 0); // CFLAG:1 = 0
+    EraChara.get(arg).cflag.set(506, 1); // CFLAG:506 = 1
+    EraChara.get(arg).cflag.set(507, 0); // CFLAG:507 = 0
     party_del(arg);
   }
 
@@ -161,29 +167,31 @@ async function temptation(arg, rand = default_rand) {
  */
 function prepare_temptation(arg) {
   // 成功の基本値（魔王等级＋三个 FLAG 加成＋勇者的经验与素质）
-  let seikou = 99 + (era.get('cflag:0:9') || 0);
+  let seikou = 99 + (EraChara.get(0).cflag.get(9) || 0);
   seikou +=
-    (era.get('flag:30') || 0) +
-    (era.get('flag:31') || 0) +
-    (era.get('flag:32') || 0);
+    (era_flag.love_or_lewd_count || 0) +
+    (era_flag.kill_count || 0) +
+    (era_flag.born_of_love_slave || 0);
   seikou += Math.trunc(
-    ((era.get(`exp:${arg}:2`) || 0) +
-      (era.get(`exp:${arg}:5`) || 0) +
-      (era.get(`exp:${arg}:20`) || 0) +
-      (era.get(`exp:${arg}:55`) || 0) +
-      (era.get(`exp:${arg}:56`) || 0) +
-      (era.get(`exp:${arg}:57`) || 0) +
-      (era.get(`exp:${arg}:74`) || 0)) /
+    ((EraChara.get(arg).exp.get(2) || 0) +
+      (EraChara.get(arg).exp.get(5) || 0) +
+      (EraChara.get(arg).exp.get(20) || 0) +
+      (EraChara.get(arg).exp.get(55) || 0) +
+      (EraChara.get(arg).exp.get(56) || 0) +
+      (EraChara.get(arg).exp.get(57) || 0) +
+      (EraChara.get(arg).exp.get(74) || 0)) /
       3,
   );
   seikou +=
     5 *
-    ((era.get(`abl:${arg}:0`) || 0) +
-      (era.get(`abl:${arg}:1`) || 0) +
-      (era.get(`abl:${arg}:2`) || 0) +
-      (era.get(`abl:${arg}:3`) || 0));
+    ((EraChara.get(arg).abl.get(0) || 0) +
+      (EraChara.get(arg).abl.get(1) || 0) +
+      (EraChara.get(arg).abl.get(2) || 0) +
+      (EraChara.get(arg).abl.get(3) || 0));
   seikou +=
-    10 * ((era.get(`abl:${arg}:10`) || 0) + (era.get(`abl:${arg}:11`) || 0));
+    10 *
+    ((EraChara.get(arg).abl.get(10) || 0) +
+      (EraChara.get(arg).abl.get(11) || 0));
 
   // 残り体力・気力の二段（最大倍率は脅威の36倍）
   seikou = times(seikou, health_factor(arg, 0));
@@ -191,16 +199,18 @@ function prepare_temptation(arg) {
 
   // 失敗の基本値は勇者レベルとカルマ、刻印の効果が大
   let sippai =
-    50 + (era.get(`cflag:${arg}:9`) || 0) + (era.get(`cflag:${arg}:151`) || 0); // CFLAG:151 善恶值
+    50 +
+    (EraChara.get(arg).cflag.get(9) || 0) +
+    (EraChara.get(arg).cflag.get(151) || 0); // CFLAG:151 善恶值
   sippai = Math.max(0, sippai);
-  sippai *= 1 + (era.get(`mark:${arg}:3`) || 0);
+  sippai *= 1 + (EraChara.get(arg).mark.get(3) || 0);
   sippai = Math.trunc(
     sippai /
       Math.pow(
         1 +
-          (era.get(`mark:${arg}:0`) || 0) +
-          (era.get(`mark:${arg}:1`) || 0) +
-          (era.get(`mark:${arg}:2`) || 0),
+          (EraChara.get(arg).mark.get(0) || 0) +
+          (EraChara.get(arg).mark.get(1) || 0) +
+          (EraChara.get(arg).mark.get(2) || 0),
         2,
       ),
   );
@@ -214,8 +224,8 @@ function prepare_temptation(arg) {
  * @returns {number} 百分比（整数）
  */
 function health_ratio(arg, index) {
-  const value = era.get(`base:${arg}:${index}`) || 0;
-  const max = era.get(`maxbase:${arg}:${index}`) || 0;
+  const value = EraChara.get(arg).base.get(index) || 0;
+  const max = EraChara.get(arg).maxbase.get(index) || 0;
   return Math.trunc((value * 100) / max);
 }
 
@@ -246,14 +256,14 @@ function health_factor(arg, index) {
  * @returns {0|1} 1 = 诱惑成功
  */
 function fi_temptation(arg, seikou, sippai, rand = default_rand) {
-  const ring1 = (era.get(`cflag:${arg}:551`) || 0) % 1000; // RING:1
-  const ring2 = (era.get(`cflag:${arg}:552`) || 0) % 1000; // RING:2
+  const ring1 = (EraChara.get(arg).cflag.get(551) || 0) % 1000; // RING:1
+  const ring2 = (EraChara.get(arg).cflag.get(552) || 0) % 1000; // RING:2
   // [即落ち][淫乱][愛][肉便器]なら無条件で成功
   if (
-    era.get(`talent:${arg}:73`) ||
-    era.get(`talent:${arg}:76`) ||
-    era.get(`talent:${arg}:85`) ||
-    era.get(`talent:${arg}:204`)
+    EraChara.get(arg).talent.get(73) ||
+    EraChara.get(arg).talent.get(76) ||
+    EraChara.get(arg).talent.get(85) ||
+    EraChara.get(arg).talent.get(204)
   ) {
     return 1;
   }
@@ -274,8 +284,8 @@ function fi_temptation(arg, seikou, sippai, rand = default_rand) {
  */
 async function temptation_try(arg, rand = default_rand) {
   const [seikou, sippai] = prepare_temptation(arg);
-  const name = era.get(`callname:${arg}:-1`) ?? ''; // callname -1 槽
-  const master_lv = era.get('cflag:0:9') || 0; // CFLAG:0:9 魔王等级
+  const name = EraChara.get(arg).name ?? ''; // callname -1 槽
+  const master_lv = EraChara.get(0).cflag.get(9) || 0; // CFLAG:0:9 魔王等级
 
   for (let num = 0; num < 6; num += 1) {
     // 誘惑判定成功
@@ -385,7 +395,8 @@ function heal_affection(arg, index) {
  */
 function heal_base(arg, index, delta) {
   const view = chara(arg).dungeon;
-  const max = index === 0 ? view.体力上限 : era.get(`maxbase:${arg}:1`) || 0;
+  const max =
+    index === 0 ? view.体力上限 : EraChara.get(arg).maxbase.get(1) || 0;
   const next = (index === 0 ? view.体力 : view.气力) + delta;
   const capped = Math.min(next, max);
   if (index === 0) view.体力 = capped;
@@ -406,7 +417,7 @@ async function sponsor_chances(arg, rand) {
   const money = era_flag.money;
   if (
     rand(20) === 0 &&
-    (era.get(`talent:${arg}:${T_SPONSOR}`) || 0) === 0 &&
+    (EraChara.get(arg).talent.get(T_SPONSOR) || 0) === 0 &&
     money >= SPONSOR_AMOUNT
   ) {
     // 担保人でなく、あなたが LOCAL 以上のお金を持ち、1/20 の確率
@@ -421,16 +432,16 @@ async function sponsor_chances(arg, rand) {
         `*${era.get(`callname:${arg}:-1`) ?? ''}为了钱，成为了债务的担保人了*`,
       );
       era.print(`屈服点数+${(era.get('cflag:0:9') || 0) * 2}`);
-      add_juel(arg, 6, (era.get('cflag:0:9') || 0) * 2);
+      add_juel(arg, 6, (EraChara.get(0).cflag.get(9) || 0) * 2);
       add_affection(arg, 50);
-      era.set(`talent:${arg}:${T_SPONSOR}`, 1);
+      EraChara.get(arg).talent.set(T_SPONSOR, 1);
       pay_sponsor();
       credit_partner(arg);
     }
   } else if (
     rand(20) === 0 &&
-    (era.get(`talent:${arg}:121`) || 0) === 0 &&
-    (era.get(`talent:${arg}:122`) || 0) === 0 &&
+    (EraChara.get(arg).talent.get(121) || 0) === 0 &&
+    (EraChara.get(arg).talent.get(122) || 0) === 0 &&
     money >= SPONSOR_AMOUNT
   ) {
     // オトコでもふたなりでもなく、1/20 の確率で肉芽の呪い（肉芽诅咒
@@ -446,15 +457,15 @@ async function sponsor_chances(arg, rand) {
         `*${era.get(`callname:${arg}:-1`) ?? ''}为了钱，受到了肉芽的诅咒*`,
       );
       era.print(`屈服点数+${(era.get('cflag:0:9') || 0) * 2}`);
-      add_juel(arg, 6, (era.get('cflag:0:9') || 0) * 2);
+      add_juel(arg, 6, (EraChara.get(0).cflag.get(9) || 0) * 2);
       add_affection(arg, 50);
-      chara(arg).stronghold.肉芽诅咒 = 1;
+      EraChara.get(arg).talent.set(326, 1);
       pay_sponsor();
       credit_partner(arg);
     }
   } else if (
     rand(10) === 0 &&
-    (era.get(`cflag:${arg}:582`) || 0) < SPONSOR_AMOUNT * -1 &&
+    (EraChara.get(arg).cflag.get(582) || 0) < SPONSOR_AMOUNT * -1 &&
     money >= SPONSOR_AMOUNT
   ) {
     // 借金が LOCAL 以上あり、1/10 の確率で代わりに返済
@@ -466,10 +477,13 @@ async function sponsor_chances(arg, rand) {
         `*${era.get(`callname:${arg}:-1`) ?? ''}还了钱，一种可怜的屈服感油然而生*`,
       );
       era.print(`屈服点数+${(era.get('cflag:0:9') || 0) * 5}`);
-      add_juel(arg, 6, (era.get('cflag:0:9') || 0) * 5);
+      add_juel(arg, 6, (EraChara.get(0).cflag.get(9) || 0) * 5);
       add_affection(arg, 80);
       pay_sponsor(); // 只扣双资金，不入目标所持金
-      chara(arg).patch.借款 += SPONSOR_AMOUNT; // CFLAG:582（patch 域）
+      EraChara.get(arg).cflag.set(
+        582,
+        EraChara.get(arg).cflag.get(582) + SPONSOR_AMOUNT,
+      ); // CFLAG:582（patch 域）
     }
   }
 }
@@ -487,13 +501,16 @@ function pay_sponsor() {
  * @param {number} arg 目标角色号
  */
 function credit_partner(arg) {
-  chara(arg).dungeon.所持金 += SPONSOR_AMOUNT; // CFLAG:580（dungeon 域）
+  EraChara.get(arg).cflag.set(
+    580,
+    EraChara.get(arg).cflag.get(580) + SPONSOR_AMOUNT,
+  ); // CFLAG:580（dungeon 域）
 }
 
 /** 一串 ABL 下标之和 */
 function abl_sum(arg, indexes) {
   return indexes.reduce(
-    (sum, idx) => sum + (era.get(`abl:${arg}:${idx}`) || 0),
+    (sum, idx) => sum + (EraChara.get(arg).abl.get(idx) || 0),
     0,
   );
 }
@@ -501,26 +518,26 @@ function abl_sum(arg, indexes) {
 /** 一串 MARK 下标之和 */
 function mark_sum(arg, indexes) {
   return indexes.reduce(
-    (sum, idx) => sum + (era.get(`mark:${arg}:${idx}`) || 0),
+    (sum, idx) => sum + (EraChara.get(arg).mark.get(idx) || 0),
     0,
   );
 }
 
 /** 单个刻印读数（MARK:n） */
 function mark_of(arg, index) {
-  return era.get(`mark:${arg}:${index}`) || 0;
+  return EraChara.get(arg).mark.get(index) || 0;
 }
 
 /** 好感度写入（CFLAG:2） */
 function add_affection(arg, delta) {
-  era.set(`cflag:${arg}:2`, (era.get(`cflag:${arg}:2`) || 0) + delta);
+  era.set(`cflag:${arg}:2`, (EraChara.get(arg).cflag.get(2) || 0) + delta);
 }
 
 /** 屈服/欲情点数写入（JUEL:n） */
 function add_juel(arg, index, delta) {
   era.set(
     `juel:${arg}:${index}`,
-    (era.get(`juel:${arg}:${index}`) || 0) + delta,
+    (EraChara.get(arg).jewel.get(index) || 0) + delta,
   );
 }
 

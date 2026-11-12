@@ -32,6 +32,7 @@
  */
 
 const era = require('#/era-electron');
+const EraChara = require('#/era-utils/era-chara');
 const { char_size_generate } = require('#/system/chara/chara-body');
 const { ex_talentname } = require('#/system/chara/chara-ex');
 const { chara } = require('#/facade/chara');
@@ -42,13 +43,13 @@ const {
 const { default_rand } = require('#/utils/numeric');
 
 function name_of(cid) {
-  return era.get(`callname:${cid}:-1`) ?? '';
+  return EraChara.get(cid).name ?? '';
 }
 
 // 称呼（callname:cid:-2）：确认对话仅这一处用它，其余
 // 全用姓名（callname:cid:-1，见 name_of）
 function nickname_of(cid) {
-  return era.get(`callname:${cid}:-2`) ?? '';
+  return EraChara.get(cid).callname ?? '';
 }
 
 /** 数值型角色表：[表名, 声明的元素数]。ex_talent 无声明（本项目扩展表），
@@ -164,16 +165,16 @@ function transferapp(cid) {
   for (const idx of [10, 2]) swap_var('cflag', 0, cid, idx); // 好感度/调教次数
   for (const idx of [85, 86, 76]) swap_var('talent', 0, cid, idx); // 爱慕/盲从/淫乱
 
-  chara(0).invasion.状态 = 0;
-  chara(cid).invasion.状态 = 0;
+  EraChara.get(0).cflag.set(1, 0);
+  EraChara.get(cid).cflag.set(1, 0);
 
   // 姓名交换只落最终可观察效果：互换称呼（:-2），再各自把姓名（:-1）
   // 改写成新的称呼——两槽的语义见 utils/callname-utils.js 文件头
   // 两侧称呼槽都由 addCharacter 初始化（无称呼预设时回落姓名），不存在
   // undefined 侧，swap_var 的数值缺省值不会写入。
   swap_var('callname', 0, cid, -2);
-  era.set('callname:0:-1', era.get('callname:0:-2') ?? '');
-  era.set(`callname:${cid}:-1`, era.get(`callname:${cid}:-2`) ?? '');
+  era.set('callname:0:-1', EraChara.get(0).callname ?? '');
+  era.set(`callname:${cid}:-1`, EraChara.get(cid).callname ?? '');
 
   relation_swap_rebuild(0, cid);
   personalock(cid);
@@ -185,64 +186,64 @@ function transferapp(cid) {
  */
 function bodycheck_maou() {
   if (
-    (era.get('cflag:0:452') || 0) === 0 &&
-    (era.get('cflag:0:314') || 0) > 0
+    (EraChara.get(0).cflag.get(452) || 0) === 0 &&
+    (EraChara.get(0).cflag.get(314) || 0) > 0
   ) {
-    era.set('cflag:0:452', 666);
+    EraChara.get(0).cflag.set(452, 666);
   }
   if (
-    (era.get('cflag:0:452') || 0) === 0 &&
-    (era.get('cflag:0:314') || 0) === 0
+    (EraChara.get(0).cflag.get(452) || 0) === 0 &&
+    (EraChara.get(0).cflag.get(314) || 0) === 0
   ) {
-    era.set('cflag:0:452', 21);
+    EraChara.get(0).cflag.set(452, 21);
   }
-  if ((era.get('cflag:0:451') || 0) === 0) {
-    era.set('cflag:0:451', 21);
+  if ((EraChara.get(0).cflag.get(451) || 0) === 0) {
+    EraChara.get(0).cflag.set(451, 21);
   }
   if (
-    !(era.get('cflag:0:453') || 0) ||
-    !(era.get('cflag:0:454') || 0) ||
-    !(era.get('cflag:0:455') || 0) ||
-    !(era.get('cflag:0:456') || 0) ||
-    !(era.get('cflag:0:457') || 0)
+    !(EraChara.get(0).cflag.get(453) || 0) ||
+    !(EraChara.get(0).cflag.get(454) || 0) ||
+    !(EraChara.get(0).cflag.get(455) || 0) ||
+    !(EraChara.get(0).cflag.get(456) || 0) ||
+    !(EraChara.get(0).cflag.get(457) || 0)
   ) {
     const [, , height, weight, bust, waist, hip] = char_size_generate(0);
-    era.set('cflag:0:453', height);
-    era.set('cflag:0:454', weight);
-    era.set('cflag:0:455', bust);
-    era.set('cflag:0:456', waist);
-    era.set('cflag:0:457', hip);
+    EraChara.get(0).cflag.set(453, height);
+    EraChara.get(0).cflag.set(454, weight);
+    EraChara.get(0).cflag.set(455, bust);
+    EraChara.get(0).cflag.set(456, waist);
+    EraChara.get(0).cflag.set(457, hip);
   }
   if (
-    !(era.get('talent:0:300') || 0) ||
-    !(era.get('talent:0:301') || 0) ||
-    !(era.get('talent:0:302') || 0) ||
-    !(era.get('talent:0:303') || 0) ||
-    !(era.get('talent:0:304') || 0)
+    !(EraChara.get(0).talent.get(300) || 0) ||
+    !(EraChara.get(0).talent.get(301) || 0) ||
+    !(EraChara.get(0).talent.get(302) || 0) ||
+    !(EraChara.get(0).talent.get(303) || 0) ||
+    !(EraChara.get(0).talent.get(304) || 0)
   ) {
-    era.set('talent:0:300', 5);
-    era.set('talent:0:301', 1);
-    era.set('talent:0:302', 300);
-    era.set('talent:0:303', 1);
-    era.set('talent:0:304', 1);
+    EraChara.get(0).talent.set(300, 5);
+    EraChara.get(0).talent.set(301, 1);
+    EraChara.get(0).talent.set(302, 300);
+    EraChara.get(0).talent.set(303, 1);
+    EraChara.get(0).talent.set(304, 1);
   }
   if (
-    !(era.get('talent:0:305') || 0) ||
-    !(era.get('talent:0:306') || 0) ||
-    !(era.get('talent:0:307') || 0)
+    !(EraChara.get(0).talent.get(305) || 0) ||
+    !(EraChara.get(0).talent.get(306) || 0) ||
+    !(EraChara.get(0).talent.get(307) || 0)
   ) {
-    era.set('talent:0:305', 3);
-    era.set('talent:0:306', 3);
-    era.set('talent:0:307', 4);
+    EraChara.get(0).talent.set(305, 3);
+    EraChara.get(0).talent.set(306, 3);
+    EraChara.get(0).talent.set(307, 4);
   }
   if (
-    !(era.get('talent:0:308') || 0) ||
-    !(era.get('talent:0:309') || 0) ||
-    !(era.get('talent:0:310') || 0)
+    !(EraChara.get(0).talent.get(308) || 0) ||
+    !(EraChara.get(0).talent.get(309) || 0) ||
+    !(EraChara.get(0).talent.get(310) || 0)
   ) {
-    era.set('talent:0:308', 150);
-    era.set('talent:0:309', 3);
-    era.set('talent:0:310', 100);
+    EraChara.get(0).talent.set(308, 150);
+    EraChara.get(0).talent.set(309, 3);
+    EraChara.get(0).talent.set(310, 100);
   }
 }
 
@@ -269,18 +270,21 @@ async function transfer_soul(cid, mode = 0, rand = default_rand) {
 
   bodycheck_maou();
 
-  const marriage = era.get(`cflag:${cid}:601`) || 0;
+  const marriage = EraChara.get(cid).cflag.get(601) || 0;
   if ((marriage >= 900 && marriage <= 902) || marriage === 0) {
     swap_var('cflag', 0, cid, 601);
     swap_var('cflag', 0, cid, 609);
   } else {
-    era.set('cflag:0:621', marriage);
+    EraChara.get(0).cflag.set(621, marriage);
     const partner = search_family(cid, 'MARRIAGE');
     // partner<0（查无婚姻对象）时跳过，否则执行
     if (partner >= 0) {
-      era.set(`cflag:${partner}:621`, era.get(`cflag:${partner}:601`) || 0);
-      era.set(`cflag:${partner}:601`, 901);
-      era.set(`cflag:${partner}:609`, era.get(`cflag:${partner}:6`) || 0);
+      era.set(
+        `cflag:${partner}:621`,
+        EraChara.get(partner).cflag.get(601) || 0,
+      );
+      EraChara.get(partner).cflag.set(601, 901);
+      era.set(`cflag:${partner}:609`, EraChara.get(partner).cflag.get(6) || 0);
     }
   }
 
@@ -290,11 +294,11 @@ async function transfer_soul(cid, mode = 0, rand = default_rand) {
   // 灵魂错位素质叠加（有 debuff）：本次转移让转移对象背上 1-5 级，
   // 若魔王身上已带着旧的错位素质则继承并 +1 级、魔王自己清零
   let debuff = rand(5) + 1;
-  if (era.get('ex_talent:0:0')) {
-    debuff = (era.get('ex_talent:0:0') || 0) + 1;
+  if (EraChara.get(0).ex_talent.get(0)) {
+    debuff = (EraChara.get(0).ex_talent.get(0) || 0) + 1;
   }
-  era.set(`ex_talent:${cid}:0`, debuff);
-  era.set('ex_talent:0:0', 0);
+  EraChara.get(cid).ex_talent.set(0, debuff);
+  EraChara.get(0).ex_talent.set(0, 0);
   era.print(`${name_of(cid)}陷入了【${ex_talentname(0)}】`);
   // 转移播报在回名册前经按键确认（名册循环换屏会清掉本屏，ADR-0009）
   await era.waitAnyKey();
@@ -312,12 +316,12 @@ async function transfer_soul(cid, mode = 0, rand = default_rand) {
  * @param {(n: number) => number} [rand] 随机源
  */
 function soul_dislocation(cid, rand = default_rand) {
-  const level = era.get(`ex_talent:${cid}:0`) || 0;
+  const level = EraChara.get(cid).ex_talent.get(0) || 0;
   const cap = level > 3 ? 3 : level; // 等级超过 3 按 3 计
   if (level && !rand(cap + 1)) {
     let next = level - 1;
     if (next < 0) next = 0;
-    era.set(`ex_talent:${cid}:0`, next);
+    EraChara.get(cid).ex_talent.set(0, next);
     if (next === 0) {
       era.print(`${name_of(cid)}从【${ex_talentname(0)}】中恢复了`);
     }

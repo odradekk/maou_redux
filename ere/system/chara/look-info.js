@@ -44,6 +44,7 @@
 'use strict';
 
 const era = require('#/era-electron');
+const EraChara = require('#/era-utils/era-chara');
 
 /** 语言中立的回退字串 'ERROR'：未登记的 kind 与各 CASEELSE 的默认值 */
 const ERROR = 'ERROR';
@@ -426,7 +427,7 @@ const COMMON_SENSE_DAILY_DEFAULT = '不改变';
  * @returns {number}
  */
 function talent(cid, idx) {
-  return era.get(`talent:${cid}:${idx}`) || 0;
+  return EraChara.get(cid).talent.get(idx) || 0;
 }
 
 /**

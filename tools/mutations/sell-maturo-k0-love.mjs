@@ -24,15 +24,15 @@ export default [
   make(
     7634,
     '职业 200 编号改错',
-    "async function love_matu_ge1m(ctx) {\n  const { cid, target_name } = ctx;\n  let buyer = '';\n  let route = 0;\n  let ending = '';\n  if (\n    EraChara.get(cid).talent.warrior == 1 ||\n    EraChara.get(cid).talent.thief == 1\n  ) {",
-    "async function love_matu_ge1m(ctx) {\n  const { cid, target_name } = ctx;\n  let buyer = '';\n  let route = 0;\n  let ending = '';\n  if (\n    EraChara.get(cid).talent.get(199) == 1 ||\n    EraChara.get(cid).talent.thief == 1\n  ) {",
+    "async function love_matu_ge1m(ctx) {\n  const { cid, target_name } = ctx;\n  let buyer = '';\n  let route = 0;\n  let ending = '';\n  if (era.get(`talent:${cid}:200`) == 1 || era.get(`talent:${cid}:203`) == 1) {",
+    "async function love_matu_ge1m(ctx) {\n  const { cid, target_name } = ctx;\n  let buyer = '';\n  let route = 0;\n  let ending = '';\n  if (era.get(`talent:${cid}:199`) == 1 || era.get(`talent:${cid}:203`) == 1) {",
     '八种职业编号',
   ),
   make(
     7635,
     '职业 203 编号改错',
-    "async function love_matu_ge1m(ctx) {\n  const { cid, target_name } = ctx;\n  let buyer = '';\n  let route = 0;\n  let ending = '';\n  if (\n    EraChara.get(cid).talent.warrior == 1 ||\n    EraChara.get(cid).talent.thief == 1\n  ) {",
-    "async function love_matu_ge1m(ctx) {\n  const { cid, target_name } = ctx;\n  let buyer = '';\n  let route = 0;\n  let ending = '';\n  if (\n    EraChara.get(cid).talent.warrior == 1 ||\n    EraChara.get(cid).talent.archer == 1\n  ) {",
+    "async function love_matu_ge1m(ctx) {\n  const { cid, target_name } = ctx;\n  let buyer = '';\n  let route = 0;\n  let ending = '';\n  if (era.get(`talent:${cid}:200`) == 1 || era.get(`talent:${cid}:203`) == 1) {",
+    "async function love_matu_ge1m(ctx) {\n  const { cid, target_name } = ctx;\n  let buyer = '';\n  let route = 0;\n  let ending = '';\n  if (era.get(`talent:${cid}:200`) == 1 || era.get(`talent:${cid}:208`) == 1) {",
     '八种职业编号',
   ),
   make(
@@ -66,8 +66,8 @@ export default [
   make(
     7640,
     '爱慕十万档职业 201 例外丢失',
-    "async function love_matu_ge100k(ctx) {\n  const { cid, target_name } = ctx;\n  let buyer = '';\n  let route = 0;\n  let ending = '';\n  if (\n    EraChara.get(cid).talent.warrior == 1 ||\n    EraChara.get(cid).talent.thief == 1\n  ) {\n    buyer = '魔王军的士官';\n    route = 3;\n  } else if (\n    EraChara.get(cid).talent.knight == 1 ||\n    EraChara.get(cid).talent.mage == 1\n  ) {",
-    "async function love_matu_ge100k(ctx) {\n  const { cid, target_name } = ctx;\n  let buyer = '';\n  let route = 0;\n  let ending = '';\n  if (\n    EraChara.get(cid).talent.warrior == 1 ||\n    EraChara.get(cid).talent.thief == 1\n  ) {\n    buyer = '魔王军的士官';\n    route = 3;\n  } else if (\n    EraChara.get(cid).talent.knight == 1 ||\n    EraChara.get(cid).talent.ninja == 1\n  ) {",
+    "async function love_matu_ge100k(ctx) {\n  const { cid, target_name } = ctx;\n  let buyer = '';\n  let route = 0;\n  let ending = '';\n  if (era.get(`talent:${cid}:200`) == 1 || era.get(`talent:${cid}:203`) == 1) {\n    buyer = '魔王军的士官';\n    route = 3;\n  } else if (\n    era.get(`talent:${cid}:205`) == 1 ||\n    era.get(`talent:${cid}:201`) == 1",
+    "async function love_matu_ge100k(ctx) {\n  const { cid, target_name } = ctx;\n  let buyer = '';\n  let route = 0;\n  let ending = '';\n  if (era.get(`talent:${cid}:200`) == 1 || era.get(`talent:${cid}:203`) == 1) {\n    buyer = '魔王军的士官';\n    route = 3;\n  } else if (\n    era.get(`talent:${cid}:205`) == 1 ||\n    era.get(`talent:${cid}:207`) == 1",
     'SELL_MATURO_K0：八种职业编号与爱慕十万档的例外逐项分流',
   ),
   make(

@@ -34,6 +34,8 @@
 'use strict';
 
 const era = require('#/era-electron');
+const EraChara = require('#/era-utils/era-chara');
+const era_flag = require('#/era-utils/era-flag');
 const { karma } = require('#/system/chara/chara-stats');
 const { family_print_info } = require('#/system/chara/chara-family');
 const { get_look_info } = require('#/system/chara/look-info');
@@ -104,17 +106,17 @@ const T_家族构成 = 320;
 
 /** 素质下标 → 值（目标角色一律显式传 cid） */
 function t(cid, idx) {
-  return era.get(`talent:${cid}:${idx}`) || 0;
+  return EraChara.get(cid).talent.get(idx) || 0;
 }
 
 /** 写素质（域内下标；跨域的在调用点走门面） */
 function set_t(cid, idx, value) {
-  era.set(`talent:${cid}:${idx}`, value);
+  EraChara.get(cid).talent.set(idx, value);
 }
 
 /** EX 素质（`EX_TALENT:2` 后代标记；#138 的 ex_talent 表） */
 function ex_t(cid, idx) {
-  return era.get(`ex_talent:${cid}:${idx}`) || 0;
+  return EraChara.get(cid).ex_talent.get(idx) || 0;
 }
 
 /**
@@ -600,45 +602,47 @@ function born_set(cid, rand_n) {
     if (t(cid, T_男人) && t(cid, T_童贞)) {
       // 童貞オトコの場合
       const local = rand_n(20) + 1;
-      chara(cid).dungeon.肛门经验 += local;
-      chara(cid).dungeon.性交经验 += local;
+      EraChara.get(cid).exp.set(1, EraChara.get(cid).exp.get(1) + local);
+      EraChara.get(cid).exp.set(5, EraChara.get(cid).exp.get(5) + local);
       if (q !== 20) {
-        chara(cid).dungeon.卖淫经验 += local;
+        EraChara.get(cid).exp.set(74, EraChara.get(cid).exp.get(74) + local);
       }
     } else if (t(cid, T_男人)) {
       // オトコの場合
       const local = rand_n(40) + 1;
-      chara(cid).dungeon.肛门经验 += local;
-      chara(cid).dungeon.性交经验 += local;
+      EraChara.get(cid).exp.set(1, EraChara.get(cid).exp.get(1) + local);
+      EraChara.get(cid).exp.set(5, EraChara.get(cid).exp.get(5) + local);
       if (q !== 20) {
-        chara(cid).dungeon.卖淫经验 += local;
+        EraChara.get(cid).exp.set(74, EraChara.get(cid).exp.get(74) + local);
       }
     } else if (t(cid, T_处女) === 1) {
       // 处女の場合
       const local = rand_n(40) + 1;
-      chara(cid).dungeon.肛门经验 += local;
-      chara(cid).dungeon.性交经验 += local;
+      EraChara.get(cid).exp.set(1, EraChara.get(cid).exp.get(1) + local);
+      EraChara.get(cid).exp.set(5, EraChara.get(cid).exp.get(5) + local);
       if (q !== 20) {
-        chara(cid).dungeon.卖淫经验 += local;
+        EraChara.get(cid).exp.set(74, EraChara.get(cid).exp.get(74) + local);
       }
     } else if (rand_n(5) === 0) {
       // 非处女でアナルも使用している
       const local0 = rand_n(40) + 1;
       const local1 = rand_n(40) + 1;
-      chara(cid).dungeon.私处经验 += local0;
-      chara(cid).dungeon.肛门经验 += local1;
-      const sum5 = chara(cid).dungeon.私处经验 + chara(cid).dungeon.肛门经验;
-      chara(cid).dungeon.性交经验 += sum5;
+      EraChara.get(cid).exp.set(0, EraChara.get(cid).exp.get(0) + local0);
+      EraChara.get(cid).exp.set(1, EraChara.get(cid).exp.get(1) + local1);
+      const sum5 =
+        (EraChara.get(cid).exp.get(0) || 0) +
+        (EraChara.get(cid).exp.get(1) || 0);
+      EraChara.get(cid).exp.set(5, EraChara.get(cid).exp.get(5) + sum5);
       if (q !== 20) {
-        chara(cid).dungeon.卖淫经验 += sum5;
+        EraChara.get(cid).exp.set(74, EraChara.get(cid).exp.get(74) + sum5);
       }
     } else {
       // 非处女でVのみ
       const local = rand_n(40) + 1;
-      chara(cid).dungeon.私处经验 += local;
-      chara(cid).dungeon.性交经验 += local;
+      EraChara.get(cid).exp.set(0, EraChara.get(cid).exp.get(0) + local);
+      EraChara.get(cid).exp.set(5, EraChara.get(cid).exp.get(5) + local);
       if (q !== 20) {
-        chara(cid).dungeon.卖淫经验 += local;
+        EraChara.get(cid).exp.set(74, EraChara.get(cid).exp.get(74) + local);
       }
     }
 
@@ -646,12 +650,12 @@ function born_set(cid, rand_n) {
     if (rand_n(15) === 0 && q !== 7 && t(cid, T_男人) === 0) {
       const local = rand_n(8) + 10;
       // 刺青候选表（TATTOO_NAMES）按 local 取项，写入 CSTR:local
-      era.set(`cstr:${cid}:${local}`, TATTOO_NAMES[local - 10]);
+      EraChara.get(cid).cstr.set(local, TATTOO_NAMES[local - 10]);
     }
 
     // 非处女の場合、生育经验がつくことがある（EXP:60 属主 chara）
     if (t(cid, T_处女) === 0 && rand_n(15) === 0 && t(cid, T_男人) === 0) {
-      chara(cid).chara.生育经验 += rand_n(3);
+      EraChara.get(cid).exp.set(60, EraChara.get(cid).exp.get(60) + rand_n(3));
     }
     // そして善恶值が低い
     karma(cid, -30);
@@ -668,8 +672,8 @@ function born_set(cid, rand_n) {
   } else if (q === 21 && t(cid, T_男人) === 0) {
     // 主婦は経験がつく + 確定で子持ち
     const local0 = rand_n(20) + 10;
-    chara(cid).dungeon.私处经验 += local0;
-    chara(cid).dungeon.性交经验 += local0;
+    EraChara.get(cid).exp.set(0, EraChara.get(cid).exp.get(0) + local0);
+    EraChara.get(cid).exp.set(5, EraChara.get(cid).exp.get(5) + local0);
     set_t(cid, T_处女, 0); // 处女を失う
     set_t(cid, T_私处封印, 0); // 私处封印も失う
     set_t(cid, T_人妻, 1); // 必ず人妻がつく
@@ -816,7 +820,7 @@ function family_set(cid, rand_n) {
     // オトコ
     if (rand_n(20) === 0) {
       local += 8000000000; // 男男カップル
-      chara(cid).system.断背气质 = 3; // BLっ気補正
+      EraChara.get(cid).abl.set(23, 3); // BLっ気補正
     } else if (rand_n(8) === 0) {
       local += 7000000000; // 男ふたカップル
     } else {
@@ -826,26 +830,26 @@ function family_set(cid, rand_n) {
     // ふたなり
     if (rand_n(10) === 0) {
       local += 5000000000; // 希少なふたなりのカップル
-      chara(cid).chara.百合气质 = 3; // 百合气质補正
+      EraChara.get(cid).abl.set(22, 3); // 百合气质補正
     } else if (rand_n(2) === 0) {
       local += 4000000000; // ふた男カップル
     } else {
       local += 3000000000; // ふた女カップル
-      chara(cid).chara.百合气质 = 3;
+      EraChara.get(cid).abl.set(22, 3);
     }
   } else if (marry === 1) {
     // 女
     if (rand_n(20) === 0) {
       local += 2000000000; // 女女カップル
-      chara(cid).chara.百合气质 = 3;
+      EraChara.get(cid).abl.set(22, 3);
     } else if (rand_n(8) === 0) {
       local += 1000000000; // 女ふたカップル
-      chara(cid).chara.百合气质 = 3;
+      EraChara.get(cid).abl.set(22, 3);
     }
   }
 
   // データ反映
-  era.add(`talent:${cid}:${T_家族构成}`, local);
+  EraChara.get(cid).talent.add(T_家族构成, local);
 }
 
 /**
@@ -874,7 +878,7 @@ function look_clear(cid) {
  */
 function love_like_base(cid) {
   const v = t(cid, T_喜欢的东西); // TALENT:317
-  const zero_cflag0 = (era.get(`cflag:${cid}:0`) || 0) === 0; // 命中档共用的 `&& CFLAG:0 == 0`（未陷落）
+  const zero_cflag0 = (EraChara.get(cid).cflag.get(0) || 0) === 0; // 命中档共用的 `&& CFLAG:0 == 0`（未陷落）
   const table = [
     [1, true, '甜食'],
     [2, true, '辣条'],
@@ -1073,17 +1077,17 @@ const LOVE_HEART_MAX = 6;
 const LOVE_PER_ROW = 6;
 
 /** ABL 读数 */
-const abl_of = (cid, idx) => era.get(`abl:${cid}:${idx}`) || 0;
+const abl_of = (cid, idx) => EraChara.get(cid).abl.get(idx) || 0;
 /** EXP 读数 */
-const exp_of = (cid, idx) => era.get(`exp:${cid}:${idx}`) || 0;
+const exp_of = (cid, idx) => EraChara.get(cid).exp.get(idx) || 0;
 /** MARK 读数 */
-const mark_of = (cid, idx) => era.get(`mark:${cid}:${idx}`) || 0;
+const mark_of = (cid, idx) => EraChara.get(cid).mark.get(idx) || 0;
 /** CFLAG 读数 */
-const cflag_of = (cid, idx) => era.get(`cflag:${cid}:${idx}`) || 0;
+const cflag_of = (cid, idx) => EraChara.get(cid).cflag.get(idx) || 0;
 
 /** FLAG:5 位 11（2048）=「口上视角」 */
 function kojo_view() {
-  return ((era.get('flag:5') || 0) & 2048) !== 0;
+  return ((era_flag.game_settings || 0) & 2048) !== 0;
 }
 
 /**
@@ -1101,7 +1105,7 @@ async function gobi_koujo(arg0) {
 }
 
 /** 角色预设的「名前」（callname -1 槽，chara-name.js 先例） */
-const csv_name = (cid) => era.get(`callname:${cid}:-1`) ?? '';
+const csv_name = (cid) => EraChara.get(cid).name ?? '';
 
 /**
  * look_info：角色外观与来历的整屏描述。

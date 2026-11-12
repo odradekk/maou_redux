@@ -68,8 +68,8 @@ export default [
   make(
     8042,
     '七元组落盘的起始下标 451 改 452',
-    '    era.set(`cflag:${cid}:${451 + offset}`, body[offset]);',
-    '    era.set(`cflag:${cid}:${452 + offset}`, body[offset]);',
+    "    EraChara.get(cid).cflag.set(451 + offset, body[offset])",
+    "    EraChara.get(cid).cflag.set(452 + offset, body[offset])",
     'CFLAG:451-457 依序接住身体数据七元组',
   ),
   make(
@@ -89,8 +89,8 @@ export default [
   make(
     8045,
     '种族年龄表槽 0-5 的上界 5 改 4（人狼槽读不到）',
-    '  if (slot >= 0 && slot <= 5) return game.chara.种族年龄设定_0[slot] ?? 0;',
-    '  if (slot >= 0 && slot <= 4) return game.chara.种族年龄设定_0[slot] ?? 0;',
+    "  if (slot >= 0 && slot <= 5) return era_flag.race_age_setting_0[slot] ?? 0;",
+    "  if (slot >= 0 && slot <= 4) return era_flag.race_age_setting_0[slot] ?? 0;",
     '偏斜随机档',
   ),
   make(
@@ -302,8 +302,8 @@ export default [
   make(
     8075,
     '随机档的回落字段由 CFLAG:452 改 451（回落到人类年龄自身）',
-    '  return era.get(`cflag:${cid}:452`) || 0;',
-    '  return era.get(`cflag:${cid}:451`) || 0;',
+    "  return EraChara.get(cid).cflag.race_age || 0;",
+    "  return EraChara.get(cid).cflag.age || 0;",
     '回落 CFLAG:452',
   ),
   // —— char_age_generate ——
@@ -352,15 +352,15 @@ export default [
   make(
     8082,
     '后代标记 EX_TALENT:2 读成 3（后代不再固定 10 岁）',
-    '  if (era.get(`ex_talent:${cid}:2`)) age = 10;',
-    '  if (era.get(`ex_talent:${cid}:3`)) age = 10;',
+    "  if (EraChara.get(cid).ex_talent.offspring) age = 10;",
+    "  if (EraChara.get(cid).ex_talent.demon_king_double) age = 10;",
     'EX_TALENT:2（后代）固定 10 岁',
   ),
   make(
     8083,
     '未熟边界 <= 14 改成 < 14',
-    '  if (age <= 14) chara(cid).train.未熟 = 1;',
-    '  if (age < 14) chara(cid).train.未熟 = 1;',
+    "  if (age <= 14) EraChara.get(cid).talent.immature = 1;",
+    "  if (age < 14) EraChara.get(cid).talent.immature = 1;",
     '14 岁（边界值）必须盖未熟',
     { test_name: '人类年龄 ≤ 14 补盖未熟' },
   ),

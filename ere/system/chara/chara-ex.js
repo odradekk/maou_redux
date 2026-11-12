@@ -18,6 +18,7 @@
  */
 
 const era = require('#/era-electron');
+const EraChara = require('#/era-utils/era-chara');
 const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
 
 // 声明的编号空间：45 个角色编号（0-24、31-35、100、
@@ -43,7 +44,7 @@ let get_ex_kojo_num_local = 0;
  */
 function get_ex_kojo_num(cid) {
   for (let count = 101; count < 801; count += 1) {
-    if (era.get(`ex_talent:${cid}:${count}`)) {
+    if (EraChara.get(cid).ex_talent.get(count)) {
       get_ex_kojo_num_local = count + 900;
     }
   }

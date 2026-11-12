@@ -46,6 +46,7 @@
  */
 
 const era = require('#/era-electron');
+const EraChara = require('#/era-utils/era-chara');
 const { relation_rename_rebuild } = require('#/system/chara/chara-family');
 const { nid_get_type } = require('#/system/chara/chara-name-type');
 
@@ -93,7 +94,7 @@ function csv_callname(cid) {
  */
 function chara_name_random_define(cid, type = -1, rand = default_rand) {
   let name_type = type;
-  const talent = (index) => era.get(`talent:${cid}:${index}`) || 0;
+  const talent = (index) => EraChara.get(cid).talent.get(index) || 0;
 
   // 职业偏向：骑士偏洋名，巫女/忍者偏和名。
   if (name_type === -1) {
@@ -106,7 +107,7 @@ function chara_name_random_define(cid, type = -1, rand = default_rand) {
 
   // 种族偏向；人类、魔族及未知种族保持未指定。
   if (name_type === -1) {
-    const race = era.get(`cflag:${cid}:314`) || 0; // CFLAG:314 种族
+    const race = EraChara.get(cid).cflag.get(314) || 0; // CFLAG:314 种族
     if ([1, 3, 4, 5, 6, 7, 8, 10, 11].includes(race)) {
       name_type = 1;
     } else if (race === 2) {
@@ -150,12 +151,12 @@ function chara_name_random_define(cid, type = -1, rand = default_rand) {
     //     而随机名编号的上限是 4500 + CHINESE_NAME_COUNT - 1 = 5288（五条
     //     掷法里的最大值），够不着——「首个命中是 MASTER 时不重掷」在可达
     //     状态里等价。
-    era.set(`cflag:${cid}:6`, -1);
+    EraChara.get(cid).cflag.set(6, -1);
     const duplicate = era.getAddedCharacters().some((other) => {
       if (other === 0 || other === cid) {
         return false;
       }
-      return (era.get(`cflag:${other}:6`) || 0) === nid;
+      return (EraChara.get(other).cflag.get(6) || 0) === nid;
     });
     if (!duplicate) {
       break;
@@ -201,10 +202,10 @@ function chara_name_define(cid, nid = -1) {
   // 特殊角色使用特定名字
   if ((chara_no >= 17 && chara_no <= 40) || chara_no === 0) {
     const csv = csv_callname(chara_no);
-    era.set(`callname:${cid}:-1`, csv); // 姓名
-    era.set(`callname:${cid}:-2`, csv); // 称呼
+    EraChara.get(cid).name = csv; // 姓名
+    EraChara.get(cid).callname = csv; // 称呼
     // 定义名字编号
-    era.set(`cflag:${cid}:6`, 10_000 + chara_no);
+    EraChara.get(cid).cflag.set(6, 10_000 + chara_no);
     relation_rename_rebuild(cid);
     return 0;
   }
@@ -212,9 +213,9 @@ function chara_name_define(cid, nid = -1) {
   // 名字编号的取舍
   let name_id = nid;
   if (name_id < 0) {
-    name_id = era.get(`cflag:${cid}:6`) || 0;
+    name_id = EraChara.get(cid).cflag.get(6) || 0;
   } else {
-    era.set(`cflag:${cid}:6`, name_id);
+    EraChara.get(cid).cflag.set(6, name_id);
     relation_rename_rebuild(cid);
   }
 
@@ -224,23 +225,23 @@ function chara_name_define(cid, nid = -1) {
     if (name_id < LIST_CHARA_NAME_SIZE) {
       const fixed = get_fixed_chara_name(name_id);
       if (fixed.length > 0) {
-        era.set(`callname:${cid}:-1`, fixed);
-        era.set(`callname:${cid}:-2`, fixed);
+        EraChara.get(cid).name = fixed;
+        EraChara.get(cid).callname = fixed;
       } else {
         // 名字没有被记录
-        era.set(`callname:${cid}:-1`, '佳奈美');
-        era.set(`callname:${cid}:-2`, '佳奈美');
+        EraChara.get(cid).name = '佳奈美';
+        EraChara.get(cid).callname = '佳奈美';
       }
     } else {
       // 无效的名字编号
-      era.set(`callname:${cid}:-1`, '佳奈美');
-      era.set(`callname:${cid}:-2`, '佳奈美');
+      EraChara.get(cid).name = '佳奈美';
+      EraChara.get(cid).callname = '佳奈美';
     }
   } else {
     // 使用随机名
     const combined = cn_span_combine_name(name_id);
-    era.set(`callname:${cid}:-1`, combined); // 姓名
-    era.set(`callname:${cid}:-2`, combined); // 称呼
+    EraChara.get(cid).name = combined; // 姓名
+    EraChara.get(cid).callname = combined; // 称呼
   }
   return undefined;
 }
@@ -254,10 +255,8 @@ function chara_name_define(cid, nid = -1) {
  */
 function chara_name_reset(cid) {
   const callname =
-    cid >= 17 && cid <= 40
-      ? csv_callname(cid)
-      : (era.get(`callname:${cid}:-1`) ?? ''); // 姓名
-  era.set(`callname:${cid}:-2`, callname); // 称呼
+    cid >= 17 && cid <= 40 ? csv_callname(cid) : (EraChara.get(cid).name ?? ''); // 姓名
+  EraChara.get(cid).callname = callname; // 称呼
 }
 
 /**
@@ -270,7 +269,7 @@ function cn_rebuild() {
     if (cid === 0) {
       continue; // 跳过魔王
     }
-    era.set(`callname:${cid}:-2`, era.get(`callname:${cid}:-1`) ?? '');
+    era.set(`callname:${cid}:-2`, EraChara.get(cid).name ?? '');
   }
 }
 

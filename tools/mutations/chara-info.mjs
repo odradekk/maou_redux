@@ -43,12 +43,8 @@ export default [
   {
     desc: 'M7850 CHARA_INFO_RESTORE_STATE 迎击中不再先离队（party_del 被短路）',
     file: 'ere/system/chara/chara-info-actions.js',
-    find: `  if ((era.get(\`cflag:\${cid}:1\`) || 0) === 3) {
-    party_del(cid);
-  }`,
-    replace: `  if (false) {
-    party_del(cid);
-  }`,
+    find: "  if ((EraChara.get(cid).cflag.state || 0) === 3) {\n    party_del(cid);\n  }",
+    replace: "  if (false) {\n    party_del(cid);\n  }",
     tests: ['chara-info-actions'],
     must_mention: 'CHARA_INFO_RESTORE_STATE：迎击中先离队',
   },
@@ -87,9 +83,8 @@ export default [
   {
     desc: 'M7856 transferapp 收尾不再把双方 CFLAG:1 复位为 0',
     file: 'ere/system/chara/chara-soul-transfer.js',
-    find: `  chara(0).invasion.状态 = 0;
-  chara(cid).invasion.状态 = 0;`,
-    replace: `  // 变异：不把双方状态复位为 0`,
+    find: "  EraChara.get(0).cflag.state = 0;\n  EraChara.get(cid).cflag.state = 0;",
+    replace: "  // 变异：不把双方状态复位为 0",
     tests: ['chara-soul-transfer'],
     must_mention: 'transferapp：等级/攻防互换、双侧状态清零',
   },
@@ -104,12 +99,8 @@ export default [
   {
     desc: 'M7858 transfer_soul 旧错位素质继承支被短路（魔王带着 debuff 转移时不 +1 继承）',
     file: 'ere/system/chara/chara-soul-transfer.js',
-    find: `  if (era.get('ex_talent:0:0')) {
-    debuff = (era.get('ex_talent:0:0') || 0) + 1;
-  }`,
-    replace: `  if (false) {
-    debuff = (era.get('ex_talent:0:0') || 0) + 1;
-  }`,
+    find: "  if (EraChara.get(0).ex_talent.soul_misplaced) {\n    debuff = (EraChara.get(0).ex_talent.soul_misplaced || 0) + 1;\n  }",
+    replace: "  if (false) {\n    debuff = (EraChara.get(0).ex_talent.soul_misplaced || 0) + 1;\n  }",
     tests: ['chara-soul-transfer'],
     must_mention: 'transfer_soul：错位等级继承',
   },

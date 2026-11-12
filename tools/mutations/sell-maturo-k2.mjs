@@ -38,8 +38,8 @@ export default [
   make(
     7109,
     'K2 非牝犬淫乱分支失效',
-    '  } else if (EraChara.get(cid).talent.lewd) {',
-    '  } else if (false && EraChara.get(cid).talent.lewd) {',
+    "  } else if (EraChara.get(cid).talent.lewd) {",
+    "  } else if (false && EraChara.get(cid).talent.lewd) {",
     '非牝犬按淫乱与售价选择分支',
   ),
   make(
@@ -52,8 +52,8 @@ export default [
   make(
     7111,
     'K2 漏写家人末路',
-    '  if (family_id >= 0)\n    EraChara.get(family_id).cstr.family_fate = `${ending}${name}`;',
-    "  if (family_id >= 0)\n    EraChara.get(family_id).cstr.family_fate = '';",
+    'if (family_id >= 0) chara(family_id).event.家人末路 = `${ending}${name}`;',
+    "if (family_id >= 0) chara(family_id).event.家人末路 = '';",
     '找到家人时同步记录其末路称号',
   ),
   make(

@@ -19,6 +19,7 @@
  */
 
 const era = require('#/era-electron');
+const EraChara = require('#/era-utils/era-chara');
 const { search_family } = require('#/system/chara/chara-family');
 const { get_look_info } = require('#/system/chara/look-info');
 const { LOVER_NAMES } = require('#/system/dungeon/dungeon-lovers');
@@ -59,7 +60,7 @@ const SUBJUGATE_THRESHOLD = 5;
  * @param {(n: number) => number} [rand] RAND:N 随机源（交给 MONSTER_DATA）
  */
 function show_data(cid, rand = default_rand) {
-  const cflag = (index) => era.get(`cflag:${cid}:${index}`) || 0;
+  const cflag = (index) => EraChara.get(cid).cflag.get(index) || 0;
   const stone = [];
 
   // 使役魔兽（CFLAG:570 是配下怪物的识别号）
@@ -126,7 +127,7 @@ function marriage_fragments(cid, cflag) {
   }
   if (marry === 0) {
     // 未婚：有后代标记（EX_TALENT:2）时直接「无」
-    if ((era.get(`ex_talent:${cid}:2`) || 0) !== 0) {
+    if ((EraChara.get(cid).ex_talent.get(2) || 0) !== 0) {
       return [{ content: '无' }];
     }
     return [{ content: get_look_info(cid, '婚史') }];

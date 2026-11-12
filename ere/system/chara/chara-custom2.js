@@ -62,6 +62,7 @@
 'use strict';
 
 const era = require('#/era-electron');
+const EraChara = require('#/era-utils/era-chara');
 const {
   char_body_generate_wapped,
   char_bust_regenerate_wapped,
@@ -228,12 +229,12 @@ const EMPTY_CHECK_TALENTS = [
 
 /** 读取素质（#13：未声明下标读回 undefined，默认 0） */
 function talent(cid, index) {
-  return era.get(`talent:${cid}:${index}`) || 0;
+  return EraChara.get(cid).talent.get(index) || 0;
 }
 
 /** 写素质（chara 属主下标；跨域下标一律走门面） */
 function set_talent(cid, index, value) {
-  era.set(`talent:${cid}:${index}`, value);
+  EraChara.get(cid).talent.set(index, value);
 }
 
 /** `%TALENTNAME:n%`：素质名（引擎静态表 talent 的列名） */
@@ -439,7 +440,7 @@ function char_custom_talent_deal(l_tal, cid, rand = default_rand) {
 
   // 扶她及男人才有童贞（talent:1 属 train 域）
   if (!talent(cid, T_扶她) && !talent(cid, T_男人)) {
-    chara(cid).train.童贞 = 0;
+    EraChara.get(cid).talent.set(1, 0);
   }
 
   // 纤细体型不肥胖
@@ -733,11 +734,11 @@ async function chara_first_xp(cid, rand = default_rand) {
     let sex_name = ''; // LOCALS:1：初体验对象的称呼
 
     // 四项产物先写初值（本段每次重来都重置）
-    chara(cid).train.初吻对象 = kiss; // CFLAG:16
-    chara(cid).train.初吻对象名 = kiss_name; // CSTR:4
-    chara(cid).train.初体验对象 = sex; // CFLAG:15
-    chara(cid).train.初体验对象名 = sex_name; // CSTR:3
-    if ((era.get(`ex_talent:${cid}:2`) || 0) !== 0) {
+    EraChara.get(cid).cflag.set(16, kiss); // CFLAG:16
+    EraChara.get(cid).cstr.set(4, kiss_name); // CSTR:4
+    EraChara.get(cid).cflag.set(15, sex); // CFLAG:15
+    EraChara.get(cid).cstr.set(3, sex_name); // CSTR:3
+    if ((EraChara.get(cid).ex_talent.get(2) || 0) !== 0) {
       return 0; // SIF EX_TALENT:ARG:2 RETURN 0（后代不问）
     }
 
@@ -887,79 +888,79 @@ async function chara_first_xp(cid, rand = default_rand) {
     }
 
     // A = ARG；非后代补 CM_NS_EXP 的经验初始化
-    if ((era.get(`ex_talent:${cid}:2`) || 0) === 0) {
+    if ((EraChara.get(cid).ex_talent.get(2) || 0) === 0) {
       await cm_ns_exp(cid, rand);
     }
     if (kiss !== -1) {
-      chara(cid).train.初吻对象 = kiss;
-      chara(cid).train.初吻对象名 = kiss_name;
+      EraChara.get(cid).cflag.set(16, kiss);
+      EraChara.get(cid).cstr.set(4, kiss_name);
     }
     if (sex !== -1) {
-      chara(cid).train.初体验对象 = sex;
-      chara(cid).train.初体验对象名 = sex_name;
+      EraChara.get(cid).cflag.set(15, sex);
+      EraChara.get(cid).cstr.set(3, sex_name);
     }
 
     // 初吻对象的回显
     era.print('　'); // （全角空格）
-    if (chara(cid).train.初吻对象 > -1) {
-      if (chara(cid).train.初吻对象 === 0) {
+    if ((EraChara.get(cid).cflag.get(16) || 0) > -1) {
+      if ((EraChara.get(cid).cflag.get(16) || 0) === 0) {
         era.print('[初吻对象：不明]');
-      } else if (chara(cid).train.初吻对象 === 992) {
+      } else if ((EraChara.get(cid).cflag.get(16) || 0) === 992) {
         // 992 在本问卷里取不到（选项里没有它，各支写下的
         // 编码也到不了 992）——保留既有写法，无对应测试
-        era.print(`[初吻对象：${chara(cid).train.初吻对象名}]`);
-      } else if (chara(cid).train.初吻对象 === 993) {
+        era.print(`[初吻对象：${EraChara.get(cid).cstr.get(4) || ''}]`);
+      } else if ((EraChara.get(cid).cflag.get(16) || 0) === 993) {
         era.print('[初吻对象：狂王]');
-      } else if (chara(cid).train.初吻对象 === 994) {
+      } else if ((EraChara.get(cid).cflag.get(16) || 0) === 994) {
         era.print('[初吻对象：怪物]');
-      } else if (chara(cid).train.初吻对象 === 995) {
+      } else if ((EraChara.get(cid).cflag.get(16) || 0) === 995) {
         era.print('[初吻对象：怪物的阴茎]');
-      } else if (chara(cid).train.初吻对象 === 996) {
+      } else if ((EraChara.get(cid).cflag.get(16) || 0) === 996) {
         era.print('[初吻对象：野狗的肛门]');
-      } else if (chara(cid).train.初吻对象 === 997) {
+      } else if ((EraChara.get(cid).cflag.get(16) || 0) === 997) {
         era.print('[初吻对象：野狗的阴茎]');
-      } else if (chara(cid).train.初吻对象 === 998) {
+      } else if ((EraChara.get(cid).cflag.get(16) || 0) === 998) {
         era.print('[初吻对象：野狗的嘴]');
-      } else if (chara(cid).train.初吻对象 === 999) {
+      } else if ((EraChara.get(cid).cflag.get(16) || 0) === 999) {
         era.print('[初吻对象：触手]');
       } else {
         let tail;
         if (rand(2)) {
           tail = '唇]'; // （掷中即唇，不再看编码）
-        } else if (chara(cid).train.初吻对象 < 100) {
+        } else if ((EraChara.get(cid).cflag.get(16) || 0) < 100) {
           tail = '唇]';
-        } else if (chara(cid).train.初吻对象 < 300) {
+        } else if ((EraChara.get(cid).cflag.get(16) || 0) < 300) {
           tail = '阴茎]';
-        } else if (chara(cid).train.初吻对象 < 400) {
+        } else if ((EraChara.get(cid).cflag.get(16) || 0) < 400) {
           tail = '私处]';
-        } else if (chara(cid).train.初吻对象 < 500) {
+        } else if ((EraChara.get(cid).cflag.get(16) || 0) < 500) {
           tail = '肛门]';
         } else {
           tail = ']'; // ENDIF 之后直接跟闭括号，500 以上无部位词
         }
-        era.print(`[初吻对象：${chara(cid).train.初吻对象名}的${tail}`);
+        era.print(`[初吻对象：${EraChara.get(cid).cstr.get(4) || ''}的${tail}`);
       }
     }
 
     // 初体验对象的回显
-    if (chara(cid).train.初体验对象 > 0) {
-      const local = chara(cid).train.初体验对象 - 1; // LOCAL = CFLAG:15 - 1
-      if (chara(cid).train.初体验对象 === 101) {
+    if ((EraChara.get(cid).cflag.get(15) || 0) > 0) {
+      const local = (EraChara.get(cid).cflag.get(15) || 0) - 1; // LOCAL = CFLAG:15 - 1
+      if ((EraChara.get(cid).cflag.get(15) || 0) === 101) {
         era.print('[初体验对象：蠕虫]');
-      } else if (chara(cid).train.初体验对象 === 102) {
+      } else if ((EraChara.get(cid).cflag.get(15) || 0) === 102) {
         era.print('[初体验对象：触手生物]');
-      } else if (chara(cid).train.初体验对象 === 103) {
+      } else if ((EraChara.get(cid).cflag.get(15) || 0) === 103) {
         era.print('[初体验对象：野狗]');
-      } else if (chara(cid).train.初体验对象 === 104) {
+      } else if ((EraChara.get(cid).cflag.get(15) || 0) === 104) {
         era.print('[初体验对象：怪物]');
-      } else if (chara(cid).train.初体验对象 === 105) {
+      } else if ((EraChara.get(cid).cflag.get(15) || 0) === 105) {
         era.print('[初体验对象：狂王]');
       } else if (local === 0) {
         // %SAVESTR:LOCAL% —— LOCAL 此处为 0 / 1（CFLAG:15=1 或 2），
         // SAVESTR:0 是魔王的称呼（#5 决议：SAVESTR:x ↔ callname:x:-1）
         era.print(`[初体验对象：${chara_callname(local)}]`);
       } else {
-        era.print(`[初体验对象：${chara(cid).train.初体验对象名}]`);
+        era.print(`[初体验对象：${EraChara.get(cid).cstr.get(3) || ''}]`);
       }
     }
 
@@ -1059,14 +1060,14 @@ async function char_custom(cid, mode, rand = default_rand) {
             set_talent(cid, 322, rand(3) + 191);
           }
           // 人物初始设定（走 chara-make.js 的初始化函数）
-          chara(cid).chara.等级 = 1; // CFLAG:A:9
-          chara(cid).dungeon.战斗经验 = 0; // EXP:A:80
-          chara(cid).invasion.状态 = 0; // CFLAG:A:1
+          EraChara.get(cid).cflag.set(9, 1); // CFLAG:A:9
+          EraChara.get(cid).exp.set(80, 0); // EXP:A:80
+          EraChara.get(cid).cflag.set(1, 0); // CFLAG:A:1
           await cm_base(cid);
           await cm_kind(cid, rand);
           await cm_cloth(cid, rand);
           await random_self_call(cid, rand);
-          const settings = era.get('flag:5') || 0; // GETBIT(FLAG:5,12/15)
+          const settings = era_flag.game_settings || 0; // GETBIT(FLAG:5,12/15)
           if (((settings >> 12) & 1) !== 0 || ((settings >> 15) & 1) !== 0) {
             char_body_generate_wapped(cid, rand);
           }
@@ -1078,8 +1079,8 @@ async function char_custom(cid, mode, rand = default_rand) {
             talent(cid, 343) ||
             talent(cid, 344);
           if (pregnant) {
-            chara(cid).event.预产日 = era_flag.day_count + 10 + rand(6);
-            chara(cid).event.孩子父亲 = 0;
+            EraChara.get(cid).cflag.set(110, era_flag.day_count + 10 + rand(6));
+            EraChara.get(cid).cflag.set(111, 0);
           }
           price = chara_cost(cid); // 再次检查价格
           era.print(`${chara_callname(cid)}的最终价格是${price}点，可以吗？`);

@@ -364,8 +364,8 @@ export default [
   {
     desc: 'M8803 初始化的等级 CFLAG:9 写 2 而非 1',
     file: 'ere/system/chara/chara-custom2.js',
-    find: '          chara(cid).chara.等级 = 1; // CFLAG:A:9',
-    replace: '          chara(cid).chara.等级 = 2; // CFLAG:A:9',
+    find: "          EraChara.get(cid).cflag.level = 1; // CFLAG:A:9",
+    replace: "          EraChara.get(cid).cflag.level = 2; // CFLAG:A:9",
     tests: ['chara-custom2'],
     must_mention: '等级初始化',
   },
