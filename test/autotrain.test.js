@@ -25,6 +25,7 @@ const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { preset_gamebase } = require('./helpers/gamebase');
+const { com_context } = require('./helpers/com-context');
 
 /**
  * 世界底座：预置魔王 0、奴隶 17（+ 可选助手 1），开调教域，指好指针。
@@ -477,7 +478,11 @@ test('AUTOTRAIN: com63_auto 的两条损耗都落在气力（合计 120，体力
   manual.fixture.store.set('abl:17:0', 2);
   manual.fixture.load_module('system/train/com-assistant');
   const { com_family } = manual.fixture.load_module('system/train/com-family');
-  assert.equal(await com_family.call(63), 1);
+  const manual_flag = manual.fixture.load_module('era-utils/era-flag');
+  assert.equal(
+    await com_family.call(63, { args: [com_context(manual_flag)] }),
+    1,
+  );
   assert.equal(manual.fixture.store.get('deltabase:17:0'), undefined);
   assert.equal(manual.fixture.store.get('deltabase:17:1'), -120);
 });

@@ -105,8 +105,8 @@ function same_trainer() {
  * @param {number} id 升格后的 COM 号
  * @returns {Promise<number>}
  */
-async function jump_to_advanced(id) {
-  return com_family.call(id, { whenMissing: 1 });
+async function jump_to_advanced(com_context, id) {
+  return com_family.call(id, { whenMissing: 1, args: [com_context] });
 }
 
 const name_of = (table, id) => era.get(`${table}:${id}`) ?? '';
@@ -296,9 +296,9 @@ function record_player_kiss(player, target, code) {
   }
 }
 
-function incest_prefix(other_cid) {
+function incest_prefix(target, other_cid) {
   const t14 = era.get('tflag:14') || 0;
-  const t_male = tal(era_flag.target, 122);
+  const t_male = tal(target, 122);
   const o_male = tal(other_cid, 122);
   if ((t14 === 1 || t14 === 2) && !t_male && !o_male) return '母女';
   if (t14 === 1 || t14 === 2) return '父子';
@@ -335,20 +335,20 @@ function raise_abl10(target, min) {
   }
 }
 
-function apply_service_source(src, rows, skill_rates = RATE_SKILL_45) {
-  const [s4, s5, dirt] = pick(rows, abl(era_flag.target, 16));
+function apply_service_source(target, src, rows, skill_rates = RATE_SKILL_45) {
+  const [s4, s5, dirt] = pick(rows, abl(target, 16));
   src.set(4, s4);
   src.set(5, s5);
   if (dirt !== undefined) src.times(8, dirt);
-  const rate = pick(skill_rates, abl(era_flag.target, 12));
+  const rate = pick(skill_rates, abl(target, 12));
   src.times(4, rate);
   src.times(5, rate);
 }
 
-function apply_poison_on_ejac(src, rows, e) {
+function apply_poison_on_ejac(target, src, rows, e) {
   if (!e) return;
   src.times(4, 3);
-  const [s7, s5, s13] = pick(rows, abl(era_flag.target, 32));
+  const [s7, s5, s13] = pick(rows, abl(target, 32));
   src.set(7, s7);
   src.times(5, s5);
   src.times(13, s13);
@@ -356,6 +356,7 @@ function apply_poison_on_ejac(src, rows, e) {
 
 function settle_ejac({
   cid,
+  target,
   e,
   heavy_semen,
   normal_semen,
@@ -372,7 +373,7 @@ function settle_ejac({
     if (extra_heavy) extra_heavy();
     chara(cid).train.射精经验 += 2;
     if (heavy_semen) {
-      chara(era_flag.target).dungeon.精液经验 += heavy_semen;
+      chara(target).dungeon.精液经验 += heavy_semen;
       era.print(heavy_label);
       era.print(`精液经验${plus}${heavy_semen}`);
     } else {
@@ -384,7 +385,7 @@ function settle_ejac({
     if (extra_normal) extra_normal();
     chara(cid).train.射精经验 += 1;
     if (normal_semen) {
-      chara(era_flag.target).dungeon.精液经验 += normal_semen;
+      chara(target).dungeon.精液经验 += normal_semen;
       era.print(normal_label);
       era.print(`精液经验${plus}${normal_semen}`);
     } else {
@@ -426,9 +427,7 @@ function print_craft(player) {
   else era.print('没什么经验做这个，完成的效果好像和想象中不同…');
 }
 
-async function hairset() {
-  const target = era_flag.target;
-  const player = era_flag.player;
+async function hairset({ target, player }) {
   const src = make_src(target);
   let cut = 0;
   let styled = 0;
@@ -600,11 +599,11 @@ function record_first_exp(cid, other, table) {
   if (code) chara(cid).train.初体验对象 = code;
 }
 
-function maybe_mouth_seed(e, heavy_div, normal_div) {
+function maybe_mouth_seed(target, e, heavy_div, normal_div) {
   const n = e === 2 ? heavy_div : e === 1 ? normal_div : 0;
   if (!n) return;
-  if (Math.floor(Math.random() * n) === 0 && tal(era_flag.target, 340)) {
-    era.set(`cflag:${era_flag.target}:113`, 4);
+  if (Math.floor(Math.random() * n) === 0 && tal(target, 340)) {
+    era.set(`cflag:${target}:113`, 4);
   }
 }
 
@@ -923,9 +922,7 @@ async function start_judge() {
   return { parts, state, t: judge_tools(parts, state) };
 }
 
-async function com60() {
-  const target = era_flag.target;
-  const player = era_flag.player;
+async function com60({ target, player }) {
   const src = make_src(target);
   era.print('助手接吻');
   const { parts, state, t } = await start_judge();
@@ -956,7 +953,7 @@ async function com60() {
   src.set(13, 100);
   src.set(14, 10);
   src.set(8, y * 20 + 10);
-  apply_service_source(src, [
+  apply_service_source(target, src, [
     [50, 0, 4],
     [150, 50, 2.5],
     [200, 100, 1.5],
@@ -965,6 +962,7 @@ async function com60() {
     [350, 500, 0.1],
   ]);
   apply_poison_on_ejac(
+    target,
     src,
     [
       [0, 2, 2],
@@ -982,6 +980,7 @@ async function com60() {
   }
   settle_ejac({
     cid: player,
+    target,
     e,
     heavy_semen: 1,
     flag: 4,
@@ -995,11 +994,10 @@ async function com60() {
   return 1;
 }
 
-async function com61() {
+async function com61({ target, player, assi }) {
   const upgraded = await get_adv_com(61);
-  if (upgraded !== 61) return jump_to_advanced(upgraded);
-  const target = era_flag.target;
-  const player = era_flag.player;
+  if (upgraded !== 61)
+    return jump_to_advanced({ target, player, assi }, upgraded);
   const src = make_src(target);
   era.print('强制舔阴');
   const { parts, state, t } = await start_judge();
@@ -1030,7 +1028,7 @@ async function com61() {
   src.set(13, 1000);
   src.set(14, 500);
   src.set(8, y * 80 + 50);
-  apply_service_source(src, [
+  apply_service_source(target, src, [
     [420, 150, 4],
     [500, 300, 2.5],
     [580, 600, 1.5],
@@ -1039,6 +1037,7 @@ async function com61() {
     [820, 2200, 0.1],
   ]);
   apply_poison_on_ejac(
+    target,
     src,
     [
       [0, 2, 2],
@@ -1056,6 +1055,7 @@ async function com61() {
   }
   settle_ejac({
     cid: player,
+    target,
     e,
     heavy_semen: 4,
     normal_semen: 1,
@@ -1070,9 +1070,7 @@ async function com61() {
   return 1;
 }
 
-async function com62() {
-  const target = era_flag.target;
-  const assi = era_flag.assi;
+async function com62({ target, player, assi }) {
   const src = make_src(target);
   incest(target, assi);
   const t14 = era.get('tflag:14') || 0;
@@ -1147,7 +1145,7 @@ async function com62() {
   if (t14 === 1 || t14 === 2) raise_abl10(target, 3);
   else if (kin) raise_abl10(target, 2);
   era.set('tflag:14', 0);
-  incest(assi, era_flag.player);
+  incest(assi, player);
   const t14b = era.get('tflag:14') || 0;
   if (chara(MASTER).train.童贞) {
     chara(MASTER).train.童贞 = 0;
@@ -1192,7 +1190,7 @@ async function com62() {
     src.times(13, pick([1, 1.2, 1.5, 2, 2.5, 3], abl(target, 32)));
   }
   if (e === 2) src.times(10, 1.5);
-  settle_ejac({ cid: MASTER, e, heavy_semen: 1, flag: 7 });
+  settle_ejac({ cid: MASTER, target, e, heavy_semen: 1, flag: 7 });
   if (tal(MASTER, 119) || tal(MASTER, 122) || tal(MASTER, 121)) {
     stain_exchange(MASTER, 2, assi, 3);
   }
@@ -1212,9 +1210,7 @@ async function com62() {
   return 1;
 }
 
-async function com63() {
-  const target = era_flag.target;
-  const player = era_flag.player;
+async function com63({ target, player }) {
   const src = make_src(target);
   era.print('磨镜');
   await train_message_b();
@@ -1267,9 +1263,7 @@ async function com63() {
   return 1;
 }
 
-async function com64() {
-  const target = era_flag.target;
-  const assi = era_flag.assi;
+async function com64({ target, player, assi }) {
   const src = make_src(target);
   assign_3p_sites();
   if (site_used(1)) {
@@ -1333,7 +1327,7 @@ async function com64() {
     src.add(6, pick([20000, 300, 50, 10, 0, 0], lv));
     if (lv === 0) {
       src.add(11, 2000);
-      if (!tal(era_flag.player, 122)) {
+      if (!tal(player, 122)) {
         chara(target).dungeon.异常经验 += 1;
         era.print(`${name_of('expname', 50)}＋１`);
       }
@@ -1362,6 +1356,7 @@ async function com64() {
   }
   if (site_used(3)) {
     apply_service_source(
+      target,
       src,
       [
         [420, 150],
@@ -1422,9 +1417,9 @@ async function com64() {
     chara(target).dungeon.性交经验 += 1;
     era.print('性交经验＋１');
     era.set('tflag:14', 0);
-    incest(target, era_flag.player);
+    incest(target, player);
     let z = 0;
-    if (tal(target, 0) && !tal(era_flag.player, 122)) z += 1;
+    if (tal(target, 0) && !tal(player, 122)) z += 1;
     const t14 = era.get('tflag:14') || 0;
     if (tal(target, 0) && t14 === 1) z += 2;
     else if (tal(target, 0) && (t14 === 3 || t14 === 4)) z += 1;
@@ -1440,11 +1435,11 @@ async function com64() {
   }
   if (site_used(1)) {
     era.set('tflag:14', 0);
-    incest(target, era_flag.player);
-    if (chara(era_flag.player).train.童贞) {
-      chara(era_flag.player).train.童贞 = 0;
+    incest(target, player);
+    if (chara(player).train.童贞) {
+      chara(player).train.童贞 = 0;
       era.print('【童贞丧失】');
-      record_first_exp(era_flag.player, target, [
+      record_first_exp(player, target, [
         [2, 1, 300],
         [2, 0, 301],
         [3, 1, 306],
@@ -1502,7 +1497,7 @@ async function com64() {
     era.set('tflag:6', 1);
     if (t41 === 1 && !tequip(target, 36)) era.set('tflag:38', 1);
   }
-  await com_ejac_player_milk(era_flag.player === MASTER ? b : b2);
+  await com_ejac_player_milk(player === MASTER ? b : b2);
   const stain_part = { 1: 3, 2: 4, 3: 0 };
   if (stain_part[t41] !== undefined && (tal(assi, 121) || tal(assi, 122))) {
     stain_exchange(target, stain_part[t41], assi, 2);
@@ -1510,7 +1505,7 @@ async function com64() {
   if (stain_part[t40] !== undefined && (tal(MASTER, 121) || tal(MASTER, 122))) {
     stain_exchange(target, stain_part[t40], MASTER, 2);
   }
-  if (!tal(target, 122) && !tal(era_flag.player, 122)) {
+  if (!tal(target, 122) && !tal(player, 122)) {
     era.print(`${name_of('expname', 40)}+10`);
     chara(target).train.百合经验 += 10;
   }
@@ -1519,9 +1514,7 @@ async function com64() {
   return 1;
 }
 
-async function com65() {
-  const target = era_flag.target;
-  const player = era_flag.player;
+async function com65({ target, player }) {
   const src = make_src(target);
   era.set('tflag:14', 0);
   incest(target, player);
@@ -1653,6 +1646,7 @@ async function com65() {
   }
   era.set('tflag:14', 0);
   apply_poison_on_ejac(
+    target,
     src,
     [
       [0, 2, 2],
@@ -1690,10 +1684,7 @@ async function com65() {
   return 1;
 }
 
-async function com66() {
-  const target = era_flag.target;
-  const player = era_flag.player;
-  const assi = era_flag.assi;
+async function com66({ target, player, assi }) {
   const src = make_src(target);
   era.print('双枪口交');
   const { parts, state, t } = await start_judge();
@@ -1725,6 +1716,7 @@ async function com66() {
   src.set(14, 600);
   src.set(8, y * 40 + 100);
   apply_service_source(
+    target,
     src,
     [
       [800, 600, 4],
@@ -1736,9 +1728,10 @@ async function com66() {
     ],
     [0.8, 1.0, 1.2, 1.5, 2.0, 2.2],
   );
-  apply_poison_on_ejac(src, POISON_MOUTH, e);
+  apply_poison_on_ejac(target, src, POISON_MOUTH, e);
   settle_ejac({
     cid: MASTER,
+    target,
     e,
     heavy_semen: 9,
     normal_semen: 3,
@@ -1748,7 +1741,7 @@ async function com66() {
       src.times(5, 1.5);
     },
   });
-  maybe_mouth_seed(e, 5, 10);
+  maybe_mouth_seed(target, e, 5, 10);
   era.print(`${name_of('expname', 22)}＋２`);
   chara(target).dungeon.口交经验 += 2;
   stain_exchange(target, 0, MASTER, 2);
@@ -1784,9 +1777,7 @@ async function com66() {
   return 1;
 }
 
-async function com67() {
-  const target = era_flag.target;
-  const player = era_flag.player;
+async function com67({ target, player }) {
   const src = make_src(target);
   era.print('践踏奴隶');
   const { parts, state, t } = await start_judge();
@@ -1847,13 +1838,11 @@ async function com67() {
   return 1;
 }
 
-async function com68() {
-  const target = era_flag.target;
-  const assi = era_flag.assi;
+async function com68({ target, player, assi }) {
   const src = make_src(target);
   era.set('tflag:14', 0);
-  incest(target, era_flag.player);
-  const prefix = incest_prefix(assi);
+  incest(target, player);
+  const prefix = incest_prefix(target, assi);
   if (prefix) era.print(prefix);
   era.print('双人口交');
   const { parts, state, t } = await start_judge();
@@ -1867,10 +1856,9 @@ async function com68() {
   t.add_talent(target, 62, -3);
   t.add_talent(target, 63, 6);
   t.add_talent(target, 71, -1);
-  if (tal(target, 82) && tal(era_flag.player, 122))
-    t.add_talent(target, 82, -12);
+  if (tal(target, 82) && tal(player, 122)) t.add_talent(target, 82, -12);
   if (tal(target, 85) && era_flag.assiplay === 0) t.add_talent(target, 85, 5);
-  if (tal(era_flag.player, 121)) t.add_talent(era_flag.player, 121, 8);
+  if (tal(player, 121)) t.add_talent(player, 121, 8);
   const y = dirty_score({ player: MASTER, part: 2, target, bit16: 15 });
   t.add_dirty(y, target);
   if (!(await finish_judge(parts, state, 34))) return 0;
@@ -1904,9 +1892,10 @@ async function com68() {
   src.times(4, pick(RATE_SKILL_12, abl(target, 12)));
   src.times(5, pick(RATE_SKILL_12, abl(target, 12)));
   apply_kin_source(src, era.get('tflag:14') || 0);
-  apply_poison_on_ejac(src, POISON_MOUTH, e);
+  apply_poison_on_ejac(target, src, POISON_MOUTH, e);
   settle_ejac({
     cid: MASTER,
+    target,
     e,
     heavy_semen: 9,
     normal_semen: 3,
@@ -1916,7 +1905,7 @@ async function com68() {
       src.times(5, 1.5);
     },
   });
-  maybe_mouth_seed(e, 5, 10);
+  maybe_mouth_seed(target, e, 5, 10);
   era.print(`${name_of('expname', 22)}＋１`);
   chara(target).dungeon.口交经验 += 1;
   await com_ejac_player_milk(b);
@@ -1947,13 +1936,11 @@ async function com68() {
   return 1;
 }
 
-async function com69() {
-  const target = era_flag.target;
-  const player = era_flag.player;
+async function com69({ target, player }) {
   const src = make_src(target);
   era.set('tflag:14', 0);
   incest(target, player);
-  const prefix = incest_prefix(player);
+  const prefix = incest_prefix(target, player);
   if (prefix) era.print(prefix);
   era.print('六九式');
   const { parts, state, t } = await start_judge();
@@ -1996,6 +1983,7 @@ async function com69() {
     src.add(16, idiv_trunc(src.get(0), 20));
   }
   apply_service_source(
+    target,
     src,
     [
       [620, 150, 4],
@@ -2015,6 +2003,7 @@ async function com69() {
   }
   apply_kin_source(src, era.get('tflag:14') || 0);
   apply_poison_on_ejac(
+    target,
     src,
     [
       [0, 2, 2],
@@ -2028,6 +2017,7 @@ async function com69() {
   );
   settle_ejac({
     cid: player,
+    target,
     e,
     heavy_semen: 9,
     normal_semen: 3,
@@ -2037,7 +2027,7 @@ async function com69() {
       src.times(5, 1.5);
     },
   });
-  maybe_mouth_seed(e, 5, 10);
+  maybe_mouth_seed(target, e, 5, 10);
   if (tal(player, 121) || tal(player, 122)) {
     era.print(`${name_of('expname', 22)}＋１`);
     chara(target).dungeon.口交经验 += 1;
@@ -2060,13 +2050,11 @@ async function com69() {
   return 1;
 }
 
-async function com70() {
-  const target = era_flag.target;
-  const assi = era_flag.assi;
+async function com70({ target, player, assi }) {
   const src = make_src(target);
   era.set('tflag:14', 0);
   incest(target, assi);
-  const prefix = incest_prefix(assi);
+  const prefix = incest_prefix(target, assi);
   if (prefix) era.print(prefix);
   era.print('双人股间性交');
   const { parts, state, t } = await start_judge();
@@ -2077,14 +2065,13 @@ async function com70() {
   t.add_palam(target, 5, 3);
   t.add_talent(target, 35, -1);
   t.add_talent(target, 71, -3);
-  if (tal(target, 82) && tal(era_flag.player, 122))
-    t.add_talent(target, 82, -7);
+  if (tal(target, 82) && tal(player, 122)) t.add_talent(target, 82, -7);
   if (tal(target, 85) && era_flag.assiplay === 0)
     t.add_talent(target, 85, 3, 3);
-  if (tal(era_flag.player, 121)) t.add_talent(era_flag.player, 121, 8);
+  if (tal(player, 121)) t.add_talent(player, 121, 8);
   if (tequip(target, 21)) t.add_custom(name_of('itemname', 26), 6);
   const y = dirty_score({
-    player: era_flag.player,
+    player: player,
     part: 2,
     target,
     bit16: 1,
@@ -2101,6 +2088,7 @@ async function com70() {
   src.set(14, 600);
   src.set(8, y * 10 + 60);
   apply_service_source(
+    target,
     src,
     [
       [200, 100, 4],
@@ -2135,8 +2123,8 @@ async function com70() {
   b += pick([0, 0, 0, 300, 600, 1000], palam_level(palam(target, 3)));
   b = scale_by_abl(b, target, 10, RATE_OBED);
   b = scale_by_abl(b, target, 16, RATE_SERVE_SPIRIT);
-  b = scale_by_abl(b, era_flag.player, 0, RATE_C_SENSE);
-  const e = add_gauge(era_flag.player, b);
+  b = scale_by_abl(b, player, 0, RATE_C_SENSE);
+  const e = add_gauge(player, b);
   if (e) {
     src.times(4, 2);
     const poison = pick(
@@ -2157,22 +2145,22 @@ async function com70() {
   if (e === 2) {
     src.times(7, 1.5);
     src.times(5, 1.2);
-    chara(era_flag.player).train.射精经验 += 2;
+    chara(player).train.射精经验 += 2;
     chara(target).train.百合经验 += 2;
     era.print('大量射精');
     era.print('精液经验+2');
-    mark_penis_stain(era_flag.player);
+    mark_penis_stain(player);
     era.set('tflag:9', 2);
   } else if (e === 1) {
-    chara(era_flag.player).train.射精经验 += 1;
+    chara(player).train.射精经验 += 1;
     chara(target).train.百合经验 += 1;
     era.print('射精');
     era.print('精液经验+1');
-    mark_penis_stain(era_flag.player);
+    mark_penis_stain(player);
     era.set('tflag:9', 1);
   }
-  stain_exchange(target, 3, era_flag.player, 2);
-  stain_exchange(assi, 3, era_flag.player, 2);
+  stain_exchange(target, 3, player, 2);
+  stain_exchange(assi, 3, player, 2);
   stain_exchange(target, 3, assi, 3);
   print_same_sex_exp(target, MASTER, 7, 7);
   if (!tal(target, 122) && !tal(assi, 122)) {
@@ -2188,17 +2176,15 @@ async function com70() {
   }
   game.train.快乐经验 = 1;
   game.train.屈服刻印结算 = 1;
-  if (tal(era_flag.player, 121)) src.times(13, 0.5);
+  if (tal(player, 121)) src.times(13, 0.5);
   return 1;
 }
 
-async function com71() {
-  const target = era_flag.target;
-  const assi = era_flag.assi;
+async function com71({ target, player, assi }) {
   const src = make_src(target);
   era.set('tflag:14', 0);
-  incest(target, era_flag.player);
-  const prefix = incest_prefix(assi);
+  incest(target, player);
+  const prefix = incest_prefix(target, assi);
   if (prefix) era.print(prefix);
   era.print('双人乳交');
   const { parts, state, t } = await start_judge();
@@ -2230,6 +2216,7 @@ async function com71() {
   src.set(13, 1800);
   src.set(14, 900);
   apply_service_source(
+    target,
     src,
     [
       [420, 150],
@@ -2255,7 +2242,7 @@ async function com71() {
   b = times_exact(b, pick(RATE_SKILL_ASSI, abl(assi, 12)));
   if (tal(assi, 52)) b = times_exact(b, 2);
   const e = add_gauge(MASTER, b);
-  apply_poison_on_ejac(src, POISON_MOUTH, e);
+  apply_poison_on_ejac(target, src, POISON_MOUTH, e);
   if (e === 2) {
     src.times(7, 2);
     src.times(5, 1.5);
@@ -2303,8 +2290,7 @@ async function com71() {
   return 1;
 }
 
-async function com72() {
-  const target = era_flag.target;
+async function com72({ target, player }) {
   const src = make_src(target);
   era.print('刮阴毛');
   lose(target, 0, 20);
@@ -2321,7 +2307,7 @@ async function com72() {
   src.add(11, a);
   src.add(12, a);
   era.print(
-    `${chara_callname(era_flag.player)}将${chara_callname(target)}的阴毛漂亮地刮掉了。`,
+    `${chara_callname(player)}将${chara_callname(target)}的阴毛漂亮地刮掉了。`,
   );
   if ((era.get(`base:${target}:0`) || 0) > 0) {
     const name = chara_callname(target);
@@ -2329,7 +2315,7 @@ async function com72() {
     if (expo < 2) {
       era.print(
         tequip(target, 44)
-          ? `${name}面红耳赤，不断回避着${chara_callname(era_flag.player)}的视线，不敢与之相交…`
+          ? `${name}面红耳赤，不断回避着${chara_callname(player)}的视线，不敢与之相交…`
           : `${name}面红耳赤，还试图用手遮住光滑的性器…`,
       );
     } else if (expo === 2) era.print(`${name}害羞地看着自己光溜溜的阴部…`);
@@ -2342,8 +2328,7 @@ async function com72() {
   return 1;
 }
 
-async function com73() {
-  const target = era_flag.target;
+async function com73({ target, player }) {
   const src = make_src(target);
   era.print('摆弄发型');
   lose(target, 1, 60);
@@ -2361,15 +2346,8 @@ async function com73() {
   if (obed[0]) src.set(3, obed[0]);
   src.set(13, obed[1]);
   src.set(12, pick([500, 250, 100, 50, 25, 10], abl(target, 17)));
-  src.set(
-    6,
-    abl(era_flag.player, 12) <= 3
-      ? 100
-      : abl(era_flag.player, 12) === 4
-        ? 10
-        : 0,
-  );
-  await hairset();
+  src.set(6, abl(player, 12) <= 3 ? 100 : abl(player, 12) === 4 ? 10 : 0);
+  await hairset({ target, player });
   return 1;
 }
 

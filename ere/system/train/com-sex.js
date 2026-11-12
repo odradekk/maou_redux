@@ -115,7 +115,18 @@ function reverse_lust_level(cid) {
  * @returns {Promise<number>}
  */
 async function jump_to_advanced(id) {
-  return com_family.call(id, { whenMissing: 1 });
+  // 本文件尚未接上下文形参；升格目标可能是别票已改造的指令（如 COM64），
+  // 故在此现取一次指针，时点与回合开始相同。
+  return com_family.call(id, {
+    whenMissing: 1,
+    args: [
+      {
+        target: era_flag.target,
+        player: era_flag.player,
+        assi: era_flag.assi,
+      },
+    ],
+  });
 }
 
 /** 阴道性交共通的 V 感觉初始 V 快感/情爱表。 */
