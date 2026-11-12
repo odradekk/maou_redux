@@ -120,8 +120,8 @@ function same_trainer() {
  * @param {number} id 升格后的 COM 号
  * @returns {Promise<number>}
  */
-async function jump_to_advanced(id) {
-  return com_family.call(id, { whenMissing: 1 });
+async function jump_to_advanced(com_context, id) {
+  return com_family.call(id, { whenMissing: 1, args: [com_context] });
 }
 
 /**
@@ -360,9 +360,8 @@ function times_src(cid, index, multiplier) {
 }
 
 /** com120 的 SOURCE 计算。分档读 PALAM:13（抑郁）。 */
-function source120() {
-  const cid = era_flag.target;
-  const player = era_flag.player;
+function source120(com_context) {
+  const { target: cid, player } = com_context;
   const prev = era_flag.prevcom;
 
   if (prev === 34) {
@@ -641,7 +640,8 @@ async function message_b120() {
 // message_a120：无 A 支——射精文本由公共段出（见上）
 
 /** com120：插入Ｇ点蹂躏。高级 COM。 */
-async function com120() {
+async function com120(com_context) {
+  const { target: cid } = com_context;
   const select = era_flag.selectcom;
   game.train.三人PLAY持续 = 0;
   if (select === 34 || (select >= 20 && select <= 23)) {
@@ -651,21 +651,19 @@ async function com120() {
   }
   era_flag.selectcom = 120; // 升格抵达时回填号位
   await train_message_b();
-  const cid = era_flag.target;
   game.train.伴V经验指令 = 1;
   if (tal(cid, 85) && !era_flag.assiplay && exp(cid, 0) === 0) {
     game.train.主人导致处女丧失 = 1;
   }
   await com_ejac_player_sex();
-  source120();
+  source120(com_context);
   await com_after_vagina_sex();
   return 1;
 }
 
 /** com121 的 SOURCE 计算。润滑低档乘 SOURCE:0 是既有写法（SOURCE:0 常为 0）。 */
-function source121() {
-  const cid = era_flag.target;
-  const player = era_flag.player;
+function source121(com_context) {
+  const { target: cid, player } = com_context;
   const prev = era_flag.prevcom;
 
   if (prev === 34) {
@@ -959,7 +957,8 @@ async function message_b121() {
 // message_a121：无 A 支——射精文本由公共段出（见上）
 
 /** com121：插入子宫口蹂躏。高级 COM。 */
-async function com121() {
+async function com121(com_context) {
+  const { target: cid } = com_context;
   const select = era_flag.selectcom;
   game.train.三人PLAY持续 = 0;
   if (select === 34 || (select >= 20 && select <= 23)) {
@@ -969,13 +968,12 @@ async function com121() {
   }
   era_flag.selectcom = 121; // 升格抵达时回填号位
   await train_message_b();
-  const cid = era_flag.target;
   game.train.伴V经验指令 = 1;
   if (tal(cid, 85) && !era_flag.assiplay && exp(cid, 0) === 0) {
     game.train.主人导致处女丧失 = 1;
   }
   await com_ejac_player_sex();
-  source121();
+  source121(com_context);
   await com_after_vagina_sex();
   return 1;
 }
@@ -997,9 +995,8 @@ function append_term(parts, state, label, amount) {
   state.s = 1;
 }
 
-function dirty_penalty_122() {
-  const player = era_flag.player;
-  const cid = era_flag.target;
+function dirty_penalty_122(com_context) {
+  const { target: cid, player } = com_context;
   let y = 0;
   if (stain(player, 2) & 1) y += 1;
   if (stain(player, 2) & 4) y += 3;
@@ -1011,9 +1008,8 @@ function dirty_penalty_122() {
   return Math.floor(y / 3);
 }
 
-async function order122() {
-  const cid = era_flag.target;
-  const player = era_flag.player;
+async function order122(com_context) {
+  const { target: cid, player } = com_context;
   const { a, s, parts } = await com_order(0, 0);
   const state = { a, s };
   if (abl(cid, 11)) {
@@ -1063,7 +1059,7 @@ async function order122() {
   if (tequip(cid, 21)) {
     append_term(parts, state, name_of('itemname', 26), 6);
   }
-  const y = dirty_penalty_122();
+  const y = dirty_penalty_122(com_context);
   if (y) {
     const dirty_label = tal(cid, 61)
       ? `脏、${name_of('talentname', 61)}`
@@ -1080,9 +1076,8 @@ async function order122() {
   return state.a >= 20;
 }
 
-function source122() {
-  const cid = era_flag.target;
-  const player = era_flag.player;
+function source122(com_context) {
+  const { target: cid, player } = com_context;
   add_lose(cid, 0, 30);
   add_lose(cid, 1, 90);
   set_src(cid, 12, 250);
@@ -1121,9 +1116,8 @@ function source122() {
   times_src(cid, 5, [0.6, 0.8, 1, 1.2, 1.4, 1.6][lube]);
 }
 
-function ejac122() {
-  const cid = era_flag.target;
-  const player = era_flag.player;
+function ejac122(com_context) {
+  const { target: cid, player } = com_context;
   let b = [1500, 2100, 2900, 4000, 5000, 6000][Math.min(abl(cid, 12), 5)];
   b = times(b, [0.8, 0.9, 1, 1.1, 1.2, 1.3][Math.min(abl(cid, 10), 5)]);
   b = times(b, [0.5, 0.8, 1.2, 1.5, 1.8, 2.4][palam_ladder(palam(cid, 3))]);
@@ -1189,18 +1183,17 @@ async function message_b122() {
 // message_a122：无 A 支——射精文本由公共段出（见上）
 
 /** com122：阴茎互捅。可直选。 */
-async function com122() {
+async function com122(com_context) {
   era.print('阴茎互捅');
-  if (!(await order122())) return 0;
+  if (!(await order122(com_context))) return 0;
   await train_message_b();
-  source122();
-  ejac122();
+  source122(com_context);
+  ejac122(com_context);
   return 1;
 }
 
-function dirty_penalty_123() {
-  const player = era_flag.player;
-  const cid = era_flag.target;
+function dirty_penalty_123(com_context) {
+  const { target: cid, player } = com_context;
   let y = 0;
   if (stain(player, 2) & 1) y += 1;
   if (stain(player, 2) & 4) y += 3;
@@ -1212,9 +1205,8 @@ function dirty_penalty_123() {
   return y;
 }
 
-async function order123(y) {
-  const cid = era_flag.target;
-  const player = era_flag.player;
+async function order123(com_context, y) {
+  const { target: cid, player } = com_context;
   const { a, s, parts } = await com_order(0, 0);
   const state = { a, s };
   if (abl(cid, 11)) {
@@ -1279,8 +1271,8 @@ async function order123(y) {
   return state.a >= 36;
 }
 
-function source123(y) {
-  const cid = era_flag.target;
+function source123(com_context, y) {
+  const { target: cid } = com_context;
   if (tal(cid, 47)) {
     add_lose(cid, 0, 20);
     add_lose(cid, 1, 80);
@@ -1313,9 +1305,8 @@ function source123(y) {
   times_src(cid, 5, skill);
 }
 
-function gauge123() {
-  const cid = era_flag.target;
-  const player = era_flag.player;
+function gauge123(com_context) {
+  const { target: cid, player } = com_context;
   let b = [1200, 1700, 2300, 3000, 3600, 4200][Math.min(abl(cid, 12), 5)];
   b = times(b, [0.8, 0.9, 1, 1.1, 1.2, 1.3][Math.min(abl(cid, 10), 5)]);
   b = times(b, [0.5, 0.8, 1.2, 1.5, 1.8, 2.4][Math.min(abl(cid, 13), 5)]);
@@ -1333,9 +1324,8 @@ function gauge123() {
   return { b, e };
 }
 
-function ejac123(e) {
-  const cid = era_flag.target;
-  const player = era_flag.player;
+function ejac123(com_context, e) {
+  const { target: cid, player } = com_context;
   if (e) {
     times_src(cid, 4, 3);
     const poison = [
@@ -1376,9 +1366,8 @@ function ejac123(e) {
   return e;
 }
 
-function after123(e) {
-  const cid = era_flag.target;
-  const player = era_flag.player;
+function after123(com_context, e) {
+  const { target: cid, player } = com_context;
   const merged = stain(cid, 0) | stain(player, 2);
   era.set(`stain:${cid}:0`, merged);
   era.set(`stain:${player}:2`, merged);
@@ -1431,24 +1420,25 @@ async function message_b123() {
 // message_a123：无 A 支——射精文本由公共段出（见上）
 
 /** com123：乳夹口交。高级 COM。 */
-async function com123() {
+async function com123(com_context) {
+  const { target } = com_context;
   era_flag.selectcom = 123; // 升格抵达时回填号位
   era.print('乳夹口交');
-  const y = dirty_penalty_123();
-  if (!(await order123(y))) return 0;
+  const y = dirty_penalty_123(com_context);
+  if (!(await order123(com_context, y))) return 0;
   await train_message_b();
   era.print(`${name_of('expname', 22)}＋１`);
-  chara(era_flag.target).dungeon.口交经验 += 1;
-  source123(y);
-  const { b, e } = gauge123();
-  ejac123(e);
+  chara(target).dungeon.口交经验 += 1;
+  source123(com_context, y);
+  const { b, e } = gauge123(com_context);
+  ejac123(com_context, e);
   await com_ejac_player_milk(b);
-  after123(e);
+  after123(com_context, e);
   return 1;
 }
 
-function dirty_penalty_124() {
-  const player = era_flag.player;
+function dirty_penalty_124(com_context) {
+  const { player } = com_context;
   let y = 0;
   if (stain(player, 2) & 1) y += 1;
   if (stain(player, 2) & 4) y += 3;
@@ -1458,9 +1448,8 @@ function dirty_penalty_124() {
   return y;
 }
 
-async function order124(y) {
-  const cid = era_flag.target;
-  const player = era_flag.player;
+async function order124(com_context, y) {
+  const { target: cid, player } = com_context;
   const { a, s, parts } = await com_order(0, 0);
   const state = { a, s };
   if (abl(cid, 11)) {
@@ -1528,8 +1517,8 @@ async function order124(y) {
   return state.a >= 40;
 }
 
-function source124(y) {
-  const cid = era_flag.target;
+function source124(com_context, y) {
+  const { target: cid } = com_context;
   if (tal(cid, 47)) {
     add_lose(cid, 0, 20);
     add_lose(cid, 1, 90);
@@ -1557,9 +1546,8 @@ function source124(y) {
   times_src(cid, 5, skill);
 }
 
-function gauge124() {
-  const cid = era_flag.target;
-  const player = era_flag.player;
+function gauge124(com_context) {
+  const { target: cid, player } = com_context;
   let b = [1500, 2000, 2600, 3200, 4000, 4800][Math.min(abl(cid, 12), 5)];
   b = times(b, [0.5, 0.8, 1, 1.2, 1.5, 2][Math.min(abl(cid, 10), 5)]);
   b = times(b, [0.5, 0.8, 1.2, 1.5, 1.8, 2.4][Math.min(abl(cid, 13), 5)]);
@@ -1573,9 +1561,8 @@ function gauge124() {
   return { b, e };
 }
 
-function ejac124(e) {
-  const cid = era_flag.target;
-  const player = era_flag.player;
+function ejac124(com_context, e) {
+  const { target: cid, player } = com_context;
   if (e) {
     times_src(cid, 4, 3);
     const poison = [
@@ -1616,9 +1603,8 @@ function ejac124(e) {
   return e;
 }
 
-function after124(e) {
-  const cid = era_flag.target;
-  const player = era_flag.player;
+function after124(com_context, e) {
+  const { target: cid, player } = com_context;
   const merged = stain(cid, 0) | stain(player, 2);
   era.set(`stain:${cid}:0`, merged);
   era.set(`stain:${player}:2`, merged);
@@ -1664,25 +1650,25 @@ async function message_b124() {
 // message_a124：无 A 支——射精文本由公共段出（见上）
 
 /** com124：深喉。高级 COM。 */
-async function com124() {
+async function com124(com_context) {
+  const { target } = com_context;
   era_flag.selectcom = 124; // 升格抵达时回填号位
   era.print('深喉');
-  const y = dirty_penalty_124();
-  if (!(await order124(y))) return 0;
+  const y = dirty_penalty_124(com_context);
+  if (!(await order124(com_context, y))) return 0;
   await train_message_b();
   era.print(`${name_of('expname', 22)}＋１`);
-  chara(era_flag.target).dungeon.口交经验 += 1;
-  source124(y);
-  const { b, e } = gauge124();
-  ejac124(e);
+  chara(target).dungeon.口交经验 += 1;
+  source124(com_context, y);
+  const { b, e } = gauge124(com_context);
+  ejac124(com_context, e);
   await com_ejac_player_milk(b);
-  after124(e);
+  after124(com_context, e);
   return 1;
 }
 
-function dirty_penalty_125() {
-  const player = era_flag.player;
-  const cid = era_flag.target;
+function dirty_penalty_125(com_context) {
+  const { target: cid, player } = com_context;
   let y = 0;
   if (stain(player, 2) & 1) y += 1;
   if (stain(player, 2) & 4) y += 3;
@@ -1695,9 +1681,8 @@ function dirty_penalty_125() {
   return y;
 }
 
-async function order125(y) {
-  const cid = era_flag.target;
-  const player = era_flag.player;
+async function order125(com_context, y) {
+  const { target: cid, player } = com_context;
   const { a, s, parts } = await com_order(0, 0);
   const state = { a, s };
   if (abl(cid, 11)) {
@@ -1818,8 +1803,8 @@ function apply_lube_lust_obey(va, vb, vc, cid) {
   return { va, vb, vc };
 }
 
-function source125(y) {
-  const cid = era_flag.target;
+function source125(com_context, y) {
+  const { target: cid } = com_context;
   if (tal(cid, 47)) {
     add_lose(cid, 0, 20);
     add_lose(cid, 1, 70);
@@ -2048,9 +2033,8 @@ function source125(y) {
   if (!tal(cid, 125) && tal(cid, 310) <= 20) times_src(cid, 12, 2);
 }
 
-function after125(e) {
-  const cid = era_flag.target;
-  const player = era_flag.player;
+function after125(com_context, e) {
+  const { target: cid, player } = com_context;
   const mouth = stain(cid, 0) | stain(player, 2);
   era.set(`stain:${cid}:0`, mouth);
   era.set(`stain:${player}:2`, mouth);
@@ -2120,26 +2104,27 @@ async function message_b125() {
 // message_a125：无 A 支——射精文本由公共段出（见上）
 
 /** com125：口交时自慰。高级 COM。 */
-async function com125() {
+async function com125(com_context) {
+  const { target } = com_context;
   era_flag.selectcom = 125; // 升格抵达时回填号位
   era.print('口交时自慰');
-  const y = dirty_penalty_125();
-  if (!(await order125(y))) return 0;
+  const y = dirty_penalty_125(com_context);
+  if (!(await order125(com_context, y))) return 0;
   await train_message_b();
   era.print(`${name_of('expname', 22)}＋１`);
-  chara(era_flag.target).dungeon.口交经验 += 1;
+  chara(target).dungeon.口交经验 += 1;
   era.print(`${name_of('expname', 10)}＋１`);
-  chara(era_flag.target).dungeon.自慰经验 += 1;
-  source125(y);
-  const { b, e } = gauge124();
-  ejac124(e);
+  chara(target).dungeon.自慰经验 += 1;
+  source125(com_context, y);
+  const { b, e } = gauge124(com_context);
+  ejac124(com_context, e);
   await com_ejac_player_milk(b);
-  after125(e);
+  after125(com_context, e);
   return 1;
 }
 
-function source126(y) {
-  const cid = era_flag.target;
+function source126(com_context, y) {
+  const { target: cid } = com_context;
   if (tal(cid, 47)) {
     add_lose(cid, 0, 10);
     add_lose(cid, 1, 90);
@@ -2166,9 +2151,8 @@ function source126(y) {
   times_src(cid, 5, [0.5, 0.8, 1, 1.2, 1.5, 2][skill]);
 }
 
-function gauge126() {
-  const cid = era_flag.target;
-  const player = era_flag.player;
+function gauge126(com_context) {
+  const { target: cid, player } = com_context;
   let b = [1200, 1700, 2300, 3000, 3600, 4200][Math.min(abl(cid, 12), 5)];
   b = times(b, [0.8, 0.9, 1, 1.1, 1.2, 1.3][Math.min(abl(cid, 10), 5)]);
   b = times(b, [0.5, 0.8, 1.2, 1.5, 1.8, 2.4][Math.min(abl(cid, 13), 5)]);
@@ -2182,9 +2166,8 @@ function gauge126() {
   return { b, e };
 }
 
-function after126(e) {
-  const cid = era_flag.target;
-  const player = era_flag.player;
+function after126(com_context, e) {
+  const { target: cid, player } = com_context;
   const finger = stain(cid, 1) | stain(player, 2);
   era.set(`stain:${cid}:1`, finger);
   era.set(`stain:${player}:2`, finger);
@@ -2234,19 +2217,20 @@ async function message_b126() {
 // message_a126：无 A 支——射精文本由公共段出（见上）
 
 /** com126：手搓口交。高级 COM。 */
-async function com126() {
+async function com126(com_context) {
+  const { target } = com_context;
   era_flag.selectcom = 126; // 升格抵达时回填号位
   era.print('手搓口交');
-  const y = dirty_penalty_125();
-  if (!(await order124(y))) return 0;
+  const y = dirty_penalty_125(com_context);
+  if (!(await order124(com_context, y))) return 0;
   await train_message_b();
   era.print(`${name_of('expname', 22)}＋１`);
-  chara(era_flag.target).dungeon.口交经验 += 1;
-  source126(y);
-  const { b, e } = gauge126();
-  ejac124(e);
+  chara(target).dungeon.口交经验 += 1;
+  source126(com_context, y);
+  const { b, e } = gauge126(com_context);
+  ejac124(com_context, e);
   await com_ejac_player_milk(b);
-  after126(e);
+  after126(com_context, e);
   return 1;
 }
 
@@ -2263,24 +2247,25 @@ async function message_b127() {
 // message_a127：无 A 支——射精文本由公共段出（见上）
 
 /** com127：真空口交。高级 COM。 */
-async function com127() {
+async function com127(com_context) {
+  const { target } = com_context;
   era_flag.selectcom = 127; // 升格抵达时回填号位
   era.print('真空口交');
-  const y = dirty_penalty_124();
-  if (!(await order124(y))) return 0;
+  const y = dirty_penalty_124(com_context);
+  if (!(await order124(com_context, y))) return 0;
   await train_message_b();
   era.print(`${name_of('expname', 22)}＋１`);
-  chara(era_flag.target).dungeon.口交经验 += 1;
-  source124(y);
-  const { b, e } = gauge124();
-  ejac124(e);
+  chara(target).dungeon.口交经验 += 1;
+  source124(com_context, y);
+  const { b, e } = gauge124(com_context);
+  ejac124(com_context, e);
   await com_ejac_player_milk(b);
-  after124(e);
+  after124(com_context, e);
   return 1;
 }
 
-function source128() {
-  const cid = era_flag.target;
+function source128(com_context) {
+  const { target: cid, assi } = com_context;
   add_lose(cid, 0, 60);
   add_lose(cid, 1, 120);
   set_src(cid, 12, 400);
@@ -2346,7 +2331,7 @@ function source128() {
     times_src(cid, 1, 1.8);
     times_src(cid, 6, 0.1);
   }
-  if (era_flag.assiplay && tal(era_flag.assi, 121)) times_src(cid, 1, 2.5);
+  if (era_flag.assiplay && tal(assi, 121)) times_src(cid, 1, 2.5);
   if (tal(cid, 99)) times_src(cid, 6, 0.8);
   if (tal(cid, 100)) times_src(cid, 6, 2);
   if (tal(cid, 135)) times_src(cid, 6, 4);
@@ -2393,9 +2378,8 @@ function source128() {
   times_src(cid, 3, 2); // 恒乘，不在任何条件分支内
 }
 
-function after128() {
-  const cid = era_flag.target;
-  const player = era_flag.player;
+function after128(com_context) {
+  const { target: cid, player } = com_context;
   const mouth = stain(cid, 0) | stain(player, 0);
   era.set(`stain:${cid}:0`, mouth);
   era.set(`stain:${player}:0`, mouth);
@@ -2410,26 +2394,26 @@ async function message_b128() {
 // message_a128：无 A 支——射精文本由公共段出（见上）
 
 /** com128：正常位・接吻。高级 COM。 */
-async function com128() {
+async function com128(com_context) {
+  const { target: cid } = com_context;
   era_flag.selectcom = 128; // 升格抵达时回填号位
   if ((await confirm_lost_virgin()) === 0) return 0;
   if (!(await confirm_condom())) return 0;
   era.print('正常位・接吻');
   await train_message_b();
-  const cid = era_flag.target;
   game.train.伴V经验指令 = 1;
   if (tal(cid, 85) && !era_flag.assiplay && exp(cid, 0) === 0) {
     game.train.主人导致处女丧失 = 1;
   }
   await com_ejac_player_sex();
-  source128();
-  after128();
+  source128(com_context);
+  after128(com_context);
   await com_after_vagina_sex();
   return 1;
 }
 
-function source129() {
-  const cid = era_flag.target;
+function source129(com_context) {
+  const { target: cid, assi } = com_context;
   add_lose(cid, 0, 60);
   add_lose(cid, 1, 120);
   set_src(cid, 12, 400);
@@ -2492,7 +2476,7 @@ function source129() {
     times_src(cid, 1, 1.8);
     times_src(cid, 6, 0.1);
   }
-  if (era_flag.assiplay && tal(era_flag.assi, 121)) times_src(cid, 1, 2.5);
+  if (era_flag.assiplay && tal(assi, 121)) times_src(cid, 1, 2.5);
   if (tal(cid, 99)) times_src(cid, 6, 0.8);
   if (tal(cid, 100)) times_src(cid, 6, 2);
   if (tal(cid, 135)) times_src(cid, 6, 4);
@@ -2554,25 +2538,25 @@ async function message_b129() {
 // message_a129：无 A 支——射精文本由公共段出（见上）
 
 /** com129：正常位・胸爱抚。高级 COM。 */
-async function com129() {
+async function com129(com_context) {
+  const { target: cid } = com_context;
   era_flag.selectcom = 129; // 升格抵达时回填号位
   if ((await confirm_lost_virgin()) === 0) return 0;
   if (!(await confirm_condom())) return 0;
   era.print('正常位・胸爱抚');
   await train_message_b();
-  const cid = era_flag.target;
   game.train.伴V经验指令 = 1;
   if (tal(cid, 85) && !era_flag.assiplay && exp(cid, 0) === 0) {
     game.train.主人导致处女丧失 = 1;
   }
   await com_ejac_player_sex();
-  source129();
+  source129(com_context);
   await com_after_vagina_sex();
   return 1;
 }
 
-function source130() {
-  const cid = era_flag.target;
+function source130(com_context) {
+  const { target: cid, assi } = com_context;
   add_lose(cid, 0, 70);
   add_lose(cid, 1, 130);
   set_src(cid, 12, 400);
@@ -2639,7 +2623,7 @@ function source130() {
     times_src(cid, 1, 1.8);
     times_src(cid, 6, 0.1);
   }
-  if (era_flag.assiplay && tal(era_flag.assi, 121)) times_src(cid, 1, 2.5);
+  if (era_flag.assiplay && tal(assi, 121)) times_src(cid, 1, 2.5);
   if (tal(cid, 99)) times_src(cid, 6, 0.8);
   if (tal(cid, 100)) times_src(cid, 6, 2);
   if (tal(cid, 135)) times_src(cid, 6, 4);
@@ -2700,9 +2684,8 @@ function source130() {
   }
 }
 
-function after130() {
-  const cid = era_flag.target;
-  const player = era_flag.player;
+function after130(com_context) {
+  const { target: cid, player } = com_context;
   const mouth = stain(cid, 0) | stain(player, 0);
   era.set(`stain:${cid}:0`, mouth);
   era.set(`stain:${player}:0`, mouth);
@@ -2756,26 +2739,26 @@ async function message_b130() {
 // message_a130：无 A 支——射精文本由公共段出（见上）
 
 /** com130：正常位ＳＰ。高级 COM。 */
-async function com130() {
+async function com130(com_context) {
+  const { target: cid } = com_context;
   era_flag.selectcom = 130; // 升格抵达时回填号位
   if ((await confirm_lost_virgin()) === 0) return 0;
   if (!(await confirm_condom())) return 0;
   era.print('正常位ＳＰ');
   await train_message_b();
-  const cid = era_flag.target;
   game.train.伴V经验指令 = 1;
   if (tal(cid, 85) && !era_flag.assiplay && exp(cid, 0) === 0) {
     game.train.主人导致处女丧失 = 1;
   }
   await com_ejac_player_sex();
-  source130();
-  after130();
+  source130(com_context);
+  after130(com_context);
   await com_after_vagina_sex();
   return 1;
 }
 
-function source131() {
-  const cid = era_flag.target;
+function source131(com_context) {
+  const { target: cid, player, assi } = com_context;
   add_lose(cid, 0, 60);
   add_lose(cid, 1, 120);
   set_src(cid, 12, 800);
@@ -2793,7 +2776,7 @@ function source131() {
   if (e0 < EXPLV[1]) {
     times_src(cid, 1, 0.2);
     set_src(cid, 6, 5000);
-    if (era_flag.assiplay && tal(era_flag.player, 122) === 0) {
+    if (era_flag.assiplay && tal(player, 122) === 0) {
       era.print(`${name_of('expname', 50)}＋１`);
       chara(cid).dungeon.异常经验 += 1;
     }
@@ -2842,7 +2825,7 @@ function source131() {
     times_src(cid, 1, 1.8);
     times_src(cid, 6, 0.1);
   }
-  if (era_flag.assiplay && tal(era_flag.assi, 121)) times_src(cid, 1, 2.5);
+  if (era_flag.assiplay && tal(assi, 121)) times_src(cid, 1, 2.5);
   if (tal(cid, 99)) times_src(cid, 6, 1.8);
   if (tal(cid, 100)) times_src(cid, 6, 2);
   if (tal(cid, 30)) {
@@ -2903,13 +2886,13 @@ async function message_b131() {
 // message_a131：无 A 支——射精文本由公共段出（见上）
 
 /** com131：背后位・胸爱抚。高级 COM。 */
-async function com131() {
+async function com131(com_context) {
+  const { target: cid } = com_context;
   era_flag.selectcom = 131; // 升格抵达时回填号位
   if ((await confirm_lost_virgin()) === 0) return 0;
   if (!(await confirm_condom())) return 0;
   era.print('背后位・胸爱抚');
   await train_message_b();
-  const cid = era_flag.target;
   game.train.伴V经验指令 = 1;
   if (
     tal(cid, 85) &&
@@ -2920,13 +2903,13 @@ async function com131() {
     game.train.主人导致处女丧失 = 1;
   }
   await com_ejac_player_sex();
-  source131();
+  source131(com_context);
   await com_after_vagina_sex();
   return 1;
 }
 
-function source132() {
-  const cid = era_flag.target;
+function source132(com_context) {
+  const { target: cid, player, assi } = com_context;
   add_lose(cid, 0, 100);
   add_lose(cid, 1, 120);
   set_src(cid, 10, 800);
@@ -2947,7 +2930,7 @@ function source132() {
   if (e0 < EXPLV[1]) {
     times_src(cid, 1, 0.2);
     set_src(cid, 6, 5000);
-    if (era_flag.assiplay && tal(era_flag.player, 122) === 0) {
+    if (era_flag.assiplay && tal(player, 122) === 0) {
       era.print(`${name_of('expname', 50)}＋１`);
       chara(cid).dungeon.异常经验 += 1;
     }
@@ -2986,7 +2969,7 @@ function source132() {
     times_src(cid, 1, 1.8);
     times_src(cid, 6, 0.1);
   }
-  if (era_flag.assiplay && tal(era_flag.assi, 121)) times_src(cid, 1, 2.5);
+  if (era_flag.assiplay && tal(assi, 121)) times_src(cid, 1, 2.5);
   if (tal(cid, 99)) times_src(cid, 6, 1.8);
   if (tal(cid, 100)) times_src(cid, 6, 2);
   if (tal(cid, 30)) {
@@ -3070,13 +3053,13 @@ async function message_b132() {
 // message_a132：无 A 支——射精文本由公共段出（见上）
 
 /** com132：背后位・打屁股。高级 COM。 */
-async function com132() {
+async function com132(com_context) {
+  const { target: cid } = com_context;
   era_flag.selectcom = 132; // 升格抵达时回填号位
   if ((await confirm_lost_virgin()) === 0) return 0;
   if (!(await confirm_condom())) return 0;
   era.print('背后位・打屁股');
   await train_message_b();
-  const cid = era_flag.target;
   game.train.伴V经验指令 = 1;
   if (
     tal(cid, 85) &&
@@ -3087,13 +3070,13 @@ async function com132() {
     game.train.主人导致处女丧失 = 1;
   }
   await com_ejac_player_sex();
-  source132();
+  source132(com_context);
   await com_after_vagina_sex();
   return 1;
 }
 
-function source133() {
-  const cid = era_flag.target;
+function source133(com_context) {
+  const { target: cid, player, assi } = com_context;
   add_lose(cid, 0, 60);
   add_lose(cid, 1, 120);
   set_src(cid, 12, 800);
@@ -3124,7 +3107,7 @@ function source133() {
   if (e0 < EXPLV[1]) {
     times_src(cid, 1, 0.2);
     set_src(cid, 6, 5000);
-    if (era_flag.assiplay && tal(era_flag.player, 122) === 0) {
+    if (era_flag.assiplay && tal(player, 122) === 0) {
       era.print(`${name_of('expname', 50)}＋１`);
       chara(cid).dungeon.异常经验 += 1;
     }
@@ -3173,7 +3156,7 @@ function source133() {
     times_src(cid, 1, 1.8);
     times_src(cid, 6, 0.1);
   }
-  if (era_flag.assiplay && tal(era_flag.assi, 121)) times_src(cid, 1, 2.5);
+  if (era_flag.assiplay && tal(assi, 121)) times_src(cid, 1, 2.5);
   if (tal(cid, 99)) times_src(cid, 6, 1.8);
   if (tal(cid, 100)) times_src(cid, 6, 2);
   if (tal(cid, 30)) {
@@ -3219,9 +3202,8 @@ function source133() {
   times_src(cid, 3, 1.5); // 恒乘，不在任何条件分支内
 }
 
-function after133() {
-  const cid = era_flag.target;
-  const player = era_flag.player;
+function after133(com_context) {
+  const { target: cid, player } = com_context;
   const mouth = stain(cid, 0) | stain(player, 0);
   era.set(`stain:${cid}:0`, mouth);
   era.set(`stain:${player}:0`, mouth);
@@ -3252,13 +3234,13 @@ async function message_b133() {
 // message_a133：无 A 支——射精文本由公共段出（见上）
 
 /** com133：站立背后位。高级 COM。 */
-async function com133() {
+async function com133(com_context) {
+  const { target: cid } = com_context;
   era_flag.selectcom = 133; // 升格抵达时回填号位
   if ((await confirm_lost_virgin()) === 0) return 0;
   if (!(await confirm_condom())) return 0;
   era.print('站立背后位');
   await train_message_b();
-  const cid = era_flag.target;
   game.train.伴V经验指令 = 1;
   if (
     tal(cid, 85) &&
@@ -3269,13 +3251,13 @@ async function com133() {
     game.train.主人导致处女丧失 = 1;
   }
   await com_ejac_player_sex();
-  source133();
-  after133();
+  source133(com_context);
+  after133(com_context);
   await com_after_vagina_sex();
   return 1;
 }
-function source134() {
-  const cid = era_flag.target;
+function source134(com_context) {
+  const { target: cid, player, assi } = com_context;
   add_lose(cid, 0, 60);
   add_lose(cid, 1, 120);
   set_src(cid, 12, 800);
@@ -3306,7 +3288,7 @@ function source134() {
   if (e0 < EXPLV[1]) {
     times_src(cid, 1, 0.2);
     set_src(cid, 6, 5000);
-    if (era_flag.assiplay && tal(era_flag.player, 122) === 0) {
+    if (era_flag.assiplay && tal(player, 122) === 0) {
       era.print(`${name_of('expname', 50)}＋１`);
       chara(cid).dungeon.异常经验 += 1;
     }
@@ -3355,7 +3337,7 @@ function source134() {
     times_src(cid, 1, 1.8);
     times_src(cid, 6, 0.1);
   }
-  if (era_flag.assiplay && tal(era_flag.assi, 121)) times_src(cid, 1, 2.5);
+  if (era_flag.assiplay && tal(assi, 121)) times_src(cid, 1, 2.5);
   if (tal(cid, 99)) times_src(cid, 6, 1.8);
   if (tal(cid, 100)) times_src(cid, 6, 2);
   if (tal(cid, 30)) {
@@ -3417,8 +3399,8 @@ function source134() {
   }
 }
 
-function after134() {
-  after133();
+function after134(com_context) {
+  after133(com_context);
 }
 
 async function message_b134() {
@@ -3472,13 +3454,13 @@ async function message_b134() {
 // message_a134：无 A 支——射精文本由公共段出（见上）
 
 /** com134：背后位ＳＰ。高级 COM。 */
-async function com134() {
+async function com134(com_context) {
+  const { target: cid } = com_context;
   era_flag.selectcom = 134; // 升格抵达时回填号位
   if ((await confirm_lost_virgin()) === 0) return 0;
   if (!(await confirm_condom())) return 0;
   era.print('背后位ＳＰ');
   await train_message_b();
-  const cid = era_flag.target;
   game.train.伴V经验指令 = 1;
   if (
     tal(cid, 85) &&
@@ -3489,14 +3471,14 @@ async function com134() {
     game.train.主人导致处女丧失 = 1;
   }
   await com_ejac_player_sex();
-  source134();
-  after134();
+  source134(com_context);
+  after134(com_context);
   await com_after_vagina_sex();
   return 1;
 }
 
-async function order135() {
-  const cid = era_flag.target;
+async function order135(com_context) {
+  const { target: cid } = com_context;
   const { a, s, parts } = await com_order(0, 0);
   const state = { a, s };
   if (abl(cid, 11)) {
@@ -3551,8 +3533,8 @@ async function order135() {
   return state.a >= v;
 }
 
-function source135() {
-  const cid = era_flag.target;
+function source135(com_context) {
+  const { target: cid } = com_context;
   add_lose(cid, 0, 5);
   add_lose(cid, 1, 50);
   set_src(cid, 14, 400);
@@ -3610,9 +3592,8 @@ function source135() {
   }
 }
 
-function after135() {
-  const cid = era_flag.target;
-  const player = era_flag.player;
+function after135(com_context) {
+  const { target: cid, player } = com_context;
   const finger_b = stain(cid, 1) | stain(cid, 5);
   era.set(`stain:${cid}:1`, finger_b);
   era.set(`stain:${cid}:5`, finger_b);
@@ -3669,18 +3650,18 @@ async function message_b135() {
  * com135：自助舔阴。可直选。
  * 头部 LOCAL = 21：先取 get_adv_com(21)，命中则直跳升格目标。
  */
-async function com135() {
+async function com135(com_context) {
+  const { target } = com_context;
   const upgraded = await get_adv_com(21);
-  if (upgraded !== 21) return jump_to_advanced(upgraded);
-  const target = era_flag.target;
+  if (upgraded !== 21) return jump_to_advanced(com_context, upgraded);
   let prefix = '';
   if (tequip(target, 53)) prefix += '公开';
   if (tequip(target, 54)) prefix += '野外';
   era.print(prefix + (tal(target, 121) === 1 ? '自我口交' : '自助舔阴'));
-  if (!(await order135())) return 0;
+  if (!(await order135(com_context))) return 0;
   await train_message_b();
-  source135();
-  after135();
+  source135(com_context);
+  after135(com_context);
   return 1;
 }
 
