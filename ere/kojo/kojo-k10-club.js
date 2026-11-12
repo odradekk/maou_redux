@@ -1,7 +1,9 @@
 /* eslint-disable no-irregular-whitespace, no-dupe-else-if */
 /**
- * @file 俱乐部性格口上 K10：EVENTTRAIN 存在标志 + 主体（issue #241）。
+ * @file 俱乐部性格口上 K10：EVENTTRAIN 主体 + 指令口上（issue #241）。
  *
+ * 「口上存在标志」一档（EVENTTRAIN #PRI 置位、EVENTEND #LATER 清零）随 #859
+ * 删除：分发改由工厂按 `get_kojo_num` 的编号取实例，模块装没装就是标志本身。
  * == 头部七道检查（kojo_message_com_10，与 K3/K7 顺序不同） ==
  *
  * ①ASSI>0 && ASSIPLAY → return 0；②TEQUIP:45 && SELECTCOM!=45 → return 0；

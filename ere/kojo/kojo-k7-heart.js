@@ -1,6 +1,7 @@
 /* eslint-disable no-irregular-whitespace, no-dupe-else-if */
 /**
- * @file 金红桃口上 K7：EVENTTRAIN 存在标志 + 主体（issue #238）。
+ * @file 金红桃口上 K7：EVENTTRAIN 主体 + 指令口上（issue #238；
+ *       「口上存在标志」一档随 #859 删除——分发按 `get_kojo_num` 的编号查工厂）。
  *
  * == 简易助手口上（NO:ASSI 直判） ==
  *

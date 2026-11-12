@@ -1,6 +1,7 @@
 /* eslint-disable no-irregular-whitespace, no-dupe-else-if */
 /**
- * @file 伶俐性格口上 K15：EVENTTRAIN 存在标志 + 主体（issue #246）。
+ * @file 伶俐性格口上 K15：EVENTTRAIN 主体 + 指令口上（issue #246；
+ *       「口上存在标志」一档随 #859 删除——分发按 `get_kojo_num` 的编号查工厂）。
  *
  * == 头部检查（K15 与模板七条不同，逐文件不同） ==
  *

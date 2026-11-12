@@ -34,7 +34,8 @@
  * 264 条命中 >1 处，且经验证无法在不破坏 text-fidelity 逐句绑定
  * （find_printform 要求 n..m 窗口内首条 PRINTFORM 系行即目标句，向前/
  * 向后扩窗只要越过相邻语句自身的 PRINTFORM 行就会误绑定）的前提下继续
- * 收窄——60 条来自既有前段（存在标志/EVENTTRAIN/K11_KOJO2/
+ * 收窄——60 条来自迁移前的既有前段（存在标志一档随 #859 删除，此处指它
+ * 当时的处理器；EVENTTRAIN/K11_KOJO2/
  * EVENTEND），落在 CFLAG:400 魔族化分支与 K11_KOJO2 RAND 分档
  * 里逐句复现的对白段落内，按 issue 讨论保持现状、不再动；4 条来自
  * SELECTCOM 0/1/2（姉妹相认/魔族化前后两套台词在平行

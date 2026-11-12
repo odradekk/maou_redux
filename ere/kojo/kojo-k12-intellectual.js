@@ -1,7 +1,8 @@
 /* eslint-disable no-irregular-whitespace, no-dupe-else-if */
 /**
- * @file 知的（博士型）口上 K12：存在标志一对 + EVENTTRAIN 主体 + k12_kojo2 +
- *       EVENTEND（issue #243，J33）。
+ * @file 知的（博士型）口上 K12：EVENTTRAIN 主体 + k12_kojo2 +
+ *       EVENTEND（issue #243，J33；「存在标志一对」一档随 #859 删除——
+ *       分发按 `get_kojo_num` 的编号查工厂，模块装没装就是标志本身）。
  *
  * == 头部检查（KOJO_MESSAGE_COM_12，与 K3/K10 顺序不同） ==
  *

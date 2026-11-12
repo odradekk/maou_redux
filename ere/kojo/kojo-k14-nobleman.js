@@ -1,8 +1,8 @@
 /* eslint-disable no-irregular-whitespace, no-dupe-else-if */
 /**
- * @file 貴公子口上 K14：EVENTTRAIN 存在标志 + 主体 + 二回目以降 + 调教结束 +
+ * @file 貴公子口上 K14：EVENTTRAIN 主体 + 二回目以降 + 调教结束 +
  *       指令口上 + 兽奸/死斗场/NTR/处刑/博物馆/流放/肉便器/迎击奖惩等非调教
- *       入口（issue #245）。
+ *       入口（issue #245；「口上存在标志」一档随 #859 删除）。
  *
  * == 角色设定 ==
  *
@@ -55,7 +55,8 @@
  *   的组合档：这两类角色走链上其余分档。
  *
  * 分片进度（issue #245 分片合入）：
- *   S1（95a2ef6）：EVENTTRAIN/EVENTEND/K14_KOJO2/存在标志一对。
+ *   S1（95a2ef6）：EVENTTRAIN/EVENTEND/K14_KOJO2/存在标志一对
+ *      （其中存在标志一对已随 #859 删除，见文件头）。
  *   S2（c6255cb）：KOJO_MESSAGE_COM_14 全篇（空模板骨架，525
  *     处空 PRINTFORMW；含穿环 SELECTCOM 87 的 piercing_state 读、P
  *     声明补写）。
