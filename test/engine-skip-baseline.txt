@@ -136,7 +136,7 @@
 # train-static-tables/variable-yml 的逐字段比对用例）与新增 chara-load 的 8 个
 # 引擎门控用例对冲后，现为 70（6923 = 6853 过 + 70 跳过 + 0 挂，
 # ERE_ENGINE_ASAR=none 实测）。
-102
+104
 # #835（四张表移出静态数据）复测：−5（chara-name-list.test.js 的六个引擎门控
 # 用例里留 1 个）——固定的 3,264 条固定名搬成 ere/data/chara-name-const.js 的
 # 常量表后，「NameList.yml 装载零告警」「引擎真寻址读出真名字」「三种范围各
@@ -218,3 +218,7 @@
 # 新增的一条「每个 cflag 的 era.add 落点都已登记」只读 yml 与源码文本，任何环境
 # 都跑。计数依据：ERE_ENGINE_ASAR=none npm test 实测 7372 = 7270 过 + 102 跳过 + 0 挂
 # （合入 83bab573 之后的 master，含 #978 / #984）。
+# #825（据点与角色改用开发套件的夹具读面）：+2（fixture-raw 的引擎比对用例——
+# 「addCharacter 后声明列预置 0、未声明列 undefined」与「item:<N> 与 item:hold:<N>
+# 是同一个槽」，都驱动真 resetData / addCharacter / raw / setVar）。102 + 2 = 104。
+# 计数依据：ERE_ENGINE_ASAR=none npm test 实测 7393 = 7289 过 + 104 跳过 + 0 挂。
