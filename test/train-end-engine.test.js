@@ -79,6 +79,16 @@ function seed_world() {
   ]) {
     fixture.era[name] = api[name].bind(api);
   }
+  // 开发套件的具名访问器读夹具的数据层视图（raw()），而 era.get/set 走的是
+  // 上面那台真引擎：两边都要有这三个角色，否则 party_del 读到不存在的行
+  for (const cid of [0, 31, 32]) {
+    fixture.seed_chara(cid, {
+      id: cid,
+      name: `角色${cid}`,
+      callname: `角色${cid}`,
+    });
+    fixture.era.addCharacter(cid);
+  }
   const flags = fixture.load_module('era-utils/era-flag');
   flags.target = flags.target_backup = flags.target_record = 31;
   flags.assi = flags.assi_backup = flags.assi_record = 32;

@@ -70,6 +70,8 @@ test('两份源文件的函数全部导出真身', () => {
 
 test('弱召唤保留 -1 实参：基础五轮折半为两轮并增加对应怪物库存', async () => {
   const fixture = create_era_fixture();
+  // 魔王 0 真加入（真机上 resetData 建）：召唤段按它定怪物等级（CFLAG:0:9）
+  add_chara(fixture, 0, '你');
   fixture.store.set('itemname:100', '史莱姆');
   const { summon_monster } = fixture.load_module(
     'system/dungeon/monster-summon',
@@ -91,6 +93,7 @@ test('魔界公主（TALENT:35:1254）：菲娅在场时每轮召唤数 ×1.5（
   const rand = (n) => (n === 25 ? 12 : 0);
 
   const plain = create_era_fixture();
+  add_chara(plain, 0, '你'); // 召唤段按魔王等级定怪物等级
   plain.store.set('itemname:100', '史莱姆');
   await plain
     .load_module('system/dungeon/monster-summon')
@@ -98,6 +101,7 @@ test('魔界公主（TALENT:35:1254）：菲娅在场时每轮召唤数 ×1.5（
   assert.equal(plain.store.get('item:hold:100'), 65, '5 轮 × 13 只');
 
   const princess = create_era_fixture();
+  add_chara(princess, 0, '你');
   princess.store.set('itemname:100', '史莱姆');
   add_chara(princess, 35, '菲娅');
   princess.store.set('talent:35:1254', 1); // 魔界公主（菲娅线结局写入的那一格）
@@ -112,6 +116,7 @@ test('魔界公主（TALENT:35:1254）：菲娅在场时每轮召唤数 ×1.5（
 
   // 有素质但菲娅不在场：不加成（GETCHARA(35) <= 0 的分支）。
   const absent = create_era_fixture();
+  add_chara(absent, 0, '你');
   absent.store.set('itemname:100', '史莱姆');
   absent.store.set('talent:35:1254', 1);
   await absent
@@ -148,6 +153,7 @@ test('怪物总数只统计 100-184 的 45 个离散槽，全部满时允许返�
 
 test('生产怪物仅在实际入库分支追加双胞胎，且双胞胎文本保持同一显示行', async () => {
   const fixture = create_era_fixture();
+  add_chara(fixture, 0, '你'); // 召唤段按魔王等级定怪物等级（CFLAG:0:9）
   fixture.store.set('callname:1:-1', '母亲');
   fixture.store.set('itemname:100', '史莱姆');
   fixture.store.set('cflag:1:111', -1);
@@ -168,6 +174,7 @@ test('生产怪物仅在实际入库分支追加双胞胎，且双胞胎文本�
   );
 
   const departed = create_era_fixture();
+  add_chara(departed, 0, '你'); // 召唤段按魔王等级定怪物等级
   departed.store.set('callname:1:-1', '母亲');
   departed.store.set('itemname:100', '史莱姆');
   departed.store.set('cflag:1:111', -1);
@@ -1467,6 +1474,7 @@ test('直接生产分派覆盖角色上限的魔王与普通角色、近卫、�
 test('每日推进覆盖近产期自动移室、设定禁止移室与育儿提示', async () => {
   for (const setting of [false, true]) {
     const fixture = create_era_fixture();
+    add_chara(fixture, 0, '你'); // 生产段的召唤按魔王等级定怪物等级
     add_chara(fixture, 1, '母亲');
     const view = chara_view(fixture, 1);
     view.chara.妊娠 = 1;
@@ -1480,6 +1488,7 @@ test('每日推进覆盖近产期自动移室、设定禁止移室与育儿提�
   }
 
   const care = create_era_fixture();
+  add_chara(care, 0, '你');
   add_chara(care, 1, '母亲');
   const care_view = chara_view(care, 1);
   care_view.chara.育儿中 = 1;
@@ -1488,6 +1497,7 @@ test('每日推进覆盖近产期自动移室、设定禁止移室与育儿提�
   assert.ok(printed(care, '母亲在育儿室照顾孩子……'));
 
   const depart = create_era_fixture();
+  add_chara(depart, 0, '你'); // 生产段的召唤按魔王等级定怪物等级
   add_chara(depart, 1, '母亲');
   const depart_view = chara_view(depart, 1);
   depart_view.chara.育儿中 = 1;
@@ -1501,6 +1511,7 @@ test('每日推进覆盖近产期自动移室、设定禁止移室与育儿提�
   assert.equal(depart_view.chara.育儿中, 0);
 
   const unaffected = create_era_fixture();
+  add_chara(unaffected, 0, '你');
   add_chara(unaffected, 1, '无关角色');
   await unaffected
     .load_module('system/chara/chara-pregnancy')
@@ -1533,6 +1544,7 @@ test('育儿结束生成孩子后，母亲与孩子都离开育儿室状态并�
 
 test('端到端：怪物妊娠从发觉、临月推进到生产并清理状态', async () => {
   const fixture = create_era_fixture();
+  add_chara(fixture, 0, '你'); // 生产段的召唤按魔王等级定怪物等级
   add_chara(fixture, 1, '母亲');
   fixture.store.set('flag:5', 1 << 2);
   fixture.store.set('cflag:1:451', 20);

@@ -179,6 +179,9 @@ test('yml/E.yml 已撤除（战斗状态不再占用引擎变量表，新档不�
 
 test('monster_data：整列写进战斗状态对象，E 表一个键都不写', () => {
   const fixture = create_era_fixture();
+  // 魔王 0 真加入（真机上 resetData 建）：monster_data 按它定怪物等级
+  fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
+  fixture.era.addCharacter(0);
   fixture.store.set('item:hold:100', 5);
   fixture.store.set('itemname:100', '狗头人');
   const { monster_data } = fixture.load_module('system/dungeon/monster-data');
@@ -209,6 +212,12 @@ test('monster_data：整列写进战斗状态对象，E 表一个键都不写', 
 
 test('monster_data：列号 3/4 的勇者配下与列 0 互不干扰（对象列隔离）', () => {
   const fixture = create_era_fixture();
+  // 魔王 0 与配下勇者 1 都真加入：monster_data 读魔王等级，MINION_A 列还
+  // 要读勇者 1 的 CFLAG:570
+  fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
+  fixture.era.addCharacter(0);
+  fixture.seed_chara(1, { id: 1, name: '勇者1', callname: '勇者1' });
+  fixture.era.addCharacter(1);
   fixture.store.set('item:hold:100', 4);
   fixture.store.set('cflag:1:570', 100);
   const { monster_data } = fixture.load_module('system/dungeon/monster-data');

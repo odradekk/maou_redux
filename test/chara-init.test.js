@@ -62,6 +62,14 @@ test('已持有一系能力者时整段跳过（!(275||…||279) 的检查）', 
 
 test('等级段条件：CFLAG:9 > 1 且 CFLAG:11 == 0 才进（st_up 真身，#179）', async () => {
   const fixture = create_era_fixture();
+  // 角色 35 真加入：st_up 按角色读 CFLAG:9 / TALENT:240 等具名属性，未加入的
+  // 角色没有逐角色行，读具名属性与引擎一样抛 TypeError（夹具 raw() 段）。
+  fixture.seed_chara(35, { id: 35, name: '菲娅', callname: '菲娅' });
+  fixture.era.addCharacter(35);
+  // 体力/气力上限从 0 起算（真机上它们由角色预设的「基礎」行给初值，
+  // yml/ 没有 MaxBase 声明表，夹具不预置这一格，用例自己播种起点）
+  fixture.store.set('maxbase:35:0', 0);
+  fixture.store.set('maxbase:35:1', 0);
   fixture.store.set('cflag:35:9', 5);
   fixture.store.set('cflag:35:11', 0);
   const { char_init } = load(fixture);

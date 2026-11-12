@@ -435,11 +435,29 @@ test('char_gift：ARG 不在 1/5/6 三档 → THROW INVALID ARGUMENT', async () 
   await assert.rejects(() => char_gift(0), /INVALID ARGUMENT/);
 });
 
-test('char_gift 自选路线：另外挑选 → 随机角色 → 性格/发色子菜单 → 决定', async () => {
+/**
+ * char_gift 自选路线的世界底座：预设 31（预设角色）与 5（随机落点），并把
+ * 魔王 0 真加入。
+ *
+ * 真机上魔王由 resetData 按 GameBase【初始角色编号】建、恒在场；char_gift
+ * 退掉随机角色时经 party_char_del → party_del 读 LEADER（CFLAG:533，未入队
+ * 即 0 = 魔王）的同伴位，而开发套件的具名访问器读未加入的角色与引擎一样抛
+ * TypeError（夹具 raw() 段），所以角色 0 必须真在队里。
+ * @returns {object} 夹具
+ */
+function gift_world() {
   const fixture = create_era_fixture();
   fixture.seed_chara(31, { name: '琼', callname: '琼' });
   fixture.seed_chara(5, { name: '路人五', callname: '路人五' });
+  fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
+  fixture.era.addCharacter(0);
+  return fixture;
+}
+
+test('char_gift 自选路线：另外挑选 → 随机角色 → 性格/发色子菜单 → 决定', async () => {
+  const fixture = gift_world();
   fixture.seed_chara(0, { name: '你', callname: '你' });
+  fixture.era.addCharacter(0);
   fixture.store.set('talentname:161', '自信家');
   fixture.store.set('callname:5:-1', '路人五');
   const { char_gift } = fixture.load_module('system/ending/ending-screen');
@@ -501,9 +519,7 @@ test('char_gift 自选路线：另外挑选 → 随机角色 → 性格/发色�
 });
 
 test('char_gift 子菜单边界：性格取 0 档（慈爱）、发色取 10 档（暗金发）', async () => {
-  const fixture = create_era_fixture();
-  fixture.seed_chara(31, { name: '琼', callname: '琼' });
-  fixture.seed_chara(5, { name: '路人五', callname: '路人五' });
+  const fixture = gift_world();
   fixture.store.set('talentname:160', '慈爱');
   const { char_gift } = fixture.load_module('system/ending/ending-screen');
   // 另外挑选(1) → 性格([0]) → 选 0 → 发色([1]) → 选 10 → 决定(100) → 收下(0)
@@ -540,9 +556,7 @@ test('char_gift 发色子菜单：未显示的 11 号色仍可键入（#872：�
   // 发色界面上不显示却仍被受理，按钮集写不全它，于是把 1-11 整集写进
   // rule（先例 event-museum.js 的未显示 100）。本用例走真实 input 路径
   // 把这条路径钉住：改回默认白名单即红。
-  const fixture = create_era_fixture();
-  fixture.seed_chara(31, { name: '琼', callname: '琼' });
-  fixture.seed_chara(5, { name: '路人五', callname: '路人五' });
+  const fixture = gift_world();
   const { char_gift } = fixture.load_module('system/ending/ending-screen');
   // 另外挑选(1) → 发色([1]) → 11 → 决定(100) → 收下(0)
   fixture.set_inputs(1, 1, 11, 100, 0);
@@ -554,9 +568,7 @@ test('char_gift 发色子菜单：未显示的 11 号色仍可键入（#872：�
 
 test('char_gift 发色子菜单：1-11 之外的编号由 rule 在输入框里拦下（#872）', async () => {
   for (const typed of [12, 0, -1]) {
-    const fixture = create_era_fixture();
-    fixture.seed_chara(31, { name: '琼', callname: '琼' });
-    fixture.seed_chara(5, { name: '路人五', callname: '路人五' });
+    const fixture = gift_world();
     const { char_gift } = fixture.load_module('system/ending/ending-screen');
     fixture.set_inputs(1, 1, typed, 100, 0);
     await assert.rejects(
@@ -607,9 +619,7 @@ test('char_gift 子菜单的越界输入：引擎当场拒收（#572：选项已
   // 那八档，越界值在引擎那头被拒收、不回传游戏，该支结构性不可达
   // （有意保留，page-ability-up.js 文件头同款登记）。
   for (const picked of [8, -1]) {
-    const fixture = create_era_fixture();
-    fixture.seed_chara(31, { name: '琼', callname: '琼' });
-    fixture.seed_chara(5, { name: '路人五', callname: '路人五' });
+    const fixture = gift_world();
     fixture.store.set('talentname:160', '慈爱');
     const { char_gift } = fixture.load_module('system/ending/ending-screen');
     fixture.set_inputs(1, 0, picked);
@@ -624,9 +634,7 @@ test('char_gift 子菜单的越界输入：引擎当场拒收（#572：选项已
 test('char_gift 主菜单的越界输入：引擎当场拒收（#572：选项已按钮化）', async () => {
   // 旧行为是「非 0/1/100 的键回菜单重画」——按钮化后越界值
   // 被引擎拒收，重画支结构性不可达（有意保留）。
-  const fixture = create_era_fixture();
-  fixture.seed_chara(31, { name: '琼', callname: '琼' });
-  fixture.seed_chara(5, { name: '路人五', callname: '路人五' });
+  const fixture = gift_world();
   const { char_gift } = fixture.load_module('system/ending/ending-screen');
   fixture.set_inputs(1, 7);
   await assert.rejects(
@@ -636,9 +644,7 @@ test('char_gift 主菜单的越界输入：引擎当场拒收（#572：选项已
 });
 
 test('char_gift 终局 [2]「去要圣女」：退掉随机角色、回到预设角色的 loop 0', async () => {
-  const fixture = create_era_fixture();
-  fixture.seed_chara(31, { name: '琼', callname: '琼' });
-  fixture.seed_chara(5, { name: '路人五', callname: '路人五' });
+  const fixture = gift_world();
   const { char_gift } = fixture.load_module('system/ending/ending-screen');
   // 另外挑选(1) → 决定(100) → 终局 [2] 回预设 → [0] 收下预设
   fixture.set_inputs(1, 100, 2, 0);
@@ -664,6 +670,8 @@ test('char_gift 的种族年龄支：FLAG:5 位 12/13 为真时把 race_age_gene
   const seed = (fixture, bits) => {
     fixture.seed_chara(31, { name: '琼', callname: '琼' });
     fixture.seed_chara(5, { name: '路人五', callname: '路人五' });
+    fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
+    fixture.era.addCharacter(0);
     fixture.store.set('flag:5', bits);
     fixture.store.set('flag:26', [...RACE_TABLE_0]);
     fixture.store.set('flag:27', [...RACE_TABLE_1]);
@@ -812,6 +820,9 @@ test('贯通：出兵封顶 10000 → 结算尾触发 ending_1 → 选 0 继续�
   fixture.store.set('base:0:1', 10000);
   fixture.store.set('maxbase:0:1', 10000);
   fixture.store.set('callname:0:-1', '你');
+  // 魔王 0 真加入（真机上 resetData 建）：出兵段读 CFLAG:0:9（魔王补正）
+  fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
+  fixture.era.addCharacter(0);
   // [109] 主菜单 → 侵略画面选 [1] 出兵 → ending_1 询问选 [0] 继续
   fixture.set_inputs(109, 1, 0);
   const { run_shop } = fixture.load_module('page/page-shop');
@@ -2532,6 +2543,10 @@ test('ask 段分岔：八个 INPUT 段的两侧都走一遍（表驱动）', asy
       callname: '角色',
     });
     fixture.era.addCharacter(family === 11 ? 22 : 21);
+    // 魔王 0 真加入（真机上 resetData 建）：leave 步经 party_char_del →
+    // party_del 读 LEADER（CFLAG:533，未入队即 0 = 魔王）
+    fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
+    fixture.era.addCharacter(0);
     fixture.store.set('base:22:0', 5000);
     fixture.store.set('base:22:1', 5000);
     fixture.store.set('base:21:0', 5000);
@@ -2703,6 +2718,10 @@ test('选项步按钮化：十一处选项行都是按钮、在最后一次等�
     if (c.family === 11 || c.family === 14) {
       fixture.seed_chara(cid, { id: cid, name: '角色', callname: '角色' });
       fixture.era.addCharacter(cid);
+      // 魔王 0 真加入（真机上 resetData 建）：[1] 支离队经 party_char_del →
+      // party_del 读 LEADER（未入队即 0 = 魔王）
+      fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
+      fixture.era.addCharacter(0);
       fixture.store.set(`base:${cid}:0`, 5000);
       fixture.store.set(`base:${cid}:1`, 5000);
     }
@@ -2864,8 +2883,16 @@ test('leave 步：调教对象指针归空、TARGET/ASSI 从 FLAG:1/2 回填、�
   const { END_FAMILY } = fixture.load_module('system/ending/ending-family');
   fixture.seed_chara(22, { id: 22, name: '黑方片', callname: '黑方片' });
   fixture.seed_chara(5, { id: 5, name: '路人', callname: '路人' });
+  // party_del(5) 在 cid == leader 支里逐个清 LEADER / 仲間A / 仲間B 的队伍槽位：
+  // 5 号自己是队长（下面写 cflag:5:533 = 5），仲間A/B 是 1 与 0——真机上这些
+  // 角色都在名单里（魔王 0 由 resetData 建），开发套件的具名访问器读未加入的
+  // 角色与引擎一样抛 TypeError。
+  fixture.seed_chara(1, { id: 1, name: '仲間A', callname: '仲間A' });
+  fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
   fixture.era.addCharacter(22);
   fixture.era.addCharacter(5);
+  fixture.era.addCharacter(1);
+  fixture.era.addCharacter(0);
   fixture.store.set('flag:1', 22); // 上次调教对象 = 黑方片
   fixture.store.set('flag:2', 5); // 上次助手 = 路人
   fixture.store.set('exflag:2803', 5); // 失控奴隶号（party_char_del 的实参）

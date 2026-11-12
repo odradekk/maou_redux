@@ -1729,6 +1729,10 @@ test('show_equip_1：失神中的条件是 TFLAG:899 >= 1', () => {
 
 function data_fixture({ cflags = {}, ex_talents = {}, items = {} } = {}) {
   const fixture = create_era_fixture();
+  // 魔王 0 真加入（真机上 resetData 建）：使役魔兽一段经 monster_data 读
+  // 魔王等级（CFLAG:0:9）
+  fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
+  fixture.era.addCharacter(0);
   fixture.store.set('callname:0:-1', '魔王');
   fixture.store.set('callname:7:-1', '考狄利亚');
   for (const [index, value] of Object.entries(cflags)) {
@@ -2163,6 +2167,10 @@ test('show_talent_condition：性豪条件列四枚强化素质', () => {
 
 function main_fixture({ flag5 = 0, cflags = {}, talents = {} } = {}) {
   const fixture = create_era_fixture();
+  // 魔王 0 真加入（理由同 data_fixture），献祭后代时也经 party_char_del
+  // 读 LEADER 的同伴位
+  fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
+  fixture.era.addCharacter(0);
   fixture.store.set('flag:5', flag5);
   fixture.store.set('callname:7:-1', '考狄利亚');
   for (const [index, value] of Object.entries(cflags)) {

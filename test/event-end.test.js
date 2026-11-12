@@ -18,6 +18,11 @@ const { join_slave_chara } = require('./helpers/chara');
 // 体力/气力由用例另置。tflag/palam/ex 寻址有夹具防护，先 beginTrain 开表。
 // #47 起 EVENTEND 内联珠结算（读键 + 一枚输入退出交互循环）。
 function seed_world(fixture, { assi = -1 } = {}) {
+  // 魔王 0 真加入（真机上 resetData 按 GameBase【初始角色编号】建）：死亡
+  // 删除分支经 party_char_del → party_del 读 LEADER（CFLAG:533，未入队即
+  // 0 = 魔王）的同伴位，未加入的角色读具名属性与引擎一样抛 TypeError
+  fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
+  fixture.era.addCharacter(0);
   join_slave_chara(fixture, 31, '温妮');
   if (assi >= 0) {
     join_slave_chara(fixture, assi, '助手桑');

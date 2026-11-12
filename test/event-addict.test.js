@@ -27,6 +27,9 @@ function seq(values) {
 function seed_world() {
   const fixture = create_era_fixture();
   preset_chara_0(fixture);
+  // 魔王 0 真加入：陷落支经 party_char_del → party_del 读 LEADER（未入队
+  // 即 0 = 魔王）的同伴位
+  fixture.era.addCharacter(0);
   join_slave_chara(fixture, 31, '琼');
   return fixture;
 }

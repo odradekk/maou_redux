@@ -902,8 +902,25 @@ function load_rand(fixture) {
   return fixture.load_module('system/chara/chara-make').rand_chara_make;
 }
 
+/**
+ * 把魔王 0 真加入名单。
+ *
+ * 真机上它由引擎的 resetData 按 GameBase【初始角色编号】建、恒在场；招募流程
+ * 收尾时开角色信息屏，「使役魔兽」一段经 monster_data 读魔王等级
+ * （CFLAG:0:9），除名时又经 party_char_del → party_del 读 LEADER（未入队即
+ * 0 = 魔王）的同伴位——开发套件的具名访问器读未加入的角色与引擎一样抛
+ * TypeError（夹具 raw() 段），所以世界照真机建。
+ * @param {object} fixture 夹具
+ * @returns {void}
+ */
+function join_master(fixture) {
+  fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
+  fixture.era.addCharacter(0);
+}
+
 test('rand_chara_make：挑中空位——新建、加 EX、chara_make 收尾并返回新角色号', async () => {
   const fixture = create_era_fixture();
+  join_master(fixture);
   seed_hero(fixture, 2);
   seed_hero(fixture, 9);
   fixture.era.addCharacter(9); // 编制**不连号**（#487）：只有 9 号先在场
@@ -916,8 +933,8 @@ test('rand_chara_make：挑中空位——新建、加 EX、chara_make 收尾并
   assert.equal(result, 2, '返回值 = 新角色的角色号');
   assert.deepEqual(
     fixture.era.getAddedCharacters(),
-    [2, 9],
-    'addCharacter 落在 2 号位',
+    [0, 2, 9],
+    'addCharacter 落在 2 号位（魔王 0 本就在名单里）',
   );
   assert.equal(fixture.store.get('cflag:2:1'), 0, 'CFLAG:1 归零');
   assert.equal(
@@ -966,12 +983,13 @@ test('rand_chara_make：挑中空位——新建、加 EX、chara_make 收尾并
 
 test('rand_chara_make：掷勇者位的上界恒 16（位号 1-16）', async () => {
   const fixture = create_era_fixture();
+  join_master(fixture);
   seed_hero(fixture, 5);
   answer_sequence(fixture, [100, 2]);
   const cap = seq_capture([4]);
   await load_rand(fixture)(cap, not_overseas);
   assert.equal(cap.bounds[0], 16, '第一掷上界 16 → 位号 1-16');
-  assert.deepEqual(fixture.era.getAddedCharacters(), [5], '4 + 1 = 5');
+  assert.deepEqual(fixture.era.getAddedCharacters(), [0, 5], '4 + 1 = 5');
   // add_chara_ex 拿的同样是角色号（5）。编制为空时「已加入数 - 1」
   // 是 0，而 0 号会分到魔王的专属初始化（add_chara_ex 的分发条件对 0 号
   // 放行）、会给魔王点亮 EX 素质——这里顺手钉住「不落到那个值」（#487）
@@ -1113,6 +1131,7 @@ test('rand_chara_make：异国分支不跑非异国段——名单带来的性�
 
 test('rand_chara_make：异国分支换人重挑不把上一位的发色落到新导入的角色上', async () => {
   const fixture = create_era_fixture();
+  join_master(fixture);
   seed_hero(fixture, 5);
   seed_hero(fixture, 6);
   seed_hero(fixture, 9);
@@ -1165,6 +1184,7 @@ test('rand_chara_make：16 位占满时早退（只掷一次、返回 0）', asy
 
 test('rand_chara_make：换人支删除刚加的角色并回到重挑', async () => {
   const fixture = create_era_fixture();
+  join_master(fixture);
   seed_hero(fixture, 1);
   seed_hero(fixture, 2);
   seed_hero(fixture, 9);
@@ -1174,14 +1194,15 @@ test('rand_chara_make：换人支删除刚加的角色并回到重挑', async ()
   const result = await load_rand(fixture)(seq_capture([1]), not_overseas);
   assert.deepEqual(
     fixture.era.getAddedCharacters(),
-    [1, 9],
-    '第一位（2 号）被删除，重挑到 1 号',
+    [0, 1, 9],
+    '第一位（2 号）被删除，重挑到 1 号（魔王 0 本就在名单里）',
   );
   assert.equal(result, 1, '返回重挑后的角色号');
 });
 
 test('rand_chara_make：TARGET/ASSI 复位——FLAG:1/2 搬迁是恒空操作、原样保留（#565 返工）', async () => {
   const fixture = create_era_fixture();
+  join_master(fixture);
   seed_hero(fixture, 3);
   seed_hero(fixture, 9);
   fixture.era.addCharacter(9); // 编制**不连号**（#487）

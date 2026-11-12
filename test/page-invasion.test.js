@@ -47,9 +47,13 @@ function make_world(
   fixture.store.set('exflag:99', prestige); // EX_FLAG:99 威望（EVENTFIRST 播种 70）
   fixture.store.set('flag:81', invasion); // FLAG:81 人间界侵攻度
   fixture.store.set('flag:82', fallen); // FLAG:82 人间界陷落
-  // addCharacter(0) 的引擎侧数据层赋值（夹具注释见 era-fixture 的
-  // addCharacter 段）：魔王存档名 %SAVESTR:MASTER% 的承载（#5 决议）
-  fixture.store.set('callname:0:-1', '你');
+  // 魔王真加入：引擎在 resetData 里按 GameBase【初始角色编号】建角色 0（#848），
+  // 真机上它恒在场。开发套件的具名访问器按角色读 cflag/base/exp，未加入的
+  // 角色读具名属性与引擎一样抛 TypeError（夹具 raw() 段），只往 store 里塞
+  // 键不足以建出逐角色行——所以这里走 addCharacter，顺带落 callname 的
+  // %SAVESTR:MASTER% 承载（#5 决议）。
+  fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
+  fixture.era.addCharacter(0);
 }
 
 /**
@@ -465,10 +469,13 @@ test('[0] 结算段 5% 抓捕：命中调 get_enemy，人数上限早退才有�
   const fixture = create_era_fixture();
   make_world(fixture);
   fixture.store.set('item:hold:100', 600);
-  // 已加入数顶到 61 只（> 60）：get_enemy 的人数上限首支（FLAG:82 == 0 且
+  // 已加入数顶到 61（> 60）：get_enemy 的人数上限首支（FLAG:82 == 0 且
   // CHARANUM > 60）早退 0 → 才有「犒赏士兵」那一行。
-  // 少于 61 只会走进 CHAR_MAKE——本用例的世界没有预设数据，那条路跑不下去
-  for (let id = 1; id <= 61; id += 1) {
+  // CHARANUM 数的是全部已加入角色，真机上魔王 0 也在其中（resetData 建），
+  // 所以魔王之外再补 60 只正好 61。
+  // 少于 61 只（含魔王）会走进 CHAR_MAKE——本用例的世界没有预设数据，
+  // 那条路跑不下去
+  for (let id = 1; id <= 60; id += 1) {
     fixture.chara_no.push(id);
   }
   assert.equal(await run_invasion(fixture, [0], knob({ 100: 0 })), 1);
@@ -487,7 +494,7 @@ test('[0] 结算段 5% 抓捕：命中调 get_enemy，人数上限早退才有�
   const edge = create_era_fixture();
   make_world(edge);
   edge.store.set('item:hold:100', 600);
-  for (let id = 1; id <= 61; id += 1) {
+  for (let id = 1; id <= 60; id += 1) {
     edge.chara_no.push(id);
   }
   assert.equal(await run_invasion(edge, [0], knob({ 100: 5 })), 1);
@@ -2241,6 +2248,10 @@ const SEIEI_PRESETS = {
 /** 预置并准备精锐部队的角色（战斗体里才 ADDCHARA） */
 function seed_seiei(fixture, id) {
   const p = SEIEI_PRESETS[id];
+  // 退场经 seiei_cleanup → party_char_del → party_del：它读 LEADER
+  // （CFLAG:533，精锐部队没设过即 0 = 魔王）的同伴位。真机上魔王 0 恒在
+  // （resetData 按 GameBase【初始角色编号】建），世界照真机建。
+  join_chara(fixture, 0, '你');
   fixture.seed_chara(id, { id, name: '精锐部队', callname: '精锐部队' });
   fixture.store.set(`base:${id}:0`, p.hp);
   fixture.store.set(`maxbase:${id}:0`, p.hp);
@@ -2249,6 +2260,23 @@ function seed_seiei(fixture, id) {
   fixture.store.set(`cflag:${id}:11`, p.atk);
   fixture.store.set(`cflag:${id}:12`, p.def);
   fixture.store.set(`cflag:${id}:9`, p.lv);
+}
+
+/**
+ * 预置并真的加入一个角色。
+ *
+ * 开发套件的具名访问器按角色读数据层（`EraChara.get(id).cflag.level` →
+ * `raw().data.cflag[id][9]`），未加入的角色没有逐角色行，读具名属性与引擎
+ * 一样抛 TypeError（era-fixture 的 raw() 段）——只往 store 里塞 callname
+ * 不足以建出行。真机上这些角色都是在本局里加入过的，所以世界照真机建。
+ * @param {object} fixture 夹具
+ * @param {number} id 角色号
+ * @param {string} name 姓名（同时作呼び名）
+ * @returns {void}
+ */
+function join_chara(fixture, id, name) {
+  fixture.seed_chara(id, { id, name, callname: name });
+  fixture.era.addCharacter(id);
 }
 
 /** 预置一名可带兵出战的勇者（[2] 路线的候选） */
@@ -2300,9 +2328,8 @@ test('inv_death_check：精锐部队的三条退场条件', async () => {
   // 每条都跟着一个 PRINTL 空行
   const run = async (elite_hp, elite_mp) => {
     const fixture = create_era_fixture();
-    fixture.store.set('callname:5:-1', '勇者5');
-    fixture.store.set('callname:9:-1', '精锐部队');
-    fixture.store.set('callname:9:-2', '精锐部队');
+    join_chara(fixture, 5, '勇者5');
+    join_chara(fixture, 9, '精锐部队');
     fixture.store.set('base:5:0', 500);
     fixture.store.set('base:5:1', 500);
     fixture.store.set('base:9:0', elite_hp);
@@ -2344,11 +2371,9 @@ test('inv_death_check：精锐部队的三条退场条件', async () => {
 test('inv_death_check：魔王侧四条退场条件与俘虏支', async () => {
   const run = async (setup) => {
     const fixture = create_era_fixture();
-    fixture.store.set('callname:0:-1', '魔王');
-    fixture.store.set('callname:0:-2', '魔王');
-    fixture.store.set('callname:5:-1', '勇者5');
-    fixture.store.set('callname:9:-1', '精锐部队');
-    fixture.store.set('callname:9:-2', '精锐部队');
+    join_chara(fixture, 0, '魔王');
+    join_chara(fixture, 5, '勇者5');
+    join_chara(fixture, 9, '精锐部队');
     fixture.store.set('base:9:0', 500); // 精锐部队完好
     fixture.store.set('base:9:1', 500);
     fixture.store.set('base:0:0', 5000); // 魔王体力
@@ -2407,12 +2432,9 @@ test('inv_death_check：魔王侧四条退场条件与俘虏支', async () => {
 test('inv_death_check 的 CFLAG 状态写入：俘虏支 9 / 逃回支 0', async () => {
   const run = async (setup) => {
     const fixture = create_era_fixture();
-    fixture.store.set('callname:0:-1', '魔王');
-    fixture.store.set('callname:0:-2', '魔王');
-    fixture.store.set('callname:7:-1', '勇者7');
-    fixture.store.set('callname:7:-2', '勇者7');
-    fixture.store.set('callname:9:-1', '精锐部队');
-    fixture.store.set('callname:9:-2', '精锐部队');
+    join_chara(fixture, 0, '魔王');
+    join_chara(fixture, 7, '勇者7');
+    join_chara(fixture, 9, '精锐部队');
     fixture.store.set('base:9:0', 500);
     fixture.store.set('base:9:1', 500);
     fixture.store.set('base:7:0', 5000);
@@ -2458,8 +2480,7 @@ test('invasion_event_seiei 战斗体：防御型 18 与血量/攻防套算', asy
   // 直驱该分支：SINKOU 按引用传入（`#DIM REF SINKOU`，这里把它加进勇者体力）
   fixture.store.set('flag:81', 5000); // FLAG:AREA >= 5000 才开打
   fixture.store.set('flag:82', 0);
-  fixture.store.set('callname:1:-1', '勇者1');
-  fixture.store.set('callname:1:-2', '勇者1');
+  join_chara(fixture, 1, '勇者1');
   fixture.store.set('base:1:0', 20000);
   fixture.store.set('maxbase:1:0', 30000);
   fixture.store.set('base:1:1', 20000);
@@ -2553,8 +2574,7 @@ test('invasion_event_seiei 战斗体：精锐反击的伤害 ×5 与防御折半
   const fixture = create_era_fixture();
   fixture.store.set('flag:81', 5000);
   fixture.store.set('flag:82', 0);
-  fixture.store.set('callname:1:-1', '勇者1');
-  fixture.store.set('callname:1:-2', '勇者1');
+  join_chara(fixture, 1, '勇者1');
   fixture.store.set('base:1:0', 600);
   fixture.store.set('maxbase:1:0', 20000);
   fixture.store.set('base:1:1', 600);
@@ -2589,8 +2609,7 @@ test('invasion_event_seiei 战斗体：第一条退场检查带实参、判精�
   const fixture = create_era_fixture();
   fixture.store.set('flag:81', 5000);
   fixture.store.set('flag:82', 0);
-  fixture.store.set('callname:1:-1', '勇者1');
-  fixture.store.set('callname:1:-2', '勇者1');
+  join_chara(fixture, 1, '勇者1');
   fixture.store.set('base:1:0', 20000);
   fixture.store.set('maxbase:1:0', 20000);
   fixture.store.set('base:1:1', 20000);
@@ -2629,8 +2648,7 @@ test('invasion_event_seiei 战斗体：攻击型 19 与 FLAG:60 的等级补正'
   fixture.store.set('flag:81', 5000);
   fixture.store.set('flag:82', 0);
   fixture.store.set('flag:60', 10); // 勇者基础等级补正
-  fixture.store.set('callname:1:-1', '勇者1');
-  fixture.store.set('callname:1:-2', '勇者1');
+  join_chara(fixture, 1, '勇者1');
   fixture.store.set('base:1:0', 20000);
   fixture.store.set('maxbase:1:0', 20000);
   fixture.store.set('base:1:1', 20000);
@@ -2648,6 +2666,8 @@ test('invasion_event_seiei 战斗体：攻击型 19 与 FLAG:60 的等级补正'
   const { invasion_event_seiei } = fixture.load_module(
     'system/invasion/invasion-event',
   );
+  // 世界构造本身也要 addCharacter（勇者 1 与魔王 0 真加入），只算本段的调用
+  const setup_calls = fixture.calls.length;
   // RAND:2 == 1 → 攻击型 19
   assert.equal(await invasion_event_seiei(81, 82, 2, state, seq([2001, 1])), 0);
 
@@ -2664,6 +2684,7 @@ test('invasion_event_seiei 战斗体：攻击型 19 与 FLAG:60 的等级补正'
   assert.equal(fixture.store.get('base:19:1'), 7500 + 100, 'BASE:1');
   assert.deepEqual(
     fixture.calls
+      .slice(setup_calls)
       .filter((call) => call.api === 'addCharacter')
       .map((c) => c.args[0]),
     [19],
@@ -2683,8 +2704,7 @@ test('invasion_event_seiei 战斗体：REPEAT 21 打满 → 战线崩溃 RETURN 
   const fixture = create_era_fixture();
   fixture.store.set('flag:81', 5000);
   fixture.store.set('flag:82', 0);
-  fixture.store.set('callname:1:-1', '勇者1');
-  fixture.store.set('callname:1:-2', '勇者1');
+  join_chara(fixture, 1, '勇者1');
   fixture.store.set('base:1:0', 20000);
   fixture.store.set('maxbase:1:0', 20000);
   fixture.store.set('base:1:1', 20000);
@@ -3011,10 +3031,8 @@ function make_arm_world({ sindo = 0, progress = 0, money = 0, ex95 = 0 } = {}) {
   fixture.store.set('exflag:95', ex95); // EX_FLAG:95 勇者击破位域
   fixture.store.set('flag:10004', money); // MONEY
   fixture.store.set('exflag:4444', money); // EX_FLAG:4444
-  fixture.store.set('callname:1:-1', '勇者1');
-  fixture.store.set('callname:1:-2', '勇者1');
-  fixture.store.set('callname:0:-1', '你');
-  fixture.store.set('callname:0:-2', '你');
+  join_chara(fixture, 1, '勇者1');
+  join_chara(fixture, 0, '你');
   fixture.store.set('base:1:0', 5000);
   fixture.store.set('maxbase:1:0', 5000);
   fixture.store.set('base:1:1', 5000);
@@ -3980,6 +3998,9 @@ test('CHALLENGE 的四个地区名表：AREA 决定称呼表与复现职业', as
       const { invasion_event_challenge } = fixture.load_module(
         'system/invasion/invasion-event',
       );
+      // 世界构造本身也要 addCharacter（勇者 1 与魔王 0 真加入），只算本段的
+      // 调用：基线之后新增的才是被测分支的 ADDCHARA
+      const setup_calls = fixture.calls.length;
       fixture.set_inputs(1, 1); // [1] 召唤魔王应战 → [1] 使用氪金道具
       await invasion_event_challenge(
         area,
@@ -3990,6 +4011,7 @@ test('CHALLENGE 的四个地区名表：AREA 决定称呼表与复现职业', as
       );
       assert.deepEqual(
         fixture.calls
+          .slice(setup_calls)
           .filter((call) => call.api === 'addCharacter')
           .map((call) => call.args[0]),
         [expected],
@@ -4009,8 +4031,7 @@ test('invasion_event_seiei 先制攻撃：会心/普通/忍术三档与伤害套
     const fixture = create_era_fixture();
     fixture.store.set('flag:81', 5000);
     fixture.store.set('flag:82', 0);
-    fixture.store.set('callname:1:-1', '勇者1');
-    fixture.store.set('callname:1:-2', '勇者1');
+    join_chara(fixture, 1, '勇者1');
     fixture.store.set('base:1:0', 20000);
     fixture.store.set('maxbase:1:0', 20000);
     fixture.store.set('base:1:1', 20000);
@@ -4183,11 +4204,12 @@ test('CHALLENGE 的档界与人数上限边界', async () => {
   assert.equal(draw.ret, 0, 'RETURN 0');
   assert.equal(draw.fixture.store.get('base:1:0'), 500, 'LOCAL == 5 落此档');
 
-  // 人数上限的第一支是 `CHARANUM > 60`：正好 60 人不触发
+  // 人数上限的第一支是 `CHARANUM > 60`：正好 60 人不触发。CHARANUM 含魔王 0
+  // （真机上它由 resetData 建），所以魔王之外再加 59 只。
   const exact60 = await open(
     [
       (f) => {
-        for (let id = 1; id <= 60; id += 1) {
+        for (let id = 1; id <= 59; id += 1) {
           f.seed_chara(id, { id, name: `角色${id}`, callname: `角色${id}` });
           f.era.addCharacter(id);
         }
@@ -4209,7 +4231,7 @@ test('CHALLENGE 的档界与人数上限边界', async () => {
   const over60 = await open(
     [
       (f) => {
-        for (let id = 1; id <= 61; id += 1) {
+        for (let id = 1; id <= 60; id += 1) {
           f.seed_chara(id, { id, name: `角色${id}`, callname: `角色${id}` });
           f.era.addCharacter(id);
         }
@@ -4220,7 +4242,7 @@ test('CHALLENGE 的档界与人数上限边界', async () => {
   assert.equal(
     over60.fixture.store.get('exflag:95'),
     0,
-    '61 人触发 → LOCAL = 0',
+    '61 人（含魔王）触发 → LOCAL = 0',
   );
   assert(
     over60.fixture.text_lines().includes('金钱-3000。'),

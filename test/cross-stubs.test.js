@@ -264,6 +264,9 @@ test('ENEMY_DATA_CHECK：保留未绑定局部变量造成的无操作行为', (
 
 test('MONSTER_DATA：1000-1009 接入 ENEMY_DATA_CHECK 且不回退成骷髅', () => {
   const fixture = create_era_fixture();
+  // 魔王 0 真加入（真机上 resetData 建）：monster_data 按它读等级与精英素质
+  fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
+  fixture.era.addCharacter(0);
   fixture.store.set('flag:400', 1);
   const { monster_data } = fixture.load_module('system/dungeon/monster-data');
 
@@ -276,6 +279,8 @@ test('MONSTER_DATA：1000-1009 接入 ENEMY_DATA_CHECK 且不回退成骷髅', (
 
 test('MONSTER_DATA：1010-1999 仍走 ENEMY_DATA_CHECK，不回退成骷髅', () => {
   const fixture = create_era_fixture();
+  fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
+  fixture.era.addCharacter(0);
   const { monster_data } = fixture.load_module('system/dungeon/monster-data');
 
   monster_data(1010, 5, -1, -1, -1, () => 0);

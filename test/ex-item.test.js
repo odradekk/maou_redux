@@ -21,6 +21,10 @@ function seq_rand(values, fallback = 1) {
 
 function setup() {
   const fixture = create_era_fixture();
+  // 魔王 0 真加入（真机上 resetData 建）：TARGET 未指向别人时城镇援助
+  // 按它读善恶值（CFLAG:151）与等级，开发套件的具名访问器要求角色已在场
+  fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
+  fixture.era.addCharacter(0);
   fixture.seed_chara(1, { id: 1, name: '阿尔', callname: '阿尔' });
   fixture.era.addCharacter(1);
   fixture.store.set('base:1:0', 500);

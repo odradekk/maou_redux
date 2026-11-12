@@ -43,6 +43,9 @@ async function run_plain(fixture, name, area, point, rand) {
 
 test('分发：三列各抽一怪、写 E: 列、按凌辱类型调旁白、列间空行', async () => {
   const fixture = create_era_fixture();
+  // 魔王 0 真加入（真机上 resetData 建）：monster_data 按它定怪物等级
+  fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
+  fixture.era.addCharacter(0);
   fixture.store.set('item:hold:110', 1); // 兽人（110-199 段的第一个），持有 1 只
   fixture.store.set('itemname:110', '兽人');
   const mod = fixture.load_module('system/invasion/invasion-ravish');
@@ -73,6 +76,8 @@ test('分发：三列各抽一怪、写 E: 列、按凌辱类型调旁白、列�
 
 test('分发：全灭回退到骷髅 190（凌辱类型 0）时不打印开场行、也不调旁白', async () => {
   const fixture = create_era_fixture();
+  fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
+  fixture.era.addCharacter(0);
   // 不持有 110 → MONSTER_DATA 的「全滅」早退把它换成 190 骷髅（凌辱类型 0），
   // 本用例覆盖的就是这条回退路径；就地清零检查在 ere 侧不可达（依据见
   // invasion-ravish.js 文件头），没有用例守着它。
@@ -95,6 +100,9 @@ test('分发：全灭回退到骷髅 190（凌辱类型 0）时不打印开场�
 test('分发：侵攻点 ÷5000 归一——门槛按归一后的档位开合', async () => {
   const make = () => {
     const fixture = create_era_fixture();
+    // 魔王 0 真加入（真机上 resetData 建）：monster_data 按它定怪物等级
+    fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
+    fixture.era.addCharacter(0);
     fixture.store.set('item:hold:110', 1);
     fixture.store.set('itemname:110', '兽人');
     return fixture;
