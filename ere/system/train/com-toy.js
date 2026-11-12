@@ -172,8 +172,7 @@ function shower_clean(cid) {
 }
 
 /** com10。 */
-async function com10() {
-  const target = era_flag.target;
+async function com10({ target, player }) {
   era.print('振动宝石');
   await train_message_b();
   add_lose(target, 0, 10);
@@ -181,13 +180,12 @@ async function com10() {
   set_src(target, 12, 120);
   set_src(target, 14, 70);
   set_src(target, 0, ladder(target, 0, [200, 400, 900, 1600, 2400, 3000]));
-  same_sex_exp(target, era_flag.player, 1);
+  same_sex_exp(target, player, 1);
   return 1;
 }
 
 /** com12。 */
-async function com12() {
-  const target = era_flag.target;
+async function com12({ target, player }) {
   era.print('振动杖');
   await train_message_b();
   add_lose(target, 0, 30);
@@ -195,13 +193,12 @@ async function com12() {
   set_src(target, 12, 120);
   set_src(target, 14, 400);
   set_src(target, 0, ladder(target, 0, [2000, 2500, 3000, 3300, 3600, 3800]));
-  same_sex_exp(target, era_flag.player, 1);
+  same_sex_exp(target, player, 1);
   return 1;
 }
 
 /** com11：蠕虫装着/解除；返回 0 是回合取消。 */
-async function com11() {
-  const target = era_flag.target;
+async function com11({ target, player }) {
   if ((await confirm_lost_virgin()) === 0) {
     return 0;
   }
@@ -270,7 +267,7 @@ async function com11() {
           : 4;
   chara(target).dungeon.私处经验 += gain;
   era.print(`私处经验+${gain}`);
-  if (!tal(target, 122) && !tal(era_flag.player, 122)) {
+  if (!tal(target, 122) && !tal(player, 122)) {
     era.print('百合经验+3');
     chara(target).train.百合经验 += 3;
   }
@@ -281,8 +278,7 @@ async function com11() {
 }
 
 /** com13：肛门虫装着/解除；返回 0 是满月输入取消。 */
-async function com13() {
-  const target = era_flag.target;
+async function com13({ target, player }) {
   era.print(tq(target, 90) ? '肛门触手' : '肛门虫');
   if (
     era_flag.date === 15 &&
@@ -365,7 +361,7 @@ async function com13() {
           : 4;
   chara(target).dungeon.肛门经验 += gain;
   era.print(`肛门经验+${gain}`);
-  same_sex_exp(target, era_flag.player, 1);
+  same_sex_exp(target, player, 1);
   set_tq(target, 13, 1 - tq(target, 13));
   reset_tentacle_turn(target);
   tentacle_stain(target, 13, 4);
@@ -373,8 +369,7 @@ async function com13() {
 }
 
 /** com14。 */
-async function com14() {
-  const target = era_flag.target;
+async function com14({ target, player }) {
   era.print(tq(target, 90) ? '触手凌辱阴蒂' : '电动阴蒂夹');
   await train_message_b();
   add_lose(target, 0, 10);
@@ -382,7 +377,7 @@ async function com14() {
   set_src(target, 12, 120);
   set_src(target, 14, 70);
   set_src(target, 0, ladder(target, 0, [200, 400, 900, 1600, 2400, 3000]));
-  if (!tal(target, 122) && !tal(era_flag.player, 122)) {
+  if (!tal(target, 122) && !tal(player, 122)) {
     era.print('百合经验+1');
     chara(target).train.百合经验 += 1;
   }
@@ -393,8 +388,7 @@ async function com14() {
 }
 
 /** com15。 */
-async function com15() {
-  const target = era_flag.target;
+async function com15({ target, player }) {
   era.print(tq(target, 90) ? '触手凌辱乳头' : '乳头夹');
   await train_message_b();
   add_lose(target, 0, 20);
@@ -402,10 +396,10 @@ async function com15() {
   set_src(target, 12, 120);
   set_src(target, 14, 70);
   let a = ladder(target, 1, [100, 300, 800, 1500, 2300, 2900]);
-  if (tal(era_flag.player, 131)) {
+  if (tal(player, 131)) {
     set_src(target, 17, times(src(target, 17), 1.2));
   }
-  if (tal(era_flag.player, 132)) {
+  if (tal(player, 132)) {
     set_src(target, 17, times(src(target, 17), 1.2));
   }
   if (tal(target, 110)) {
@@ -417,7 +411,7 @@ async function com15() {
     a = times(a, 0.6);
   }
   set_src(target, 17, src(target, 17) + a);
-  same_sex_exp(target, era_flag.player, 1);
+  same_sex_exp(target, player, 1);
   set_tq(target, 15, 1 - tq(target, 15));
   reset_tentacle_turn(target);
   tentacle_stain(target, 15, 5);
@@ -425,8 +419,7 @@ async function com15() {
 }
 
 /** com16。 */
-async function com16() {
-  const target = era_flag.target;
+async function com16({ target, player }) {
   era.print(tq(target, 90) ? '触手榨乳' : '榨乳器');
   await train_message_b();
   add_lose(target, 0, 50);
@@ -454,7 +447,7 @@ async function com16() {
     set_src(target, 6, times(src(target, 6), 1.5));
   }
   set_src(target, 17, src(target, 17) + a);
-  same_sex_exp(target, era_flag.player, 1);
+  same_sex_exp(target, player, 1);
   set_tq(target, 16, 1 - tq(target, 16));
   reset_tentacle_turn(target);
   tentacle_stain(target, 16, 5);
@@ -462,8 +455,7 @@ async function com16() {
 }
 
 /** com17。 */
-async function com17() {
-  const target = era_flag.target;
+async function com17({ target, player }) {
   era.print(tq(target, 90) ? '触手凌辱阴茎' : '飞机杯');
   await train_message_b();
   add_lose(target, 0, 10);
@@ -471,7 +463,7 @@ async function com17() {
   set_src(target, 12, 120);
   set_src(target, 14, 70);
   set_src(target, 0, ladder(target, 0, [200, 400, 900, 1600, 2400, 3000]));
-  same_sex_exp(target, era_flag.player, 1);
+  same_sex_exp(target, player, 1);
   set_tq(target, 17, 1 - tq(target, 17));
   reset_tentacle_turn(target);
   tentacle_stain(target, 17, 3);
@@ -479,8 +471,7 @@ async function com17() {
 }
 
 /** com18。 */
-async function com18() {
-  const target = era_flag.target;
+async function com18({ target, player }) {
   era.print('淋浴');
   await train_message_b();
   add_lose(target, 1, 10);
@@ -507,15 +498,14 @@ async function com18() {
     set_src(target, 13, times(src(target, 13), 1.5));
     set_src(target, 15, times(src(target, 15), 2));
   }
-  same_sex_exp(target, era_flag.player, 1);
+  same_sex_exp(target, player, 1);
   set_tq(target, 18, 1 - tq(target, 18));
   shower_clean(target);
   return 1;
 }
 
 /** com19。 */
-async function com19() {
-  const target = era_flag.target;
+async function com19({ target }) {
   era.print('肛珠');
   await train_message_b();
   add_lose(target, 0, 60);
