@@ -53,9 +53,9 @@
 'use strict';
 
 const era = require('#/era-electron');
+const EraChara = require('#/era-utils/era-chara');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
-const { chara } = require('#/facade/chara');
 const { karma } = require('#/system/chara/chara-stats');
 // 四个 _AUTO 变体的真身在 train 域；测试在本文件的模块对象上替换导出，
 // 故经模块对象取用（读属性发生在调用期）。
@@ -76,12 +76,12 @@ const campaign_trap_family = new DispatchFamily('CAMPAIGN_TRAP', [1]);
 
 /** 名字承载（#5 决议；savestr 通道不存在，文件头） */
 function name_of(cid) {
-  return era.get(`callname:${cid}:-1`) ?? '';
+  return EraChara.get(cid).name ?? '';
 }
 
 /** 指定 CFLAG 位是否立起（CFLAG:503 位域，文件头） */
 function cbit(cid, idx, bit) {
-  return ((era.get(`cflag:${cid}:${idx}`) || 0) & bit) !== 0;
+  return (EraChara.get(cid).cflag.get(idx) & bit) !== 0;
 }
 
 // —— 战役陷阱槽（#469 起族真身）——
@@ -172,7 +172,7 @@ function trap_price(p) {
  */
 async function dungeon_trap(a, tries, rand, ctx) {
   const rand_n = rand ?? default_rand;
-  const settings = era.get('flag:5') || 0;
+  const settings = era_flag.game_settings;
   const show = (settings & 32) !== 0;
 
   // SIF D:4 <= 0 → D:4 = 1
@@ -181,12 +181,12 @@ async function dungeon_trap(a, tries, rand, ctx) {
   // FOR TRAP_COUNT, 0, D:4
   for (let trap_count = 0; trap_count < d4; trap_count += 1) {
     // 迎撃中？
-    if (chara(a).invasion.状态 === 3) {
+    if (EraChara.get(a).cflag.state === 3) {
       await slave_trap_set(a);
     }
 
     // 侵攻中の勇者？（2 = 侵攻 / 12 = 战役；迎击 3 在上一行已处理）
-    const place = chara(a).invasion.状态;
+    const place = EraChara.get(a).cflag.state;
     if (place !== 2 && place !== 12) {
       return ctx;
     }
@@ -195,16 +195,16 @@ async function dungeon_trap(a, tries, rand, ctx) {
     // CFLAG:A:501 是现在的阶层
 
     // 陷阱がＡにあるか？
-    let trap_num = chara(a).dungeon.侵攻阶层 + 299;
-    let trap_id = era.get(`flag:${trap_num}`) || 0;
+    let trap_num = EraChara.get(a).cflag.invasion_floor + 299;
+    let trap_id = era_flag.get(trap_num);
     if (place === 12) {
       trap_id = await campaign_trap(trap_num);
     }
 
     // Ａになければ陷阱がＢにあるか？
     if (trap_id < 0) {
-      trap_num = chara(a).dungeon.侵攻阶层 + 309;
-      trap_id = era.get(`flag:${trap_num}`) || 0;
+      trap_num = EraChara.get(a).cflag.invasion_floor + 309;
+      trap_id = era_flag.get(trap_num);
       if (place === 12) {
         trap_id = await campaign_trap(trap_num);
       }
@@ -212,15 +212,15 @@ async function dungeon_trap(a, tries, rand, ctx) {
 
     // $TRAP_LOOP（TRAP_NUM += 10 → < 330 则回循环头）
     for (;;) {
-      trap_id = era.get(`flag:${trap_num}`) || 0;
+      trap_id = era_flag.get(trap_num);
       if (place === 12) {
         trap_id = await campaign_trap(trap_num);
       }
 
       // 陷阱がＣにあるか？
       if (trap_id < 0) {
-        trap_num = chara(a).dungeon.侵攻阶层 + 319;
-        trap_id = era.get(`flag:${trap_num}`) || 0;
+        trap_num = EraChara.get(a).cflag.invasion_floor + 319;
+        trap_id = era_flag.get(trap_num);
         if (place === 12) {
           trap_id = await campaign_trap(trap_num);
         }
@@ -233,8 +233,8 @@ async function dungeon_trap(a, tries, rand, ctx) {
       let trap_result = 0;
 
       // 同一罠発動による回避率上昇 / 罠回避率の減少
-      let c512 = era.get(`cflag:${a}:512`) || 0;
-      const c513 = era.get(`cflag:${a}:513`) || 0;
+      let c512 = EraChara.get(a).cflag.trap_avoid_bonus;
+      const c513 = EraChara.get(a).cflag.last_trap_id;
       if (c513 === trap_id) {
         c512 += 1;
       }
@@ -243,7 +243,7 @@ async function dungeon_trap(a, tries, rand, ctx) {
       }
 
       // 記憶リセット（罠の回避や失敗で連鎖が途切れるように）
-      era.set(`cflag:${a}:513`, 0);
+      EraChara.get(a).cflag.last_trap_id = 0;
 
       // 回避率は負にはならない
       if (c512 < 0) {
@@ -258,14 +258,14 @@ async function dungeon_trap(a, tries, rand, ctx) {
       if ((era.get(`item:${trap_id}`) || 0) < 1) {
         // 在庫なしの場合は何もしません
         c512 -= 1;
-        era.set(`cflag:${a}:512`, c512);
+        EraChara.get(a).cflag.trap_avoid_bonus = c512;
       } else if (trap_miss < rand_n(20)) {
         // ≪同一陷阱发动限制≫
         if (show) {
           era.print('≪同一陷阱发动限制≫勇者回避了陷阱……');
         }
         c512 -= 1;
-        era.set(`cflag:${a}:512`, c512);
+        EraChara.get(a).cflag.trap_avoid_bonus = c512;
       } else if (trap_id === 60) {
         trap_result = await pit_trap(a, rand_n, ctx); // 落穴
       } else if (trap_id === 61) {
@@ -339,7 +339,7 @@ async function dungeon_trap(a, tries, rand, ctx) {
 
       // 陷阱発動記憶
       if (trap_nouse === 0) {
-        era.set(`cflag:${a}:513`, trap_id);
+        EraChara.get(a).cflag.last_trap_id = trap_id;
       }
 
       // 陷阱自動補充（FLAG:5 位 6）
@@ -351,7 +351,7 @@ async function dungeon_trap(a, tries, rand, ctx) {
           trap_id >= 60 &&
           trap_id <= 89
         ) {
-          era.set(`item:${trap_id}`, (era.get(`item:${trap_id}`) || 0) + 1);
+          era.add(`item:${trap_id}`, 1);
           era_flag.money -= price;
           era_exflag.legit_money -= price;
         }
@@ -384,35 +384,35 @@ async function dungeon_trap(a, tries, rand, ctx) {
  * @returns {Promise<number>} RETURN（1 = 未作动）
  */
 async function pit_trap(a, rand_n) {
-  const settings = era.get('flag:5') || 0;
+  const settings = era_flag.game_settings;
   const show = (settings & 32) !== 0;
   const name = name_of(a);
-  const diff = era.get('flag:85') || 0;
+  const diff = era_flag.trap_level;
 
   // 落下フラグ（位 6）
   if (cbit(a, 503, 64)) {
     if (show) {
       era.print('连续落下！（气力-10） ');
     }
-    chara(a).dungeon.气力 -= 10;
+    EraChara.get(a).base.willpower -= 10;
   } else {
     if (show) {
       era.print('地板打开了！ ');
     }
     // 落下フラグON
-    era.set(`cflag:${a}:503`, (era.get(`cflag:${a}:503`) || 0) + 64);
+    EraChara.get(a).cflag.rest_flag += 64;
   }
 
   let dice = rand_n(100);
 
   // 天使（TALENT:314 == 6）/ 堕天使（== 8）及时飞起
-  if ((era.get(`talent:${a}:314`) || 0) === 6) {
+  if (EraChara.get(a).talent.race === 6) {
     if (show) {
       era.print(`天使族的${name}及时地飞起来，避开了落穴… `);
     }
     return 1;
   }
-  if ((era.get(`talent:${a}:314`) || 0) === 8) {
+  if (EraChara.get(a).talent.race === 8) {
     if (show) {
       era.print(`堕天使族的${name}及时地飞起来，避开了落穴… `);
     }
@@ -428,7 +428,7 @@ async function pit_trap(a, rand_n) {
     // 要害（两倍伤害）
     dice = rand_n(40) + diff * 10 + 1;
     dice *= 2;
-    if (era.get('talent:0:328')) {
+    if (EraChara.get(0).talent.bug_knowledge) {
       // 魔蟲知識によってダメージ1.5倍に（MASTER 的 TALENT:328）
       dice += Math.floor(dice / 2);
       if (show) {
@@ -440,7 +440,7 @@ async function pit_trap(a, rand_n) {
     }
   } else {
     dice = rand_n(40) + diff * 10 + 1;
-    if (era.get('talent:0:328')) {
+    if (EraChara.get(0).talent.bug_knowledge) {
       dice += Math.floor(dice / 2);
       if (show) {
         era.print('穴底有毒虫群！');
@@ -450,14 +450,14 @@ async function pit_trap(a, rand_n) {
       era.print(`${name}受到${dice}点伤害！`);
     }
   }
-  chara(a).dungeon.体力 -= dice;
+  EraChara.get(a).base.stamina -= dice;
 
   // 胆怯（TALENT:10）
-  if ((era.get(`talent:${a}:10`) || 0) === 1) {
+  if (EraChara.get(a).talent.timidity === 1) {
     if (show) {
       era.print(`胆小的${name}吓得要死…（气力-10） `);
     }
-    chara(a).dungeon.气力 -= 10;
+    EraChara.get(a).base.willpower -= 10;
   }
 
   // 的 PRINTL 只结束上面那串 `PRINTFORM` 拼起来的一行（PRINTFORM
@@ -471,10 +471,10 @@ async function pit_trap(a, rand_n) {
  * @returns {Promise<number>} RETURN（1 = 未作动）
  */
 async function arrow_trap(a, rand_n) {
-  const settings = era.get('flag:5') || 0;
+  const settings = era_flag.game_settings;
   const show = (settings & 32) !== 0;
   const name = name_of(a);
-  const diff = era.get('flag:85') || 0;
+  const diff = era_flag.trap_level;
 
   if (show) {
     era.print('有射箭陷阱！ ');
@@ -499,13 +499,13 @@ async function arrow_trap(a, rand_n) {
     if (show && diff > 0) {
       era.print(`箭矢插的很深，${name}被追加了${dice}点的伤害！ `);
     }
-    chara(a).dungeon.体力 -= dice;
+    EraChara.get(a).base.stamina -= dice;
     // 怕痛（TALENT:40）
-    if ((era.get(`talent:${a}:40`) || 0) === 1) {
+    if (EraChara.get(a).talent.fears_pain === 1) {
       if (show) {
         era.print(`对怕痛的${name}来说，这简直无法忍受…（气力-30） `);
       }
-      chara(a).dungeon.气力 -= 30;
+      EraChara.get(a).base.willpower -= 30;
     }
   } else {
     // ——印追加 {FLAG:85 * 10}（字面，与 DICE 相加
@@ -517,12 +517,12 @@ async function arrow_trap(a, rand_n) {
     if (show && diff > 0) {
       era.print(`箭矢插的很深，${name}被追加了${diff * 10}点的伤害！`);
     }
-    chara(a).dungeon.体力 -= dice;
-    if ((era.get(`talent:${a}:40`) || 0) === 1) {
+    EraChara.get(a).base.stamina -= dice;
+    if (EraChara.get(a).talent.fears_pain === 1) {
       if (show) {
         era.print(`对怕痛的${name}来说，这简直无法忍受…（气力-30） `);
       }
-      chara(a).dungeon.气力 -= 30;
+      EraChara.get(a).base.willpower -= 30;
     }
   }
 
@@ -537,10 +537,10 @@ async function arrow_trap(a, rand_n) {
  * @returns {Promise<number>} RETURN（1 = 未作动）
  */
 async function teleport_trap(a, rand_n, ctx) {
-  const settings = era.get('flag:5') || 0;
+  const settings = era_flag.game_settings;
   const show = (settings & 32) !== 0;
   const name = name_of(a);
-  const diff = era.get('flag:85') || 0;
+  const diff = era_flag.trap_level;
 
   if (show) {
     era.print('哎呀！突然出现了个传送阵！ ');
@@ -570,11 +570,11 @@ async function teleport_trap(a, rand_n, ctx) {
   }
 
   // 胆怯
-  if ((era.get(`talent:${a}:10`) || 0) === 1) {
+  if (EraChara.get(a).talent.timidity === 1) {
     if (show) {
       era.print(`胆小的${name}吓得要死…（气力-10） `);
     }
-    chara(a).dungeon.气力 -= 10;
+    EraChara.get(a).base.willpower -= 10;
   }
 
   // 高难度时气力损耗
@@ -582,7 +582,7 @@ async function teleport_trap(a, rand_n, ctx) {
     if (show) {
       era.print(`${name}被突然地瞬间移动弄得头昏脑胀…（气力-${diff}）`);
     }
-    chara(a).dungeon.气力 -= diff;
+    EraChara.get(a).base.willpower -= diff;
   }
 
   // 的 PRINTL：**只在 FLAG:85 > 0 那支里是真空行**——那支的上一条
@@ -601,10 +601,10 @@ async function teleport_trap(a, rand_n, ctx) {
  * @returns {Promise<number>} RETURN（1 = 未作动）
  */
 async function one_way_trap(a, rand_n, ctx) {
-  const settings = era.get('flag:5') || 0;
+  const settings = era_flag.game_settings;
   const show = (settings & 32) !== 0;
   const name = name_of(a);
-  const diff = era.get('flag:85') || 0;
+  const diff = era_flag.trap_level;
 
   // 侵攻度不足 40 时不作动（不消耗：以 RETURN 1 实现，而非
   // 注释态的 ITEM:63 += 1 帳尻合わせ）
@@ -619,7 +619,7 @@ async function one_way_trap(a, rand_n, ctx) {
         '突然落下的大门把刚才走过的路给封住了，不可能爬回上去（气力-20） ',
       );
     }
-    chara(a).dungeon.气力 -= 20;
+    EraChara.get(a).base.willpower -= 20;
   } else {
     if (show) {
       era.print('门后面听到钥匙锁门的声音！ ');
@@ -639,19 +639,19 @@ async function one_way_trap(a, rand_n, ctx) {
   if (show) {
     era.print(`${name}迷路了… `);
   }
-  era.set(`cflag:${a}:509`, 1);
+  EraChara.get(a).cflag.lost_state = 1;
   // D:1 = 1——全库无读者，不落变量（#172 结论）
   if (show) {
     era.print(`${name}心急如焚 （气力-${20 + diff}） `);
   }
-  chara(a).dungeon.气力 -= 20 + diff;
+  EraChara.get(a).base.willpower -= 20 + diff;
 
   // 胆怯
-  if ((era.get(`talent:${a}:10`) || 0) === 1) {
+  if (EraChara.get(a).talent.timidity === 1) {
     if (show) {
       era.print(`胆小的${name}吓得要死…（气力-10） `);
     }
-    chara(a).dungeon.气力 -= 10;
+    EraChara.get(a).base.willpower -= 10;
   }
 
   // 的 PRINTL 只结束上面那串 `PRINTFORM` 拼起来的一行（PRINTFORM
@@ -665,10 +665,10 @@ async function one_way_trap(a, rand_n, ctx) {
  * @returns {Promise<number>} RETURN（屏息跑开也是 0 = 作动、消耗）
  */
 async function love_gas_trap(a, rand_n) {
-  const settings = era.get('flag:5') || 0;
+  const settings = era_flag.game_settings;
   const show = (settings & 32) !== 0;
   const name = name_of(a);
-  const diff = era.get('flag:85') || 0;
+  const diff = era_flag.trap_level;
 
   if (show) {
     era.print('墙壁的缝隙中突然喷出了甘甜的气体…… ');
@@ -687,25 +687,25 @@ async function love_gas_trap(a, rand_n) {
       era.print(`${name}吸入了大量的催情气体，开始思春了…`);
       era.print(`欲情点数+${40 + diff}`);
     }
-    era.set(`juel:${a}:5`, (era.get(`juel:${a}:5`) || 0) + (40 + diff));
+    EraChara.get(a).jewel.lust += 40 + diff;
     if (show) {
       era.print(`${name}气息慌乱了（气力-${40 + diff * 2}）`);
     }
-    chara(a).dungeon.气力 -= 40 + diff * 2;
+    EraChara.get(a).base.willpower -= 40 + diff * 2;
   } else {
     if (show) {
       era.print(`${name}在思春着…`);
       era.print(`欲情点数+${20 + diff}`);
     }
-    era.set(`juel:${a}:5`, (era.get(`juel:${a}:5`) || 0) + (20 + diff));
+    EraChara.get(a).jewel.lust += 20 + diff;
     if (show) {
       era.print(`${name}气息慌乱了（气力-${20 + diff * 2}）`);
     }
-    chara(a).dungeon.气力 -= 20 + diff * 2;
+    EraChara.get(a).base.willpower -= 20 + diff * 2;
   }
 
   // 容易自慰（TALENT:60）
-  const self_masturbation = (era.get(`talent:${a}:60`) || 0) === 1;
+  const self_masturbation = EraChara.get(a).talent.prone_masturbation === 1;
   if (self_masturbation) {
     if (show) {
       era.print(`${name}身不由己地开始自慰了。`);
@@ -713,10 +713,10 @@ async function love_gas_trap(a, rand_n) {
       era.print('欲情点数+20');
       era.print('阴核点数+10');
     }
-    era.set(`exp:${a}:10`, (era.get(`exp:${a}:10`) || 0) + 1);
-    era.set(`juel:${a}:0`, (era.get(`juel:${a}:0`) || 0) + 20);
-    chara(a).dungeon.气力 -= 10;
-    era.set(`juel:${a}:5`, (era.get(`juel:${a}:5`) || 0) + 20);
+    EraChara.get(a).exp.masturbation_exp += 1;
+    EraChara.get(a).jewel.clitoris += 20;
+    EraChara.get(a).base.willpower -= 10;
+    EraChara.get(a).jewel.lust += 20;
   }
 
   // 的 PRINTL：**只在 TALENT:60 那支里是真空行**——那支的
@@ -727,7 +727,7 @@ async function love_gas_trap(a, rand_n) {
   }
 
   // 欲情フラグ（位 9）
-  era.set(`cflag:${a}:503`, (era.get(`cflag:${a}:503`) || 0) | 512);
+  EraChara.get(a).cflag.rest_flag = EraChara.get(a).cflag.rest_flag | 512;
 
   return 0;
 }
@@ -737,17 +737,17 @@ async function love_gas_trap(a, rand_n) {
  * @returns {Promise<number>} RETURN（1 = 未作动；注意本段不立欲情位）
  */
 async function syokusyu_floor_trap(a, rand_n) {
-  const settings = era.get('flag:5') || 0;
+  const settings = era_flag.game_settings;
   const show = (settings & 32) !== 0;
   const name = name_of(a);
-  const diff = era.get('flag:85') || 0;
+  const diff = era_flag.trap_level;
 
   // 落下フラグ
   if (cbit(a, 503, 64)) {
     if (show) {
       era.print('突然掉到了触手的巢穴！！（气力-20） ');
     }
-    chara(a).dungeon.气力 -= 20;
+    EraChara.get(a).base.willpower -= 20;
   } else {
     if (show) {
       era.print('一地的触手，一起袭来！！ ');
@@ -769,38 +769,38 @@ async function syokusyu_floor_trap(a, rand_n) {
       era.print('触手经验+1');
       era.print(`欲情点数+${100 + diff * 2}`);
     }
-    era.set(`exp:${a}:55`, (era.get(`exp:${a}:55`) || 0) + 1);
-    era.set(`juel:${a}:5`, (era.get(`juel:${a}:5`) || 0) + (120 + diff * 2));
+    EraChara.get(a).exp.tentacle_exp += 1;
+    EraChara.get(a).jewel.lust += 120 + diff * 2;
     if (show) {
       era.print(`${name}拼命挣扎着，消耗了大量的体力（气力-200） `);
     }
-    chara(a).dungeon.气力 -= 200;
+    EraChara.get(a).base.willpower -= 200;
   } else {
     if (show) {
       era.print(`${name}被触手抓住了，催情的体液涂在身上…`);
       era.print('触手经验+1');
       era.print(`欲情点数+${60 + diff * 2}`);
     }
-    era.set(`exp:${a}:55`, (era.get(`exp:${a}:55`) || 0) + 1);
-    era.set(`juel:${a}:5`, (era.get(`juel:${a}:5`) || 0) + (60 + diff * 2));
+    EraChara.get(a).exp.tentacle_exp += 1;
+    EraChara.get(a).jewel.lust += 60 + diff * 2;
     if (show) {
       era.print(`${name}拼命挣扎着，消耗了相当的体力（气力-100）`);
     }
-    chara(a).dungeon.气力 -= 100;
+    EraChara.get(a).base.willpower -= 100;
   }
 
   // 容易自慰
-  if ((era.get(`talent:${a}:60`) || 0) === 1) {
+  if (EraChara.get(a).talent.prone_masturbation === 1) {
     if (show) {
       era.print(`催情功效发挥了，${name}情不自禁地自慰着`);
       era.print('自慰经验+1');
       era.print('欲情点数+10');
       era.print('阴核点数+10');
     }
-    era.set(`exp:${a}:10`, (era.get(`exp:${a}:10`) || 0) + 1);
-    era.set(`juel:${a}:0`, (era.get(`juel:${a}:0`) || 0) + 20);
-    chara(a).dungeon.气力 -= 10;
-    era.set(`juel:${a}:5`, (era.get(`juel:${a}:5`) || 0) + 20);
+    EraChara.get(a).exp.masturbation_exp += 1;
+    EraChara.get(a).jewel.clitoris += 20;
+    EraChara.get(a).base.willpower -= 10;
+    EraChara.get(a).jewel.lust += 20;
   }
 
   return 0;
@@ -811,17 +811,17 @@ async function syokusyu_floor_trap(a, rand_n) {
  * @returns {Promise<number>} RETURN（必中，恒 0）
  */
 async function love_bath_trap(a, rand_n) {
-  const settings = era.get('flag:5') || 0;
+  const settings = era_flag.game_settings;
   const show = (settings & 32) !== 0;
   const name = name_of(a);
-  const diff = era.get('flag:85') || 0;
+  const diff = era_flag.trap_level;
 
   // 落下フラグ
   if (cbit(a, 503, 64)) {
     if (show) {
       era.print('掉入了装满媚药的水坑里！！（气力-20） ');
     }
-    chara(a).dungeon.气力 -= 20;
+    EraChara.get(a).base.willpower -= 20;
   } else {
     if (show) {
       era.print('地板突然打开，掉入了装满媚药的水池里！ ');
@@ -835,45 +835,45 @@ async function love_bath_trap(a, rand_n) {
       era.print('药物经验+1');
       era.print(`欲情点数+${200 + diff * 5}`);
     }
-    era.set(`exp:${a}:57`, (era.get(`exp:${a}:57`) || 0) + 1);
-    era.set(`juel:${a}:5`, (era.get(`juel:${a}:5`) || 0) + (200 + diff * 5));
+    EraChara.get(a).exp.drug_exp += 1;
+    EraChara.get(a).jewel.lust += 200 + diff * 5;
     if (show) {
       era.print(
         `${name}拼命地挣扎，消耗了相当的体力和精力。（体力-200 气力-200）`,
       );
     }
-    chara(a).dungeon.体力 -= 200;
-    chara(a).dungeon.气力 -= 200;
+    EraChara.get(a).base.stamina -= 200;
+    EraChara.get(a).base.willpower -= 200;
   } else {
     if (show) {
       era.print(`${name}被大量的媚药沾满全身，走路摇摇晃晃了。`);
       era.print('药物经验+1');
       era.print(`欲情点数+${100 + diff * 5}`);
     }
-    era.set(`exp:${a}:57`, (era.get(`exp:${a}:57`) || 0) + 1);
-    era.set(`juel:${a}:5`, (era.get(`juel:${a}:5`) || 0) + (100 + diff * 5));
+    EraChara.get(a).exp.drug_exp += 1;
+    EraChara.get(a).jewel.lust += 100 + diff * 5;
     if (show) {
       era.print(`${name}拼命地挣扎，消耗了相当的精力。（气力-100）`);
     }
-    chara(a).dungeon.气力 -= 100;
+    EraChara.get(a).base.willpower -= 100;
   }
 
   // 容易自慰
-  if ((era.get(`talent:${a}:60`) || 0) === 1) {
+  if (EraChara.get(a).talent.prone_masturbation === 1) {
     if (show) {
       era.print(`媚药令思维都变得奇怪了，${name}情不自禁地自慰了起来。`);
       era.print('自慰经验+1');
       era.print('欲情点数+10');
       era.print('阴核点数+10');
     }
-    era.set(`exp:${a}:10`, (era.get(`exp:${a}:10`) || 0) + 1);
-    era.set(`juel:${a}:0`, (era.get(`juel:${a}:0`) || 0) + 20);
-    chara(a).dungeon.气力 -= 10;
-    era.set(`juel:${a}:5`, (era.get(`juel:${a}:5`) || 0) + 20);
+    EraChara.get(a).exp.masturbation_exp += 1;
+    EraChara.get(a).jewel.clitoris += 20;
+    EraChara.get(a).base.willpower -= 10;
+    EraChara.get(a).jewel.lust += 20;
   }
 
   // 欲情フラグ（位 9）
-  era.set(`cflag:${a}:503`, (era.get(`cflag:${a}:503`) || 0) | 512);
+  EraChara.get(a).cflag.rest_flag = EraChara.get(a).cflag.rest_flag | 512;
 
   return 0;
 }
@@ -886,7 +886,7 @@ async function love_bath_trap(a, rand_n) {
  * @returns {Promise<number>} RETURN（1 = 未作动）
  */
 async function self_saimin_trap(a, rand_n) {
-  const settings = era.get('flag:5') || 0;
+  const settings = era_flag.game_settings;
   const show = (settings & 32) !== 0;
   const name = name_of(a);
 
@@ -923,8 +923,8 @@ async function self_saimin_trap(a, rand_n) {
         `${name}连怪物跑到面前的声音都听不到了。（攻击力和防御力降为0！）`,
       );
     }
-    era.set(`cflag:${a}:11`, 0);
-    era.set(`cflag:${a}:12`, 0);
+    EraChara.get(a).cflag.attack = 0;
+    EraChara.get(a).cflag.defense = 0;
   } else {
     // 浅度催眠（攻防减半）
     if (show) {
@@ -941,8 +941,10 @@ async function self_saimin_trap(a, rand_n) {
         `${name}连怪物跑到面前的声音都听不到了。（攻击力和防御力下降一半！）`,
       );
     }
-    era.set(`cflag:${a}:11`, Math.floor((era.get(`cflag:${a}:11`) || 0) / 2));
-    era.set(`cflag:${a}:12`, Math.floor((era.get(`cflag:${a}:12`) || 0) / 2));
+    EraChara.get(a).cflag.attack = Math.floor(EraChara.get(a).cflag.attack / 2);
+    EraChara.get(a).cflag.defense = Math.floor(
+      EraChara.get(a).cflag.defense / 2,
+    );
   }
 
   return 0;
@@ -954,10 +956,10 @@ async function self_saimin_trap(a, rand_n) {
  * @returns {Promise<number>} RETURN（1 = 未作动）
  */
 async function imitater_trap(a, rand_n) {
-  const settings = era.get('flag:5') || 0;
+  const settings = era_flag.game_settings;
   const show = (settings & 32) !== 0;
   const name = name_of(a);
-  const diff = era.get('flag:85') || 0;
+  const diff = era_flag.trap_level;
 
   // 掷骰在落下判定之前（顺序有意保留）
   let z = rand_n(100);
@@ -991,21 +993,18 @@ async function imitater_trap(a, rand_n) {
       era.print(`阴核点数+${50 + diff * 10}`);
     }
     for (const idx of [6, 8, 14, 0, 5]) {
-      era.set(
-        `juel:${a}:${idx}`,
-        (era.get(`juel:${a}:${idx}`) || 0) + (50 + diff * 10),
-      );
+      EraChara.get(a).jewel.add(idx, 50 + diff * 10);
     }
-    chara(a).dungeon.气力 -= 50 + diff * 10;
+    EraChara.get(a).base.willpower -= 50 + diff * 10;
     if (show) {
       era.print(
         `全裸的${name}被媚药所控制，在战斗中居然忘我地绝顶了。（攻击力和防御力降为0！）`,
       );
       era.print('绝顶经验+1');
     }
-    era.set(`exp:${a}:2`, (era.get(`exp:${a}:2`) || 0) + 1);
-    era.set(`cflag:${a}:11`, 0);
-    era.set(`cflag:${a}:12`, 0);
+    EraChara.get(a).exp.orgasm_exp += 1;
+    EraChara.get(a).cflag.attack = 0;
+    EraChara.get(a).cflag.defense = 0;
   } else {
     // （30 + FLAG:85×6 + 攻防减半）
     if (show) {
@@ -1019,21 +1018,20 @@ async function imitater_trap(a, rand_n) {
       era.print(`阴核点数+${30 + diff * 6}`);
     }
     for (const idx of [6, 8, 14, 0, 5]) {
-      era.set(
-        `juel:${a}:${idx}`,
-        (era.get(`juel:${a}:${idx}`) || 0) + (30 + diff * 6),
-      );
+      EraChara.get(a).jewel.add(idx, 30 + diff * 6);
     }
-    chara(a).dungeon.气力 -= 30 + diff * 6;
+    EraChara.get(a).base.willpower -= 30 + diff * 6;
     if (show) {
       era.print(
         `${name}被媚药所控制，在战斗中居然忘我地绝顶了。（攻击力和防御力下降一半！）`,
       );
       era.print('绝顶经验+1');
     }
-    era.set(`exp:${a}:2`, (era.get(`exp:${a}:2`) || 0) + 1);
-    era.set(`cflag:${a}:11`, Math.floor((era.get(`cflag:${a}:11`) || 0) / 2));
-    era.set(`cflag:${a}:12`, Math.floor((era.get(`cflag:${a}:12`) || 0) / 2));
+    EraChara.get(a).exp.orgasm_exp += 1;
+    EraChara.get(a).cflag.attack = Math.floor(EraChara.get(a).cflag.attack / 2);
+    EraChara.get(a).cflag.defense = Math.floor(
+      EraChara.get(a).cflag.defense / 2,
+    );
   }
 
   return 0;
@@ -1045,10 +1043,10 @@ async function imitater_trap(a, rand_n) {
  * @returns {Promise<number>} RETURN（1 = 未作动）
  */
 async function summon_trap(a, rand_n) {
-  const settings = era.get('flag:5') || 0;
+  const settings = era_flag.game_settings;
   const show = (settings & 32) !== 0;
   const name = name_of(a);
-  const diff = era.get('flag:85') || 0;
+  const diff = era_flag.trap_level;
 
   if (show) {
     era.print(`${name}踩到了召唤的魔法阵！！`);
@@ -1072,7 +1070,7 @@ async function summon_trap(a, rand_n) {
     if (show) {
       era.print(`${name}受到魔法阵的魔力的冲击（体力-${diff * 10}）`);
     }
-    chara(a).dungeon.体力 -= diff * 10;
+    EraChara.get(a).base.stamina -= diff * 10;
   }
 
   return 0;
@@ -1084,10 +1082,10 @@ async function summon_trap(a, rand_n) {
  * @returns {Promise<number>} RETURN（1 = 未作动）
  */
 async function succubus_trap(a, rand_n) {
-  const settings = era.get('flag:5') || 0;
+  const settings = era_flag.game_settings;
   const show = (settings & 32) !== 0;
   const name = name_of(a);
-  const diff = era.get('flag:85') || 0;
+  const diff = era_flag.trap_level;
 
   if (show) {
     era.print('发现了一个少女，貌似是被凌辱之后的勇者…');
@@ -1102,7 +1100,7 @@ async function succubus_trap(a, rand_n) {
   }
 
   // 男人位（TALENT:122 == 0 = 女性 → 百合经验）
-  const yuri = (era.get(`talent:${a}:122`) || 0) === 0;
+  const yuri = EraChara.get(a).talent.male === 0;
 
   if (dice > 60) {
     if (show) {
@@ -1129,24 +1127,21 @@ async function succubus_trap(a, rand_n) {
       era.print(`阴核点数+${100 + diff * 10}`);
     }
     if (yuri) {
-      chara(a).train.百合经验 += 6; // EXP:A:40（train 域门面）
+      EraChara.get(a).exp.lesbian_exp += 6; // EXP:A:40（train 域门面）
     }
     for (const idx of [6, 8, 14, 0, 5]) {
-      era.set(
-        `juel:${a}:${idx}`,
-        (era.get(`juel:${a}:${idx}`) || 0) + (100 + diff * 10),
-      );
+      EraChara.get(a).jewel.add(idx, 100 + diff * 10);
     }
-    chara(a).dungeon.气力 -= 100 + diff * 10;
+    EraChara.get(a).base.willpower -= 100 + diff * 10;
     if (show) {
       era.print(
         `全裸的${name}在之后的战斗中居然忘我地绝顶了。（攻击力和防御力降为0！）`,
       );
       era.print('绝顶经验+1');
     }
-    era.set(`exp:${a}:2`, (era.get(`exp:${a}:2`) || 0) + 1);
-    era.set(`cflag:${a}:11`, 0);
-    era.set(`cflag:${a}:12`, 0);
+    EraChara.get(a).exp.orgasm_exp += 1;
+    EraChara.get(a).cflag.attack = 0;
+    EraChara.get(a).cflag.defense = 0;
   } else {
     // 浅度（60 + FLAG:85×6）
     if (show) {
@@ -1167,24 +1162,23 @@ async function succubus_trap(a, rand_n) {
       era.print(`阴核点数+${60 + diff * 6}`);
     }
     if (yuri) {
-      chara(a).train.百合经验 += 4; // EXP:A:40（train 域门面）
+      EraChara.get(a).exp.lesbian_exp += 4; // EXP:A:40（train 域门面）
     }
     for (const idx of [6, 8, 14, 0, 5]) {
-      era.set(
-        `juel:${a}:${idx}`,
-        (era.get(`juel:${a}:${idx}`) || 0) + (60 + diff * 6),
-      );
+      EraChara.get(a).jewel.add(idx, 60 + diff * 6);
     }
-    chara(a).dungeon.气力 -= 60 + diff * 6;
+    EraChara.get(a).base.willpower -= 60 + diff * 6;
     if (show) {
       era.print(
         `${name}在之后的战斗中居然忘我地绝顶了。（攻击力和防御力下降一半！）`,
       );
       era.print('绝顶经验+1');
     }
-    era.set(`exp:${a}:2`, (era.get(`exp:${a}:2`) || 0) + 1);
-    era.set(`cflag:${a}:11`, Math.floor((era.get(`cflag:${a}:11`) || 0) / 2));
-    era.set(`cflag:${a}:12`, Math.floor((era.get(`cflag:${a}:12`) || 0) / 2));
+    EraChara.get(a).exp.orgasm_exp += 1;
+    EraChara.get(a).cflag.attack = Math.floor(EraChara.get(a).cflag.attack / 2);
+    EraChara.get(a).cflag.defense = Math.floor(
+      EraChara.get(a).cflag.defense / 2,
+    );
   }
 
   return 0;
@@ -1197,10 +1191,10 @@ async function succubus_trap(a, rand_n) {
  * @returns {Promise<number>} RETURN（逃脱也是 0 = 作动、消耗）
  */
 async function slime_room_trap(a, rand_n) {
-  const settings = era.get('flag:5') || 0;
+  const settings = era_flag.game_settings;
   const show = (settings & 32) !== 0;
   const name = name_of(a);
-  const diff = era.get('flag:85') || 0;
+  const diff = era_flag.trap_level;
 
   let dice = rand_n(100);
   era_flag.target = a; // TARGET = A
@@ -1227,9 +1221,11 @@ async function slime_room_trap(a, rand_n) {
         `${name}的全身都被史莱姆覆盖着，装备被融化，全裸了（攻击力和防御力减半！） `,
       );
     }
-    chara(a).dungeon.气力 -= 25 + diff;
-    era.set(`cflag:${a}:11`, Math.floor((era.get(`cflag:${a}:11`) || 0) / 2));
-    era.set(`cflag:${a}:12`, Math.floor((era.get(`cflag:${a}:12`) || 0) / 2));
+    EraChara.get(a).base.willpower -= 25 + diff;
+    EraChara.get(a).cflag.attack = Math.floor(EraChara.get(a).cflag.attack / 2);
+    EraChara.get(a).cflag.defense = Math.floor(
+      EraChara.get(a).cflag.defense / 2,
+    );
 
     if (show) {
       era.print(
@@ -1237,8 +1233,8 @@ async function slime_room_trap(a, rand_n) {
       );
       era.print('肛门经验+1');
     }
-    era.set(`exp:${a}:1`, (era.get(`exp:${a}:1`) || 0) + 1);
-    chara(a).dungeon.气力 -= 10 + diff;
+    EraChara.get(a).exp.anal_exp += 1;
+    EraChara.get(a).base.willpower -= 10 + diff;
   } else {
     // 装备半融（攻防减 1/3；1/3 概率追加肛门段）
     if (show) {
@@ -1246,25 +1242,21 @@ async function slime_room_trap(a, rand_n) {
         `${name}全身都被史莱姆戏弄着，装备都被融化了一半（攻击力和防御力下降三分之一！） `,
       );
     }
-    chara(a).dungeon.气力 -= 25 + diff * 5;
-    era.set(
-      `cflag:${a}:11`,
-      (era.get(`cflag:${a}:11`) || 0) -
-        Math.floor((era.get(`cflag:${a}:11`) || 0) / 3),
-    );
-    era.set(
-      `cflag:${a}:12`,
-      (era.get(`cflag:${a}:12`) || 0) -
-        Math.floor((era.get(`cflag:${a}:12`) || 0) / 3),
-    );
+    EraChara.get(a).base.willpower -= 25 + diff * 5;
+    EraChara.get(a).cflag.attack =
+      EraChara.get(a).cflag.attack -
+      Math.floor(EraChara.get(a).cflag.attack / 3);
+    EraChara.get(a).cflag.defense =
+      EraChara.get(a).cflag.defense -
+      Math.floor(EraChara.get(a).cflag.defense / 3);
 
     if (rand_n(3) === 0) {
       if (show) {
         era.print(`${name}气喘吁吁……（气力-${10 + diff}）`);
         era.print('肛门经验+1');
       }
-      era.set(`exp:${a}:1`, (era.get(`exp:${a}:1`) || 0) + 1);
-      chara(a).dungeon.气力 -= 10 + diff;
+      EraChara.get(a).exp.anal_exp += 1;
+      EraChara.get(a).base.willpower -= 10 + diff;
     }
   }
 
@@ -1275,7 +1267,7 @@ async function slime_room_trap(a, rand_n) {
   await autotrain_mod.source_check_auto();
 
   // ヌルヌル付与（位 3）
-  era.set(`cflag:${a}:503`, (era.get(`cflag:${a}:503`) || 0) | 8);
+  EraChara.get(a).cflag.rest_flag = EraChara.get(a).cflag.rest_flag | 8;
 
   return 0;
 }
@@ -1288,35 +1280,35 @@ async function slime_room_trap(a, rand_n) {
  * @returns {Promise<number>} RETURN（恒 0）
  */
 async function net_trap(a) {
-  const settings = era.get('flag:5') || 0;
+  const settings = era_flag.game_settings;
   const show = (settings & 32) !== 0;
   const name = name_of(a);
-  const diff = era.get('flag:85') || 0;
+  const diff = era_flag.trap_level;
 
   let local = 10 + diff * 5;
 
   // 気力最大値によるキャップ
-  if (local > Math.floor((era.get(`maxbase:${a}:1`) || 0) / 20)) {
-    local = Math.floor((era.get(`maxbase:${a}:1`) || 0) / 20);
+  if (local > Math.floor(EraChara.get(a).maxbase.willpower / 20)) {
+    local = Math.floor(EraChara.get(a).maxbase.willpower / 20);
   }
 
   if (show) {
     era.print(`${name}在蜘蛛的巢穴里消耗了相当的精力（气力-${local}） `);
   }
-  chara(a).dungeon.气力 -= local;
+  EraChara.get(a).base.willpower -= local;
 
   // 魔虫知识
-  if (era.get('talent:0:328')) {
+  if (EraChara.get(0).talent.bug_knowledge) {
     // 魔虫知识によって気力ダメージの1.5倍のHPダメージ
     local += Math.floor(local / 2);
     // HP最大値によるキャップ
-    if (local > Math.floor((era.get(`maxbase:${a}:0`) || 0) / 20)) {
-      local = Math.floor((era.get(`maxbase:${a}:0`) || 0) / 20);
+    if (local > Math.floor(EraChara.get(a).maxbase.stamina / 20)) {
+      local = Math.floor(EraChara.get(a).maxbase.stamina / 20);
     }
     if (show) {
       era.print(`毒蜘蛛不断地袭来！（HP-${local}）  `);
     }
-    chara(a).dungeon.体力 -= local;
+    EraChara.get(a).base.stamina -= local;
   }
 
   // 的 PRINTL 只结束上面那串 `PRINTFORM` 拼起来的一行（PRINTFORM
@@ -1333,17 +1325,17 @@ async function net_trap(a) {
  * @returns {Promise<number>} RETURN（1 = 没买 / 钱不够）
  */
 async function shop_trap(a, rand_n) {
-  const settings = era.get('flag:5') || 0;
+  const settings = era_flag.game_settings;
   const show = (settings & 32) !== 0;
   const name = name_of(a);
-  const diff = era.get('flag:85') || 0;
+  const diff = era_flag.trap_level;
 
   if (show) {
     era.print(`${name}被奸商兜售了偏贵的商品。`);
   }
 
   // 代金（等级 CFLAG:9 决定档位）
-  let cost = rand_n(Math.floor((era.get(`cflag:${a}:9`) || 0) / 10 + 5)) * 50;
+  let cost = rand_n(Math.floor(EraChara.get(a).cflag.level / 10 + 5)) * 50;
 
   if (cost === 0) {
     if (show) {
@@ -1354,11 +1346,11 @@ async function shop_trap(a, rand_n) {
 
   // 阶层立方补正（POWER = 幂，整除截断）
   cost += diff * 10;
-  const floor = chara(a).dungeon.侵攻阶层;
+  const floor = EraChara.get(a).cflag.invasion_floor;
   cost = Math.floor((cost * (99 + floor * floor * floor)) / 100);
 
   // 所持金不足
-  if (chara(a).dungeon.所持金 < cost) {
+  if (EraChara.get(a).cflag.money < cost) {
     if (show) {
       era.print(`${name}带的钱不够，企图杀价也失败了～`); // PRINTFORMW
       await era.waitAnyKey();
@@ -1373,15 +1365,15 @@ async function shop_trap(a, rand_n) {
   // （CFLAG:580 扣款是注释态，不落）
   era_flag.money += cost;
   era_exflag.legit_money += cost;
-  chara(a).patch.借款 -= cost; // CFLAG:582（patch 域门面「借款」）
+  EraChara.get(a).cflag.debt -= cost; // CFLAG:582（patch 域门面「借款」）
 
   // HP 按消费恢复（上限封顶）
-  chara(a).dungeon.体力 += cost;
-  if (chara(a).dungeon.体力 > (era.get(`maxbase:${a}:0`) || 0)) {
-    chara(a).dungeon.体力 = era.get(`maxbase:${a}:0`) || 0;
+  EraChara.get(a).base.stamina += cost;
+  if (EraChara.get(a).base.stamina > EraChara.get(a).maxbase.stamina) {
+    EraChara.get(a).base.stamina = EraChara.get(a).maxbase.stamina;
   }
   // 気力の回復（全恢复）
-  chara(a).dungeon.气力 = era.get(`maxbase:${a}:1`) || 0;
+  EraChara.get(a).base.willpower = EraChara.get(a).maxbase.willpower;
   if (show) {
     era.print(`${name}恢复了。`);
   }
@@ -1395,10 +1387,10 @@ async function shop_trap(a, rand_n) {
  * @returns {Promise<number>} RETURN（逃脱也是 0 = 作动、消耗）
  */
 async function blackout_trap(a, rand_n) {
-  const settings = era.get('flag:5') || 0;
+  const settings = era_flag.game_settings;
   const show = (settings & 32) !== 0;
   const name = name_of(a);
-  const diff = era.get('flag:85') || 0;
+  const diff = era_flag.trap_level;
 
   if (show) {
     era.print(`${name}突然被夺走了视野。`);
@@ -1415,28 +1407,28 @@ async function blackout_trap(a, rand_n) {
     if (show) {
       era.print('黑暗之中什么都看不见！（攻击力减半！）');
     }
-    era.set(`cflag:${a}:11`, Math.floor((era.get(`cflag:${a}:11`) || 0) / 2));
+    EraChara.get(a).cflag.attack = Math.floor(EraChara.get(a).cflag.attack / 2);
     if (show) {
       era.print('黑暗里传来什么可怕的声音！（气力-100）');
     }
-    chara(a).dungeon.气力 -= 100;
+    EraChara.get(a).base.willpower -= 100;
     if (diff > 0) {
       if (show) {
         era.print(`${name}在黑暗中被毒箭射中了！（体力-${diff * 10}）`);
       }
-      chara(a).dungeon.体力 -= diff * 10;
+      EraChara.get(a).base.stamina -= diff * 10;
     }
   } else {
     if (show) {
       era.print('黑暗之中什么都看不见！（攻击力减半！）');
     }
-    era.set(`cflag:${a}:11`, Math.floor((era.get(`cflag:${a}:11`) || 0) / 2));
+    EraChara.get(a).cflag.attack = Math.floor(EraChara.get(a).cflag.attack / 2);
 
     if (diff > 0) {
       if (show) {
         era.print(`${name}在黑暗中被毒箭射中了！（体力-${diff * 10}）`);
       }
-      chara(a).dungeon.体力 -= diff * 10;
+      EraChara.get(a).base.stamina -= diff * 10;
     }
   }
 
@@ -1450,10 +1442,10 @@ async function blackout_trap(a, rand_n) {
  * @returns {Promise<number>} RETURN（1 = 未作动）
  */
 async function shoot_trap(a, rand_n, ctx) {
-  const settings = era.get('flag:5') || 0;
+  const settings = era_flag.game_settings;
   const show = (settings & 32) !== 0;
   const name = name_of(a);
-  const diff = era.get('flag:85') || 0;
+  const diff = era_flag.trap_level;
 
   // 侵攻度不足时不作动（以 RETURN 1 实现，非注释态的
   // ITEM:75 += 1 帳尻合わせ）
@@ -1468,13 +1460,13 @@ async function shoot_trap(a, rand_n, ctx) {
         '掉入一个地方之后又掉入另一个地方，连锁地掉入未知的地方！！(气力-20)',
       );
     }
-    chara(a).dungeon.气力 -= 20;
+    EraChara.get(a).base.willpower -= 20;
   } else {
     if (show) {
       era.print(`${name}突然落下了！`);
     }
     // 落下フラグON
-    era.set(`cflag:${a}:503`, (era.get(`cflag:${a}:503`) || 0) + 64);
+    EraChara.get(a).cflag.rest_flag += 64;
   }
 
   const z = rand_n(3);
@@ -1490,40 +1482,40 @@ async function shoot_trap(a, rand_n, ctx) {
     era.print('*嘿！！*');
   }
 
-  if (chara(a).dungeon.侵攻阶层 === 9) {
+  if (EraChara.get(a).cflag.invasion_floor === 9) {
     // 第 9 层：从天花板砸向最底层（队伍不分断）
     const dmg = rand_n(300);
-    chara(a).dungeon.体力 -= dmg;
+    EraChara.get(a).base.stamina -= dmg;
     if (show) {
       era.print(
         `不停地往最底层掉落！带着奇妙的浮游感，${name}从第9阶层天花板上的传送阵掉落，狠狠地摔在地上（体力-${dmg}）`,
       );
       era.print(`${name}迷路了…`);
     }
-    era.set(`cflag:${a}:509`, 1);
+    EraChara.get(a).cflag.lost_state = 1;
     // D:1 = 1——全库无读者，不落变量（#172 结论）
-  } else if (chara(a).dungeon.侵攻阶层 === 8) {
+  } else if (EraChara.get(a).cflag.invasion_floor === 8) {
     // 第 8 层：下坠一层 + 分断
-    chara(a).dungeon.侵攻阶层 += 1;
+    EraChara.get(a).cflag.invasion_floor += 1;
     const dmg = rand_n(300);
-    chara(a).dungeon.体力 -= dmg;
+    EraChara.get(a).base.stamina -= dmg;
     if (show) {
       era.print(
         `这里看起来是最底层了。${name}的屁股被狠狠地撞到了（体力-${dmg}）`,
       );
       era.print(`${name}迷路了…`);
     }
-    era.set(`cflag:${a}:509`, 1);
+    EraChara.get(a).cflag.lost_state = 1;
     // パーティが分断される
     party_mod.party_del(a); // （经模块对象，文件头）
     // D:1 = 1——同上
   } else {
     // 中间层：下坠一层 + 分断
-    chara(a).dungeon.侵攻阶层 += 1;
+    EraChara.get(a).cflag.invasion_floor += 1;
     if (show) {
       era.print(`掉到了下一层，${name}迷路了…`);
     }
-    era.set(`cflag:${a}:509`, 1);
+    EraChara.get(a).cflag.lost_state = 1;
     // パーティが分断される
     party_mod.party_del(a); // （经模块对象，文件头）
     // D:1 = 1——同上
@@ -1533,7 +1525,7 @@ async function shoot_trap(a, rand_n, ctx) {
     if (show) {
       era.print(`${name}因为掉落的冲击而呻吟着…（体力-${diff}）`);
     }
-    chara(a).dungeon.体力 -= diff;
+    EraChara.get(a).base.stamina -= diff;
   }
 
   return 0;
@@ -1545,10 +1537,10 @@ async function shoot_trap(a, rand_n, ctx) {
  * @returns {Promise<number>} RETURN（解除也是 0 = 作动、消耗）
  */
 async function dispell_trap(a, rand_n) {
-  const settings = era.get('flag:5') || 0;
+  const settings = era_flag.game_settings;
   const show = (settings & 32) !== 0;
   const name = name_of(a);
-  const diff = era.get('flag:85') || 0;
+  const diff = era_flag.trap_level;
 
   if (show) {
     era.print(`${name}碰到了诅咒的魔法阵！`);
@@ -1576,14 +1568,14 @@ async function dispell_trap(a, rand_n) {
     if (show) {
       era.print(`${name}被诅咒了…`);
     }
-    era.set(`cflag:${a}:503`, (era.get(`cflag:${a}:503`) || 0) + 2);
+    EraChara.get(a).cflag.rest_flag += 2;
   }
 
   if (diff > 0) {
     if (show) {
       era.print(`魔力的漩涡侵蚀着${name}的精神（气力-${diff * 10}）`);
     }
-    chara(a).dungeon.气力 -= diff * 10;
+    EraChara.get(a).base.willpower -= diff * 10;
   }
 
   return 0;
@@ -1596,10 +1588,10 @@ async function dispell_trap(a, rand_n) {
  * @returns {Promise<number>} RETURN（1 = 未作动）
  */
 async function oil_trap(a, rand_n) {
-  const settings = era.get('flag:5') || 0;
+  const settings = era_flag.game_settings;
   const show = (settings & 32) !== 0;
   const name = name_of(a);
-  const diff = era.get('flag:85') || 0;
+  const diff = era_flag.trap_level;
 
   if (show) {
     era.print('有油壶陷阱！');
@@ -1617,13 +1609,13 @@ async function oil_trap(a, rand_n) {
   if (show) {
     era.print(`${name}被油泼满一身，气力减少${z}点！`);
   }
-  chara(a).dungeon.气力 -= z;
+  EraChara.get(a).base.willpower -= z;
   if (cbit(a, 503, 8)) {
     if (show) {
       era.print('黏黏糊糊的…');
     }
   } else {
-    era.set(`cflag:${a}:503`, (era.get(`cflag:${a}:503`) || 0) + 8);
+    EraChara.get(a).cflag.rest_flag += 8;
   }
 
   return 0;
@@ -1635,10 +1627,10 @@ async function oil_trap(a, rand_n) {
  * @returns {Promise<number>} RETURN（回避也是 0 = 作动、消耗）
  */
 async function fire_trap(a, rand_n) {
-  const settings = era.get('flag:5') || 0;
+  const settings = era_flag.game_settings;
   const show = (settings & 32) !== 0;
   const name = name_of(a);
-  const diff = era.get('flag:85') || 0;
+  const diff = era_flag.trap_level;
 
   if (show) {
     era.print('有火箭发射陷阱！');
@@ -1656,12 +1648,12 @@ async function fire_trap(a, rand_n) {
   if (show) {
     era.print(`${name}受到${dice}点伤害！`);
   }
-  chara(a).dungeon.体力 -= dice;
+  EraChara.get(a).base.stamina -= dice;
   if (cbit(a, 503, 8)) {
     if (show) {
       era.print(`火把身上的油点燃了，追加伤害！（${30 + diff * 5}）`);
     }
-    chara(a).dungeon.体力 -= 30 + diff * 5;
+    EraChara.get(a).base.stamina -= 30 + diff * 5;
   }
 
   return 0;
@@ -1675,10 +1667,10 @@ async function fire_trap(a, rand_n) {
  * @returns {Promise<number>} RETURN（1 = 未作动）
  */
 async function a_worm_trap(a, rand_n) {
-  const settings = era.get('flag:5') || 0;
+  const settings = era_flag.game_settings;
   const show = (settings & 32) !== 0;
   const name = name_of(a);
-  const diff = era.get('flag:85') || 0;
+  const diff = era_flag.trap_level;
 
   if (show) {
     era.print('有肛门虫陷阱！');
@@ -1706,19 +1698,19 @@ async function a_worm_trap(a, rand_n) {
   if (show) {
     era.print(`${name}被肛门虫消耗了${dice}点气力！`);
   }
-  chara(a).dungeon.气力 -= dice;
+  EraChara.get(a).base.willpower -= dice;
 
   // A経験が多いと、中に入られてしまう
   if (
-    (era.get(`talent:${a}:193`) || 0) === 0 &&
-    (era.get(`exp:${a}:1`) || 0) > 30
+    EraChara.get(a).talent.anal_worm === 0 &&
+    EraChara.get(a).exp.anal_exp > 30
   ) {
     // SETCOLORBYNAME LightSalmon → RESETCOLOR：配色不做（#175 先例）
     if (show) {
       era.print(`肛门虫在${name}的肠内不停蠕动着……`);
     }
-    era.set(`talent:${a}:193`, 1);
-  } else if (era.get(`talent:${a}:193`)) {
+    EraChara.get(a).talent.anal_worm = 1;
+  } else if (EraChara.get(a).talent.anal_worm) {
     // PLAYER = 0——不落变量、注释留痕（读者面见文件头：本体不读、
     // 三连第三站的结算读）
     era_flag.target = a; // TARGET = A
@@ -1729,7 +1721,7 @@ async function a_worm_trap(a, rand_n) {
     await autotrain_mod.source_check_auto();
   }
 
-  era.set(`exp:${a}:1`, (era.get(`exp:${a}:1`) || 0) + 1);
+  EraChara.get(a).exp.anal_exp += 1;
   if (show) {
     era.print('肛门经验+1');
   }
@@ -1745,17 +1737,17 @@ async function a_worm_trap(a, rand_n) {
  * @returns {Promise<number>} RETURN（1 = 未作动）
  */
 async function love_bug_trap(a, rand_n) {
-  const settings = era.get('flag:5') || 0;
+  const settings = era_flag.game_settings;
   const show = (settings & 32) !== 0;
   const name = name_of(a);
-  const diff = era.get('flag:85') || 0;
+  const diff = era_flag.trap_level;
 
   // 落下フラグ
   if (cbit(a, 503, 64)) {
     if (show) {
       era.print('掉入了淫虫的巢穴！（气力-10） ');
     }
-    chara(a).dungeon.气力 -= 10;
+    EraChara.get(a).base.willpower -= 10;
   } else {
     if (show) {
       era.print('踩到了淫虫的巢穴上！ ');
@@ -1765,13 +1757,13 @@ async function love_bug_trap(a, rand_n) {
   let dice = rand_n(100);
 
   // 天使 / 堕天使
-  if ((era.get(`talent:${a}:314`) || 0) === 6) {
+  if (EraChara.get(a).talent.race === 6) {
     if (show) {
       era.print(`天使族的${name}及时地飞起来，避开了巢穴… `);
     }
     return 1;
   }
-  if ((era.get(`talent:${a}:314`) || 0) === 8) {
+  if (EraChara.get(a).talent.race === 8) {
     if (show) {
       era.print(`堕天使族的${name}及时地飞起来，避开了巢穴…`);
     }
@@ -1796,7 +1788,7 @@ async function love_bug_trap(a, rand_n) {
       era.print(`${name}受到${dice}点伤害！`);
     }
   }
-  chara(a).dungeon.体力 -= dice;
+  EraChara.get(a).base.stamina -= dice;
 
   // 的 PRINTL 只结束上面那串 `PRINTFORM` 拼起来的一行
   // （PRINTFORM 不换行），**不是空行**——ere 侧每段各自一次 print，
@@ -1812,11 +1804,11 @@ async function love_bug_trap(a, rand_n) {
   await autotrain_mod.source_check_auto();
 
   // 胆怯
-  if ((era.get(`talent:${a}:10`) || 0) === 1) {
+  if (EraChara.get(a).talent.timidity === 1) {
     if (show) {
       era.print(`胆小的${name}吓得要死…（气力-10）`);
     }
-    chara(a).dungeon.气力 -= 10;
+    EraChara.get(a).base.willpower -= 10;
   }
 
   return 0;
@@ -1829,10 +1821,10 @@ async function love_bug_trap(a, rand_n) {
  * @returns {Promise<number>} RETURN（1 = 克服）
  */
 async function dark_juel_trap(a, rand_n) {
-  const settings = era.get('flag:5') || 0;
+  const settings = era_flag.game_settings;
   const show = (settings & 32) !== 0;
   const name = name_of(a);
-  const diff = era.get('flag:85') || 0;
+  const diff = era_flag.trap_level;
 
   if (show) {
     era.print(`${name}将高价的宝石捡了起来……`);
@@ -1841,7 +1833,7 @@ async function dark_juel_trap(a, rand_n) {
   let dice = rand_n(5) * 50;
 
   // カルマが高いと誘惑に打ち勝つ判定
-  if (chara(a).chara.善恶值 > 150 && rand_n(4) === 0) {
+  if (EraChara.get(a).cflag.karma > 150 && rand_n(4) === 0) {
     dice = 0;
   }
 
@@ -1853,24 +1845,24 @@ async function dark_juel_trap(a, rand_n) {
   }
 
   // 阶层立方补正
-  const floor = chara(a).dungeon.侵攻阶层;
+  const floor = EraChara.get(a).cflag.invasion_floor;
   dice += diff * 10;
   dice = Math.floor((dice * (99 + floor * floor * floor)) / 100);
 
   // 素质补正
-  if (era.get(`talent:${a}:23`)) {
+  if (EraChara.get(a).talent.curious) {
     dice += 5; // 好奇心ボーナス
   }
-  if ((era.get(`talent:${a}:316`) || 0) === 2) {
+  if (EraChara.get(a).talent.hero_trigger === 2) {
     dice += 10; // 金のためボーナス
   }
-  if ((era.get(`talent:${a}:314`) || 0) === 10) {
+  if (EraChara.get(a).talent.race === 10) {
     dice += 15; // ホビットボーナス
   }
-  if ((era.get(`talent:${a}:314`) || 0) === 11) {
+  if (EraChara.get(a).talent.race === 11) {
     dice += 15; // ドワーフボーナス
   }
-  if (era.get(`talent:${a}:203`)) {
+  if (EraChara.get(a).talent.thief) {
     dice += Math.floor(dice / 5); // 盗賊は収入が多い（1.2倍）
   }
 
@@ -1878,9 +1870,9 @@ async function dark_juel_trap(a, rand_n) {
     era.print(`总计价值${dice}的宝石被勇者装入怀中……`);
   }
 
-  era.set(`cflag:${a}:581`, (era.get(`cflag:${a}:581`) || 0) + dice);
+  EraChara.get(a).cflag.loot_value += dice;
 
-  era.set(`juel:${a}:6`, (era.get(`juel:${a}:6`) || 0) + Math.floor(dice / 10));
+  EraChara.get(a).jewel.submission += Math.floor(dice / 10);
   if (show) {
     era.print(`屈服点数+${Math.floor(dice / 10)}`);
   }
@@ -1898,10 +1890,10 @@ async function dark_juel_trap(a, rand_n) {
  * @returns {Promise<number>} RETURN（恒 0）
  */
 async function def_down_trap(a, rand_n) {
-  const settings = era.get('flag:5') || 0;
+  const settings = era_flag.game_settings;
   const show = (settings & 32) !== 0;
   const name = name_of(a);
-  const diff = era.get('flag:85') || 0;
+  const diff = era_flag.trap_level;
 
   if (show) {
     era.print(`${name}被附上攻击效果上升的图腾……`);
@@ -1913,7 +1905,7 @@ async function def_down_trap(a, rand_n) {
     era.print(`${name}的防御值弱化了${dice}％……`);
   }
 
-  era.set(`cflag:${a}:680`, (era.get(`cflag:${a}:680`) || 0) + dice);
+  EraChara.get(a).cflag.defense_down_rate += dice;
 
   return 0;
 }
@@ -1924,10 +1916,10 @@ async function def_down_trap(a, rand_n) {
  * @returns {Promise<number>} RETURN（恒 0）
  */
 async function atk_down_trap(a, rand_n) {
-  const settings = era.get('flag:5') || 0;
+  const settings = era_flag.game_settings;
   const show = (settings & 32) !== 0;
   const name = name_of(a);
-  const diff = era.get('flag:85') || 0;
+  const diff = era_flag.trap_level;
 
   if (show) {
     era.print(`${name}被附上了防御效果上升的图腾……`);
@@ -1939,7 +1931,7 @@ async function atk_down_trap(a, rand_n) {
     era.print(`${name}的伤害值被弱化了${dice}％……`);
   }
 
-  era.set(`cflag:${a}:681`, (era.get(`cflag:${a}:681`) || 0) + dice);
+  EraChara.get(a).cflag.attack_down_rate += dice;
 
   return 0;
 }
@@ -1950,10 +1942,10 @@ async function atk_down_trap(a, rand_n) {
  * @returns {Promise<number>} RETURN（恒 0）
  */
 async function mag_down_trap(a, rand_n) {
-  const settings = era.get('flag:5') || 0;
+  const settings = era_flag.game_settings;
   const show = (settings & 32) !== 0;
   const name = name_of(a);
-  const diff = era.get('flag:85') || 0;
+  const diff = era_flag.trap_level;
 
   if (show) {
     era.print(`${name}被附上了魔法攻击效果上升的图腾……`);
@@ -1965,7 +1957,7 @@ async function mag_down_trap(a, rand_n) {
     era.print(`${name}受到的魔法伤害上升了${dice}％……`);
   }
 
-  era.set(`cflag:${a}:682`, (era.get(`cflag:${a}:682`) || 0) + dice);
+  EraChara.get(a).cflag.magic_damage_up_rate += dice;
 
   return 0;
 }
@@ -1976,10 +1968,10 @@ async function mag_down_trap(a, rand_n) {
  * @returns {Promise<number>} RETURN（恒 0）
  */
 async function all_down_trap(a, rand_n) {
-  const settings = era.get('flag:5') || 0;
+  const settings = era_flag.game_settings;
   const show = (settings & 32) !== 0;
   const name = name_of(a);
-  const diff = era.get('flag:85') || 0;
+  const diff = era_flag.trap_level;
 
   if (show) {
     era.print(`${name}遭惨白的手所缠绕，被下了诅咒……`);
@@ -1991,9 +1983,9 @@ async function all_down_trap(a, rand_n) {
     era.print(`${name}被弱化了${dice}％……`);
   }
 
-  era.set(`cflag:${a}:680`, (era.get(`cflag:${a}:680`) || 0) + dice);
-  era.set(`cflag:${a}:681`, (era.get(`cflag:${a}:681`) || 0) + dice);
-  era.set(`cflag:${a}:682`, (era.get(`cflag:${a}:682`) || 0) + dice);
+  EraChara.get(a).cflag.defense_down_rate += dice;
+  EraChara.get(a).cflag.attack_down_rate += dice;
+  EraChara.get(a).cflag.magic_damage_up_rate += dice;
 
   return 0;
 }
@@ -2015,8 +2007,8 @@ function pick_data(rand_n, options) {
  */
 async function fraud_story1(a, rand_n) {
   const name = name_of(a);
-  const diff = era.get('flag:85') || 0;
-  const karma = chara(a).chara.善恶值;
+  const diff = era_flag.trap_level;
+  const karma = EraChara.get(a).cflag.karma;
 
   era.print(
     `一个骨瘦如柴的${pick_data(rand_n, ['老太太', '老先生', '流浪汉', '小孩子'])}正向${name}求救，`,
@@ -2034,48 +2026,48 @@ async function fraud_story1(a, rand_n) {
   // 善悪値判定
   if (karma > 100) {
     let cost =
-      Math.floor((karma * (era.get(`cflag:${a}:9`) || 0)) / 2) + diff * 20;
-    if (cost > Math.floor(chara(a).dungeon.所持金 / 2)) {
-      cost = Math.floor(chara(a).dungeon.所持金 / 2);
+      Math.floor((karma * EraChara.get(a).cflag.level) / 2) + diff * 20;
+    if (cost > Math.floor(EraChara.get(a).cflag.money / 2)) {
+      cost = Math.floor(EraChara.get(a).cflag.money / 2);
     }
     era.print(`正义感很高的${name}，非常同情对方的处境`);
-    if (chara(a).dungeon.所持金 < 100) {
+    if (EraChara.get(a).cflag.money < 100) {
       era.print('尽管想帮助对方，但自己身上也所剩无几，只能爱莫能助了……');
     } else {
       // SETCOLORBYNAME LightSalmon → RESETCOLOR：配色不做（#175 先例）
       era.print(`将自己的所持金分了${cost}给对方……`);
       era_flag.money += cost;
       era_exflag.legit_money += cost;
-      chara(a).dungeon.所持金 -= cost;
+      EraChara.get(a).cflag.money -= cost;
     }
   } else if (karma > 0) {
     let cost =
-      Math.floor((karma * (era.get(`cflag:${a}:9`) || 0)) / 2) + diff * 10;
-    if (cost > Math.floor(chara(a).dungeon.所持金 / 3)) {
-      cost = Math.floor(chara(a).dungeon.所持金 / 3);
+      Math.floor((karma * EraChara.get(a).cflag.level) / 2) + diff * 10;
+    if (cost > Math.floor(EraChara.get(a).cflag.money / 3)) {
+      cost = Math.floor(EraChara.get(a).cflag.money / 3);
     }
     era.print(`${name}虽然有点半信半疑，最后还是选择相信对方`);
-    if (chara(a).dungeon.所持金 < 100) {
+    if (EraChara.get(a).cflag.money < 100) {
       era.print('尽管想帮助对方，但自己身上也所剩无几，只能爱莫能助了……');
     } else {
       era.print(`将自己的所持金分了${cost}给对方……`);
       era_flag.money += cost;
       era_exflag.legit_money += cost;
-      chara(a).dungeon.所持金 -= cost;
+      EraChara.get(a).cflag.money -= cost;
     }
   } else if (karma > -50) {
-    let cost = (era.get(`cflag:${a}:9`) || 0) * (rand_n(5) + 1) + diff * 5;
-    if (cost > Math.floor(chara(a).dungeon.所持金 / 5)) {
-      cost = Math.floor(chara(a).dungeon.所持金 / 5);
+    let cost = EraChara.get(a).cflag.level * (rand_n(5) + 1) + diff * 5;
+    if (cost > Math.floor(EraChara.get(a).cflag.money / 5)) {
+      cost = Math.floor(EraChara.get(a).cflag.money / 5);
     }
     era.print(`${name}很怀疑这么危险的地方居然会出现平民`);
-    if (chara(a).dungeon.所持金 < 100) {
+    if (EraChara.get(a).cflag.money < 100) {
       era.print('不过因为自己身上也所剩无几，只能爱莫能助了……');
     } else {
       era.print(`犹豫了一番，最后还是将自己的所持金分了${cost}给对方……`);
       era_flag.money += cost;
       era_exflag.legit_money += cost;
-      chara(a).dungeon.所持金 -= cost;
+      EraChara.get(a).cflag.money -= cost;
     }
   } else {
     era.print(`${name}认为这一定是陷阱，于是漠不关心地转身离开了……`);
@@ -2089,8 +2081,8 @@ async function fraud_story1(a, rand_n) {
  */
 async function fraud_story2(a, rand_n) {
   const name = name_of(a);
-  const diff = era.get('flag:85') || 0;
-  const karma = chara(a).chara.善恶值;
+  const diff = era_flag.trap_level;
+  const karma = EraChara.get(a).cflag.karma;
 
   era.print(
     `一个${pick_data(rand_n, ['看似老练的冒险者', '精明干练的女勇者', '热情洋溢的商人', '睿智慈祥的老者'])}正向${name}搭话，`,
@@ -2109,9 +2101,9 @@ async function fraud_story2(a, rand_n) {
   // 善悪値判定
   if (karma > 100) {
     let cost =
-      Math.floor((karma * (era.get(`cflag:${a}:9`) || 0)) / 2) + diff * 20;
-    if (cost > Math.floor(chara(a).dungeon.所持金 / 2)) {
-      cost = Math.floor(chara(a).dungeon.所持金 / 2);
+      Math.floor((karma * EraChara.get(a).cflag.level) / 2) + diff * 20;
+    if (cost > Math.floor(EraChara.get(a).cflag.money / 2)) {
+      cost = Math.floor(EraChara.get(a).cflag.money / 2);
     }
     era.print(`正义感很高的${name}，觉得对方提出的建议非常有意义`);
     if (cost < 2000) {
@@ -2124,18 +2116,18 @@ async function fraud_story2(a, rand_n) {
       );
       era_flag.money += cost;
       era_exflag.legit_money += cost;
-      chara(a).patch.借款 -= cost; // CFLAG:582（patch 域门面「借款」）
+      EraChara.get(a).cflag.debt -= cost; // CFLAG:582（patch 域门面「借款」）
     } else {
       era.print(`于是兴高采烈地拿出所持金${cost}给对方了……`);
       era_flag.money += cost;
       era_exflag.legit_money += cost;
-      chara(a).dungeon.所持金 -= cost;
+      EraChara.get(a).cflag.money -= cost;
     }
   } else if (karma > 0) {
     let cost =
-      Math.floor((karma * (era.get(`cflag:${a}:9`) || 0)) / 2) + diff * 10;
-    if (cost > Math.floor(chara(a).dungeon.所持金 / 3)) {
-      cost = Math.floor(chara(a).dungeon.所持金 / 3);
+      Math.floor((karma * EraChara.get(a).cflag.level) / 2) + diff * 10;
+    if (cost > Math.floor(EraChara.get(a).cflag.money / 3)) {
+      cost = Math.floor(EraChara.get(a).cflag.money / 3);
     }
     era.print(`${name}虽然有点半信半疑，但是最后还是被对方说动了`);
     if (cost < 1000) {
@@ -2148,17 +2140,17 @@ async function fraud_story2(a, rand_n) {
       );
       era_flag.money += cost;
       era_exflag.legit_money += cost;
-      chara(a).patch.借款 -= cost; // CFLAG:582（patch 域门面「借款」）
+      EraChara.get(a).cflag.debt -= cost; // CFLAG:582（patch 域门面「借款」）
     } else {
       era.print(`拿出所持金${cost}给对方了……`);
       era_flag.money += cost;
       era_exflag.legit_money += cost;
-      chara(a).dungeon.所持金 -= cost;
+      EraChara.get(a).cflag.money -= cost;
     }
   } else if (karma > -50) {
-    let cost = (era.get(`cflag:${a}:9`) || 0) * (rand_n(5) + 1) + diff * 5;
-    if (cost > Math.floor(chara(a).dungeon.所持金 / 5)) {
-      cost = Math.floor(chara(a).dungeon.所持金 / 5);
+    let cost = EraChara.get(a).cflag.level * (rand_n(5) + 1) + diff * 5;
+    if (cost > Math.floor(EraChara.get(a).cflag.money / 5)) {
+      cost = Math.floor(EraChara.get(a).cflag.money / 5);
     }
     era.print(`${name}很怀疑对方的真实性，但是又无法完全否决`);
     if (cost < 500) {
@@ -2171,12 +2163,12 @@ async function fraud_story2(a, rand_n) {
       );
       era_flag.money += cost;
       era_exflag.legit_money += cost;
-      chara(a).patch.借款 -= cost; // CFLAG:582（patch 域门面「借款」）
+      EraChara.get(a).cflag.debt -= cost; // CFLAG:582（patch 域门面「借款」）
     } else {
       era.print(`犹豫了一番，最后还是拿出所持金${cost}给对方了……`);
       era_flag.money += cost;
       era_exflag.legit_money += cost;
-      chara(a).dungeon.所持金 -= cost;
+      EraChara.get(a).cflag.money -= cost;
     }
   } else {
     era.print(`${name}认为这一定是陷阱，于是漠不关心地转身离开了……`);
@@ -2190,8 +2182,8 @@ async function fraud_story2(a, rand_n) {
  */
 async function fraud_story3(a, rand_n) {
   const name = name_of(a);
-  const diff = era.get('flag:85') || 0;
-  const karma = chara(a).chara.善恶值;
+  const diff = era_flag.trap_level;
+  const karma = EraChara.get(a).cflag.karma;
 
   era.print(
     `一个${pick_data(rand_n, ['笑容满面的冒险者', '热情洋溢的冒险者', '和蔼可亲的冒险者', '诚恳随和的冒险者'])}正向${name}搭话，`,
@@ -2202,19 +2194,19 @@ async function fraud_story3(a, rand_n) {
   // 善悪値判定（三档的下限钳制方向与前两段相反：SIF COST < N）
   let cost;
   if (karma > 100) {
-    cost = Math.floor((karma * (era.get(`cflag:${a}:9`) || 0)) / 2) + diff * 20;
+    cost = Math.floor((karma * EraChara.get(a).cflag.level) / 2) + diff * 20;
     if (cost < 1500) {
       cost = 1500 + rand_n(100);
     }
     era.print(`正义感很高的${name}，轻易就相信了对方的说辞\t`);
   } else if (karma > 0) {
-    cost = Math.floor((karma * (era.get(`cflag:${a}:9`) || 0)) / 2) + diff * 10;
+    cost = Math.floor((karma * EraChara.get(a).cflag.level) / 2) + diff * 10;
     if (cost < 1000) {
       cost = 1000 + rand_n(100);
     }
     era.print(`${name}虽然有点半信半疑，但是最后接受了对方的金钱援助`);
   } else {
-    cost = (era.get(`cflag:${a}:9`) || 0) * (rand_n(5) + 1) + diff * 5;
+    cost = EraChara.get(a).cflag.level * (rand_n(5) + 1) + diff * 5;
     if (cost < 500) {
       cost = 500 + rand_n(100);
     }
@@ -2227,8 +2219,8 @@ async function fraud_story3(a, rand_n) {
 
   era_flag.money += cost;
   era_exflag.legit_money += cost;
-  chara(a).dungeon.所持金 += cost;
-  chara(a).patch.借款 -= cost * 2; // CFLAG:582（patch 域门面「借款」）
+  EraChara.get(a).cflag.money += cost;
+  EraChara.get(a).cflag.debt -= cost * 2; // CFLAG:582（patch 域门面「借款」）
 }
 
 /**
@@ -2237,7 +2229,7 @@ async function fraud_story3(a, rand_n) {
  * @returns {Promise<number>} 恒 return 0（恒作动、消耗）
  */
 async function fraud_trap(a, rand_n) {
-  const settings = era.get('flag:5') || 0;
+  const settings = era_flag.game_settings;
   if ((settings & 32) !== 0) {
     // SELECTCASE RAND:3
     const roll = rand_n(3);
@@ -2260,19 +2252,19 @@ async function fraud_trap(a, rand_n) {
  * @returns {Promise<number>} 恒 return 0
  */
 async function slave_trap_set(a) {
-  const settings = era.get('flag:5') || 0;
+  const settings = era_flag.game_settings;
   const show = (settings & 32) !== 0;
 
   // 補充行動か
-  if ((era.get(`cflag:${a}:500`) || 0) !== 2) {
+  if (EraChara.get(a).cflag.dungeon_action !== 2) {
     return 0;
   }
 
-  let local = chara(a).dungeon.侵攻阶层 + 299;
+  let local = EraChara.get(a).cflag.invasion_floor + 299;
 
   // $TRAP_LOOP_2（LOCAL += 10 → < 330 则回起）
   for (;;) {
-    const trap_id = era.get(`flag:${local}`) || 0;
+    const trap_id = era_flag.get(local);
 
     if (trap_id > 0) {
       // 補充
