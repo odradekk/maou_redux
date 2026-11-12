@@ -74,7 +74,18 @@ function jump_com(id, { rewrite_selectcom = false } = {}) {
   if (rewrite_selectcom) {
     era_flag.selectcom = id;
   }
-  return com_family.call(id, { whenMissing: COM_MISSING });
+  // 跳转目标含 5/11/13–17/31（#877 起这些指令从回合循环接收 {target, player,
+  // assi}）；本函数没有上下文可转发，按跳转发生的那一刻现取一份。
+  return com_family.call(id, {
+    whenMissing: COM_MISSING,
+    args: [
+      {
+        target: era_flag.target,
+        player: era_flag.player,
+        assi: era_flag.assi,
+      },
+    ],
+  });
 }
 
 function scale_a_by_half_explv(cid, a) {
