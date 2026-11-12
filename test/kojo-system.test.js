@@ -31,6 +31,7 @@ const { test } = require('node:test');
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { register_handlers } = require('./helpers/event-registration');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
+const { com_context } = require('./helpers/com-context');
 
 // 世界底座：玛奥入列调教，加载口上系统 + K3/K5 两模块
 async function setup_kojo(seed) {
@@ -397,7 +398,7 @@ test('实机路径端到端：主菜单 → 调教 → 爱抚 → 玛奥真的�
   // 回合：COM0（爱抚）→ SOURCE_CHECK（CALL KOJO_MESSAGE_COM）
   fixture.load_module('system/train/com-caress');
   const { com_family } = fixture.load_module('system/train/com-family');
-  await com_family.call(0);
+  await com_family.call(0, { args: [com_context(era_flag)] });
   await fixture.load_module('system/train/source-check').handle_source_check();
   assert.ok(
     fixture.text_lines().includes('「你这个变态…别、别碰我！」'),

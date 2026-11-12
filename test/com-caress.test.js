@@ -19,6 +19,7 @@ const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
+const { com_context } = require('./helpers/com-context');
 
 // 初始化调教临时表、TARGET/PLAYER 与 com0，返回测试夹具及指令族。
 function seed_caress_world() {
@@ -75,11 +76,15 @@ test('0 号可用性检查：默认可执行；爱抚系过滤与决斗中各挡
 
 for (const [level, [src0, src3]] of C_TIERS.entries()) {
   test(`ABL:0（阴蒂感觉）= ${level} 档：SOURCE:0 = ${src0}`, async () => {
-    const { fixture, com_family } = seed_caress_world();
+    const { fixture, era_flag, com_family } = seed_caress_world();
     fixture.store.set('abl:31:0', level);
     fixture.store.set('abl:31:1', 0);
     // 无素质干扰、无初吻回避（cflag:16 留 undefined = 0 ≠ -1）
-    assert.equal(await com_family.call(0), 1, 'com0 RETURN 1');
+    assert.equal(
+      await com_family.call(0, { args: [com_context(era_flag)] }),
+      1,
+      'com0 RETURN 1',
+    );
     assert.equal(fixture.store.get('source:31:0'), src0);
     // SOURCE:3 = C 档的基础 + B 档（ABL:1 = 0）的增量 25
     assert.equal(fixture.store.get('source:31:3'), src3 + 25);
@@ -88,10 +93,10 @@ for (const [level, [src0, src3]] of C_TIERS.entries()) {
 
 for (const [level, [src17, src3_add]] of B_TIERS.entries()) {
   test(`ABL:1（乳房感觉）= ${level} 档：SOURCE:17 = ${src17}`, async () => {
-    const { fixture, com_family } = seed_caress_world();
+    const { fixture, era_flag, com_family } = seed_caress_world();
     fixture.store.set('abl:31:0', 0);
     fixture.store.set('abl:31:1', level);
-    await com_family.call(0);
+    await com_family.call(0, { args: [com_context(era_flag)] });
     assert.equal(fixture.store.get('source:31:17'), src17);
     // SOURCE:3 = C 档（ABL:0 = 0）的基础 25 + B 档增量（累加语义）
     assert.equal(fixture.store.get('source:31:3'), 25 + src3_add);
@@ -99,10 +104,10 @@ for (const [level, [src17, src3_add]] of B_TIERS.entries()) {
 }
 
 test('ABL 超过 5 落 ELSE 档（2800 / 1600 / 125+125）', async () => {
-  const { fixture, com_family } = seed_caress_world();
+  const { fixture, era_flag, com_family } = seed_caress_world();
   fixture.store.set('abl:31:0', 8);
   fixture.store.set('abl:31:1', 99);
-  await com_family.call(0);
+  await com_family.call(0, { args: [com_context(era_flag)] });
   assert.equal(fixture.store.get('source:31:0'), 2800);
   assert.equal(fixture.store.get('source:31:17'), 1600);
   assert.equal(fixture.store.get('source:31:3'), 125 + 125);
@@ -111,47 +116,47 @@ test('ABL 超过 5 落 ELSE 档（2800 / 1600 / 125+125）', async () => {
 // —— 接吻侧分支 ——
 
 test('初吻未体验（CFLAG:16 == -1）：不洁清零、SOURCE:0 减半、SOURCE:3 四分', async () => {
-  const { fixture, com_family } = seed_caress_world();
+  const { fixture, era_flag, com_family } = seed_caress_world();
   fixture.store.set('cflag:31:16', -1);
-  await com_family.call(0);
+  await com_family.call(0, { args: [com_context(era_flag)] });
   assert.equal(fixture.store.get('source:31:8'), 0);
   assert.equal(fixture.store.get('source:31:0'), Math.floor(20 / 2));
   assert.equal(fixture.store.get('source:31:3'), Math.floor(50 / 4));
 });
 
 test('不怕污臭（TALENT:61）：不洁源 ÷ 4', async () => {
-  const { fixture, com_family } = seed_caress_world();
+  const { fixture, era_flag, com_family } = seed_caress_world();
   fixture.store.set('talent:31:61', 1);
-  await com_family.call(0);
+  await com_family.call(0, { args: [com_context(era_flag)] });
   assert.equal(fixture.store.get('source:31:8'), Math.floor(30 / 4));
 });
 
 test('反感污臭（TALENT:62）：不洁源 × 3；高姿态（TALENT:15）再 × 2', async () => {
-  const { fixture, com_family } = seed_caress_world();
+  const { fixture, era_flag, com_family } = seed_caress_world();
   fixture.store.set('talent:31:62', 1);
-  await com_family.call(0);
+  await com_family.call(0, { args: [com_context(era_flag)] });
   assert.equal(fixture.store.get('source:31:8'), 90);
 
   const f2 = seed_caress_world();
   f2.fixture.store.set('talent:31:62', 1);
   f2.fixture.store.set('talent:31:15', 1);
-  await f2.com_family.call(0);
+  await f2.com_family.call(0, { args: [com_context(f2.era_flag)] });
   assert.equal(f2.fixture.store.get('source:31:8'), 180);
 });
 
 test('爱慕（TALENT:85）且主人调教：情爱 × 2、不洁 ÷ 10', async () => {
-  const { fixture, com_family } = seed_caress_world();
+  const { fixture, era_flag, com_family } = seed_caress_world();
   fixture.store.set('talent:31:85', 1);
-  await com_family.call(0);
+  await com_family.call(0, { args: [com_context(era_flag)] });
   assert.equal(fixture.store.get('source:31:3'), (25 + 25) * 2);
   assert.equal(fixture.store.get('source:31:8'), Math.floor(30 / 10));
 });
 
 test('主人口有污垢：不洁 × 3 / 2；且口污双向移动', async () => {
-  const { fixture, com_family } = seed_caress_world();
+  const { fixture, era_flag, com_family } = seed_caress_world();
   fixture.store.set('stain:0:0', 5); // 主人的口（PLAYER = 0）
   fixture.store.set('stain:31:0', 2); // 奴隶的口
-  await com_family.call(0);
+  await com_family.call(0, { args: [com_context(era_flag)] });
   assert.equal(fixture.store.get('source:31:8'), Math.floor((30 * 3) / 2));
   // 两边同为原两值的按位或
   assert.equal(fixture.store.get('stain:31:0'), 2 | 5);
@@ -159,11 +164,11 @@ test('主人口有污垢：不洁 × 3 / 2；且口污双向移动', async () =>
 });
 
 test('污垢移动：奴隶的 V/B 与调教者的指合流', async () => {
-  const { fixture, com_family } = seed_caress_world();
+  const { fixture, era_flag, com_family } = seed_caress_world();
   fixture.store.set('stain:31:3', 1); // V
   fixture.store.set('stain:0:1', 8); // 调教者的指
   fixture.store.set('stain:31:5', 16); // B
-  await com_family.call(0);
+  await com_family.call(0, { args: [com_context(era_flag)] });
   // V |= 指 → 1|8 = 9；指 |= V → 9；B |= 指 → 16|9 = 25；指 |= B → 25
   assert.equal(fixture.store.get('stain:31:3'), 9);
   assert.equal(fixture.store.get('stain:31:5'), 25);
@@ -173,38 +178,38 @@ test('污垢移动：奴隶的 V/B 与调教者的指合流', async () => {
 // —— 经验与消耗 ——
 
 test('双方皆非男人：百合经验 +5；爱情经验要 CFLAG:2 ≥ 1000 且主人调教', async () => {
-  const { fixture, com_family } = seed_caress_world();
-  await com_family.call(0);
+  const { fixture, era_flag, com_family } = seed_caress_world();
+  await com_family.call(0, { args: [com_context(era_flag)] });
   assert.equal(fixture.store.get('exp:31:40'), 5);
   assert.equal(fixture.store.get('exp:31:23'), undefined, 'CFLAG:2 不足不加');
   assert(fixture.text_lines().includes('百合经验+5'));
 
   const f2 = seed_caress_world();
   f2.fixture.store.set('cflag:31:2', 1000);
-  await f2.com_family.call(0);
+  await f2.com_family.call(0, { args: [com_context(f2.era_flag)] });
   assert.equal(f2.fixture.store.get('exp:31:23'), 2);
   assert(f2.fixture.text_lines().includes('爱情经验+2'));
 });
 
 test('调教者是男人（角色 0）：无百合经验', async () => {
-  const { fixture, com_family } = seed_caress_world();
+  const { fixture, era_flag, com_family } = seed_caress_world();
   fixture.store.set('talent:0:122', 1); // 主人是男人
-  await com_family.call(0);
+  await com_family.call(0, { args: [com_context(era_flag)] });
   assert.equal(fixture.store.get('exp:31:40'), undefined);
 });
 
 test('双方都是男人：断背经验 +5', async () => {
-  const { fixture, com_family } = seed_caress_world();
+  const { fixture, era_flag, com_family } = seed_caress_world();
   fixture.store.set('talent:31:122', 1);
   fixture.store.set('talent:0:122', 1);
-  await com_family.call(0);
+  await com_family.call(0, { args: [com_context(era_flag)] });
   assert.equal(fixture.store.get('exp:31:41'), 5);
   assert(fixture.text_lines().includes('断背经验+5'));
 });
 
 test('LOSEBASE：deltabase 负向累加 5 / 50；指令行与描写前缀已输出', async () => {
-  const { fixture, com_family } = seed_caress_world();
-  await com_family.call(0);
+  const { fixture, era_flag, com_family } = seed_caress_world();
+  await com_family.call(0, { args: [com_context(era_flag)] });
   assert.equal(fixture.store.get('deltabase:31:0'), -5);
   assert.equal(fixture.store.get('deltabase:31:1'), -50);
   const texts = fixture.text_lines();
@@ -277,11 +282,11 @@ function seed_family_world(selectcom = 0) {
 // —— com1（舔阴）真身 ——
 
 test('com1：源计算的分档与污垢移动；调教者初吻记录 301', async () => {
-  const { fixture, com_family } = seed_family_world(1);
+  const { fixture, era_flag, com_family } = seed_family_world(1);
   fixture.store.set('abl:31:0', 3); // → SOURCE:0 = 1500
   fixture.store.set('cflag:0:16', -1); // 调教者未初吻
   fixture.store.set('stain:0:0', 4); // 主人口有精液污
-  await com_family.call(1);
+  await com_family.call(1, { args: [com_context(era_flag)] });
   assert.equal(fixture.store.get('source:31:0'), 1500);
   assert.equal(fixture.store.get('source:31:10'), 100);
   assert.equal(fixture.store.get('source:31:12'), 220);
@@ -299,10 +304,10 @@ test('com1：源计算的分档与污垢移动；调教者初吻记录 301', asy
 });
 
 test('com1 擅用舌头（TALENT:PLAYER:52）：SOURCE:0 ×2 + SOURCE:16 加成', async () => {
-  const { fixture, com_family } = seed_family_world(1);
+  const { fixture, era_flag, com_family } = seed_family_world(1);
   fixture.store.set('abl:31:0', 0); // 40
   fixture.store.set('talent:0:52', 1);
-  await com_family.call(1);
+  await com_family.call(1, { args: [com_context(era_flag)] });
   assert.equal(fixture.store.get('source:31:0'), 80);
   assert.equal(fixture.store.get('source:31:16'), 4); // 80/20
 });
@@ -310,12 +315,12 @@ test('com1 擅用舌头（TALENT:PLAYER:52）：SOURCE:0 ×2 + SOURCE:16 加成'
 // —— com2（肛门爱抚）真身 ——
 
 test('com2：ABL:3 分档 + EXP:1/PALAM 三段的乘法链；肛门经验 +S', async () => {
-  const { fixture, com_family } = seed_family_world(2);
+  const { fixture, era_flag, com_family } = seed_family_world(2);
   fixture.store.set('abl:31:3', 1); // S2=75, S13=350
   fixture.store.set('exp:31:1', 0); // < EXPLV:1 → ×0.20、S6=500、S14 += 200
   fixture.store.set('palam:31:3', 0); // < LV1 → ×0.10、S6 ×3
   fixture.store.set('palam:31:5', 0); // < LV1 → ×0.30
-  await com_family.call(2);
+  await com_family.call(2, { args: [com_context(era_flag)] });
   assert.equal(fixture.store.get('source:31:12'), 850);
   assert.equal(fixture.store.get('source:31:14'), 400); // 200 + 200
   assert.equal(
@@ -332,17 +337,17 @@ test('com2：ABL:3 分档 + EXP:1/PALAM 三段的乘法链；肛门经验 +S', a
 });
 
 test('com2 触手装备：A 位 |= 2/4（不走 ⇔ 指交换）', async () => {
-  const { fixture, com_family } = seed_family_world(2);
+  const { fixture, era_flag, com_family } = seed_family_world(2);
   fixture.store.set('tequip:31:90', 1);
   fixture.store.set('stain:31:4', 8);
-  await com_family.call(2);
+  await com_family.call(2, { args: [com_context(era_flag)] });
   assert.equal(fixture.store.get('stain:31:4'), 14); // 8 | 2 | 4
 });
 
 // —— com3（自慰）真身 ——
 
 test('com3：判定段的一行形式与 A/V 门槛（不过 → RETURN 0，B 文读 A/V）', async () => {
-  const { fixture, com_family } = seed_family_world(3);
+  const { fixture, era_flag, com_family } = seed_family_world(3);
   // 判定值 42 > 33 的算术：顺从1 抖M3 苦痛1
   // 屈服2 反抗1 欲望1 露出癖1 快乐刻印2 欲情 LV2
   fixture.store.set('abl:31:10', 1);
@@ -355,7 +360,7 @@ test('com3：判定段的一行形式与 A/V 门槛（不过 → RETURN 0，B �
   fixture.store.set('abl:31:17', 1);
   fixture.store.set('palam:31:5', 600); // LV2
   fixture.store.set('flag:10009', -1); // PREVCOM = -1（不进连续高潮支）
-  const result = await com_family.call(3);
+  const result = await com_family.call(3, { args: [com_context(era_flag)] });
   assert.equal(result, 1);
   const judge = fixture.text_lines().find((l) => l.includes('实行值33'));
   assert(judge, '判定行输出（一行）');
@@ -371,10 +376,10 @@ test('com3：判定段的一行形式与 A/V 门槛（不过 → RETURN 0，B �
 });
 
 test('com3 判定不过（A < V）：RETURN 0 且不进 B 文（返回先于 B 文调用）', async () => {
-  const { fixture, com_family } = seed_family_world(3);
+  const { fixture, era_flag, com_family } = seed_family_world(3);
   // 全空状态：A = 0 < 33。B 分支 3 的「拒绝自慰」因指令先返回 0，
   // 不调用 train_message_b 而不可达，保留在 handler 内。
-  const result = await com_family.call(3);
+  const result = await com_family.call(3, { args: [com_context(era_flag)] });
   assert.equal(result, 0);
   assert(
     !fixture.text_lines().some((l) => l.includes('开始了自慰')),
@@ -388,7 +393,7 @@ test('com3 判定不过（A < V）：RETURN 0 且不进 B 文（返回先于 B �
 });
 
 test('com3 A ≥ 80：完全驯服的牝奴/牡奴表情行（LOCALS 随性别）', async () => {
-  const { fixture, com_family } = seed_family_world(3);
+  const { fixture, era_flag, com_family } = seed_family_world(3);
   fixture.store.set('abl:31:10', 5); // 顺从 5 → 20
   fixture.store.set('abl:31:21', 5); // 抖M 5 → 10
   fixture.store.set('mark:31:2', 5); // 屈服 5 → 30
@@ -397,7 +402,7 @@ test('com3 A ≥ 80：完全驯服的牝奴/牡奴表情行（LOCALS 随性别�
   fixture.store.set('abl:31:17', 5); // 露出癖 5 → 20
   fixture.store.set('palam:31:5', 40000); // LV5 → 15
   // 合计 125 ≥ 80
-  await com_family.call(3);
+  await com_family.call(3, { args: [com_context(era_flag)] });
   assert(
     fixture
       .text_lines()
@@ -410,10 +415,11 @@ test('com3 A ≥ 80：完全驯服的牝奴/牡奴表情行（LOCALS 随性别�
 });
 
 test('com3 的升格跳转：PREVCOM ∈ {31,123,124,126,127} 且目标可用 → 跳转 125（未移植上抛 COM_MISSING）', async () => {
-  const { fixture, com_family, com_able_family } = seed_family_world(3);
+  const { fixture, era_flag, com_family, com_able_family } =
+    seed_family_world(3);
   com_able_family.register(125, async () => 1);
   fixture.store.set('flag:10009', 124); // PREVCOM = 124（深喉）
-  const result = await com_family.call(3);
+  const result = await com_family.call(3, { args: [com_context(era_flag)] });
   // 本隔离夹具未装载 com-advanced，目标 125 缺失时上抛 COM_MISSING，
   // 上抛给回合循环按「重新要求输入」丢弃本回合（train-loop 步骤 12 语义）
   const { COM_MISSING } = fixture.load_module('system/train/com-family');
@@ -424,13 +430,13 @@ test('com3 的升格跳转：PREVCOM ∈ {31,123,124,126,127} 且目标可用 �
 // —— com4（口交）真身 ——
 
 test('com4：ABL:0 分档 + event_seitsu 触发（扶她 + 未熟 + 关系 150）', async () => {
-  const { fixture, com_family } = seed_family_world(4);
+  const { fixture, era_flag, com_family } = seed_family_world(4);
   fixture.store.set('abl:31:0', 2); // 800
   fixture.store.set('talent:31:121', 1); // 扶她
   fixture.store.set('talent:31:135', 1); // 未熟
   fixture.store.set('relation:31:0', 150);
   fixture.store.set('abl:31:0', 5); // C 感度 5 → 精通成立
-  await com_family.call(4);
+  await com_family.call(4, { args: [com_context(era_flag)] });
   assert.equal(fixture.store.get('source:31:0'), 3200);
   assert.equal(fixture.store.get('exp:31:40'), 3);
   assert.equal(fixture.store.get('cflag:0:22'), 1); // 调教者的经验
@@ -446,12 +452,12 @@ test('com4：ABL:0 分档 + event_seitsu 触发（扶她 + 未熟 + 关系 150�
 // —— com5（胸爱抚）真身 ——
 
 test('com5：ABL:1 分档 + event_junyu 触发（巨乳 + 未熟调教者 + 关系）', async () => {
-  const { fixture, com_family } = seed_family_world(5);
+  const { fixture, era_flag, com_family } = seed_family_world(5);
   fixture.store.set('abl:31:1', 5); // S17=2800, S3=250（event_junyu 需 ≥5）
   fixture.store.set('talent:31:110', 1); // 巨乳
   fixture.store.set('talent:0:135', 1); // 调教者未熟
   fixture.store.set('relation:31:0', 150);
-  await com_family.call(5);
+  await com_family.call(5, { args: [com_context(era_flag)] });
   assert.equal(fixture.store.get('source:31:17'), 2800);
   assert.equal(fixture.store.get('source:31:3'), 250);
   assert.equal(fixture.store.get('source:31:4'), 60);
@@ -465,10 +471,10 @@ test('com5：ABL:1 分档 + event_junyu 触发（巨乳 + 未熟调教者 + 关�
 });
 
 test('com5 胸可用时调教者擅用舌头：S17 ×1.40 + S16 加成；B ⇔ 口移动', async () => {
-  const { fixture, com_family } = seed_family_world(5);
+  const { fixture, era_flag, com_family } = seed_family_world(5);
   fixture.store.set('abl:31:1', 0); // S17=20
   fixture.store.set('talent:0:52', 1);
-  await com_family.call(5);
+  await com_family.call(5, { args: [com_context(era_flag)] });
   assert.equal(fixture.store.get('source:31:17'), 28); // 20 ×1.4
   assert.equal(fixture.store.get('source:31:16'), 1); // 28/20
 });
@@ -476,7 +482,7 @@ test('com5 胸可用时调教者擅用舌头：S17 ×1.40 + S16 加成；B ⇔ �
 // —— com6（接吻）真身 ——
 
 test('com6：判定段算术（29 > 15）；SOURCE:8 由 Y 决定', async () => {
-  const { fixture, com_family } = seed_family_world(6);
+  const { fixture, era_flag, com_family } = seed_family_world(6);
   // 判定段的既有状态（replay 播种同源）
   fixture.store.set('abl:31:10', 1);
   fixture.store.set('abl:31:21', 3);
@@ -486,7 +492,7 @@ test('com6：判定段算术（29 > 15）；SOURCE:8 由 Y 决定', async () => 
   fixture.store.set('mark:31:3', 1);
   fixture.store.set('abl:31:11', 1);
   fixture.store.set('palam:31:5', 150); // 欲情 LV1
-  const result = await com_family.call(6);
+  const result = await com_family.call(6, { args: [com_context(era_flag)] });
   assert.equal(result, 1);
   const judge = fixture.text_lines().find((l) => l.includes('实行值15'));
   assert.ok(judge.endsWith(' = 29 > 实行值15'), '判定算术');
@@ -507,10 +513,10 @@ test('com6：判定段算术（29 > 15）；SOURCE:8 由 Y 决定', async () => 
 });
 
 test('com6 自动成功（顺从 2+）：跳过判定段，Y 沿用第一块（主人口污 → Y=2 → S8=50×…）', async () => {
-  const { fixture, com_family } = seed_family_world(6);
+  const { fixture, era_flag, com_family } = seed_family_world(6);
   fixture.store.set('abl:31:10', 2); // 顺从 2 → AUTO_SUCCESS
   fixture.store.set('stain:0:0', 4); // 精液 → Y = 3 → /2 = 1
-  await com_family.call(6);
+  await com_family.call(6, { args: [com_context(era_flag)] });
   assert(
     !fixture.text_lines().some((l) => l.includes('实行值')),
     '自动成功路径无判定行',
@@ -520,12 +526,12 @@ test('com6 自动成功（顺从 2+）：跳过判定段，Y 沿用第一块（�
 });
 
 test('com6 初吻：TFLAG:13/200、CFLAG:16 = 1、CSTR:4、爱情经验 +20 基础', async () => {
-  const { fixture, com_family } = seed_family_world(6);
+  const { fixture, era_flag, com_family } = seed_family_world(6);
   fixture.store.set('abl:31:10', 2);
   fixture.store.set('cflag:31:2', 2000); // 好感度累计 ≥ 1000 → 爱情经验行
   fixture.store.set('cflag:31:16', -1); // 初吻未体验
   fixture.store.set('cflag:0:16', -1); // 调教者也是初吻
-  await com_family.call(6);
+  await com_family.call(6, { args: [com_context(era_flag)] });
   assert.equal(fixture.store.get('tflag:13'), 1);
   assert.equal(fixture.store.get('tflag:200'), 1); // 屈服刻印１
   assert.equal(fixture.store.get('cflag:31:16'), 1);
@@ -538,7 +544,7 @@ test('com6 初吻：TFLAG:13/200、CFLAG:16 = 1、CSTR:4、爱情经验 +20 基�
 // —— com7（自己扒开）真身 ——
 
 test('com7：判定段（22 门槛）与 ABL 分档的源；B 文的没毛前缀', async () => {
-  const { fixture, com_family } = seed_family_world(7);
+  const { fixture, era_flag, com_family } = seed_family_world(7);
   // 顺从1(4) + 抖M3(6) + 私处感觉2(4) + 侍奉3(12) + 露出癖2(6) + 欲情LV1(3)
   // - 润滑不足(5) = 30 > 22
   fixture.store.set('abl:31:10', 1);
@@ -548,7 +554,7 @@ test('com7：判定段（22 门槛）与 ABL 分档的源；B 文的没毛前缀
   fixture.store.set('abl:31:17', 2);
   fixture.store.set('palam:31:5', 150);
   fixture.store.set('palam:31:3', 0);
-  const result = await com_family.call(7);
+  const result = await com_family.call(7, { args: [com_context(era_flag)] });
   assert.equal(result, 1);
   // 顺从1(4) + 抖M3(6) + 私处感觉2(4) + 侍奉3(12) + 露出癖2(6)
   // - 润滑不足(5) + 欲情LV1(3) - 私处经验不足(5) = 25
@@ -571,22 +577,22 @@ test('com7：判定段（22 门槛）与 ABL 分档的源；B 文的没毛前缀
 });
 
 test('com7 处女（TALENT:0）：-20 使判定不过 → RETURN 0', async () => {
-  const { fixture, com_family } = seed_family_world(7);
+  const { fixture, era_flag, com_family } = seed_family_world(7);
   fixture.store.set('talent:31:0', 1); // 处女 -20
-  const result = await com_family.call(7);
+  const result = await com_family.call(7, { args: [com_context(era_flag)] });
   assert.equal(result, 0);
 });
 
 // —— com8（插入手指）真身 ——
 
 test('com8：confirm_lost_virgin 真身（#216 接入）选 0 放行；源与 TFLAG:19', async () => {
-  const { fixture, com_family } = seed_family_world(8);
+  const { fixture, era_flag, com_family } = seed_family_world(8);
   fixture.set_inputs(0); // 「来吧女人」→ RETURN 1 放行（真身吃这一发输入）
   fixture.store.set('talent:31:0', 1); // 处女 → 打确认问句
   fixture.store.set('abl:31:2', 2); // S1=250, S13=400
   fixture.store.set('exp:31:0', 0); // < EXPLV:1 → ×0.20、S6=300
   fixture.store.set('palam:31:3', 0); // < LV1 → ×0.10、S6 += 700 后 ×3
-  const result = await com_family.call(8);
+  const result = await com_family.call(8, { args: [com_context(era_flag)] });
   assert.equal(result, 1);
   assert(
     fixture.text_lines().some((l) => l === '夺取温妮的处女吗？'),
@@ -613,11 +619,11 @@ test('com8：confirm_lost_virgin 真身（#216 接入）选 0 放行；源与 TF
 });
 
 test('com8 最末档（EXP:0 ≥ EXPLV:5）乘 SOURCE:2 而非 SOURCE:1', async () => {
-  const { fixture, com_family } = seed_family_world(8);
+  const { fixture, era_flag, com_family } = seed_family_world(8);
   fixture.store.set('exp:31:0', 200);
   fixture.store.set('abl:31:2', 0); // S1 = 10
   fixture.store.set('source:31:2', 100); // 预置观察 SOURCE:2 被乘
-  await com_family.call(8);
+  await com_family.call(8, { args: [com_context(era_flag)] });
   assert.equal(fixture.store.get('source:31:2'), 180); // 100 ×1.8（最末档乘 S2）
   // S1 未被该档乘，但随后仍需经过 PALAM:3/5 的分档乘法，
   // 未设置时为 ×0.10 ×0.50，即 10 → 1 → 0；此计算对所有 EXP 档生效。
@@ -627,10 +633,10 @@ test('com8 最末档（EXP:0 ≥ EXPLV:5）乘 SOURCE:2 而非 SOURCE:1', async 
 // —— com9（舔肛）真身 ——
 
 test('com9：ABL:3 分档、A ⇔ 口移动、肛门经验 +1、调教者初吻 401', async () => {
-  const { fixture, com_family } = seed_family_world(9);
+  const { fixture, era_flag, com_family } = seed_family_world(9);
   fixture.store.set('abl:31:3', 4); // 1000
   fixture.store.set('cflag:0:16', -1);
-  await com_family.call(9);
+  await com_family.call(9, { args: [com_context(era_flag)] });
   assert.equal(fixture.store.get('source:31:2'), 1000);
   assert.equal(fixture.store.get('source:31:10'), 50);
   assert.equal(fixture.store.get('source:31:12'), 300);
@@ -839,13 +845,13 @@ test('9 号可用性检查：肛门虫/肛珠/浣肠/电极挡（无污物门槛
 // —— TRAIN_MESSAGE_B/A 的 1-9 分支（每指令至少一支；rand 注入可观察） ——
 
 test('B 分支 4（口交）：扶她 + rand(3)==0 走阴茎支（Math.random 定数化）', async () => {
-  const { fixture, com_family } = seed_family_world(4);
+  const { fixture, era_flag, com_family } = seed_family_world(4);
   fixture.store.set('talent:31:121', 1); // 扶她
   fixture.store.set('palam:31:5', 0); // 无勃起前缀
   const original_random = Math.random;
   Math.random = () => 0; // rand(3) === 0，固定随机数以选定分支
   try {
-    await com_family.call(4);
+    await com_family.call(4, { args: [com_context(era_flag)] });
   } finally {
     Math.random = original_random;
   }
@@ -855,8 +861,8 @@ test('B 分支 4（口交）：扶她 + rand(3)==0 走阴茎支（Math.random �
 });
 
 test('B 分支 5（胸爱抚）：普通支一行合成（你抚摸着…肌肤、温妮的…）', async () => {
-  const { fixture, com_family } = seed_family_world(5);
-  await com_family.call(5);
+  const { fixture, era_flag, com_family } = seed_family_world(5);
+  await com_family.call(5, { args: [com_context(era_flag)] });
   // 全空素质 → 尾链落最末 else（胸部揉动着…）
   assert(
     fixture
@@ -866,10 +872,10 @@ test('B 分支 5（胸爱抚）：普通支一行合成（你抚摸着…肌肤�
 });
 
 test('B 分支 5 死斗场：TFLAG:400 的六种开场之一（发霉的狗）', async () => {
-  const { fixture, com_family } = seed_family_world(5);
+  const { fixture, era_flag, com_family } = seed_family_world(5);
   fixture.store.set('tequip:31:55', 1);
   fixture.store.set('tflag:400', 203);
-  await com_family.call(5);
+  await com_family.call(5, { args: [com_context(era_flag)] });
   assert(
     fixture
       .text_lines()
@@ -879,7 +885,7 @@ test('B 分支 5 死斗场：TFLAG:400 的六种开场之一（发霉的狗）',
 });
 
 test('B 分支 6（接吻）：魔兽支按 E:307 取文案（史莱姆）', async () => {
-  const { fixture, com_family } = seed_family_world(6);
+  const { fixture, era_flag, com_family } = seed_family_world(6);
   fixture.store.set('tequip:31:88', 1);
   fixture.store.set('abl:31:10', 2); // 顺从 2+ → 判定段自动成功（直进 B 文）
   // 魔兽描写读取 e 表；测试直接设置种族与名称编号。
@@ -887,7 +893,7 @@ test('B 分支 6（接吻）：魔兽支按 E:307 取文案（史莱姆）', asy
   fixture.battle('MINION_A').rape_type = 2; // 史莱姆
   fixture.store.set('talent:31:159', 1); // 异种婚姻
   fixture.store.set('itemname:0', '史莱姆'); // MONSTER_NAME 拼名读 ITEMNAME 表
-  await com_family.call(6);
+  await com_family.call(6, { args: [com_context(era_flag)] });
   assert(
     fixture
       .text_lines()
@@ -896,14 +902,14 @@ test('B 分支 6（接吻）：魔兽支按 E:307 取文案（史莱姆）', asy
 });
 
 test('B 分支 7（自己扒开）：阴毛档与 TFLAG:38 精液漏出、贞操带行', async () => {
-  const { fixture, com_family } = seed_family_world(7);
+  const { fixture, era_flag, com_family } = seed_family_world(7);
   fixture.store.set('abl:31:10', 5); // 顺从 5 → 判定 20+8+15-5-5 = 33 > 22
   fixture.store.set('talent:31:310', 250); // 201-300 → 被长齐的阴毛覆盖的
   fixture.store.set('abl:31:17', 5);
   fixture.store.set('tflag:38', 2);
   fixture.store.set('cflag:31:42', 79);
   fixture.store.set('cflag:31:40', 64);
-  await com_family.call(7);
+  await com_family.call(7, { args: [com_context(era_flag)] });
   assert(
     fixture
       .text_lines()
@@ -922,9 +928,9 @@ test('B 分支 7（自己扒开）：阴毛档与 TFLAG:38 精液漏出、贞操
 });
 
 test('B 分支 8（插入手指）：裸手插入行与私处经验档的害怕句', async () => {
-  const { fixture, com_family } = seed_family_world(8);
+  const { fixture, era_flag, com_family } = seed_family_world(8);
   // PREVCOM ≠ 8：不触发升格，否则目标 84 缺失时上抛 COM_MISSING
-  await com_family.call(8);
+  await com_family.call(8, { args: [com_context(era_flag)] });
   assert(
     fixture
       .text_lines()
@@ -934,10 +940,10 @@ test('B 分支 8（插入手指）：裸手插入行与私处经验档的害怕�
 });
 
 test('com8 的升格跳转：PREVCOM == 8 且玩家技巧 3+ → 跳转 84（未移植上抛 COM_MISSING）', async () => {
-  const { fixture, com_family } = seed_family_world(8);
+  const { fixture, era_flag, com_family } = seed_family_world(8);
   fixture.store.set('abl:0:12', 3);
   fixture.store.set('flag:10009', 8); // PREVCOM = 8
-  const result = await com_family.call(8);
+  const result = await com_family.call(8, { args: [com_context(era_flag)] });
   // CASE 8 不探测可用性（#213）→ 直跳 84；缺失目标时上抛 COM_MISSING，
   // 上抛给回合循环按「重新要求输入」丢弃本回合（train-loop 步骤 12 语义）
   const { COM_MISSING } = fixture.load_module('system/train/com-family');
@@ -946,11 +952,11 @@ test('com8 的升格跳转：PREVCOM == 8 且玩家技巧 3+ → 跳转 84（未
 });
 
 test('B 分支 9（舔肛）：EXP:1 ≥ 50 且欲情高 → 深入搅动句', async () => {
-  const { fixture, com_family } = seed_family_world(9);
+  const { fixture, era_flag, com_family } = seed_family_world(9);
   fixture.store.set('exp:31:1', 50);
   fixture.store.set('palam:31:5', 3000); // ≥ PALAMLV:3
   fixture.store.set('abl:31:3', 3);
-  await com_family.call(9);
+  await com_family.call(9, { args: [com_context(era_flag)] });
   assert(
     fixture
       .text_lines()
@@ -1252,16 +1258,16 @@ test('升格规则无副作用：CASE 1-8 不写 FLAG:71/TFLAG:42（体位族 CA
 // —— 持久位与跨域写 ——
 
 test('TEQUIP 只读 + CFLAG 持久位：COM6 的 TFLAG:13/30/100/200 与 CFLAG:16/22', async () => {
-  const { fixture, com_family } = seed_family_world(6);
+  const { fixture, era_flag, com_family } = seed_family_world(6);
   fixture.store.set('abl:31:10', 2);
-  await com_family.call(6);
+  await com_family.call(6, { args: [com_context(era_flag)] });
   assert.equal(fixture.store.get('tflag:100'), 1); // 侍奉快乐经验旗
   // tflag/cflag 都是火车表内可寻址位（test/static-table-coverage 的族探测另测）
   assert.equal(fixture.store.get('tflag:30'), 1);
 });
 
 test('com6 兽奸（TEQUIP:89）：A 实减 15 而打印 (10)——数值与文案不一致是原状', async () => {
-  const { fixture, com_family } = seed_family_world(6);
+  const { fixture, era_flag, com_family } = seed_family_world(6);
   fixture.store.set('itemname:22', '野狗');
   fixture.store.set('tequip:31:89', 1);
   // 贡献种子：合计 29，兽奸 -15、主人口污 Y=3 → 11 < 15
@@ -1273,7 +1279,7 @@ test('com6 兽奸（TEQUIP:89）：A 实减 15 而打印 (10)——数值与文�
   fixture.store.set('mark:31:3', 1);
   fixture.store.set('abl:31:11', 1);
   fixture.store.set('palam:31:5', 150);
-  const result = await com_family.call(6);
+  const result = await com_family.call(6, { args: [com_context(era_flag)] });
   assert.equal(result, 0);
   const judge = fixture.text_lines().find((l) => l.includes('实行值15'));
   assert(judge.includes('- 野狗(10) - '), '打印值是 (10)');
@@ -1281,33 +1287,33 @@ test('com6 兽奸（TEQUIP:89）：A 实减 15 而打印 (10)——数值与文�
 });
 
 test('com7 处女的判定算术：20 + 15 - 5 - 20 = 10 < 22（罚则是决定性的）', async () => {
-  const { fixture, com_family } = seed_family_world(7);
+  const { fixture, era_flag, com_family } = seed_family_world(7);
   fixture.store.set('talentname:0', '处女');
   fixture.store.set('talent:31:0', 1);
   fixture.store.set('abl:31:10', 5); // 顺从 5 → +20
   fixture.store.set('abl:31:17', 5); // 露出 5 → +15
-  const result = await com_family.call(7);
+  const result = await com_family.call(7, { args: [com_context(era_flag)] });
   assert.equal(result, 0, '无罚则时 35-5 = 30 > 22 会放行');
   const judge = fixture.text_lines().find((l) => l.includes('实行值22'));
   assert.ok(judge.endsWith(' = 10 < 实行值22'));
 });
 
 test('B 分支 9 的深入档门槛：EXP:1 < 50 时不接深入尾串', async () => {
-  const { fixture, com_family } = seed_family_world(9);
+  const { fixture, era_flag, com_family } = seed_family_world(9);
   fixture.store.set('exp:31:1', 49);
   fixture.store.set('palam:31:5', 3000);
   fixture.store.set('abl:31:3', 3);
-  await com_family.call(9);
+  await com_family.call(9, { args: [com_context(era_flag)] });
   assert(fixture.text_lines().includes('你把温妮的肛门、认真细致地舔舐着了…'));
 });
 
 test('B 分支 4 的 rand 分岔：Math.random → 0.5 时 rand(3) = 1 走阴蒂支', async () => {
-  const { fixture, com_family } = seed_family_world(4);
+  const { fixture, era_flag, com_family } = seed_family_world(4);
   fixture.store.set('talent:31:121', 1); // 扶她
   const original_random = Math.random;
   Math.random = () => 0.5;
   try {
-    await com_family.call(4);
+    await com_family.call(4, { args: [com_context(era_flag)] });
   } finally {
     Math.random = original_random;
   }
@@ -1319,10 +1325,10 @@ test('B 分支 4 的 rand 分岔：Math.random → 0.5 时 rand(3) = 1 走阴蒂
 });
 
 test('com8：CONFIRM 选 1 → RETURN 0 → 回合取消（cancelled，非 missing）', async () => {
-  const { fixture, com_family } = seed_family_world(8);
+  const { fixture, era_flag, com_family } = seed_family_world(8);
   fixture.set_inputs(1); // 「让她继续做女孩」→ RETURN 0
   fixture.store.set('talent:31:0', 1);
-  const result = await com_family.call(8);
+  const result = await com_family.call(8, { args: [com_context(era_flag)] });
   // 指令返回 0（#228 的回合取消语义：副作用保留但不结算）；
   // COM_MISSING（missing 字段）是未移植指令的语义，两者分立
   assert.equal(result, 0);
@@ -1335,10 +1341,10 @@ test('com8：CONFIRM 选 1 → RETURN 0 → 回合取消（cancelled，非 missi
 });
 
 test('com8：非处女 → 确认直接通过（无问句、不吃输入）', async () => {
-  const { fixture, com_family } = seed_family_world(8);
+  const { fixture, era_flag, com_family } = seed_family_world(8);
   fixture.set_inputs(); // 不预置——不应等待任何输入
   fixture.store.set('abl:31:2', 2);
-  const result = await com_family.call(8);
+  const result = await com_family.call(8, { args: [com_context(era_flag)] });
   assert.equal(result, 1);
   assert(!fixture.text_lines().some((l) => l === '夺取温妮的处女吗？'));
   assert.equal(fixture.inputs_consumed.length, 0);

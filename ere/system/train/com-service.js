@@ -48,15 +48,12 @@ const { NOITEM } = require('#/data/noitem-const');
 
 const name_of = (table, id) => era.get(`${table}:${id}`) ?? '';
 const value = (table, cid, id) => era.get(`${table}:${cid}:${id}`) || 0;
-const target_value = (table, id) => value(table, era_flag.target, id);
-const player_value = (table, id) => value(table, era_flag.player, id);
-const target_talent = (id) => target_value('talent', id);
-const player_talent = (id) => player_value('talent', id);
-const target_abl = (id) => Math.floor(target_value('abl', id));
-const player_abl = (id) => Math.floor(player_value('abl', id));
-const target_exp = (id) => target_value('exp', id);
-const target_palam = (id) => target_value('palam', id);
-const target_tequip = (id) => target_value('tequip', id);
+/** 表读数：cid 由调用方给出（指令函数从上下文解构，助手按参数转发） */
+const talent_of = (cid, id) => value('talent', cid, id);
+const abl_of = (cid, id) => Math.floor(value('abl', cid, id));
+const exp_of = (cid, id) => value('exp', cid, id);
+const palam_of = (cid, id) => value('palam', cid, id);
+const tequip_of = (cid, id) => value('tequip', cid, id);
 const lose = (cid, id, amount) => era.add(`deltabase:${cid}:${id}`, -amount);
 
 function source_helpers(cid) {
@@ -103,23 +100,26 @@ function rate_by_abl(cid, id, rates) {
   return rates[Math.min(Math.floor(value('abl', cid, id)), rates.length - 1)];
 }
 
-function dirty_penalty({
-  divider = 1,
-  force_seven = false,
-  force_seven_when = () => false,
-  player_stain = 2,
-}) {
+function dirty_penalty(
+  target,
+  player,
+  {
+    divider = 1,
+    force_seven = false,
+    force_seven_when = () => false,
+    player_stain = 2,
+  },
+) {
   let y = 0;
-  const player = era_flag.player;
   const stain = (id) => era.get(`stain:${player}:${id}`) || 0;
   if (stain(player_stain) & 1) y += 1;
   if (stain(player_stain) & 4) y += 3;
   if (stain(player_stain) & 8) y += 7;
   if (stain(player_stain) & 16) y += 1;
   if (stain(4) & 32) y += 3;
-  if ((force_seven && target_tequip(89)) || force_seven_when()) y = 7;
-  if (target_talent(61)) y = idiv_trunc(y, 3);
-  if (target_talent(62)) y *= 2;
+  if ((force_seven && tequip_of(target, 89)) || force_seven_when()) y = 7;
+  if (talent_of(target, 61)) y = idiv_trunc(y, 3);
+  if (talent_of(target, 62)) y *= 2;
   return idiv_trunc(y, divider);
 }
 
@@ -132,7 +132,7 @@ function append_term(parts, state, label, amount, shown_amount) {
   state.s = 1;
 }
 
-function append_service_judge(parts, state, options) {
+function append_service_judge(target, parts, state, options) {
   const {
     lust = 1,
     service = 4,
@@ -143,9 +143,8 @@ function append_service_judge(parts, state, options) {
     maso = 0,
     extra = [],
   } = options;
-  const target = era_flag.target;
   const add_abl = (id, multiplier) => {
-    const v = target_abl(id);
+    const v = abl_of(target, id);
     if (v)
       append_term(
         parts,
@@ -174,10 +173,10 @@ function append_service_judge(parts, state, options) {
   for (const [kind, id, multiplier] of extra) {
     const v =
       kind === 'abl'
-        ? target_abl(id)
+        ? abl_of(target, id)
         : kind === 'mark'
           ? value('mark', target, id)
-          : level(target_palam(id));
+          : level(palam_of(target, id));
     if (v)
       append_term(
         parts,
@@ -188,15 +187,15 @@ function append_service_judge(parts, state, options) {
   }
 }
 
-function append_dirty_penalty(parts, state, options) {
-  const y = dirty_penalty(options);
+function append_dirty_penalty(target, player, parts, state, options) {
+  const y = dirty_penalty(target, player, options);
   if (y) {
     append_term(
       parts,
       state,
-      target_talent(61)
+      talent_of(target, 61)
         ? '脏、不怕污臭'
-        : target_talent(62)
+        : talent_of(target, 62)
           ? '脏、反感污臭'
           : '脏',
       -y,
@@ -222,7 +221,7 @@ async function service_order(title, threshold, build) {
   return { ...context, a: state.a, passed: state.a >= threshold };
 }
 
-function common_service_modifiers(parts, state, options) {
+function common_service_modifiers(target, player, parts, state, options) {
   const {
     lust_multiplier = 1,
     shame = 0,
@@ -241,7 +240,7 @@ function common_service_modifiers(parts, state, options) {
     shown_amounts = {},
   } = options;
   const add_talent = (id, amount) => {
-    if (target_talent(id)) {
+    if (talent_of(target, id)) {
       append_term(
         parts,
         state,
@@ -251,7 +250,7 @@ function common_service_modifiers(parts, state, options) {
       );
     }
   };
-  const lust = level(target_palam(5));
+  const lust = level(palam_of(target, 5));
   if (lust)
     append_term(
       parts,
@@ -264,9 +263,9 @@ function common_service_modifiers(parts, state, options) {
   if (disgust) add_talent(62, -disgust);
   if (devoted) add_talent(63, devoted);
   if (deny) add_talent(71, -deny);
-  if (hates_men && player_talent(122)) add_talent(82, -hates_men);
+  if (hates_men && talent_of(player, 122)) add_talent(82, -hates_men);
   if (fond && era_flag.assiplay === 0) add_talent(85, fond);
-  if (futa && player_talent(121))
+  if (futa && talent_of(player, 121))
     append_term(parts, state, name_of('talentname', 121), futa);
   if (perverted) add_talent(80, perverted);
   if (sadist) add_talent(83, sadist);
@@ -276,36 +275,40 @@ function common_service_modifiers(parts, state, options) {
 }
 
 function source_service_skill(
+  target,
   src,
   service_values,
   skill_rates = [0.5, 0.8, 1, 1.2, 1.5, 2],
 ) {
-  const tier = Math.min(target_abl(16), 5);
+  const tier = Math.min(abl_of(target, 16), 5);
   const [s4, s5, dirt_rate] = service_values[tier];
   src.set(4, s4);
   src.set(5, s5);
   if (dirt_rate !== undefined) src.set(8, times_exact(src.get(8), dirt_rate));
-  const rate = skill_rates[Math.min(target_abl(12), skill_rates.length - 1)];
+  const rate =
+    skill_rates[Math.min(abl_of(target, 12), skill_rates.length - 1)];
   src.set(4, times_exact(src.get(4), rate));
   src.set(5, times_exact(src.get(5), rate));
 }
 
-function service_ejaculation({
-  base,
-  target_rates = {},
-  player_rates = [[0, [1, 1.5, 2, 2.5, 3.5, 5]]],
-  source4_rate = 3,
-  extra_ejaculation_rates = [2, 1.5],
-  flag,
-  semen_exp,
-  source,
-  poison,
-  extra_rates,
-  add_if = () => player_talent(121) || player_talent(122),
-}) {
-  const target = era_flag.target;
-  const player = era_flag.player;
-  let b = base[Math.min(target_abl(12), 5)];
+function service_ejaculation(
+  target,
+  player,
+  {
+    base,
+    target_rates = {},
+    player_rates = [[0, [1, 1.5, 2, 2.5, 3.5, 5]]],
+    source4_rate = 3,
+    extra_ejaculation_rates = [2, 1.5],
+    flag,
+    semen_exp,
+    source,
+    poison,
+    extra_rates,
+    add_if = () => talent_of(player, 121) || talent_of(player, 122),
+  },
+) {
+  let b = base[Math.min(abl_of(target, 12), 5)];
   for (const [id, rates] of Object.entries(target_rates))
     b = times_exact(b, rate_by_abl(target, Number(id), rates));
   if (extra_rates) {
@@ -320,7 +323,7 @@ function service_ejaculation({
     source.set(4, times_exact(source.get(4), source4_rate));
     if (poison) {
       const [s7, s5_rate, s13_rate] =
-        poison[Math.min(target_abl(32), poison.length - 1)];
+        poison[Math.min(abl_of(target, 32), poison.length - 1)];
       source.set(7, s7);
       source.set(5, times_exact(source.get(5), s5_rate));
       source.set(13, times_exact(source.get(13), s13_rate));
@@ -348,24 +351,23 @@ function service_ejaculation({
 }
 
 function same_sex_exp(target, player, yuri, homo = yuri) {
-  if (!target_talent(122) && !player_talent(122)) {
+  if (!talent_of(target, 122) && !talent_of(player, 122)) {
     era.print(`百合经验+${yuri}`);
     chara(target).train.百合经验 += yuri;
-  } else if (target_talent(122) && player_talent(122)) {
+  } else if (talent_of(target, 122) && talent_of(player, 122)) {
     era.print(`断背经验+${homo}`);
     chara(target).train.断背经验 += homo;
   }
 }
 
 function love_exp(target, amount) {
-  if (target_value('cflag', 2) >= 1000 && era_flag.assiplay === 0) {
+  if (value('cflag', target, 2) >= 1000 && era_flag.assiplay === 0) {
     era.print(`爱情经验+${amount}`);
     chara(target).train.爱情经验 += amount;
   }
 }
 
-function player_first_kiss(target, code) {
-  const player = era_flag.player;
+function player_first_kiss(target, player, code) {
   if ((era.get(`cflag:${target}:16`) || 0) === -1) {
     era.set(`cflag:${target}:16`, code);
     era.set(`cstr:${target}:4`, chara_callname(player));
@@ -373,32 +375,28 @@ function player_first_kiss(target, code) {
   }
 }
 
-async function jump_advanced(id) {
+async function jump_advanced(id, com_context) {
   const advanced = await get_adv_com(id);
   if (advanced === id) return false;
-  // 升格目标指令从参数取上下文；本函数没有上下文，跳转处按当前指针现取。
   return com_family.call(advanced, {
     whenMissing: COM_MISSING,
-    args: [
-      { target: era_flag.target, player: era_flag.player, assi: era_flag.assi },
-    ],
+    args: [com_context],
   });
 }
 
-async function com30() {
-  const jumped = await jump_advanced(30);
+async function com30(com_context) {
+  const jumped = await jump_advanced(30, com_context);
   if (jumped !== false) return jumped;
-  const target = era_flag.target;
-  const player = era_flag.player;
+  const { target, player } = com_context;
   const result = await service_order('手淫', 14, (parts, state) => {
-    append_service_judge(parts, state, {
+    append_service_judge(target, parts, state, {
       lust: 1,
       service: 4,
       poison: 1,
       pleasure_mark: 1,
       dirty: { divider: 3, force_seven: true },
     });
-    common_service_modifiers(parts, state, {
+    common_service_modifiers(target, player, parts, state, {
       lust_multiplier: 1,
       shame: 1,
       clean: 1,
@@ -409,21 +407,24 @@ async function com30() {
       fond: 5,
       futa: 8,
     });
-    if (target_tequip(89) && !target_talent(136)) {
+    if (tequip_of(target, 89) && !talent_of(target, 136)) {
       append_term(parts, state, name_of('itemname', 22), -10);
     }
-    append_dirty_penalty(parts, state, { divider: 3, force_seven: true });
+    append_dirty_penalty(target, player, parts, state, {
+      divider: 3,
+      force_seven: true,
+    });
   });
   if (!result.passed) return 0;
   await train_message_b();
   const src = source_helpers(target);
-  const y = dirty_penalty({ divider: 3, force_seven: true });
+  const y = dirty_penalty(target, player, { divider: 3, force_seven: true });
   lose(target, 0, 10);
   lose(target, 1, 100);
   src.set(13, 500);
   src.set(14, 100);
   src.set(8, y * 10 + 60);
-  source_service_skill(src, [
+  source_service_skill(target, src, [
     [250, 50, 4],
     [300, 100, 2.5],
     [350, 200, 1.5],
@@ -431,8 +432,8 @@ async function com30() {
     [450, 500, 0.5],
     [500, 750, 0.1],
   ]);
-  if (target_tequip(89)) return 1;
-  service_ejaculation({
+  if (tequip_of(target, 89)) return 1;
+  service_ejaculation(target, player, {
     base: [450, 1000, 1600, 2200, 2700, 3200],
     target_rates: {
       10: [0.8, 0.9, 1, 1.1, 1.2, 1.3],
@@ -448,12 +449,14 @@ async function com30() {
       [3000, 5, 0.4],
       [6000, 6, 0.1],
     ],
-    add_if: () => player_talent(121) || player_talent(122),
+    add_if: () => talent_of(player, 121) || talent_of(player, 122),
     semen_exp: [1, 3],
   });
   stain_exchange(
     target,
-    player_talent(119) || player_talent(122) || player_talent(121) ? 1 : 3,
+    talent_of(player, 119) || talent_of(player, 122) || talent_of(player, 121)
+      ? 1
+      : 3,
     player,
     2,
   );
@@ -461,24 +464,23 @@ async function com30() {
   love_exp(target, 1);
   game.train.快乐经验 = 1;
   game.train.屈服刻印结算 = 1;
-  if (player_talent(121)) src.set(13, idiv_trunc(src.get(13), 2));
+  if (talent_of(player, 121)) src.set(13, idiv_trunc(src.get(13), 2));
   return 1;
 }
 
-async function com31() {
-  const jumped = await jump_advanced(31);
+async function com31(com_context) {
+  const jumped = await jump_advanced(31, com_context);
   if (jumped !== false) return jumped;
-  const target = era_flag.target;
-  const player = era_flag.player;
+  const { target, player, assi } = com_context;
   const result = await service_order('口交(奴)', 24, (parts, state) => {
-    append_service_judge(parts, state, {
+    append_service_judge(target, parts, state, {
       lust: 1,
       service: 4,
       poison: 3,
       pleasure_mark: 1,
       dirty: { force_seven: true },
     });
-    common_service_modifiers(parts, state, {
+    common_service_modifiers(target, player, parts, state, {
       lust_multiplier: 1,
       shame: 1,
       clean: 1,
@@ -489,12 +491,12 @@ async function com31() {
       fond: 5,
       futa: 8,
     });
-    if (target_tequip(89) && !target_talent(136)) {
+    if (tequip_of(target, 89) && !talent_of(target, 136)) {
       append_term(parts, state, name_of('itemname', 22), -15);
     }
-    append_dirty_penalty(parts, state, {
+    append_dirty_penalty(target, player, parts, state, {
       force_seven: true,
-      force_seven_when: () => target_tequip(55),
+      force_seven_when: () => tequip_of(target, 55),
     });
   });
   if (!result.passed) return 0;
@@ -502,16 +504,16 @@ async function com31() {
   chara(target).dungeon.口交经验 += 1;
   era.print('口交经验＋１');
   const src = source_helpers(target);
-  const y = dirty_penalty({
+  const y = dirty_penalty(target, player, {
     force_seven: true,
-    force_seven_when: () => target_tequip(55),
+    force_seven_when: () => tequip_of(target, 55),
   });
   lose(target, 0, 10);
-  lose(target, 1, target_talent(47) ? 90 : 150);
+  lose(target, 1, talent_of(target, 47) ? 90 : 150);
   src.set(13, 1500);
   src.set(14, 500);
   src.set(8, y * 40 + 100);
-  source_service_skill(src, [
+  source_service_skill(target, src, [
     [420, 150, 4],
     [500, 300, 2.5],
     [580, 600, 1.5],
@@ -519,7 +521,7 @@ async function com31() {
     [740, 1500, 0.5],
     [820, 2200, 0.1],
   ]);
-  if (target_tequip(89)) {
+  if (tequip_of(target, 89)) {
     if ((era.get(`cflag:${target}:16`) || 0) === -1) {
       era.set('tflag:13', 1);
       era.set(`cflag:${target}:16`, 997);
@@ -527,14 +529,14 @@ async function com31() {
     }
     return 1;
   }
-  if (target_tequip(55) && !(era_flag.assi > 0 && era_flag.assiplay)) {
+  if (tequip_of(target, 55) && !(assi > 0 && era_flag.assiplay)) {
     if ((era.get(`cflag:${target}:16`) || 0) === -1) {
       era.set(`cflag:${target}:16`, 995);
       era.set('tflag:13', 1);
     }
     return 1;
   }
-  const ejaculation = service_ejaculation({
+  const ejaculation = service_ejaculation(target, player, {
     base: [1200, 1700, 2300, 3000, 3600, 4200],
     target_rates: {
       10: [0.8, 0.9, 1, 1.1, 1.2, 1.3],
@@ -551,49 +553,50 @@ async function com31() {
       [6000, 9, 1.5],
       [12000, 15, 1],
     ],
-    extra_rates: target_talent(52) ? [[0, [2, 2, 2, 2, 2, 2]]] : [],
+    extra_rates: talent_of(target, 52) ? [[0, [2, 2, 2, 2, 2, 2]]] : [],
     add_if: () =>
-      player_talent(119) || player_talent(121) || player_talent(122),
+      talent_of(player, 119) ||
+      talent_of(player, 121) ||
+      talent_of(player, 122),
     semen_exp: [3, 9],
   });
   if (
     ejaculation.e &&
-    target_talent(340) &&
+    talent_of(target, 340) &&
     Math.floor(Math.random() * (ejaculation.e === 2 ? 5 : 10)) === 0
   ) {
     era.set(`cflag:${target}:113`, 4);
   }
   await com_ejac_player_milk(ejaculation.b);
   stain_exchange(target, 0, player, 2);
-  if (target_abl(16) >= 2 && target_abl(12) >= 2) {
+  if (abl_of(target, 16) >= 2 && abl_of(target, 12) >= 2) {
     era.set(`stain:${player}:2`, 2);
     if (ejaculation.e >= 1) game.train.口交射精后 = 1;
   }
   same_sex_exp(target, player, 7);
   if (era_flag.assiplay === 0 && chara(target).dungeon.私处经验 >= EXPLV[3])
     era.add('tflag:30', 1);
-  player_first_kiss(target, 201);
-  love_exp(target, target_talent(122) ? 2 : 1);
-  if (player_talent(121)) src.set(13, idiv_trunc(src.get(13), 2));
+  player_first_kiss(target, player, 201);
+  love_exp(target, talent_of(target, 122) ? 2 : 1);
+  if (talent_of(player, 121)) src.set(13, idiv_trunc(src.get(13), 2));
   game.train.快乐经验 = 1;
   game.train.屈服刻印结算 = 2;
   return 1;
 }
 
-async function com32() {
-  const jumped = await jump_advanced(32);
+async function com32(com_context) {
+  const jumped = await jump_advanced(32, com_context);
   if (jumped !== false) return jumped;
-  const target = era_flag.target;
-  const player = era_flag.player;
+  const { target, player } = com_context;
   const result = await service_order('乳交', 30, (parts, state) => {
-    append_service_judge(parts, state, {
+    append_service_judge(target, parts, state, {
       lust: 1,
       service: 4,
       poison: 3,
       pleasure_mark: 1,
       dirty: {},
     });
-    common_service_modifiers(parts, state, {
+    common_service_modifiers(target, player, parts, state, {
       lust_multiplier: 1,
       shame: 3,
       clean: 1,
@@ -604,13 +607,13 @@ async function com32() {
       fond: 5,
       futa: 8,
     });
-    append_dirty_penalty(parts, state, {});
+    append_dirty_penalty(target, player, parts, state, {});
   });
   if (!result.passed) return 0;
   await train_message_b();
   const src = source_helpers(target);
   lose(target, 0, 10);
-  lose(target, 1, target_talent(47) ? 70 : 150);
+  lose(target, 1, talent_of(target, 47) ? 70 : 150);
   src.set(13, 1800);
   src.set(14, 900);
   const service = [
@@ -621,19 +624,19 @@ async function com32() {
     [740, 1500, 20],
     [820, 2200, 0],
   ];
-  const tier = Math.min(target_abl(16), 5);
+  const tier = Math.min(abl_of(target, 16), 5);
   src.set(4, service[tier][0]);
   src.set(5, service[tier][1]);
   src.set(8, service[tier][2]);
-  let breast = [100, 200, 400, 800, 1200, 1500][Math.min(target_abl(1), 5)];
-  if (target_talent(110)) breast = times_exact(breast, 1.2);
-  if (target_talent(108)) breast = times_exact(breast, 1.2);
-  else if (target_talent(107)) breast = times_exact(breast, 0.7);
+  let breast = [100, 200, 400, 800, 1200, 1500][Math.min(abl_of(target, 1), 5)];
+  if (talent_of(target, 110)) breast = times_exact(breast, 1.2);
+  if (talent_of(target, 108)) breast = times_exact(breast, 1.2);
+  else if (talent_of(target, 107)) breast = times_exact(breast, 0.7);
   src.add(17, breast);
-  const skill = [0.5, 0.8, 1, 1.2, 1.5, 2][Math.min(target_abl(12), 5)];
+  const skill = [0.5, 0.8, 1, 1.2, 1.5, 2][Math.min(abl_of(target, 12), 5)];
   src.set(4, times_exact(src.get(4), skill));
   src.set(5, times_exact(src.get(5), skill));
-  const ejaculation = service_ejaculation({
+  const ejaculation = service_ejaculation(target, player, {
     base: [1500, 2100, 2900, 4000, 5000, 6000],
     target_rates: {
       10: [0.8, 0.9, 1, 1.1, 1.2, 1.3],
@@ -650,13 +653,13 @@ async function com32() {
       [6000, 9, 2],
       [12000, 15, 1.5],
     ],
-    extra_rates: target_talent(52) ? [[0, [2, 2, 2, 2, 2, 2]]] : [],
+    extra_rates: talent_of(target, 52) ? [[0, [2, 2, 2, 2, 2, 2]]] : [],
     semen_exp: [3, 9],
   });
   await com_ejac_player_milk(ejaculation.b);
   stain_exchange(target, 0, player, 2);
   stain_exchange(target, 5, player, 2);
-  if (target_abl(16) >= 2 && target_abl(12) >= 2) {
+  if (abl_of(target, 16) >= 2 && abl_of(target, 12) >= 2) {
     era.set(`stain:${player}:2`, 2);
     if (ejaculation.e >= 1) game.train.口交射精后 = 1;
   }
@@ -668,24 +671,23 @@ async function com32() {
   love_exp(target, 1);
   game.train.快乐经验 = 1;
   game.train.屈服刻印结算 = 2;
-  if (player_talent(121)) src.set(13, idiv_trunc(src.get(13), 2));
+  if (talent_of(player, 121)) src.set(13, idiv_trunc(src.get(13), 2));
   return 1;
 }
 
-async function com33() {
-  const jumped = await jump_advanced(33);
+async function com33(com_context) {
+  const jumped = await jump_advanced(33, com_context);
   if (jumped !== false) return jumped;
-  const target = era_flag.target;
-  const player = era_flag.player;
+  const { target, player } = com_context;
   const result = await service_order('股间性交', 20, (parts, state) => {
-    append_service_judge(parts, state, {
+    append_service_judge(target, parts, state, {
       lust: 2,
       service: 4,
       poison: 1,
       pleasure_mark: 2,
       dirty: { divider: 3 },
     });
-    common_service_modifiers(parts, state, {
+    common_service_modifiers(target, player, parts, state, {
       lust_multiplier: 3,
       shame: 1,
       deny: 3,
@@ -693,20 +695,21 @@ async function com33() {
       fond: 3,
       futa: 8,
     });
-    if (target_tequip(21))
+    if (tequip_of(target, 21))
       append_term(parts, state, name_of('itemname', 26), 6);
-    append_dirty_penalty(parts, state, { divider: 3 });
+    append_dirty_penalty(target, player, parts, state, { divider: 3 });
   });
   if (!result.passed) return 0;
   await train_message_b();
   const src = source_helpers(target);
-  const y = dirty_penalty({ divider: 3 });
+  const y = dirty_penalty(target, player, { divider: 3 });
   lose(target, 0, 40);
   lose(target, 1, 130);
   src.set(13, 1200);
   src.set(14, 400);
   src.set(8, y * 10 + 60);
   source_service_skill(
+    target,
     src,
     [
       [200, 100, 4],
@@ -718,15 +721,17 @@ async function com33() {
     ],
     [0.7, 0.9, 1, 1.2, 1.4, 1.6],
   );
-  src.set(0, [0, 10, 50, 200, 600, 2000][Math.min(target_abl(0), 5)]);
+  src.set(0, [0, 10, 50, 200, 600, 2000][Math.min(abl_of(target, 0), 5)]);
   const lube_rates = [0.3, 0.6, 1, 1.5, 2, 2.5];
   const source4_rates = [0.6, 0.8, 1, 1.2, 1.4, 1.6];
-  const lube = level(target_palam(3));
+  const lube = level(palam_of(target, 3));
   src.set(0, times_exact(src.get(0), lube_rates[lube]));
   src.set(4, times_exact(src.get(4), source4_rates[lube]));
-  let base = [500, 1100, 2000, 3000, 3900, 4600][Math.min(target_abl(12), 5)];
+  let base = [500, 1100, 2000, 3000, 3900, 4600][
+    Math.min(abl_of(target, 12), 5)
+  ];
   base += [0, 0, 0, 300, 600, 1000][lube];
-  service_ejaculation({
+  service_ejaculation(target, player, {
     base: [base, base, base, base, base, base],
     target_rates: {
       10: [0.8, 0.9, 1, 1.1, 1.2, 1.3],
@@ -752,13 +757,13 @@ async function com33() {
   love_exp(target, 1);
   game.train.快乐经验 = 1;
   game.train.屈服刻印结算 = 1;
-  if (player_talent(121)) src.set(13, idiv_trunc(src.get(13), 2));
+  if (talent_of(player, 121)) src.set(13, idiv_trunc(src.get(13), 2));
   return 1;
 }
 
-async function com34_check() {
+async function com34_check(target, player) {
   const result = await service_order('骑乘位', 24, (parts, state) => {
-    append_service_judge(parts, state, {
+    append_service_judge(target, parts, state, {
       lust: 3,
       vagina: 2,
       service: 4,
@@ -766,8 +771,9 @@ async function com34_check() {
       pleasure_mark: 3,
       dirty: { divider: 3, force_seven: true },
     });
-    if (target_palam(3) < PALAMLV[3]) append_term(parts, state, '润滑不足', -5);
-    common_service_modifiers(parts, state, {
+    if (palam_of(target, 3) < PALAMLV[3])
+      append_term(parts, state, '润滑不足', -5);
+    common_service_modifiers(target, player, parts, state, {
       lust_multiplier: 3,
       shame: 2,
       deny: 5,
@@ -776,24 +782,26 @@ async function com34_check() {
       sex_mania: 5,
       futa: 4,
     });
-    if (target_talent(0))
+    if (talent_of(target, 0))
       append_term(parts, state, name_of('talentname', 0), -20);
-    else if (target_exp(0) < EXPLV[2])
+    else if (exp_of(target, 0) < EXPLV[2])
       append_term(parts, state, `${name_of('expname', 0)}不足`, -5);
-    if (target_tequip(21))
+    if (tequip_of(target, 21))
       append_term(parts, state, name_of('itemname', 26), 6);
-    if (target_tequip(89) && !target_talent(136)) {
+    if (tequip_of(target, 89) && !talent_of(target, 136)) {
       append_term(parts, state, name_of('itemname', 22), -20);
     }
-    append_dirty_penalty(parts, state, { divider: 3, force_seven: true });
+    append_dirty_penalty(target, player, parts, state, {
+      divider: 3,
+      force_seven: true,
+    });
   });
   return result.passed;
 }
 
-async function com34_src() {
-  const target = era_flag.target;
+async function com34_src(target, player) {
   const src = source_helpers(target);
-  const y = dirty_penalty({ divider: 3, force_seven: true });
+  const y = dirty_penalty(target, player, { divider: 3, force_seven: true });
   lose(target, 0, 60);
   lose(target, 1, 150);
   src.set(12, 900);
@@ -805,7 +813,7 @@ async function com34_src() {
     [450, 900, 0, 1],
     [600, 1500, 0, 0.5],
     [750, 2200, 0, 0.1],
-  ][Math.min(target_abl(16), 5)];
+  ][Math.min(abl_of(target, 16), 5)];
   src.set(4, service[0]);
   src.set(5, service[1]);
   src.set(14, service[2]);
@@ -817,11 +825,11 @@ async function com34_src() {
     [500, 175, 1.2],
     [850, 300, 1.5],
     [1100, 425, 2],
-  ][Math.min(target_abl(2), 5)];
+  ][Math.min(abl_of(target, 2), 5)];
   src.set(1, vaginal[0]);
   src.set(3, vaginal[1]);
   src.set(4, times_exact(src.get(4), vaginal[2]));
-  const exp = target_exp(0);
+  const exp = exp_of(target, 0);
   if (exp < EXPLV[1]) {
     src.set(1, times_exact(src.get(1), 0.2));
     src.set(6, 5000);
@@ -840,7 +848,7 @@ async function com34_src() {
   } else {
     src.set(1, times_exact(src.get(1), 1.5));
   }
-  const lube = level(target_palam(3));
+  const lube = level(palam_of(target, 3));
   const lube1 = [0.2, 0.6, 1, 1.3, 1.6, 2][lube];
   const lube6 = [3, 1, 0.5, 0.3, 0.2, 0.1][lube];
   src.set(1, times_exact(src.get(1), lube1));
@@ -852,26 +860,26 @@ async function com34_src() {
     src.set(12, src.get(12) + 400);
   }
   src.set(6, times_exact(src.get(6), lube6));
-  if (target_talent(99)) src.set(6, times_exact(src.get(6), 0.8));
-  if (target_talent(100)) src.set(6, times_exact(src.get(6), 2));
-  if (target_talent(135)) src.set(6, times_exact(src.get(6), 4));
-  if (target_talent(30)) {
+  if (talent_of(target, 99)) src.set(6, times_exact(src.get(6), 0.8));
+  if (talent_of(target, 100)) src.set(6, times_exact(src.get(6), 2));
+  if (talent_of(target, 135)) src.set(6, times_exact(src.get(6), 4));
+  if (talent_of(target, 30)) {
     src.set(3, times_exact(src.get(3), 0.6));
     src.set(14, times_exact(src.get(14), 15));
     src.set(15, exp === 0 ? 10000 : 1000);
-  } else if (target_talent(31)) {
+  } else if (talent_of(target, 31)) {
     src.set(14, times_exact(src.get(14), 0.5));
     if (exp === 0) src.set(15, 300);
   } else if (exp === 0) src.set(15, 3000);
-  const lust = level(target_palam(5));
+  const lust = level(palam_of(target, 5));
   src.set(1, times_exact(src.get(1), [0.6, 0.8, 1, 1.2, 1.4, 1.6][lust]));
   src.set(3, times_exact(src.get(3), [0.3, 0.6, 1, 1.5, 1.8, 2.2][lust]));
-  const obedience = Math.min(target_abl(10), 5);
+  const obedience = Math.min(abl_of(target, 10), 5);
   src.set(1, times_exact(src.get(1), [0.5, 0.8, 1, 1.3, 1.6, 2][obedience]));
   src.set(3, times_exact(src.get(3), [0.6, 0.8, 1, 1.2, 1.4, 1.6][obedience]));
   src.set(15, times_exact(src.get(15), [2, 1.5, 1, 0.8, 0.6, 0.3][obedience]));
   src.add(13, [700, 500, 300, 100, 30, 0][obedience]);
-  const skill = Math.min(target_abl(12), 5);
+  const skill = Math.min(abl_of(target, 12), 5);
   src.set(1, times_exact(src.get(1), [0.5, 0.8, 1, 1.3, 1.6, 2][skill]));
   src.set(3, times_exact(src.get(3), [0.6, 0.8, 1, 1.2, 1.4, 1.6][skill]));
   await com_ejac_player_sex();
@@ -879,42 +887,49 @@ async function com34_src() {
     src.set(4, times_exact(src.get(4), 3));
     src.set(5, times_exact(src.get(5), 5));
     src.set(13, times_exact(src.get(13), 1.5));
-    src.set(7, [0, 300, 1000, 1500, 2200, 3000][Math.min(target_abl(32), 5)]);
+    src.set(
+      7,
+      [0, 300, 1000, 1500, 2200, 3000][Math.min(abl_of(target, 32), 5)],
+    );
   }
   await com_after_vagina_sex();
-  if (player_talent(121)) src.set(13, idiv_trunc(src.get(13), 2));
+  if (talent_of(player, 121)) src.set(13, idiv_trunc(src.get(13), 2));
 }
 
-async function com34() {
-  const jumped = await jump_advanced(34);
+async function com34(com_context) {
+  const jumped = await jump_advanced(34, com_context);
   if (jumped !== false) return jumped;
+  const { target, player } = com_context;
   // CASE34 的 FLAG:71 是菜单渲染与实际执行间的连续体缓存；仅未跳转时清零。
   game.train.自由调教跳转 = 0;
-  if (!(await com34_check())) return 0;
+  if (!(await com34_check(target, player))) return 0;
   if ((await confirm_lost_virgin()) === 0) return 0;
   if ((await confirm_condom()) === 0) return 0;
   await train_message_b();
   era.set('tflag:19', 1);
-  if (era_flag.assiplay === 0 && target_exp(0) === 0 && !target_tequip(89))
+  if (
+    era_flag.assiplay === 0 &&
+    exp_of(target, 0) === 0 &&
+    !tequip_of(target, 89)
+  )
     game.train.主人导致处女丧失 = 1;
-  await com34_src();
+  await com34_src(target, player);
   game.train.快乐经验 = 1;
-  game.train.屈服刻印结算 = target_exp(0) <= 1 ? 3 : 2;
+  game.train.屈服刻印结算 = exp_of(target, 0) <= 1 ? 3 : 2;
   return 1;
 }
 
-async function com35() {
-  const target = era_flag.target;
-  const player = era_flag.player;
+async function com35(com_context) {
+  const { target, player, assi } = com_context;
   const result = await service_order('全身擦洗', 30, (parts, state) => {
-    append_service_judge(parts, state, {
+    append_service_judge(target, parts, state, {
       lust: 1,
       service: 4,
       poison: 3,
       pleasure_mark: 1,
       dirty: {},
     });
-    common_service_modifiers(parts, state, {
+    common_service_modifiers(target, player, parts, state, {
       lust_multiplier: 1,
       shame: 3,
       clean: 1,
@@ -925,7 +940,7 @@ async function com35() {
       fond: 5,
       futa: 8,
     });
-    append_dirty_penalty(parts, state, {});
+    append_dirty_penalty(target, player, parts, state, {});
   });
   if (!result.passed) return 0;
   await train_message_b();
@@ -941,20 +956,22 @@ async function com35() {
     [1100, 1200, 50],
     [1300, 1800, 20],
     [1500, 2500, 0],
-  ][Math.min(target_abl(16), 5)];
+  ][Math.min(abl_of(target, 16), 5)];
   src.set(4, service[0]);
   src.set(5, service[1]);
   src.set(8, service[2]);
-  src.set(0, [0, 50, 200, 400, 1000, 2000][Math.min(target_abl(0), 5)]);
-  let breast = [200, 300, 500, 1000, 1500, 1800][Math.min(target_abl(1), 5)];
-  if (target_talent(110)) breast = times_exact(breast, 1.2);
-  if (target_talent(108)) breast = times_exact(breast, 1.2);
-  else if (target_talent(107)) breast = times_exact(breast, 0.7);
+  src.set(0, [0, 50, 200, 400, 1000, 2000][Math.min(abl_of(target, 0), 5)]);
+  let breast = [200, 300, 500, 1000, 1500, 1800][
+    Math.min(abl_of(target, 1), 5)
+  ];
+  if (talent_of(target, 110)) breast = times_exact(breast, 1.2);
+  if (talent_of(target, 108)) breast = times_exact(breast, 1.2);
+  else if (talent_of(target, 107)) breast = times_exact(breast, 0.7);
   src.add(17, breast);
-  const skill = [0.8, 1, 1.3, 1.6, 1.9, 2.3][Math.min(target_abl(12), 5)];
+  const skill = [0.8, 1, 1.3, 1.6, 1.9, 2.3][Math.min(abl_of(target, 12), 5)];
   src.set(4, times_exact(src.get(4), skill));
   src.set(5, times_exact(src.get(5), skill));
-  service_ejaculation({
+  service_ejaculation(target, player, {
     base: [1500, 2100, 2900, 4000, 5000, 6000],
     target_rates: {
       10: [0.8, 0.9, 1, 1.1, 1.2, 1.3],
@@ -974,20 +991,20 @@ async function com35() {
     ],
   });
   set_standard_stain(target);
-  set_standard_stain(era_flag.assiplay ? era_flag.assi : era_flag.player);
+  set_standard_stain(era_flag.assiplay ? assi : player);
   same_sex_exp(target, player, 7);
   if (era_flag.assiplay === 0 && chara(target).dungeon.口交经验 >= EXPLV[3])
     era.add('tflag:30', 1);
   love_exp(target, 2);
   game.train.快乐经验 = 1;
   game.train.屈服刻印结算 = 3;
-  if (player_talent(121)) src.set(13, idiv_trunc(src.get(13), 2));
+  if (talent_of(player, 121)) src.set(13, idiv_trunc(src.get(13), 2));
   return 1;
 }
 
-async function com36_check() {
+async function com36_check(target, player) {
   const result = await service_order('骑乘位肛交', 24, (parts, state) => {
-    append_service_judge(parts, state, {
+    append_service_judge(target, parts, state, {
       lust: 3,
       anal: 2,
       service: 4,
@@ -995,8 +1012,9 @@ async function com36_check() {
       pleasure_mark: 3,
       dirty: { divider: 3 },
     });
-    if (target_palam(3) < PALAMLV[3]) append_term(parts, state, '润滑不足', -5);
-    common_service_modifiers(parts, state, {
+    if (palam_of(target, 3) < PALAMLV[3])
+      append_term(parts, state, '润滑不足', -5);
+    common_service_modifiers(target, player, parts, state, {
       lust_multiplier: 3,
       shame: 2,
       deny: 5,
@@ -1005,19 +1023,19 @@ async function com36_check() {
       ass_mania: 5,
       futa: 4,
     });
-    if (target_tequip(21))
+    if (tequip_of(target, 21))
       append_term(parts, state, name_of('itemname', 26), 6);
-    append_dirty_penalty(parts, state, { divider: 3 });
+    append_dirty_penalty(target, player, parts, state, { divider: 3 });
   });
   return result.passed;
 }
 
-async function com36() {
-  if (!(await com36_check())) return 0;
-  const target = era_flag.target;
+async function com36(com_context) {
+  const { target, player } = com_context;
+  if (!(await com36_check(target, player))) return 0;
   const src = source_helpers(target);
   await train_message_b();
-  const y = dirty_penalty({ divider: 3 });
+  const y = dirty_penalty(target, player, { divider: 3 });
   lose(target, 0, 90);
   lose(target, 1, 110);
   src.set(12, 900);
@@ -1029,7 +1047,7 @@ async function com36() {
     [450, 900, 0, 1],
     [600, 1500, 0, 0.5],
     [750, 2200, 0, 0.1],
-  ][Math.min(target_abl(16), 5)];
+  ][Math.min(abl_of(target, 16), 5)];
   src.set(4, service[0]);
   src.set(5, service[1]);
   src.set(14, service[2]);
@@ -1041,12 +1059,12 @@ async function com36() {
     [450, 180, 1500, 1.2],
     [850, 300, 2600, 1.5],
     [1300, 450, 4000, 2],
-  ][Math.min(target_abl(3), 5)];
+  ][Math.min(abl_of(target, 3), 5)];
   src.set(2, anal[0]);
   src.set(3, anal[1]);
   src.add(13, anal[2]);
   src.set(4, times_exact(src.get(4), anal[3]));
-  const exp = target_exp(1);
+  const exp = exp_of(target, 1);
   const exp_tier = exp_level(exp);
   src.set(2, times_exact(src.get(2), [0.1, 0.3, 0.5, 1, 1.4, 1.6][exp_tier]));
   src.set(6, [18000, 10000, 4500, 1500, 700, 300][exp_tier]);
@@ -1060,26 +1078,26 @@ async function com36() {
   ][exp_tier];
   lose(target, 0, extra_lose[0]);
   lose(target, 1, extra_lose[1]);
-  const lube = level(target_palam(3));
+  const lube = level(palam_of(target, 3));
   src.set(2, times_exact(src.get(2), [0.4, 0.8, 1, 1.4, 1.8, 1.8][lube]));
   src.add(6, [10000, 3600, 1200, 200, 100, 100][lube]);
-  if (target_talent(99)) src.set(6, times_exact(src.get(6), 0.8));
-  if (target_talent(100)) src.set(6, times_exact(src.get(6), 2));
-  if (target_talent(135)) src.set(6, times_exact(src.get(6), 2));
-  if (target_talent(30)) {
+  if (talent_of(target, 99)) src.set(6, times_exact(src.get(6), 0.8));
+  if (talent_of(target, 100)) src.set(6, times_exact(src.get(6), 2));
+  if (talent_of(target, 135)) src.set(6, times_exact(src.get(6), 2));
+  if (talent_of(target, 30)) {
     src.set(3, times_exact(src.get(3), 1.2));
     src.set(16, times_exact(src.get(16), 1.1));
     src.set(15, exp === 0 ? 500 : 0);
   }
-  const lust = Math.min(level(target_palam(5)), 4);
+  const lust = Math.min(level(palam_of(target, 5)), 4);
   src.set(2, times_exact(src.get(2), [0.6, 0.8, 1, 1.2, 1.4][lust]));
   src.set(13, times_exact(src.get(13), [0.6, 0.8, 1, 1.2, 1.4][lust]));
-  const obedience = Math.min(target_abl(10), 5);
+  const obedience = Math.min(abl_of(target, 10), 5);
   src.set(2, times_exact(src.get(2), [0.5, 0.8, 1, 1.3, 1.6, 2][obedience]));
   src.set(3, times_exact(src.get(3), [0.6, 0.8, 1, 1.2, 1.4, 1.6][obedience]));
   src.set(15, times_exact(src.get(15), [2, 1.5, 1, 0.8, 0.6, 0.3][obedience]));
   src.add(13, [700, 500, 300, 100, 30, 0][obedience]);
-  const skill = Math.min(target_abl(12), 5);
+  const skill = Math.min(abl_of(target, 12), 5);
   src.set(2, times_exact(src.get(2), [0.5, 0.8, 1, 1.3, 1.6, 2][skill]));
   src.set(3, times_exact(src.get(3), [0.6, 0.8, 1, 1.2, 1.4, 1.6][skill]));
   await com_ejac_player_analsex();
@@ -1087,20 +1105,22 @@ async function com36() {
     src.set(4, times_exact(src.get(4), 3));
     src.set(5, times_exact(src.get(5), 5));
     src.set(13, times_exact(src.get(13), 1.5));
-    src.set(7, [0, 300, 1000, 1500, 2200, 3000][Math.min(target_abl(32), 5)]);
+    src.set(
+      7,
+      [0, 300, 1000, 1500, 2200, 3000][Math.min(abl_of(target, 32), 5)],
+    );
   }
   await com_after_anal_sex();
   game.train.快乐经验 = 1;
-  game.train.屈服刻印结算 = target_exp(1) <= 1 ? 3 : 2;
-  if (player_talent(121)) src.set(13, idiv_trunc(src.get(13), 2));
+  game.train.屈服刻印结算 = exp_of(target, 1) <= 1 ? 3 : 2;
+  if (talent_of(player, 121)) src.set(13, idiv_trunc(src.get(13), 2));
   return 1;
 }
 
-async function com37() {
-  const target = era_flag.target;
-  const player = era_flag.player;
+async function com37(com_context) {
+  const { target, player } = com_context;
   const result = await service_order('肛门侍奉', 23, (parts, state) => {
-    append_service_judge(parts, state, {
+    append_service_judge(target, parts, state, {
       lust: 1,
       service: 3,
       dirty: { force_seven: true, player_stain: 4 },
@@ -1129,7 +1149,7 @@ async function com37() {
         `${name_of('markname', 3)}LV${mark3}`,
         -mark3 * 5,
       );
-    common_service_modifiers(parts, state, {
+    common_service_modifiers(target, player, parts, state, {
       lust_multiplier: 0,
       shame: 1,
       clean: 2,
@@ -1139,33 +1159,40 @@ async function com37() {
       perverted: 3,
       fond: 5,
     });
-    if (target_talent(11))
+    if (talent_of(target, 11))
       append_term(parts, state, name_of('talentname', 11), -5);
-    if (target_talent(15))
+    if (talent_of(target, 15))
       append_term(parts, state, name_of('talentname', 15), -12);
-    if (target_talent(17))
+    if (talent_of(target, 17))
       append_term(parts, state, name_of('talentname', 17), 2);
-    if (target_talent(34))
+    if (talent_of(target, 34))
       append_term(parts, state, name_of('talentname', 34), -20);
-    if (target_talent(64))
+    if (talent_of(target, 64))
       append_term(parts, state, name_of('talentname', 64), 3);
-    if (player_talent(83))
+    if (talent_of(player, 83))
       append_term(parts, state, name_of('talentname', 83), 3);
-    if (target_tequip(89) && !target_talent(136)) {
+    if (tequip_of(target, 89) && !talent_of(target, 136)) {
       append_term(parts, state, name_of('itemname', 22), -20);
     }
-    append_dirty_penalty(parts, state, { force_seven: true, player_stain: 4 });
+    append_dirty_penalty(target, player, parts, state, {
+      force_seven: true,
+      player_stain: 4,
+    });
   });
   if (!result.passed) return 0;
   await train_message_b();
   const src = source_helpers(target);
-  const y = dirty_penalty({ force_seven: true, player_stain: 4 });
+  const y = dirty_penalty(target, player, {
+    force_seven: true,
+    player_stain: 4,
+  });
   lose(target, 1, 10);
   lose(target, 1, 100);
   src.set(13, 3000);
   src.set(14, 5000);
   src.set(8, y * 80 + 50);
   source_service_skill(
+    target,
     src,
     [
       [420, 150, 4],
@@ -1177,7 +1204,7 @@ async function com37() {
     ],
     [0.5, 0.8, 1, 1.5, 2.5, 4],
   );
-  if (target_tequip(89)) {
+  if (tequip_of(target, 89)) {
     if ((era.get(`cflag:${target}:16`) || 0) === -1) {
       era.set('tflag:13', 1);
       era.set(`cflag:${target}:16`, 996);
@@ -1185,7 +1212,7 @@ async function com37() {
     }
     return 1;
   }
-  service_ejaculation({
+  service_ejaculation(target, player, {
     base: [100, 300, 500, 800, 1200, 1600],
     target_rates: {
       10: [0.8, 0.9, 1, 1.1, 1.2, 1.3],
@@ -1195,7 +1222,7 @@ async function com37() {
     flag: 5,
     source: src,
     semen_exp: [1, 4],
-    extra_rates: target_talent(52) ? [[0, [2, 2, 2, 2, 2, 2]]] : [],
+    extra_rates: talent_of(target, 52) ? [[0, [2, 2, 2, 2, 2, 2]]] : [],
     poison: [
       [0, 2, 2],
       [200, 2.5, 1.6],
@@ -1206,21 +1233,20 @@ async function com37() {
     ],
   });
   stain_exchange(target, 0, player, 4);
-  if (!target_talent(122) && !player_talent(122)) {
+  if (!talent_of(target, 122) && !talent_of(player, 122)) {
     era.print('百合经验+6');
     chara(target).train.百合经验 += 6;
   }
   game.train.快乐经验 = 1;
   game.train.屈服刻印结算 = 3;
-  player_first_kiss(target, 401);
+  player_first_kiss(target, player, 401);
   return 1;
 }
 
-async function com38() {
-  const target = era_flag.target;
-  const player = era_flag.player;
+async function com38(com_context) {
+  const { target, player } = com_context;
   const result = await service_order('足交', 22, (parts, state) => {
-    append_service_judge(parts, state, {
+    append_service_judge(target, parts, state, {
       lust: 1,
       service: 4,
       maso: 5,
@@ -1228,7 +1254,7 @@ async function com38() {
       pleasure_mark: 1,
       dirty: { divider: 3 },
     });
-    common_service_modifiers(parts, state, {
+    common_service_modifiers(target, player, parts, state, {
       lust_multiplier: 1,
       shame: 3,
       clean: 1,
@@ -1243,18 +1269,18 @@ async function com38() {
       futa: 8,
       shown_amounts: { 35: -1, 71: -1, 82: -5 },
     });
-    append_dirty_penalty(parts, state, { divider: 3 });
+    append_dirty_penalty(target, player, parts, state, { divider: 3 });
   });
   if (!result.passed) return 0;
   await train_message_b();
   const src = source_helpers(target);
-  const y = dirty_penalty({ divider: 3 });
+  const y = dirty_penalty(target, player, { divider: 3 });
   lose(target, 0, 10);
   lose(target, 1, 150);
   src.set(13, 550);
   src.set(14, 400);
   src.set(8, y * 10 + 50);
-  source_service_skill(src, [
+  source_service_skill(target, src, [
     [300, 50, 4],
     [350, 100, 2.5],
     [400, 150, 1.5],
@@ -1262,11 +1288,11 @@ async function com38() {
     [500, 250, 0.5],
     [580, 300, 0.1],
   ]);
-  const maso = Math.min(target_abl(20), 5);
+  const maso = Math.min(abl_of(target, 20), 5);
   const maso_rate = [1, 1.2, 1.4, 1.6, 1.8, 2][maso];
   src.set(4, times_exact(src.get(4), maso_rate));
   src.set(5, times_exact(src.get(5), maso_rate));
-  service_ejaculation({
+  service_ejaculation(target, player, {
     base: [350, 700, 1300, 1800, 2600, 3500],
     target_rates: {
       10: [0.8, 0.9, 1, 1.1, 1.2, 1.3],
@@ -1289,10 +1315,13 @@ async function com38() {
     ],
   });
   let sadistic = 0;
-  if (target_talent(83) || (target_abl(11) >= 3 && target_abl(20) >= 3))
+  if (
+    talent_of(target, 83) ||
+    (abl_of(target, 11) >= 3 && abl_of(target, 20) >= 3)
+  )
     sadistic = 3;
-  else if (target_abl(11) >= 3 && target_abl(20) >= 1) sadistic = 2;
-  else if (target_abl(11) >= 3 || target_abl(20) >= 1) sadistic = 1;
+  else if (abl_of(target, 11) >= 3 && abl_of(target, 20) >= 1) sadistic = 2;
+  else if (abl_of(target, 11) >= 3 || abl_of(target, 20) >= 1) sadistic = 1;
   if (sadistic) {
     era.print(`施虐快乐经验+${sadistic}`);
     chara(target).dungeon.施虐快乐经验 += sadistic;
@@ -1301,7 +1330,7 @@ async function com38() {
   love_exp(target, 1);
   game.train.快乐经验 = 1;
   game.train.屈服刻印结算 = 1;
-  if (player_talent(121)) src.set(13, idiv_trunc(src.get(13), 2));
+  if (talent_of(player, 121)) src.set(13, idiv_trunc(src.get(13), 2));
   return 1;
 }
 
@@ -1326,9 +1355,9 @@ function filthy_player() {
   const stain = era.get(`stain:${era_flag.player}:2`) || 0;
   return (
     (stain & 1 || stain & 4 || stain & 8 || stain & 32) &&
-    target_abl(10) <= 3 &&
-    target_talent(62) &&
-    !target_talent(64)
+    abl_of(era_flag.target, 10) <= 3 &&
+    talent_of(era_flag.target, 62) &&
+    !talent_of(era_flag.target, 64)
   );
 }
 function male_monster() {
@@ -1340,53 +1369,58 @@ function male_monster() {
 com_able_family.register(30, async () => {
   const target = era_flag.target;
   if (era.get('tflag:899') > 0) return 0;
-  if (!player_talent(121) && !player_talent(122) && !target_tequip(89))
+  if (
+    !talent_of(era_flag.player, 121) &&
+    !talent_of(era_flag.player, 122) &&
+    !tequip_of(target, 89)
+  )
     return 0;
-  if (target_talent(151)) return 0;
-  if (target_tequip(44)) return 0;
-  if (target_tequip(89) && target_abl(39) < 1) return 0;
-  if (target_tequip(88) && !male_monster()) return 0;
-  if (target_tequip(90)) return 0;
-  if (target_tequip(55)) return 0;
+  if (talent_of(target, 151)) return 0;
+  if (tequip_of(target, 44)) return 0;
+  if (tequip_of(target, 89) && abl_of(target, 39) < 1) return 0;
+  if (tequip_of(target, 88) && !male_monster()) return 0;
+  if (tequip_of(target, 90)) return 0;
+  if (tequip_of(target, 55)) return 0;
   return costume_blocked(target, 0, false, true) ? 0 : 1;
 });
 
 com_able_family.register(31, async () => {
   const target = era_flag.target;
   if (era.get('tflag:899') > 0) return 0;
-  if (target_talent(151)) return 0;
+  if (talent_of(target, 151)) return 0;
   if (filthy_player()) return 0;
-  if (target_tequip(45)) return 0;
-  if (target_tequip(44)) return 0;
-  if (target_tequip(89) && target_abl(39) < 1) return 0;
-  if (target_tequip(88) && !male_monster()) return 0;
-  if (target_tequip(90)) return 0;
-  if (target_tequip(55)) return 0;
+  if (tequip_of(target, 45)) return 0;
+  if (tequip_of(target, 44)) return 0;
+  if (tequip_of(target, 89) && abl_of(target, 39) < 1) return 0;
+  if (tequip_of(target, 88) && !male_monster()) return 0;
+  if (tequip_of(target, 90)) return 0;
+  if (tequip_of(target, 55)) return 0;
   return costume_blocked(target, 0, false, true) ? 0 : 1;
 });
 
 com_able_family.register(32, async () => {
   const target = era_flag.target;
   if (era.get('tflag:899') > 0) return 0;
-  if (target_talent(122) || target_talent(116)) return 0;
+  if (talent_of(target, 122) || talent_of(target, 116)) return 0;
   if (
-    !target_talent(114) &&
-    !target_talent(110) &&
-    !target_talent(119) &&
-    target_abl(12) < 3
+    !talent_of(target, 114) &&
+    !talent_of(target, 110) &&
+    !talent_of(target, 119) &&
+    abl_of(target, 12) < 3
   )
     return 0;
-  if (target_talent(109) && target_abl(12) < 4) return 0;
-  if (!player_talent(121) && !player_talent(122)) return 0;
+  if (talent_of(target, 109) && abl_of(target, 12) < 4) return 0;
+  if (!talent_of(era_flag.player, 121) && !talent_of(era_flag.player, 122))
+    return 0;
   if (filthy_player()) return 0;
   if (
-    target_talent(151) ||
-    target_tequip(45) ||
-    target_tequip(44) ||
-    target_tequip(90) ||
-    target_tequip(89) ||
-    target_tequip(88) ||
-    target_tequip(55)
+    talent_of(target, 151) ||
+    tequip_of(target, 45) ||
+    tequip_of(target, 44) ||
+    tequip_of(target, 90) ||
+    tequip_of(target, 89) ||
+    tequip_of(target, 88) ||
+    tequip_of(target, 55)
   )
     return 0;
   if (worn(target) & 6) return 0;
@@ -1395,19 +1429,20 @@ com_able_family.register(32, async () => {
 
 com_able_family.register(33, async () => {
   const target = era_flag.target;
-  if (era.get('tflag:899') > 0 || target_palam(3) < 2000) return 0;
-  if (!player_talent(121) && !player_talent(122)) return 0;
+  if (era.get('tflag:899') > 0 || palam_of(target, 3) < 2000) return 0;
+  if (!talent_of(era_flag.player, 121) && !talent_of(era_flag.player, 122))
+    return 0;
   if (
-    target_talent(151) ||
-    target_tequip(11) ||
-    target_tequip(44) ||
-    target_tequip(90) ||
-    target_tequip(89) ||
-    target_tequip(88) ||
-    target_tequip(55)
+    talent_of(target, 151) ||
+    tequip_of(target, 11) ||
+    tequip_of(target, 44) ||
+    tequip_of(target, 90) ||
+    tequip_of(target, 89) ||
+    tequip_of(target, 88) ||
+    tequip_of(target, 55)
   )
     return 0;
-  if (target_tequip(58) && !(era.get('item:13') || 0) && NOITEM.value === 0)
+  if (tequip_of(target, 58) && !(era.get('item:13') || 0) && NOITEM.value === 0)
     return 0;
   return costume_blocked(target, 17) ? 0 : 1;
 });
@@ -1417,45 +1452,59 @@ com_able_family.register(34, async () => {
   if (
     game.train.指令过滤 & 4 ||
     era.get('tflag:899') > 0 ||
-    target_talent(135) ||
-    target_tequip(11) ||
-    target_talent(122)
+    talent_of(target, 135) ||
+    tequip_of(target, 11) ||
+    talent_of(target, 122)
   )
     return 0;
-  if (!player_talent(121) && !player_talent(122) && !target_tequip(89))
+  if (
+    !talent_of(era_flag.player, 121) &&
+    !talent_of(era_flag.player, 122) &&
+    !tequip_of(target, 89)
+  )
     return 0;
-  if (target_talent(151) || target_tequip(44)) return 0;
-  if (target_tequip(89) && target_abl(39) < 2) return 0;
-  if (target_tequip(88) && !male_monster()) return 0;
-  if (target_tequip(90) || target_tequip(55)) return 0;
-  if (target_tequip(58) && !(era.get('item:13') || 0) && NOITEM.value === 0)
+  if (talent_of(target, 151) || tequip_of(target, 44)) return 0;
+  if (tequip_of(target, 89) && abl_of(target, 39) < 2) return 0;
+  if (tequip_of(target, 88) && !male_monster()) return 0;
+  if (tequip_of(target, 90) || tequip_of(target, 55)) return 0;
+  if (tequip_of(target, 58) && !(era.get('item:13') || 0) && NOITEM.value === 0)
     return 0;
   if (costume_blocked(target, 17)) return 0;
   if (special(target) === 79 && worn(target) & 64 && clothes_on()) return 0;
-  return target_talent(273) ? 0 : 1;
+  return talent_of(target, 273) ? 0 : 1;
 });
 
 com_able_family.register(35, async () => {
   const target = era_flag.target;
-  if (era.get('tflag:899') > 0 || target_talent(151) || !target_tequip(58))
+  if (
+    era.get('tflag:899') > 0 ||
+    talent_of(target, 151) ||
+    !tequip_of(target, 58)
+  )
     return 0;
   if (!(era.get('item:13') || 0) && NOITEM.value === 0) return 0;
   for (const id of [18, 11, 13, 14, 15, 43, 44, 45, 19, 46, 49])
-    if (target_tequip(id)) return 0;
+    if (tequip_of(target, id)) return 0;
   if (worn(target) && clothes_on() && special(target) <= 70) return 0;
   return 1;
 });
 
 com_able_family.register(36, async () => {
   const target = era_flag.target;
-  if (game.train.指令过滤 & 8 || era.get('tflag:899') > 0 || target_talent(151))
+  if (
+    game.train.指令过滤 & 8 ||
+    era.get('tflag:899') > 0 ||
+    talent_of(target, 151)
+  )
     return 0;
-  for (const id of [13, 19, 46, 49]) if (target_tequip(id)) return 0;
-  if (!player_talent(121) && !player_talent(122)) return 0;
-  if (target_tequip(44) || target_tequip(90) || target_tequip(89)) return 0;
-  if (target_tequip(88) && !male_monster()) return 0;
-  if (target_tequip(55) || target_exp(1) < 10) return 0;
-  if (target_tequip(58) && !(era.get('item:13') || 0) && NOITEM.value === 0)
+  for (const id of [13, 19, 46, 49]) if (tequip_of(target, id)) return 0;
+  if (!talent_of(era_flag.player, 121) && !talent_of(era_flag.player, 122))
+    return 0;
+  if (tequip_of(target, 44) || tequip_of(target, 90) || tequip_of(target, 89))
+    return 0;
+  if (tequip_of(target, 88) && !male_monster()) return 0;
+  if (tequip_of(target, 55) || exp_of(target, 1) < 10) return 0;
+  if (tequip_of(target, 58) && !(era.get('item:13') || 0) && NOITEM.value === 0)
     return 0;
   return costume_blocked(target, 17) ? 0 : 1;
 });
@@ -1464,26 +1513,28 @@ com_able_family.register(37, async () => {
   const target = era_flag.target;
   if (
     era.get('tflag:899') > 0 ||
-    target_talent(151) ||
-    target_tequip(45) ||
-    target_tequip(44)
+    talent_of(target, 151) ||
+    tequip_of(target, 45) ||
+    tequip_of(target, 44)
   )
     return 0;
-  if (target_tequip(89) && target_abl(39) < 1) return 0;
-  if (target_tequip(88) || target_tequip(90) || target_tequip(55)) return 0;
+  if (tequip_of(target, 89) && abl_of(target, 39) < 1) return 0;
+  if (tequip_of(target, 88) || tequip_of(target, 90) || tequip_of(target, 55))
+    return 0;
   return costume_blocked(target, 0, false, true) ? 0 : 1;
 });
 
 com_able_family.register(38, async () => {
   const target = era_flag.target;
   if (era.get('tflag:899') > 0) return 0;
-  if (!player_talent(121) && !player_talent(122)) return 0;
+  if (!talent_of(era_flag.player, 121) && !talent_of(era_flag.player, 122))
+    return 0;
   if (
-    target_tequip(44) ||
-    target_tequip(89) ||
-    target_tequip(88) ||
-    target_tequip(90) ||
-    target_tequip(55)
+    tequip_of(target, 44) ||
+    tequip_of(target, 89) ||
+    tequip_of(target, 88) ||
+    tequip_of(target, 90) ||
+    tequip_of(target, 55)
   )
     return 0;
   return costume_blocked(target, 0, false, true) ? 0 : 1;
@@ -1499,22 +1550,25 @@ function player_name() {
 }
 
 async function train_message_b_30() {
-  let subject = target_tequip(89)
+  const target = era_flag.target;
+  let subject = tequip_of(target, 89)
     ? '狗的'
-    : target_tequip(88)
+    : tequip_of(target, 88)
       ? `${monster_name(battle_column(BATTLE_COLUMN.MINION_A).id)}的`
       : `${player_name()}的`;
   era.print(
-    `${target_name()}${target_talent(85) && !era_flag.assiplay && !target_tequip(89) ? '带着爱慕的表情、' : ''}${target_talent(76) ? '自发地' : ''}套弄着${subject}阴茎、不停摩擦侍奉着……`,
+    `${target_name()}${talent_of(target, 85) && !era_flag.assiplay && !tequip_of(target, 89) ? '带着爱慕的表情、' : ''}${talent_of(target, 76) ? '自发地' : ''}套弄着${subject}阴茎、不停摩擦侍奉着……`,
   );
 }
 async function train_message_b_31() {
+  const target_id = era_flag.target;
+  const player_id = era_flag.player;
   const target = target_name();
   const player = player_name();
-  if (target_tequip(55)) {
+  if (tequip_of(target_id, 55)) {
     const arena_text = {
       201: `${player}兴奋地抓住倒下了的${target}的头、狠狠地将${
-        player_talent(121) || player_talent(122)
+        talent_of(player_id, 121) || talent_of(player_id, 122)
           ? '阴茎'
           : (era.get('item:4') || 0) === 1
             ? '假阳具'
@@ -1531,80 +1585,86 @@ async function train_message_b_31() {
   }
 
   let suffix;
-  if (target_tequip(89)) suffix = '狗的阴茎…';
-  else if (target_tequip(88))
+  if (tequip_of(target_id, 89)) suffix = '狗的阴茎…';
+  else if (tequip_of(target_id, 88))
     suffix = `${monster_name(battle_column(BATTLE_COLUMN.MINION_A).id)}的性器…`;
-  else if (target_tequip(55) && era_flag.assi !== era_flag.player)
+  else if (tequip_of(target_id, 55) && era_flag.assi !== era_flag.player)
     suffix = '怪物的阴茎…';
   else if (
-    player_talent(122) ||
-    (player_talent(121) && Math.floor(Math.random() * 2) === 0)
+    talent_of(player_id, 122) ||
+    (talent_of(player_id, 121) && Math.floor(Math.random() * 2) === 0)
   ) {
     suffix = `${player}的阴茎…`;
   } else if (
-    !player_talent(121) &&
-    !player_talent(122) &&
+    !talent_of(player_id, 121) &&
+    !talent_of(player_id, 122) &&
     (era.get('item:4') || 0) !== 0 &&
     Math.floor(Math.random() * 8) === 0
   ) {
     suffix = `${player}的假鸡巴…`;
   } else {
     const clitoris = [
-      (target_abl(13) >= 4 && target_talent(122)) ||
-      (target_abl(13) >= 1 && !target_talent(122) && target_abl(22) >= 2) ||
-      target_talent(85)
+      (abl_of(target_id, 13) >= 4 && talent_of(target_id, 122)) ||
+      (abl_of(target_id, 13) >= 1 &&
+        !talent_of(target_id, 122) &&
+        abl_of(target_id, 22) >= 2) ||
+      talent_of(target_id, 85)
         ? `、吮吸着${player}的阴唇`
         : '',
-      (target_abl(13) >= 4 && target_talent(122)) ||
-      (target_abl(13) >= 1 && !target_talent(122) && target_abl(22) >= 3) ||
-      target_talent(85)
+      (abl_of(target_id, 13) >= 4 && talent_of(target_id, 122)) ||
+      (abl_of(target_id, 13) >= 1 &&
+        !talent_of(target_id, 122) &&
+        abl_of(target_id, 22) >= 3) ||
+      talent_of(target_id, 85)
         ? '、不时地将舌头伸进花瓣之间'
         : '',
     ].join('');
     suffix = `${player}的阴蒂${clitoris}…`;
   }
   era.print(
-    `${target}${target_talent(85) && !era_flag.assiplay && !target_tequip(89) && !target_tequip(55) ? '带着慈爱的表情、' : ''}${target_talent(76) ? '主动地' : ''}用舌头仔细舔舐着${suffix}`,
+    `${target}${talent_of(target_id, 85) && !era_flag.assiplay && !tequip_of(target_id, 89) && !tequip_of(target_id, 55) ? '带着慈爱的表情、' : ''}${talent_of(target_id, 76) ? '主动地' : ''}用舌头仔细舔舐着${suffix}`,
   );
 }
 async function train_message_b_32() {
-  const action = target_talent(109)
+  const target = era_flag.target;
+  const action = talent_of(target, 109)
     ? `努力地挤着没多少的胸部蹭着${player_name()}的阴茎`
-    : target_talent(110)
+    : talent_of(target, 110)
       ? `用两乳之间惊人的深深沟壑包裹着${player_name()}的阴茎`
-      : target_talent(114)
+      : talent_of(target, 114)
         ? `用汹涌豪乳之间那深不可测的峡谷完全淹埋了${player_name()}的阴茎`
         : `用胸部夹住${player_name()}的阴茎`;
   era.print(
-    `${target_name()}${target_talent(85) && !era_flag.assiplay ? '带着情意绵绵的表情、' : ''}${action}、摩擦侍奉着。`,
+    `${target_name()}${talent_of(target, 85) && !era_flag.assiplay ? '带着情意绵绵的表情、' : ''}${action}、摩擦侍奉着。`,
   );
 }
 async function train_message_b_33() {
+  const target = era_flag.target;
   let expression;
   if (
-    (target_talent(85) || target_talent(76)) &&
-    target_palam(5) > PALAMLV[5] &&
-    target_abl(11) >= 5
+    (talent_of(target, 85) || talent_of(target, 76)) &&
+    palam_of(target, 5) > PALAMLV[5] &&
+    abl_of(target, 11) >= 5
   )
     expression = '浮现出沉醉在快感之中的表情、';
-  else if (target_talent(85) && target_palam(5) > PALAMLV[5])
+  else if (talent_of(target, 85) && palam_of(target, 5) > PALAMLV[5])
     expression = '正露出快被融化的神情、';
-  else if (target_talent(76) && target_palam(5) > PALAMLV[5])
+  else if (talent_of(target, 76) && palam_of(target, 5) > PALAMLV[5])
     expression = '带着恳求的眼神、';
-  else if (target_palam(5) > PALAMLV[4]) expression = '嘴角流出了口水、';
+  else if (palam_of(target, 5) > PALAMLV[4]) expression = '嘴角流出了口水、';
   else if (
-    (target_talent(85) || target_talent(76)) &&
-    target_palam(5) > PALAMLV[3]
+    (talent_of(target, 85) || talent_of(target, 76)) &&
+    palam_of(target, 5) > PALAMLV[3]
   )
     expression = '眼中充满着陶醉、';
-  else if (target_talent(85)) expression = '露出被幸福包围的神情、';
-  else if (target_talent(76)) expression = '用淫秽的眼神挑逗着、';
-  else if (target_talent(36)) expression = '放荡地扭着腰、';
-  else if (target_talent(22)) expression = '脸上染上了一片红霞、';
+  else if (talent_of(target, 85)) expression = '露出被幸福包围的神情、';
+  else if (talent_of(target, 76)) expression = '用淫秽的眼神挑逗着、';
+  else if (talent_of(target, 36)) expression = '放荡地扭着腰、';
+  else if (talent_of(target, 22)) expression = '脸上染上了一片红霞、';
   else expression = '害羞地';
-  const site = target_talent(132)
+  const site = talent_of(target, 132)
     ? '幼女的阴部'
-    : target_talent(122)
+    : talent_of(target, 122)
       ? '两腿'
       : '阴唇';
   era.print(
@@ -1612,16 +1672,21 @@ async function train_message_b_33() {
   );
 }
 async function train_message_b_34() {
+  const target_id = era_flag.target;
   const target = target_name();
   const player = player_name();
-  if (game.event.插着不拔 && era_flag.prevcom === 34 && target_tequip(89)) {
+  if (
+    game.event.插着不拔 &&
+    era_flag.prevcom === 34 &&
+    tequip_of(target_id, 89)
+  ) {
     era.print(`${target}大口喘着气、在狗的上面不停地摆动着腰……`);
     if (game.event.本次调教处女丧失) game.event.本次调教处女丧失 = 2;
-  } else if (target_tequip(89)) {
+  } else if (tequip_of(target_id, 89)) {
     era.print(
       `${target}将狗仰面翻转、跨到了狗的身上、对准流浪狗勃起的阴茎、自己主动沉下腰插进去了……`,
     );
-  } else if (target_tequip(88)) {
+  } else if (tequip_of(target_id, 88)) {
     era.print(
       `${target}跨坐在${monster_name(battle_column(BATTLE_COLUMN.MINION_A).id)}的上方，对准勃起的阴茎、自己主动沉下腰插进去了……`,
     );
@@ -1649,24 +1714,25 @@ async function train_message_b_34() {
     if (game.event.本次调教处女丧失) game.event.本次调教处女丧失 = 2;
   } else {
     let text = `${target}跨到${player}的上面、慢慢地沉下了腰`;
-    if (target_talent(132) && target_exp(0) === 0)
+    if (talent_of(target_id, 132) && exp_of(target_id, 0) === 0)
       text += '、用未经人事的幼女的秘裂、把阴茎迎进去';
-    else if (target_exp(0) === 0) text += '、用未经人事的阴部、把阴茎迎进去';
+    else if (exp_of(target_id, 0) === 0)
+      text += '、用未经人事的阴部、把阴茎迎进去';
     else text += '……';
     era.print(text);
-    if (target_exp(0) >= EXPLV[3]) {
-      const body = target_talent(99)
+    if (exp_of(target_id, 0) >= EXPLV[3]) {
+      const body = talent_of(target_id, 99)
         ? '整个身子压上来'
-        : target_talent(100)
+        : talent_of(target_id, 100)
           ? '娇小的身躯拼命地'
           : '';
       const pregnancy =
-        target_talent(153) &&
-        target_value('cflag', 110) <= era_flag.day_count + 10
+        talent_of(target_id, 153) &&
+        value('cflag', target_id, 110) <= era_flag.day_count + 10
           ? '抱着怀孕的大肚子、'
           : '';
       const breasts =
-        target_talent(110) || target_talent(114)
+        talent_of(target_id, 110) || talent_of(target_id, 114)
           ? '高城深堑的傲人的双峰欢快地晃荡着、'
           : '';
       era.print(`${target}${body}${pregnancy}${breasts}自己主动扭着腰…`);
@@ -1674,28 +1740,30 @@ async function train_message_b_34() {
   }
 }
 async function train_message_b_35() {
-  const skin = target_talent(244)
+  const target = era_flag.target;
+  const skin = talent_of(target, 244)
     ? '蓝色'
-    : target_talent(253)
+    : talent_of(target, 253)
       ? '褐色'
-      : target_talent(255)
+      : talent_of(target, 255)
         ? '白皙'
         : '';
-  const action = target_talent(99)
+  const action = talent_of(target, 99)
     ? `完全包裹着${player_name()}、`
-    : target_talent(100)
+    : talent_of(target, 100)
       ? `娇小的身体努力在${player_name()}身上推擦着、`
-      : target_talent(110) || target_talent(114)
+      : talent_of(target, 110) || talent_of(target, 114)
         ? `用丰满诱人的胸部擦蹭着${player_name()}的皮肤、`
         : `擦拭着${player_name()}的全身、`;
   era.print(
-    `${target_name()}用泡沫涂满自己${skin}的肌肤、${target_talent(85) ? '带着情意殷殷的表情、' : ''}${action}爱抚着…`,
+    `${target_name()}用泡沫涂满自己${skin}的肌肤、${talent_of(target, 85) ? '带着情意殷殷的表情、' : ''}${action}爱抚着…`,
   );
 }
 async function train_message_b_36() {
+  const target_id = era_flag.target;
   const target = target_name();
   const player = player_name();
-  if (target_tequip(88)) {
+  if (tequip_of(target_id, 88)) {
     era.print(
       `${target}跨坐在${monster_name(battle_column(BATTLE_COLUMN.MINION_A).id)}的上方，对准勃起的阴茎、自己主动沉下腰插进去了……`,
     );
@@ -1709,34 +1777,36 @@ async function train_message_b_36() {
     era.print(`${player}保持着抽插、将${target}抱起、从下方挺动着腰…`);
   } else {
     era.print(
-      `${target}跨到${player}的上面、${target_palam(3) >= PALAMLV[4] ? '充满粘液的' : ''}肛门、慢慢地把整根阴茎吞入了……`,
+      `${target}跨到${player}的上面、${palam_of(target_id, 3) >= PALAMLV[4] ? '充满粘液的' : ''}肛门、慢慢地把整根阴茎吞入了……`,
     );
   }
-  if (target_exp(0) >= EXPLV[3]) {
-    const body = target_talent(99)
+  if (exp_of(target_id, 0) >= EXPLV[3]) {
+    const body = talent_of(target_id, 99)
       ? '整个身子压上来'
-      : target_talent(100)
+      : talent_of(target_id, 100)
         ? '娇小的身躯拼命地'
         : '';
     const breasts =
-      target_talent(110) || target_talent(114)
+      talent_of(target_id, 110) || talent_of(target_id, 114)
         ? '高城深堑的傲人的双峰欢快地晃荡着、'
         : '';
     era.print(`${target}${body}${breasts}自己主动扭着腰…`);
   }
 }
 async function train_message_b_37() {
+  const target = era_flag.target;
   era.print(
-    target_tequip(89)
+    tequip_of(target, 89)
       ? `${target_name()}舔舐着狗的肛门……`
       : `${target_name()}细致地舔舐着${player_name()}的肛门…`,
   );
 }
 async function train_message_b_38() {
+  const target = era_flag.target;
   const style =
-    target_talent(83) || target_abl(20) > 2
+    talent_of(target, 83) || abl_of(target, 20) > 2
       ? '践踏般'
-      : target_talent(85) || target_talent(76)
+      : talent_of(target, 85) || talent_of(target, 76)
         ? '精心地'
         : '';
   era.print(`${target_name()}用脚夹着${player_name()}的阴茎${style}玩弄着…`);
@@ -1764,24 +1834,24 @@ function train_message_a_riding_reaction() {
   } else if (pleasure < 3000) {
     era.print(`${target}一边扭动着腰、一边忍不住发出了可爱的呻吟。`);
   } else if (pleasure < 6000) {
-    if (target_talent(110) || target_talent(114)) {
+    if (talent_of(target, 110) || talent_of(target, 114)) {
       era.print(
         `${player_name()}的眼前、${target}一双傲人的人间胸器正随着腰部运动上下跳跃着、完全沉浸在快感之中了。`,
       );
     }
-    if (!target_talent(110)) {
+    if (!talent_of(target, 110)) {
       era.print(
         `${target}已经习惯了吗、积极主动地扭动着腰肢、寻求着人间极乐。`,
       );
     }
   } else if (pleasure < 10000) {
-    const body = target_talent(99)
+    const body = talent_of(target, 99)
       ? '修长的身体'
-      : target_talent(100)
+      : talent_of(target, 100)
         ? '娇小的身体'
         : '';
     era.print(
-      target_talent(32) || target_talent(71)
+      talent_of(target, 32) || talent_of(target, 71)
         ? `${target}${body}一边说着否定快感的话语、一边无法抑制地发出越来越高亢的呻吟。`
         : `${target}${body}拼命地在扭腰挺胸。发出的愉悦呻吟越来越高亢了。`,
     );
@@ -1837,7 +1907,7 @@ adv_com_family.register(31, async (rand) => {
     // 「&& 优先」的「第二个分支各自带兽奸检查」。
     ((era_flag.assiplay && !game.system.上次调教者是助手) ||
       (!era_flag.assiplay && game.system.上次调教者是助手)) &&
-    !target_tequip(89) &&
+    !tequip_of(era_flag.target, 89) &&
     [20, 21, 27].includes(prev) &&
     (await adv_able(64)) === 1
   )
@@ -1864,12 +1934,16 @@ adv_com_family.register(33, async () => {
   return 33;
 });
 adv_com_family.register(34, async (rand) => {
-  if (era_flag.prevcom !== 34 || player_abl(12) <= 2 || !same_trainer())
+  if (
+    era_flag.prevcom !== 34 ||
+    abl_of(era_flag.player, 12) <= 2 ||
+    !same_trainer()
+  )
     return 34;
   if (Math.floor(game.train.自由调教跳转 / 1000) === 5)
     return game.train.自由调教跳转 % 1000;
-  const lust = Math.min(level(target_palam(5)) + 1, 5);
-  const score = lust * rand(11) + rand(11) * target_abl(2);
+  const lust = Math.min(level(palam_of(era_flag.target, 5)) + 1, 5);
+  const score = lust * rand(11) + rand(11) * abl_of(era_flag.target, 2);
   const advanced = score >= 50 ? 121 : 120;
   if ((await adv_able(advanced)) === 1) {
     game.train.自由调教跳转 = 5000 + advanced;

@@ -76,6 +76,8 @@ const {
   gohoubi_request_koujo_family,
 } = require('#/kojo/kojo-dungeon-after');
 const { PALAMLV } = require('#/data/palam-level-const');
+const { KojoBase } = require('#/kojo/kojo-base');
+const { get_kojo, register_kojo } = require('#/kojo/kojo-factory');
 
 // EVENTTRAIN #PRI 档：存在标志 + 总开关补 0
 function handle_train_pri() {
@@ -5174,30 +5176,178 @@ async function kojo_message_markcng_12(rand) {
   }
 }
 
-kojo_message_com_family.register(12, kojo_message_com_12);
-kojo_message_palamcng_family.register(12, kojo_message_palamcng_12);
-kojo_message_markcng_family.register(12, kojo_message_markcng_12);
-self_kojo_family.register(12, self_kojo_k12);
-gohoubi_after_koujo_family.register(12, (cid, choice) =>
-  gohoubi_after_koujo_k12(undefined, cid, choice),
+/**
+ * 知的口上子类（#857，与 KojoK4 / KojoK19 同款：钩子各自转交本文件的口上本体）。
+ *
+ * 每个钩子都是**一行转交、实参原样透传**：迁移前族注册的第二参就是这些本体
+ * （`self_kojo_family.register(12, self_kojo_k12)` 之类），所以调用形状与台词
+ * 本体一字未动。本类因此成了「K12 在哪些时机说话」的唯一清单。
+ *
+ * == 头部检查为什么不挪进 header_checks() ==
+ *
+ * 与 K4 / K19 同理：四道检查（口塞 / 失神 / 兽奸 / 死斗场，顺序见
+ * `kojo_message_com_12` 头部）留在本体内，存量用例直调该函数来驱动检查本身。
+ * 钩子只是外壳：检查顺序与结果与迁移前一致。
+ *
+ * == 两处实参适配 ==
+ *
+ * `gohoubi_after_koujo` / `osioski_koujo` 的本体沿用三参旧形状（第一位是旧引擎的
+ * 全局随机源，已不用），族的签名是 (cid, choice)——迁移前就是在注册处用闭包补一个
+ * undefined。适配现在落在钩子上，注册行只剩转发。
+ */
+class KojoK12 extends KojoBase {
+  /** 指令分支体（四道头部检查在本体内，见类注释） */
+  async select_com(...args) {
+    return kojo_message_com_12(...args);
+  }
+
+  async kojo_message_palamcng(...args) {
+    return kojo_message_palamcng_12(...args);
+  }
+
+  async kojo_message_markcng(...args) {
+    return kojo_message_markcng_12(...args);
+  }
+
+  async self_kojo(...args) {
+    return self_kojo_k12(...args);
+  }
+
+  /** 兽奸专用（头部检查 TEQUIP:89 岔入；不进族，与迁移前同） */
+  async dog_kojo(...args) {
+    return dog_kojo_12(...args);
+  }
+
+  /** 死斗场专用（头部检查 TEQUIP:55 岔入；不进族，与迁移前同） */
+  async colosseum_kojo(...args) {
+    return colosseum_kojo_12(...args);
+  }
+
+  async benki_koujo(...args) {
+    return benki_koujo_k12(...args);
+  }
+
+  async dungeon_victory(...args) {
+    return dungeon_victory_k12(...args);
+  }
+
+  async dungeon_attack(...args) {
+    return dungeon_attack_k12(...args);
+  }
+
+  async dungeon_ryouzyoku(...args) {
+    return dungeon_ryouzyoku_k12(...args);
+  }
+
+  async dungeon_ryouzyoku_after(...args) {
+    return dungeon_ryouzyoku_after_k12(...args);
+  }
+
+  async ntr_koujo(...args) {
+    return ntr_koujo_k12(...args);
+  }
+
+  async exucution_koujo(...args) {
+    return exucution_koujo_k12(...args);
+  }
+
+  async museum_koujo(...args) {
+    return museum_koujo_k12(...args);
+  }
+
+  async banishment_koujo(...args) {
+    return banishment_koujo_k12(...args);
+  }
+
+  async public_exucution_koujo(...args) {
+    return public_exucution_koujo_k12(...args);
+  }
+
+  async grotesque_koujo(...args) {
+    return grotesque_koujo_k12(...args);
+  }
+
+  async enterenemy_koujo(...args) {
+    return enterenemy_koujo_k12(...args);
+  }
+
+  async gohoubi_request_koujo(...args) {
+    return gohoubi_request_koujo_k12(...args);
+  }
+
+  /** 本体沿用迁移时的三参形状（第一个实参是旧引擎的全局随机源，已不用） */
+  async gohoubi_after_koujo(cid, choice) {
+    return gohoubi_after_koujo_k12(undefined, cid, choice);
+  }
+
+  /** 同上，史拼 osioki 沿旧址 */
+  async osioski_koujo(cid, choice) {
+    return osioki_koujo_k12(undefined, cid, choice);
+  }
+
+  async gobi_koujo(...args) {
+    return gobi_koujo_k12(...args);
+  }
+}
+
+// 口上族接入：本文件每个**有分发路径**的真身都要在下面登记一处（顺序照
+// kojo-system.js 的分发表）；漏一处 = 玩家侧看到占位行或不响。文件内直调的
+// 真身不在此列（dog_kojo_12 与 colosseum_kojo_12 由 COM 头部检查直调）。范围与
+// 接入由 test/kojo-register-coverage.test.js 的「有本体必有 register」契约锁守。
+//
+// #857 起 K12 进工厂：`run_kojo` 走工厂实例的钩子，下面这些族注册是过渡期的旧
+// 入口（存量测试与「有本体必有注册」契约锁直调），一律转发到同一个实例
+// ——两处都经 KojoK12。
+register_kojo(12, KojoK12);
+const kojo_k12 = get_kojo(12);
+kojo_message_com_family.register(12, (...args) =>
+  kojo_k12.kojo_message_com(...args),
 );
-osioski_koujo_family.register(12, (cid, choice) =>
-  osioki_koujo_k12(undefined, cid, choice),
+kojo_message_palamcng_family.register(12, (...args) =>
+  kojo_k12.kojo_message_palamcng(...args),
 );
-gobi_koujo_family.register(12, gobi_koujo_k12);
-ntr_koujo_family.register(12, ntr_koujo_k12);
-benki_koujo_family.register(12, benki_koujo_k12);
-exucution_koujo_family.register(12, exucution_koujo_k12);
-museum_koujo_family.register(12, museum_koujo_k12);
-banishment_koujo_family.register(12, banishment_koujo_k12);
-public_exucution_koujo_family.register(12, public_exucution_koujo_k12);
-grotesque_koujo_family.register(12, grotesque_koujo_k12);
-enterenemy_koujo_family.register(12, enterenemy_koujo_k12);
-gohoubi_request_koujo_family.register(12, gohoubi_request_koujo_k12);
-ryouzyoku_kojo_family.register(12, dungeon_ryouzyoku_k12);
-ryouzyoku_after_kojo_family.register(12, dungeon_ryouzyoku_after_k12);
-dungeon_victory_family.register(12, dungeon_victory_k12);
-dungeon_attack_family.register(12, dungeon_attack_k12);
+kojo_message_markcng_family.register(12, (...args) =>
+  kojo_k12.kojo_message_markcng(...args),
+);
+self_kojo_family.register(12, (...args) => kojo_k12.self_kojo(...args));
+gohoubi_after_koujo_family.register(12, (...args) =>
+  kojo_k12.gohoubi_after_koujo(...args),
+);
+osioski_koujo_family.register(12, (...args) => kojo_k12.osioski_koujo(...args));
+gobi_koujo_family.register(12, (...args) => kojo_k12.gobi_koujo(...args));
+ntr_koujo_family.register(12, (...args) => kojo_k12.ntr_koujo(...args));
+benki_koujo_family.register(12, (...args) => kojo_k12.benki_koujo(...args));
+exucution_koujo_family.register(12, (...args) =>
+  kojo_k12.exucution_koujo(...args),
+);
+museum_koujo_family.register(12, (...args) => kojo_k12.museum_koujo(...args));
+banishment_koujo_family.register(12, (...args) =>
+  kojo_k12.banishment_koujo(...args),
+);
+public_exucution_koujo_family.register(12, (...args) =>
+  kojo_k12.public_exucution_koujo(...args),
+);
+grotesque_koujo_family.register(12, (...args) =>
+  kojo_k12.grotesque_koujo(...args),
+);
+enterenemy_koujo_family.register(12, (...args) =>
+  kojo_k12.enterenemy_koujo(...args),
+);
+gohoubi_request_koujo_family.register(12, (...args) =>
+  kojo_k12.gohoubi_request_koujo(...args),
+);
+ryouzyoku_kojo_family.register(12, (...args) =>
+  kojo_k12.dungeon_ryouzyoku(...args),
+);
+ryouzyoku_after_kojo_family.register(12, (...args) =>
+  kojo_k12.dungeon_ryouzyoku_after(...args),
+);
+dungeon_victory_family.register(12, (...args) =>
+  kojo_k12.dungeon_victory(...args),
+);
+dungeon_attack_family.register(12, (...args) =>
+  kojo_k12.dungeon_attack(...args),
+);
 
 // self_kojo_k12：事件口上（self_kojo family）。TFLAG:13 事件
 // 类型分档：1 调教后自慰 / 2 百合PLAY / 3 朝口交 / 4 调教后性交 / 5 夜袭 /
@@ -6485,6 +6635,7 @@ function register() {
 
 module.exports = {
   register,
+  KojoK12,
   k12_kojo2,
   kojo_message_com_12,
   kojo_message_palamcng_12,
