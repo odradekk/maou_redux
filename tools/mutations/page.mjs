@@ -166,7 +166,7 @@ export default [
       init_portcflag(0);`,
     replace: '      // 变异：portcflag 版本戳不盖',
     tests: ['page-title'],
-    must_mention: 'portcflag:0:数据版本',
+    must_mention: 'portcflag:0:0',
   },
   {
     desc: 'M116 标题音乐播错曲（TFM-003A_17 → 据点2）',

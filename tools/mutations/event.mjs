@@ -196,7 +196,8 @@ export default [
     init_portcflag(17);`,
     replace: '    // 变异：portcflag 版本戳不盖',
     tests: ['event-first'],
-    must_mention: 'portcflag:17:数据版本',
+    // #825 起那条断言锁的是写入地址的序号形态（var_writes 记的是调用方原串）
+    must_mention: 'portcflag:17:0',
   },
   {
     desc: 'M183 source-check 迁移回退一处（屈服刻印结算改回裸 era.set）',
