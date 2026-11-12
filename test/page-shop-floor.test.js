@@ -50,13 +50,13 @@ test('第 1 阶层：楼层头 + 设施后缀合行、设施四格、怪物库�
   // 设施四格：300 格放 60（落穴），310/320 空，340 放 62 但库存 0（不出行）
   fixture.store.set('flag:300', 60);
   fixture.store.set('flag:310', 61);
-  fixture.store.set('item:61', 0); // 库存 0 → 310 格不显示
+  fixture.store.set('item:hold:61', 0); // 库存 0 → 310 格不显示
   fixture.store.set('flag:340', 62);
-  fixture.store.set('item:62', 0);
-  fixture.store.set('item:60', 1);
+  fixture.store.set('item:hold:62', 0);
+  fixture.store.set('item:hold:60', 1);
   fixture.store.set('itemname:60', '落穴');
   // 怪物库存：101 格 5 只
-  fixture.store.set('item:101', 5);
+  fixture.store.set('item:hold:101', 5);
   fixture.store.set('itemname:101', '史莱姆');
 
   await show_floor_via_usershop(fixture, 521);
@@ -103,7 +103,7 @@ for (const [floor, names] of [
     // 暴走结算会给未声明编号写入库存；旧存档也可能保留这些值。
     const base_slot = (floor - 1) * 10 + 100;
     for (let slot = base_slot; slot < base_slot + 10; slot += 1) {
-      fixture.store.set(`item:${slot}`, 30);
+      fixture.store.set(`item:hold:${slot}`, 30);
     }
     for (const [index, name] of names.entries()) {
       fixture.store.set(`itemname:${base_slot + index}`, name);
@@ -117,7 +117,11 @@ for (const [floor, names] of [
       '只显示已声明魔物的名字和库存数量',
     );
     for (let slot = base_slot; slot < base_slot + 10; slot += 1) {
-      assert.equal(fixture.store.get(`item:${slot}`), 30, '查看楼层不改库存');
+      assert.equal(
+        fixture.store.get(`item:hold:${slot}`),
+        30,
+        '查看楼层不改库存',
+      );
     }
   });
 }
@@ -202,7 +206,7 @@ test('设施四格的 +30 段被跳过（槽位只有 +0/+10/+20/+40）', async 
   const fixture = create_floor_fixture();
   // 第 1 阶层读 300/310/320/340；330 属 +30 段，永不读。只点亮 330。
   fixture.store.set('flag:330', 60);
-  fixture.store.set('item:60', 1);
+  fixture.store.set('item:hold:60', 1);
   fixture.store.set('itemname:60', '落穴');
 
   await show_floor_via_usershop(fixture, 521);
@@ -237,7 +241,7 @@ test('近卫层（阶层 10）：护卫名单一行一人 + 素质名拼接，�
   fixture.store.set('talentname:200', '魁梧');
   fixture.store.set('talentname:205', '怪力');
   // 190 段的怪物库存
-  fixture.store.set('item:190', 2);
+  fixture.store.set('item:hold:190', 2);
   fixture.store.set('itemname:190', '近卫');
 
   await show_floor_via_usershop(fixture, 530);

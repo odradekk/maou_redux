@@ -213,6 +213,9 @@ test('无助手时 EVENTTRAIN 尾档 CALL K14_KOJO2：反抗刻印Lv3 分档台�
 test('K14_KOJO2 淫乱档：RAND 三选一（rand=0 时首句）', async () => {
   const fixture = await setup_k14((f) => {
     f.store.set('cflag:20:201', 9);
+    // MARK:2 是引擎给声明列的缺省 0 —— 不置 3 的话会先命中「屈服刻印Lv0」
+    // 那支（原作同序，EVENT_K14_貴公子.ERB:427 起），淫乱支在真机上不可达。
+    f.store.set('mark:20:2', 3);
     f.store.set('talent:20:76', 1);
     f.store.set('talent:20:85', 0);
     f.store.set('talent:20:122', 1);
@@ -238,6 +241,9 @@ test('EVENTEND 检查①口上开关<0 静默跳过', async () => {
 
 test('EVENTEND 反発刻印Lv3+愛なし：去死台词', async () => {
   const fixture = await setup_k14((f) => {
+    // BASE:0 是引擎给声明列的缺省 0，`<= 0` 就是死亡判定（handle_end 的第二道检查）：
+    // 不置正数的话这一支在真机上按死人跳过，台词永远不会出。
+    f.store.set('base:20:0', 1000);
     f.store.set('mark:20:3', 3);
     f.store.set('mark:20:2', 3);
     f.store.set('talent:20:85', 0);

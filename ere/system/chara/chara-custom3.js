@@ -35,6 +35,7 @@
 'use strict';
 
 const era = require('#/era-electron');
+const EraChara = require('#/era-utils/era-chara');
 const era_flag = require('#/era-utils/era-flag');
 
 /** `SETCOLORBYNAME GRAY` 的十六进制（page-ablup.js 同值） */
@@ -340,12 +341,12 @@ const T_种族2 = 319;
 
 /** 读取素质（#13：未声明下标读回 undefined，默认 0） */
 function talent(cid, index) {
-  return era.get(`talent:${cid}:${index}`) || 0;
+  return EraChara.get(cid).talent.get(index) || 0;
 }
 
 /** 写素质 */
 function set_talent(cid, index, value) {
-  era.set(`talent:${cid}:${index}`, value);
+  EraChara.get(cid).talent.set(index, value);
 }
 
 /** 显示宽度（全角 2 / 半角 1） */

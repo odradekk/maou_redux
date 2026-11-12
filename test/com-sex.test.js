@@ -135,7 +135,7 @@ test('COM27 不套用玩家技巧段；COM26 也无该段', async () => {
 test('可用性检查：COM20 的男性器/道具条件与 COM25 不额外禁止男性调教者', async () => {
   const world = seed_world();
   assert.equal(await world.com_able_family.call(20), 0, '无男性器和假阳具');
-  world.fixture.store.set('item:4', 1);
+  world.fixture.store.set('item:hold:4', 1);
   assert.equal(await world.com_able_family.call(20), 1, '假阳具放行');
 
   world.fixture.store.set('talent:31:121', 1);
@@ -370,7 +370,7 @@ test('升格到已实现目标：执行 COM64 真身，不打占位（跳转语�
   world.fixture.load_module('system/train/com-assistant'); // COM64 真身注册
   world.era_flag.prevcom = 64;
   world.fixture.store.set('tflag:42', 0);
-  world.fixture.store.set('item:4', 1); // PBAND：able64 的两项判断条件之一
+  world.fixture.store.set('item:hold:4', 1); // PBAND：able64 的两项判断条件之一
   world.fixture.store.set('exp:31:1', 10); // able64 的 A 经验门槛 >= 10
   world.fixture.store.set('talent:0:121', 1); // 魔王男根：able64 的两项判断条件之一
 

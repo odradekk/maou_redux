@@ -324,6 +324,14 @@ test('LOG_TRY_BITCH 与 FI_TRY_BITCH 互不混同：LOG 只输出不改状态、
   const { fixture, mod } = setup_log((f) => {
     f.store.set('cflag:31:1', 0);
     f.store.set('cflag:31:500', 0);
+    // CFLAG:120 是引擎给声明列的缺省 0，fi_culc_bitch 按「卖春禁止（== 0）」
+    // 给失败率加 999（原作同款 IF CFLAG:120 == 0）——不置 1 的话权重被这条
+    // 吃掉，抽不到玩法 1。角色正常初始化时这一格是 1（chara-make 的
+    // cm_stp 段），测试要跟同一状态对齐。
+    f.store.set('cflag:31:120', 1);
+    // BASE:0（体力）同理是缺省 0，fi_culc_bitch 的 ABLE 首行 `base:0 < 500`
+    // 就是濒死判定：不置正数的话全部玩法都被判不可，抽出来只剩 0。
+    f.store.set('base:31:0', 1000);
     f.store.set('abl:31:37', 0);
     f.store.set('talent:31:76', 0);
     f.store.set('cflag:31:580', 0);

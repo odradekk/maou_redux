@@ -242,7 +242,12 @@ for (const guard of [
 test('KOJO_MESSAGE_COM 头部检查：死斗场转入专用口上', async () => {
   const fixture = await setup_fia(
     K19,
-    (f) => f.store.set(`tequip:${CID}:55`, 1),
+    (f) => {
+      f.store.set(`tequip:${CID}:55`, 1);
+      // BASE:1（气力）是引擎给声明列的缺省 0，colosseum_kojo_19 用 `<= 0`
+      // 判「站都站不起来」——不置正数就会走那句而不是死斗场专用口上。
+      f.store.set(`base:${CID}:1`, 100);
+    },
     55,
   );
   await speak_k19(fixture);
@@ -812,7 +817,7 @@ test('#625 COLOSSEUM_KOJO_19：SC31/21/27 武器名与前后文同一行（三�
   for (const { selectcom, quote, head, tail, weapon_penis } of cases) {
     const tiers = [
       { weapon: weapon_penis, seed: (f) => f.store.set('talent:17:121', 1) },
-      { weapon: '假阴茎', seed: (f) => f.store.set('item:4', 1) },
+      { weapon: '假阴茎', seed: (f) => f.store.set('item:hold:4', 1) },
       { weapon: '', seed: undefined },
     ];
     for (const { weapon, seed } of tiers) {

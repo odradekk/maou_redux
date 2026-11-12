@@ -133,8 +133,8 @@ export default [
   make(
     8315,
     'BL 补正（断背气质）的加值 3 改成 2',
-    '      chara(cid).system.断背气质 = 3; // BLっ気補正',
-    '      chara(cid).system.断背气质 = 2; // BLっ気補正',
+    '      EraChara.get(cid).abl.set(23, 3); // BLっ気補正',
+    '      EraChara.get(cid).abl.set(23, 2); // BLっ気補正',
     '断背气质（abl:23）',
   ),
 

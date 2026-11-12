@@ -450,11 +450,11 @@ test('毒沼·最低 1 残留：伤害穿底钳到 1', async () => {
 test('牧场·只数累加与播报：FLAG:83 只怪物 += ITEM 槽', async () => {
   const fixture = setup_world(502);
   fixture.store.set('flag:83', 5);
-  fixture.store.set('item:100', 3);
+  fixture.store.set('item:hold:100', 3);
   fixture.store.set('itemname:100', '哥布林');
   const { dungeon_farm } = load(fixture);
   await dungeon_farm(0, () => 0);
-  assert.equal(fixture.store.get('item:100'), 8, 'ITEM:100 += 5');
+  assert.equal(fixture.store.get('item:hold:100'), 8, 'ITEM:100 += 5');
   assert.equal(
     fixture.store.get('flag:10004') ?? 0,
     0,
@@ -471,10 +471,10 @@ test('牧场·只数累加与播报：FLAG:83 只怪物 += ITEM 槽', async () =
 test('牧场·只数上限 999', async () => {
   const fixture = setup_world(502);
   fixture.store.set('flag:83', 10);
-  fixture.store.set('item:100', 995);
+  fixture.store.set('item:hold:100', 995);
   const { dungeon_farm } = load(fixture);
   await dungeon_farm(0, () => 0);
-  assert.equal(fixture.store.get('item:100'), 999, '钳到 999');
+  assert.equal(fixture.store.get('item:hold:100'), 999, '钳到 999');
 });
 
 test('牧场·卖孩子收入与 FLAG:614 位 1 一致：关闭不加、开启只计一次', async () => {

@@ -36,9 +36,9 @@
  */
 
 const era = require('#/era-electron');
+const EraChara = require('#/era-utils/era-chara');
 const { chara_name_reset } = require('#/system/chara/chara-name');
 const { random_self_call } = require('#/system/chara/chara-self-call');
-const { chara } = require('#/facade/chara');
 const { confirm_output_since } = require('#/utils/screen-change');
 const { input_text } = require('#/utils/input-text');
 
@@ -71,7 +71,7 @@ function check_able_to_name_edit(arg) {
   if (arg === 0) {
     return NAME_EDIT_KING; // 你的名字不能改
   }
-  const state = era.get(`cflag:${arg}:1`) || 0; // CFLAG:1 状态
+  const state = EraChara.get(arg).cflag.get(1) || 0; // CFLAG:1 状态
   if (state === 2) {
     return NAME_EDIT_HERO; // 侵攻中的勇者
   }
@@ -135,7 +135,7 @@ async function chara_info_name_edit(arg, reset = 0) {
     // 还原名字
     chara_name_reset(arg);
     era.print(`${era.get(`callname:${arg}:-2`) ?? ''}恢复了原来的名字……`);
-    if (chara(arg).chara.一人称档位 >= 99) {
+    if ((EraChara.get(arg).cflag.get(450) || 0) >= 99) {
       await random_self_call(arg); // 一人称設定
     }
     // 还原名的播报在回名册前经按键确认（ADR-0009）
@@ -158,8 +158,8 @@ async function chara_info_name_edit(arg, reset = 0) {
     if (strlens(input) > 0) {
       // 改名生效
       era.print(`${era.get(`callname:${arg}:-2`) ?? ''}今后被称呼为${input}。`);
-      era.set(`callname:${arg}:-1`, input); // 姓名
-      era.set(`callname:${arg}:-2`, input); // 称呼
+      EraChara.get(arg).name = input; // 姓名
+      EraChara.get(arg).callname = input; // 称呼
     } else {
       // 名字没有变更（零长输入 = 取消）
       era.print(`${era.get(`callname:${arg}:-2`) ?? ''}的名字没有变更。`);
@@ -167,7 +167,7 @@ async function chara_info_name_edit(arg, reset = 0) {
     break;
   }
 
-  if (chara(arg).chara.一人称档位 >= 99) {
+  if ((EraChara.get(arg).cflag.get(450) || 0) >= 99) {
     await random_self_call(arg); // 一人称設定
   }
   // 改名播报与一人称设定的输出在回名册前经按键确认（名册循环换屏会清掉

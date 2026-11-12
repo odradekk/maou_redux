@@ -43,12 +43,8 @@ export default [
   {
     desc: 'M7850 CHARA_INFO_RESTORE_STATE 迎击中不再先离队（party_del 被短路）',
     file: 'ere/system/chara/chara-info-actions.js',
-    find: `  if ((era.get(\`cflag:\${cid}:1\`) || 0) === 3) {
-    party_del(cid);
-  }`,
-    replace: `  if (false) {
-    party_del(cid);
-  }`,
+    find: '  if ((EraChara.get(cid).cflag.get(1) || 0) === 3) {\n    party_del(cid);\n  }',
+    replace: '  if (false) {\n    party_del(cid);\n  }',
     tests: ['chara-info-actions'],
     must_mention: 'CHARA_INFO_RESTORE_STATE：迎击中先离队',
   },
@@ -87,29 +83,25 @@ export default [
   {
     desc: 'M7856 transferapp 收尾不再把双方 CFLAG:1 复位为 0',
     file: 'ere/system/chara/chara-soul-transfer.js',
-    find: `  chara(0).invasion.状态 = 0;
-  chara(cid).invasion.状态 = 0;`,
-    replace: `  // 变异：不把双方状态复位为 0`,
+    find: '  EraChara.get(0).cflag.set(1, 0);\n  EraChara.get(cid).cflag.set(1, 0);',
+    replace: '  // 变异：不把双方状态复位为 0',
     tests: ['chara-soul-transfer'],
     must_mention: 'transferapp：等级/攻防互换、双侧状态清零',
   },
   {
     desc: 'M7857 bodycheck_maou 魔族缺省种族年龄 666 改 667',
     file: 'ere/system/chara/chara-soul-transfer.js',
-    find: `    era.set('cflag:0:452', 666);`,
-    replace: `    era.set('cflag:0:452', 667);`,
+    find: '    EraChara.get(0).cflag.set(452, 666);',
+    replace: '    EraChara.get(0).cflag.set(452, 667);',
     tests: ['chara-soul-transfer'],
     must_mention: 'bodycheck_maou：种族>0 用 666',
   },
   {
     desc: 'M7858 transfer_soul 旧错位素质继承支被短路（魔王带着 debuff 转移时不 +1 继承）',
     file: 'ere/system/chara/chara-soul-transfer.js',
-    find: `  if (era.get('ex_talent:0:0')) {
-    debuff = (era.get('ex_talent:0:0') || 0) + 1;
-  }`,
-    replace: `  if (false) {
-    debuff = (era.get('ex_talent:0:0') || 0) + 1;
-  }`,
+    find: '  if (EraChara.get(0).ex_talent.get(0)) {\n    debuff = (EraChara.get(0).ex_talent.get(0) || 0) + 1;\n  }',
+    replace:
+      '  if (false) {\n    debuff = (EraChara.get(0).ex_talent.get(0) || 0) + 1;\n  }',
     tests: ['chara-soul-transfer'],
     must_mention: 'transfer_soul：错位等级继承',
   },
@@ -559,25 +551,25 @@ export default [
   {
     desc: 'M11445 换号：排序编号只写一侧（b 侧不写，交换不成立）',
     file: 'ere/system/chara/chara-portcflag.js',
-    find: '  era.set(`portcflag:${a}:排序编号`, b_number);\n  era.set(`portcflag:${b}:排序编号`, a_number);',
-    replace: '  era.set(`portcflag:${a}:排序编号`, b_number);',
+    find: '  EraChara.get(a).portcflag.set(1, b_number);\n  EraChara.get(b).portcflag.set(1, a_number);',
+    replace: '  EraChara.get(a).portcflag.set(1, b_number);',
     tests: ['page-chara-info'],
     must_mention: '2 号拿到原属 1 号的排序编号',
   },
   {
     desc: 'M11446 换号：先写 a 再读 a（b 被写成自己刚被读走的那个值）',
     file: 'ere/system/chara/chara-portcflag.js',
-    find: '  const a_number = sort_number_of(a);\n  const b_number = sort_number_of(b);\n  era.set(`portcflag:${a}:排序编号`, b_number);\n  era.set(`portcflag:${b}:排序编号`, a_number);',
+    find: '  const a_number = sort_number_of(a);\n  const b_number = sort_number_of(b);\n  EraChara.get(a).portcflag.set(1, b_number);\n  EraChara.get(b).portcflag.set(1, a_number);',
     replace:
-      '  era.set(`portcflag:${a}:排序编号`, sort_number_of(b));\n  era.set(`portcflag:${b}:排序编号`, sort_number_of(a));',
+      '  EraChara.get(a).portcflag.set(1, sort_number_of(b));\n  EraChara.get(b).portcflag.set(1, sort_number_of(a));',
     tests: ['page-chara-info'],
     must_mention: '2 号拿到原属 1 号的排序编号',
   },
   {
     desc: 'M11447 排序编号：未设时不再回落角色 ID（读成 0）',
     file: 'ere/system/chara/chara-portcflag.js',
-    find: '  return era.get(`portcflag:${cid}:排序编号`) || cid;',
-    replace: '  return era.get(`portcflag:${cid}:排序编号`) || 0;',
+    find: '  return EraChara.get(cid).portcflag.get(1) || cid;',
+    replace: '  return EraChara.get(cid).portcflag.get(1) || 0;',
     tests: ['page-chara-info'],
     must_mention: '顺位表按排序编号升序（未设的回落角色 ID）',
   },

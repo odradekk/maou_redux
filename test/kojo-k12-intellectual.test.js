@@ -247,9 +247,12 @@ test('K12_KOJO2 淫乱（TALENT:76==1）rand=0 分档', async () => {
   // 直接驱动 k12_kojo2（rand 固定 0 → rand_n(3)==0 第一支）
   const mod = fixture.load_module('kojo/kojo-k12-intellectual');
   await mod.k12_kojo2(() => 0);
+  // MARK:2（屈服刻印等级）声明于 yml/Mark.yml，引擎 addCharacter 后恒为 0；
+  // 原作 @K12_KOJO2 的分支顺序是「MARK:2 == 0」在淫乱/爱慕之前
+  // （ERB 口上/EVENT_K12_知的.ERB:245-249），所以淫乱/爱慕两支在
+  // MARK∈{0..3} 时不可达，原作同序。这里锁真机行为（Lv0 支）。
   assert.deepEqual(fixture.text_lines(), [
-    '「今天要研究什么Play呢、好期待啊♪」',
-    '智慧像狗一样伸出舌头，吐出慌乱的吐息迎接了出来。',
+    '「根据我的计算、即使是你的力量也无法让我屈服哦」',
   ]);
 });
 
@@ -265,9 +268,10 @@ test('K12_KOJO2 爱慕（TALENT:85==1）rand=1（rand_n(3)=1 → 第二支）', 
   // rand_n(3)=1 需 rand 返回 3..5 区间——用一个只在 n>=3 返回 1 的函数不方便；
   // 这里固定 rand = (n)=>Math.floor(n/3)（3→1,2→0）。爱慕第一层 rand_n(3)：floor(3/3)=1 中第二支。
   await mod.k12_kojo2((n) => Math.floor(n / 3));
+  // 同上：MARK:2 在引擎里恒为 0，原作 Lv0 支先命中（ERB:245-249），
+  // 爱慕支不可达。
   assert.deepEqual(fixture.text_lines(), [
-    '「今天的研究进展很大。好想被表扬呢」',
-    '智慧从研究中的桌子旁站了起来，迎了出来。',
+    '「根据我的计算、即使是你的力量也无法让我屈服哦」',
   ]);
 });
 

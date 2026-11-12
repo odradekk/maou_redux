@@ -24,6 +24,8 @@
  */
 
 const era = require('#/era-electron');
+const era_tflag = require('#/era-utils/era-tflag');
+const EraChara = require('#/era-utils/era-chara');
 
 /** 出售选人屏的返回键 [999] */
 const SALE_BACK_KEY = 999;
@@ -31,10 +33,10 @@ const { remove_character } = require('#/system/chara-removal');
 const { remember_sale_price } = require('#/event/event-aftertrain');
 const { self_kojo } = require('#/kojo/kojo-system');
 const { game } = require('#/facade/game');
-const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const era_modsave = require('#/era-utils/era-modsave');
+const era_item = require('#/era-utils/era-item');
 const { get_look_info } = require('#/system/chara/look-info');
 const { change_screen } = require('#/utils/screen-change');
 const { chara_callname, chara_nickname } = require('#/utils/callname-utils');
@@ -49,8 +51,8 @@ const MAX_FIGHT_INCOME = 12_000;
 async function check_sellassiable(cid = era_flag.target) {
   if (!era.getAddedCharacters().includes(cid)) return 0;
 
-  const ability = (id) => value('abl', cid, id);
-  const talent = (id) => value('talent', cid, id);
+  const ability = (id) => EraChara.get(cid).abl.get(id);
+  const talent = (id) => EraChara.get(cid).talent.get(id);
   if (ability(10) + ability(11) < 6) return 0;
   if ([0, 1, 2, 3].every((id) => ability(id) < 3)) return 0;
   if (ability(10) < 4 && (talent(11) || talent(12))) return 0;
@@ -68,10 +70,10 @@ async function check_sellassiable(cid = era_flag.target) {
   if (!sellable) return 0;
 
   const name = chara_callname(cid);
-  if (chara(cid).stronghold.出售与助手资格 <= 0) {
+  if ((EraChara.get(cid).cflag.sale_and_assistant || 0) <= 0) {
     era.print(`${name}可以卖掉了`);
     await era.waitAnyKey();
-    chara(cid).stronghold.出售与助手资格 = 1;
+    EraChara.get(cid).cflag.sale_and_assistant = 1;
   }
 
   const assistable =
@@ -81,10 +83,10 @@ async function check_sellassiable(cid = era_flag.target) {
       ability(0) >= 3 &&
       ability(22) >= 3) ||
     (ability(10) >= 5 && ability(11) >= 4);
-  if (assistable && chara(cid).stronghold.出售与助手资格 <= 1) {
+  if (assistable && (EraChara.get(cid).cflag.sale_and_assistant || 0) <= 1) {
     era.print(`${name}可以做调教助手了`);
     await era.waitAnyKey();
-    chara(cid).stronghold.出售与助手资格 = 2;
+    EraChara.get(cid).cflag.sale_and_assistant = 2;
   }
   return 0;
 }
@@ -103,10 +105,6 @@ const ADDITION_TABLES = {
   37: [0, 500, 1000, 2000, 4000, 10000],
   39: [0, 100, 300, 500, 1000, 1700, 3000],
 };
-
-function value(table, cid, id) {
-  return era.get(`${table}:${cid}:${id}`) || 0;
-}
 
 function multiply_percent(amount, percent) {
   return Math.trunc((amount * percent) / 100);
@@ -204,7 +202,9 @@ function apply_talent_multipliers(
   multipliers,
   prostitution_effect,
 ) {
-  if (talent(0)) multipliers[0] = value('cflag', cid, 71) === 0 ? 200 : 150;
+  if (talent(0))
+    multipliers[0] =
+      (EraChara.get(cid).cflag.hymen_restored || 0) === 0 ? 200 : 150;
   if (talent(12) && ability(10) >= 3) multipliers[12] = 120;
   if (talent(15) && ability(10) >= 3) multipliers[15] = 120;
   for (const id of [20, 21, 22, 24]) {
@@ -273,9 +273,9 @@ function estimate_chara(
   cid = era_flag.target,
   { prostitution_effect = era_modsave.prostitution_effect } = {},
 ) {
-  const ability = (id) => value('abl', cid, id);
-  const talent = (id) => value('talent', cid, id);
-  const experience = (id) => value('exp', cid, id);
+  const ability = (id) => EraChara.get(cid).abl.get(id);
+  const talent = (id) => EraChara.get(cid).talent.get(id);
+  const experience = (id) => EraChara.get(cid).exp.get(id);
 
   const ability_additions = Array(40).fill(0);
   for (const [id_text, table] of Object.entries(ADDITION_TABLES)) {
@@ -364,7 +364,7 @@ function static_name(table, id, fallback = '') {
 }
 
 function print_sale_details(cid, details, prostitution_effect) {
-  const ability = (id) => value('abl', cid, id);
+  const ability = (id) => EraChara.get(cid).abl.get(id);
   for (const id of [10, 11, 12, 13, 14, 15, 30, 31, 32, 33, 39]) {
     const addition = details.ability_additions[id];
     if (addition > 0) {
@@ -392,14 +392,15 @@ function print_sale_details(cid, details, prostitution_effect) {
     const multiplier = details.ability_multipliers[id];
     if (multiplier !== 100) {
       const name =
-        id === 0 && (value('talent', cid, 121) || value('talent', cid, 122))
+        id === 0 &&
+        (EraChara.get(cid).talent.futanari || EraChara.get(cid).talent.male)
           ? '阴茎感觉'
           : static_name('abl', id);
       era.print(`${name} LV${ability(id)} × ${percent_text(multiplier)}`);
     }
   }
 
-  const prostitution_exp = value('exp', cid, 74);
+  const prostitution_exp = EraChara.get(cid).exp.prostitution_exp;
   if (prostitution_exp > 0 && prostitution_effect !== 2) {
     const kind = prostitution_effect === 0 ? '负面' : '正面';
     era.print(
@@ -408,7 +409,7 @@ function print_sale_details(cid, details, prostitution_effect) {
   }
   if (details.experience_multipliers[60] !== 100) {
     era.print(
-      `${static_name('exp', 60)} × ${percent_text(details.experience_multipliers[60])} (经验:${value('exp', cid, 60)}，得出的负面倍率)`,
+      `${static_name('exp', 60)} × ${percent_text(details.experience_multipliers[60])} (经验:${EraChara.get(cid).exp.childbirth_exp}，得出的负面倍率)`,
     );
   }
 
@@ -462,7 +463,10 @@ async function sale_chara(
       await era.waitAnyKey();
       era_flag.money += price;
       era_exflag.legit_money += price;
-      if (!value('talent', cid, 220) && !value('ex_talent', cid, 1)) {
+      if (
+        !EraChara.get(cid).talent.elite &&
+        !EraChara.get(cid).ex_talent.royal_guard
+      ) {
         era_exflag.prestige += 5;
         era.print('威望值增加');
       } else {
@@ -486,13 +490,13 @@ async function long_good_bye(cid = era_flag.target) {
     if (other === 0) continue;
     let stress = 0;
     for (const id of [21, 22, 23, 24, 25]) {
-      const relation_id = value('cflag', other, id);
+      const relation_id = EraChara.get(other).cflag.get(id);
       if (cid === relation_id % 100 && Math.trunc(relation_id / 100) < 2) {
         stress += 40;
       }
       if (cid === relation_id % 100) stress += 80;
     }
-    const relation = value('relation', other, cid);
+    const relation = EraChara.get(other).relation_to(cid);
     if (relation > 100) stress += relation - 100;
     if (stress <= 50) continue;
 
@@ -502,35 +506,35 @@ async function long_good_bye(cid = era_flag.target) {
       `那天，${chara_callname(other)}被卖掉的${chara_callname(cid)}坐在马车上，`,
     );
     era.print(
-      `${value('talent', other, 45) ? '' : '泪眼朦胧了。'}视在脱离视野之前，`,
+      `${EraChara.get(other).talent.never_cries ? '' : '泪眼朦胧了。'}视在脱离视野之前，`,
     );
     era.print('甚至在离开视野之后，也一直在目送着。');
     await era.waitAnyKey();
 
-    if (value('talent', other, 85)) stress -= 120;
-    if (value('talent', other, 76)) stress -= 60;
-    if (value('talent', other, 12)) stress -= 20;
-    if (value('talent', other, 22)) stress -= 20;
-    if (value('talent', other, 134)) stress += 20;
-    stress -= value('abl', other, 10) * 10;
-    stress += value('mark', other, 3) * 30;
+    if (EraChara.get(other).talent.in_love) stress -= 120;
+    if (EraChara.get(other).talent.lewd) stress -= 60;
+    if (EraChara.get(other).talent.firm) stress -= 20;
+    if (EraChara.get(other).talent.apathetic) stress -= 20;
+    if (EraChara.get(other).talent.weak) stress += 20;
+    stress -= (EraChara.get(other).abl.obedience || 0) * 10;
+    stress += (EraChara.get(other).mark.resistance_mark || 0) * 30;
 
-    if (stress >= 100 && !chara(other).stronghold.崩坏) {
+    if (stress >= 100 && !(EraChara.get(other).talent.breakdown || 0)) {
       era.drawLine();
       const name = chara_nickname(other);
       era.print(`${name}在目瞪口呆的表情中，`);
       era.print(`${name}心里什么东西坏掉了……`);
       era.print(`${name}的精神【${static_name('talent', 9)}】了。`);
       await era.waitAnyKey();
-      if (chara(other).stronghold.爱慕) {
+      if (EraChara.get(other).talent.in_love || 0) {
         era.print(`${name}的【${static_name('talent', 85)}】失去了。`);
-        chara(other).stronghold.爱慕 = 0;
+        EraChara.get(other).talent.in_love = 0;
       }
-      if (chara(other).stronghold.淫乱) {
+      if (EraChara.get(other).talent.lewd || 0) {
         era.print(`${name}的【${static_name('talent', 76)}】失去了。`);
-        chara(other).stronghold.淫乱 = 0;
+        EraChara.get(other).talent.lewd = 0;
       }
-      chara(other).stronghold.崩坏 = 1;
+      EraChara.get(other).talent.breakdown = 1;
       await era.waitAnyKey();
     }
   }
@@ -546,10 +550,10 @@ function kill_target(cid) {
 function sale_candidate(cid) {
   return (
     cid !== 0 &&
-    chara(cid).stronghold.出售与助手资格 >= 1 &&
-    value('base', cid, 0) >= 1 &&
-    !value('talent', cid, 292) &&
-    value('cflag', cid, 1) === 0
+    (EraChara.get(cid).cflag.sale_and_assistant || 0) >= 1 &&
+    (EraChara.get(cid).base.stamina || 0) >= 1 &&
+    !EraChara.get(cid).talent.demon_lord_shadow &&
+    (EraChara.get(cid).cflag.state || 0) === 0
   );
 }
 
@@ -580,7 +584,7 @@ async function chara_sale({
         price > 0
           ? `[评价额:${price.toLocaleString('en-US')}点]`
           : '[不能卖掉]';
-      const favorite = value('cflag', cid, 700) ? ' [☆]' : '';
+      const favorite = EraChara.get(cid).cflag.favorite ? ' [☆]' : '';
       era.printButton(`${chara_callname(cid)} ${price_text}${favorite}`, cid);
     }
     era.drawLine({ content: '‥' });
@@ -589,10 +593,10 @@ async function chara_sale({
     // 拦下不在名单里的编号——出售资格由 sale_candidate 一处判定。
     const selected = await era.input();
     if (selected === SALE_BACK_KEY) {
-      era_flag.target = game.event.上次调教对象;
+      era_flag.target = era_flag.last_train_target;
       return SALE_BACK_KEY;
     }
-    if (value('cflag', selected, 700)) {
+    if (EraChara.get(selected).cflag.favorite) {
       era.print(`${chara_callname(selected)}在你的收藏列表里，不能卖掉。`);
       await era.waitAnyKey();
       continue;
@@ -622,11 +626,11 @@ async function sell_milk() {
   const target = era_flag.target;
   if (!era.getAddedCharacters().includes(target)) return 0;
 
-  const amount = Math.min((era.get('tflag:35') || 0) * 10, MAX_MILK_AMOUNT);
+  const amount = Math.min(era_tflag.get(35) * 10, MAX_MILK_AMOUNT);
   if (amount <= 0) return 0;
 
   era.drawLine();
-  const milk_exp = value('exp', target, 54);
+  const milk_exp = EraChara.get(target).exp.get(54); // EXP:54 = 挤奶经验
   const milk_rate =
     milk_exp <= EXPLV[3]
       ? 100
@@ -636,18 +640,18 @@ async function sell_milk() {
           ? 150
           : 200;
   let price = multiply_percent(amount * 50, milk_rate);
-  if (value('talent', target, 0)) price *= 3;
-  if (value('talent', target, 78)) price *= 2;
+  if (EraChara.get(target).talent.get(0)) price *= 3; // TALENT:0 = 处女
+  if (EraChara.get(target).talent.get(78)) price *= 2; // TALENT:78 = 母乳体质
 
   const target_name = chara_callname(target);
   era.print(`使用挤奶器从${target_name}身上榨出了${amount}cc的母乳。`);
   const assi = era_flag.assi;
-  if (assi > 0 && value('abl', assi, 15)) {
+  if (assi > 0 && EraChara.get(assi).abl.get(15)) {
     const assi_name = chara_callname(assi);
     era.print(
       `${assi_name}巧妙地推销，使${target_name}的母乳卖得比平常更贵了。`,
     );
-    price = multiply_percent(price, 100 + value('abl', assi, 15) * 5);
+    price = multiply_percent(price, 100 + EraChara.get(assi).abl.get(15) * 5);
   }
   price = Math.min(price, MAX_MILK_PRICE);
   era.print(`${target_name}的母乳价值${price}点。`);
@@ -661,19 +665,20 @@ async function sell_milk() {
 /** sell_fightmoney：调教结束时结算死斗场观战费。 */
 async function sell_fightmoney() {
   const target = era_flag.target;
-  if (era.get(`tequip:${target}:55`)) {
-    game.train.观战卷 -= 1;
+  if (EraChara.get(target).tequip.get(55)) {
+    era_item.spectator_ticket.count =
+      (era_item.spectator_ticket.count || 0) - 1; // 观战卷
   }
 
-  if (game.train.死斗场收入 <= 0) return;
-  const income_points = Math.min(game.train.死斗场收入, MAX_FIGHT_INCOME);
-  game.train.死斗场收入 = income_points;
+  if (era_tflag.get(402) <= 0) return;
+  const income_points = Math.min(era_tflag.get(402), MAX_FIGHT_INCOME);
+  era_tflag.set(402, income_points);
   const price = income_points * 5;
   era.print(`从死斗场的观战费中获得${price}点收入`);
   await era.waitAnyKey();
   era_flag.money += price;
   era_exflag.legit_money += price;
-  game.train.死斗场收入 = 0;
+  era_tflag.set(402, 0);
 }
 
 module.exports = {

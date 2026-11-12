@@ -64,7 +64,7 @@ function setup_world() {
   // 怪物名与库存（Item.yml 等价预置；狗头人 5 只在库）
   fixture.store.set('itemname:100', '狗头人');
   fixture.store.set('itemname:190', '骷髅兵');
-  fixture.store.set('item:100', 5);
+  fixture.store.set('item:hold:100', 5);
   return fixture;
 }
 
@@ -341,7 +341,7 @@ test('monster_data：无库存转骷髅（190）、两骰取小、skeleton 随�
   const zero = () => 0;
   const fixture = setup_world();
   const md = load(fixture, 'system/dungeon/monster-data');
-  fixture.store.set('item:100', 0); // 无库存 → 骷髅
+  fixture.store.set('item:hold:100', 0); // 无库存 → 骷髅
   fixture.store.set('cflag:1:501', 3); // 队长的阶层 3（skeleton 用）
 
   // 掷序（zero 下全 0）：lv 段 rand(10)（0 < 0%10 假，不 +1）→ 第一骰
@@ -365,7 +365,7 @@ test('monster_data：无库存转骷髅（190）、两骰取小、skeleton 随�
 
   // arg2 = -1 → skeleton 走掷点分支：rand(9)+1（m9 控制 = 9）；两骰各 10 取小
   const fixture2 = setup_world();
-  fixture2.store.set('item:100', 0);
+  fixture2.store.set('item:hold:100', 0);
   const md2 = load(fixture2, 'system/dungeon/monster-data');
   const m9 = (n) => (n === 9 ? 8 : n - 1);
   md2.monster_data(100, 0, -1, -1, -1, m9);

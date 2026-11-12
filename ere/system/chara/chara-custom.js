@@ -46,9 +46,8 @@
 'use strict';
 
 const era = require('#/era-electron');
+const EraChara = require('#/era-utils/era-chara');
 const { wearing_cloth_able } = require('#/system/train/cloth');
-const { chara } = require('#/facade/chara');
-const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
 const { add_chara_ex } = require('#/system/chara/chara-ex');
 const { char_init } = require('#/system/chara/chara-init');
@@ -216,18 +215,18 @@ async function char_append(arg, mode, rand = default_rand) {
     }
   } else if (arg === 17) {
     // 玛奥
-    era.set(`cflag:${cid}:420`, 1); // CFLAG:420（chara 域内，无门面；全库只写不读）
-    chara(cid).chara.等级 = 1; // CFLAG:9
-    chara(cid).invasion.状态 = 0; // CFLAG:1
-    chara(cid).dungeon.攻击力 = 15; // CFLAG:11
-    chara(cid).dungeon.防御力 = 15; // CFLAG:12
-    chara(cid).chara.基础攻击 = 15; // CFLAG:13（chara 域内）
-    chara(cid).chara.基础防御 = 15; // CFLAG:14
-    chara(cid).train.初吻对象 = -1; // CFLAG:16
+    EraChara.get(cid).cflag.set(420, 1); // CFLAG:420（chara 域内，无门面；全库只写不读）
+    EraChara.get(cid).cflag.set(9, 1); // CFLAG:9
+    EraChara.get(cid).cflag.set(1, 0); // CFLAG:1
+    EraChara.get(cid).cflag.set(11, 15); // CFLAG:11
+    EraChara.get(cid).cflag.set(12, 15); // CFLAG:12
+    EraChara.get(cid).cflag.set(13, 15); // CFLAG:13（chara 域内）
+    EraChara.get(cid).cflag.set(14, 15); // CFLAG:14
+    EraChara.get(cid).cflag.set(16, -1); // CFLAG:16
     char_body_generate_wapped(17, rand);
   } else if (arg === 24) {
     // 莉莉
-    chara(cid).chara.武装 = 40; // CFLAG:A:550（初期装備：剑）
+    EraChara.get(cid).cflag.set(550, 40); // CFLAG:A:550（初期装備：剑）
     era_flag.target = cid;
     wearing_cloth_able(cid);
     char_body_generate_wapped(cid, rand);
@@ -238,19 +237,19 @@ async function char_append(arg, mode, rand = default_rand) {
     char_body_generate_wapped(cid, rand);
 
     // 等级调整：FLAG:60 的勇者基础等级修正逐级 st_up
-    const base_level = era.get('flag:60') || 0;
+    const base_level = era_flag.hero_base_level_bonus || 0;
     for (let i = 0; i < base_level; i += 1) {
       st_up(cid, rand);
     }
     // 四张牌的数值直接取上限（BASE = MAXBASE）
-    chara(cid).dungeon.体力 = chara(cid).dungeon.体力上限; // BASE:A:0
-    chara(cid).dungeon.气力 = chara(cid).dungeon.气力上限; // BASE:A:1（上限访问器见 facade/chara-dungeon.js 手写区）
+    EraChara.get(cid).base.set(0, EraChara.get(cid).maxbase.get(0)); // BASE:A:0 = MAXBASE:A:0
+    EraChara.get(cid).base.set(1, EraChara.get(cid).maxbase.get(1)); // BASE:A:1 = MAXBASE:A:1
   } else if ((arg >= 31 && arg <= 33) || arg === 35) {
     // 贡品
     await char_init(cid, rand);
   } else if (arg === 34) {
     // 狂王替身 葵希罗
-    game.chara.勇者入场_24 = 1; // FLAG:224
+    era_flag.crazylord_entered = 1; // FLAG:224
     era_flag.target = cid;
     wearing_cloth_able(cid);
     char_body_generate_wapped(cid, rand);
@@ -275,10 +274,10 @@ async function char_append(arg, mode, rand = default_rand) {
     );
     const gender = await era.input();
     if (gender === 1) {
-      era.set(`talent:${cid}:122`, 1); // 男人
+      EraChara.get(cid).talent.set(122, 1); // 男人
     }
     if (gender === 3) {
-      era.set(`talent:${cid}:121`, 1); // 扶她
+      EraChara.get(cid).talent.set(121, 1); // 扶她
     }
     era.drawLine();
 
@@ -298,8 +297,8 @@ async function char_append(arg, mode, rand = default_rand) {
       if (length > 0) {
         era.print(`新建人物今后被称呼为${name}。`);
         await era.waitAnyKey();
-        era.set(`callname:${cid}:-2`, name); // CALLNAME:A
-        era.set(`callname:${cid}:-1`, name); // SAVESTR:A 与 NAME:A
+        EraChara.get(cid).callname = name; // CALLNAME:A
+        EraChara.get(cid).name = name; // SAVESTR:A 与 NAME:A
       } else {
         chara_name_random_define(cid, -1, rand);
         era.print(`新建人物今后被称呼为${chara_callname(cid)}。`);
@@ -308,7 +307,7 @@ async function char_append(arg, mode, rand = default_rand) {
       break;
     }
   }
-  chara(cid).invasion.状态 = 0; // CFLAG:A:1 = 0
+  EraChara.get(cid).cflag.set(1, 0); // CFLAG:A:1 = 0
   era_flag.target = previous_target; // 还原调用前的 target
   return cid;
 }
@@ -323,37 +322,37 @@ async function char_append(arg, mode, rand = default_rand) {
 async function append_card(cid, arg, rand) {
   if (arg === 22) {
     // 東の砦 黑方片 &1：剑 +9000 + 暗黒接頭語
-    chara(cid).chara.武装 = 40;
-    chara(cid).chara.武装 += 9000;
-    chara(cid).chara.武装 += 900000;
-    chara(cid).chara.随机名编号 = rand(80); // CFLAG:A:6
+    EraChara.get(cid).cflag.set(550, 40);
+    EraChara.get(cid).cflag.set(550, EraChara.get(cid).cflag.get(550) + 9000);
+    EraChara.get(cid).cflag.set(550, EraChara.get(cid).cflag.get(550) + 900000);
+    EraChara.get(cid).cflag.set(6, rand(80)); // CFLAG:A:6
   } else if (arg === 23) {
     // 西の砦 白梅花 &4：法杖 + アイス
-    chara(cid).train.自慰中毒 = 1; // ABL:A:31
-    chara(cid).dungeon.自慰经验 = 30; // EXP:A:10
-    chara(cid).chara.武装 = 41;
-    chara(cid).chara.武装 += 9000;
-    chara(cid).chara.武装 += 600000;
-    chara(cid).chara.随机名编号 = rand(80);
+    EraChara.get(cid).abl.set(31, 1); // ABL:A:31
+    EraChara.get(cid).exp.set(10, 30); // EXP:A:10
+    EraChara.get(cid).cflag.set(550, 41);
+    EraChara.get(cid).cflag.set(550, EraChara.get(cid).cflag.get(550) + 9000);
+    EraChara.get(cid).cflag.set(550, EraChara.get(cid).cflag.get(550) + 600000);
+    EraChara.get(cid).cflag.set(6, rand(80));
   } else if (arg === 21) {
     // 南の砦 银黑桃 &2：手里剑 + デス
-    chara(cid).dungeon.自慰经验 = 10;
-    chara(cid).chara.武装 = 44;
-    chara(cid).chara.武装 += 9000;
-    chara(cid).chara.武装 += 300000;
-    chara(cid).chara.随机名编号 = rand(80);
+    EraChara.get(cid).exp.set(10, 10);
+    EraChara.get(cid).cflag.set(550, 44);
+    EraChara.get(cid).cflag.set(550, EraChara.get(cid).cflag.get(550) + 9000);
+    EraChara.get(cid).cflag.set(550, EraChara.get(cid).cflag.get(550) + 300000);
+    EraChara.get(cid).cflag.set(6, rand(80));
   } else if (arg === 20) {
     // 北の砦 金红桃 &8：细剑 + スラッシュ
-    chara(cid).dungeon.私处经验 = 20; // EXP:A:0
-    const king_flag = era.get('flag:500') || 0;
+    EraChara.get(cid).exp.set(0, 20); // EXP:A:0
+    const king_flag = era_flag.crazylord_gender || 0;
     if (king_flag === 0 || king_flag === 2) {
-      chara(cid).dungeon.性交经验 = chara(cid).dungeon.私处经验;
+      EraChara.get(cid).exp.set(5, EraChara.get(cid).exp.get(0) || 0);
     }
-    chara(cid).train.初体验对象 = 105; // CFLAG:A:15（初体験の相手は狂王）
-    chara(cid).chara.武装 = 50;
-    chara(cid).chara.武装 += 10000;
-    chara(cid).chara.武装 += 400000;
-    chara(cid).chara.随机名编号 = rand(80);
+    EraChara.get(cid).cflag.set(15, 105); // CFLAG:A:15（初体験の相手は狂王）
+    EraChara.get(cid).cflag.set(550, 50);
+    EraChara.get(cid).cflag.set(550, EraChara.get(cid).cflag.get(550) + 10000);
+    EraChara.get(cid).cflag.set(550, EraChara.get(cid).cflag.get(550) + 400000);
+    EraChara.get(cid).cflag.set(6, rand(80));
   }
 }
 

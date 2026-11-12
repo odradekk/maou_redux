@@ -159,7 +159,7 @@ test('端到端：新档从标题走到 ENDING_2（回标题 + 演出齐全 + �
   }
   // 留一只最低级狗头人在防御库存，使勇者的真实循环必经战斗层；没有库存
   // 时走“无敌人训练”分支，MAGIC / MONSTER_SKILL 都不会被调用。
-  fixture.store.set('item:100', 1);
+  fixture.store.set('item:hold:100', 1);
   fixture.store.set('itemname:100', '狗头人');
 
   // 保留三块真身，只在模块对象边界计数。战斗模块也经同一对象调用，故这里

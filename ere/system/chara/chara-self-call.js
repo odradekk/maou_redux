@@ -61,9 +61,9 @@
  */
 
 const era = require('#/era-electron');
+const EraChara = require('#/era-utils/era-chara');
 const { nid_get_type } = require('#/system/chara/chara-name');
 const { get_look_info } = require('#/system/chara/look-info');
-const { chara } = require('#/facade/chara');
 
 const { chara_callname } = require('#/utils/callname-utils');
 const { input_text } = require('#/utils/input-text');
@@ -216,7 +216,7 @@ function calc_selfcall_factor(cid, rand = default_rand) {
       break;
   }
 
-  const talent = (idx) => era.get(`talent:${cid}:${idx}`) || 0;
+  const talent = (idx) => EraChara.get(cid).talent.get(idx) || 0;
 
   // 素质加成（对 cid 显式取值，见文件头说明）
   if (talent(163)) {
@@ -287,7 +287,7 @@ function calc_selfcall_factor(cid, rand = default_rand) {
  */
 function set_suit_selfcall(cid, start = -1, rand = default_rand) {
   const [edu, attitude, openness] = calc_selfcall_factor(cid, rand);
-  const male = (era.get(`talent:${cid}:122`) || 0) !== 0; // TALENT:122 男人
+  const male = (EraChara.get(cid).talent.get(122) || 0) !== 0; // TALENT:122 男人
 
   for (let local = start + 1; ; local += 1) {
     switch (local) {
@@ -302,7 +302,7 @@ function set_suit_selfcall(cid, start = -1, rand = default_rand) {
               word = attitude < -3 ? '在下' : '鄙人';
             }
           }
-          era.set(`cstr:${cid}:60`, word);
+          EraChara.get(cid).cstr.set(60, word);
           return local;
         }
         break;
@@ -313,7 +313,7 @@ function set_suit_selfcall(cid, start = -1, rand = default_rand) {
           if (attitude >= 5) {
             word = male ? '老子' : '老娘';
           }
-          era.set(`cstr:${cid}:60`, word);
+          EraChara.get(cid).cstr.set(60, word);
           return local;
         }
         break;
@@ -334,7 +334,7 @@ function set_suit_selfcall(cid, start = -1, rand = default_rand) {
           } else {
             break;
           }
-          era.set(`cstr:${cid}:60`, word);
+          EraChara.get(cid).cstr.set(60, word);
           return local;
         }
         break;
@@ -348,7 +348,7 @@ function set_suit_selfcall(cid, start = -1, rand = default_rand) {
           openness >= -2 &&
           openness <= 2
         ) {
-          era.set(`cstr:${cid}:60`, male ? '鄙人' : '人家');
+          EraChara.get(cid).cstr.set(60, male ? '鄙人' : '人家');
           return local;
         }
         break;
@@ -377,11 +377,11 @@ function set_nick_selfcall(cid, start = -1, rand = default_rand) {
 
     if (!is_all_fullwidth(name)) {
       // 含半角字符：直接回落姓名本体
-      era.set(`cstr:${cid}:60`, name);
+      EraChara.get(cid).cstr.set(60, name);
       return -1;
     }
 
-    if (nid_get_type(era.get(`cflag:${cid}:6`) || 0) === 0) {
+    if (nid_get_type(EraChara.get(cid).cflag.get(6) || 0) === 0) {
       // 和名
       switch (local) {
         case 0: {
@@ -389,7 +389,7 @@ function set_nick_selfcall(cid, start = -1, rand = default_rand) {
           if (char_count > 2) {
             continue;
           }
-          era.set(`cstr:${cid}:60`, name);
+          EraChara.get(cid).cstr.set(60, name);
           return local;
         }
         case 1: {
@@ -402,7 +402,7 @@ function set_nick_selfcall(cid, start = -1, rand = default_rand) {
           }
           const len = Array.from(name).length;
           const pick = substringu(name, rand(len - 1) + 1, 1);
-          era.set(`cstr:${cid}:60`, substringu(name, 0, 1) + pick);
+          EraChara.get(cid).cstr.set(60, substringu(name, 0, 1) + pick);
           return local;
         }
         case 2: {
@@ -410,7 +410,7 @@ function set_nick_selfcall(cid, start = -1, rand = default_rand) {
           if (char_count > 1) {
             name = substringu(name, 0, 1);
           }
-          era.set(`cstr:${cid}:60`, `小${name}`);
+          EraChara.get(cid).cstr.set(60, `小${name}`);
           return local;
         }
         case 3: {
@@ -418,7 +418,7 @@ function set_nick_selfcall(cid, start = -1, rand = default_rand) {
           if (char_count > 1) {
             name = substringu(name, 0, 1);
           }
-          era.set(`cstr:${cid}:60`, `${name}子`);
+          EraChara.get(cid).cstr.set(60, `${name}子`);
           return local;
         }
         case 4: {
@@ -426,7 +426,7 @@ function set_nick_selfcall(cid, start = -1, rand = default_rand) {
           if (char_count > 1) {
             name = substringu(name, 0, 1);
           }
-          era.set(`cstr:${cid}:60`, `${name}酱`);
+          EraChara.get(cid).cstr.set(60, `${name}酱`);
           return local;
         }
         case 5: {
@@ -441,7 +441,7 @@ function set_nick_selfcall(cid, start = -1, rand = default_rand) {
             name =
               substringu(name, 0, 1) + substringu(name, rand(len - 1) + 1, 1);
           }
-          era.set(`cstr:${cid}:60`, name.repeat(2));
+          EraChara.get(cid).cstr.set(60, name.repeat(2));
           return local;
         }
         default:
@@ -455,7 +455,7 @@ function set_nick_selfcall(cid, start = -1, rand = default_rand) {
           if (char_count > 3) {
             continue;
           }
-          era.set(`cstr:${cid}:60`, name);
+          EraChara.get(cid).cstr.set(60, name);
           return local;
         }
         case 1: {
@@ -464,14 +464,14 @@ function set_nick_selfcall(cid, start = -1, rand = default_rand) {
             continue;
           }
           const pick = substringu(name, rand(char_count - 1) + 1, 1);
-          era.set(`cstr:${cid}:60`, substringu(name, 0, 1) + pick);
+          EraChara.get(cid).cstr.set(60, substringu(name, 0, 1) + pick);
           return local;
         }
         case 2: {
           if (char_count > 1) {
             name = substringu(name, 0, 1);
           }
-          era.set(`cstr:${cid}:60`, `小${name}`);
+          EraChara.get(cid).cstr.set(60, `小${name}`);
           return local;
         }
         case 3: {
@@ -486,7 +486,7 @@ function set_nick_selfcall(cid, start = -1, rand = default_rand) {
           if (!WEST_NICK_FIRST_CHARS.has(first)) {
             continue;
           }
-          era.set(`cstr:${cid}:60`, `${first}儿`);
+          EraChara.get(cid).cstr.set(60, `${first}儿`);
           return local;
         }
         case 4: {
@@ -502,7 +502,7 @@ function set_nick_selfcall(cid, start = -1, rand = default_rand) {
             continue;
           }
           const last = substringu(name, char_count - 1);
-          era.set(`cstr:${cid}:60`, `${first}${last}儿`);
+          EraChara.get(cid).cstr.set(60, `${first}${last}儿`);
           return local;
         }
         default:
@@ -534,7 +534,7 @@ function set_nick_selfcall(cid, start = -1, rand = default_rand) {
  */
 async function random_self_call(cid, rand = default_rand, mode = 0) {
   // 进入时读好的档位（mode 1 的空输入回落也沿用这个值）
-  let local = chara(cid).chara.一人称档位;
+  let local = EraChara.get(cid).cflag.get(450) || 0;
 
   if (mode === 1) {
     // 只有 mode 1 进输入段
@@ -556,8 +556,8 @@ async function random_self_call(cid, rand = default_rand, mode = 0) {
     // 串化落为自定义一人称
     if (text !== '') {
       // 非空：写入并清档位
-      era.set(`cstr:${cid}:60`, text);
-      chara(cid).chara.一人称档位 = 0;
+      EraChara.get(cid).cstr.set(60, text);
+      EraChara.get(cid).cflag.set(450, 0);
       return 0;
     }
     // 空输入 → 落随机路径（local 已在函数起手读好，等价于重读本档位）
@@ -573,16 +573,16 @@ async function random_self_call(cid, rand = default_rand, mode = 0) {
   if (local < 0) {
     const preset = preset_self_call(cid);
     if (preset) {
-      era.set(`cstr:${cid}:60`, preset); // CSTR:x:60 一人称
-      chara(cid).chara.一人称档位 = 0;
+      EraChara.get(cid).cstr.set(60, preset); // CSTR:x:60 一人称
+      EraChara.get(cid).cflag.set(450, 0);
       return 0;
     }
   }
 
   // 档位 < 9 → 一人称 = 我
   if (local < 9) {
-    era.set(`cstr:${cid}:60`, '我');
-    chara(cid).chara.一人称档位 = 9;
+    EraChara.get(cid).cstr.set(60, '我');
+    EraChara.get(cid).cflag.set(450, 9);
     return 9;
   }
 
@@ -590,7 +590,7 @@ async function random_self_call(cid, rand = default_rand, mode = 0) {
   if (local < 100) {
     const result = set_suit_selfcall(cid, local - 10, rand);
     if (result >= 0) {
-      chara(cid).chara.一人称档位 = result + 10;
+      EraChara.get(cid).cflag.set(450, result + 10);
       return result + 10;
     }
     local = 99;
@@ -600,7 +600,7 @@ async function random_self_call(cid, rand = default_rand, mode = 0) {
   if (local < 200) {
     const result = set_nick_selfcall(cid, local - 100, rand);
     if (result >= 0) {
-      chara(cid).chara.一人称档位 = result + 100;
+      EraChara.get(cid).cflag.set(450, result + 100);
       // 返回值不带 +100：与上面合适一人称表的返回值 +10 不对称，档位写入
       // 与返回值各自独立赋值，两行都保留
       return result;
@@ -608,7 +608,7 @@ async function random_self_call(cid, rand = default_rand, mode = 0) {
   }
 
   // 两张表均未命中：清空档位重试（递归不带 mode，恒走随机路径）
-  chara(cid).chara.一人称档位 = -1;
+  EraChara.get(cid).cflag.set(450, -1);
   return random_self_call(cid, rand);
 }
 

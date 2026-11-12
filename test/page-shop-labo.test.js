@@ -271,7 +271,7 @@ test('labo_page3：勋章五项按 EXP:MASTER:81 开合，[50] 按 ITEM:90 开�
     'EXP:MASTER:81 == 0 时 51/52/54/55 不画',
   );
   // 有勋章：多出 51/52/54/55
-  const rich = make_fixture({ seed: { 'exp:0:81': 5, 'item:90': 0 } });
+  const rich = make_fixture({ seed: { 'exp:0:81': 5, 'item:hold:90': 0 } });
   const rich_run = await run_labo(rich, [998, 998, 999]);
   assert.deepEqual(
     accs(rich_run.added).filter((a) => a >= 50 && a <= 74),
@@ -279,7 +279,7 @@ test('labo_page3：勋章五项按 EXP:MASTER:81 开合，[50] 按 ITEM:90 开�
     '勋章 > 0 时 51/52/54/55 一并画出',
   );
   // 已购入触手生物：50 消失（SIF ITEM:90 == 0）
-  const bought = make_fixture({ seed: { 'exp:0:81': 5, 'item:90': 1 } });
+  const bought = make_fixture({ seed: { 'exp:0:81': 5, 'item:hold:90': 1 } });
   const bought_run = await run_labo(bought, [998, 998, 999]);
   assert.ok(!accs(bought_run.added).includes(50), 'ITEM:90 != 0 时不画 [50]');
 });
@@ -1519,7 +1519,7 @@ test('bougt_tentacles：买与不买两支（ITEM:90 与 50000 点）', async ()
   const buy = make_fixture({ seed: { 'exp:0:81': 0 } });
   const first = await run(buy, 'bougt_tentacles', [0], {});
   assert.equal(first.ret, 1);
-  assert.equal(buy.store.get('item:90'), 1);
+  assert.equal(buy.store.get('item:hold:90'), 1);
   assert.equal(
     buy.store.get('flag:10004'),
     100000000 - 50000,
@@ -1527,7 +1527,7 @@ test('bougt_tentacles：买与不买两支（ITEM:90 与 50000 点）', async ()
   );
   const no = make_fixture({ seed: {} });
   assert.equal((await run(no, 'bougt_tentacles', [1], {})).ret, 0);
-  assert.equal(no.store.get('item:90'), undefined);
+  assert.equal(no.store.get('item:hold:90'), undefined);
 });
 
 test('given_human_life：非人类支只提示不返回 + 勋章清零 + 口上事件 15', async () => {
@@ -2450,7 +2450,7 @@ test('主分发整表：每个编号都进对应的函数（首行文案 + 不�
  * @param {object} extra 额外预置
  */
 async function assert_dispatch(id, exits, text, extra) {
-  const seed = { 'item:90': 0, ...(extra.seed ?? {}) };
+  const seed = { 'item:hold:90': 0, ...(extra.seed ?? {}) };
   const fixture = make_fixture({ seed });
   if (id === 51) {
     fixture.seed_chara(6, { id: 6, name: '亡者六', callname: '亡六' });
@@ -2481,7 +2481,7 @@ async function assert_dispatch(id, exits, text, extra) {
 test('主分发检查：不成立的分支连按钮都不画（[50] 已买 / [51] 无勋章）', async () => {
   // 按钮不画 ⇒ 玩家点不到 ⇒ 分发链的对应支在实机上不可达（文件头第 3 条）。
   // 这里钉的是「按钮有没有画」，也就是检查在绘制侧的落点。
-  const bought = make_fixture({ seed: { 'item:90': 1, 'exp:0:81': 40 } });
+  const bought = make_fixture({ seed: { 'item:hold:90': 1, 'exp:0:81': 40 } });
   const first = await run_labo(bought, [...turns_to(50), 999], {});
   assert.ok(
     !accs(first.added).includes(50),
@@ -3067,7 +3067,7 @@ test('各屏的编号集：被删的缺省支在这张表之外（#953）', asyn
       name: '主循环第 3 页（有勋章、未买触手）',
       fn: 'secret_labo',
       inputs: [998, 998, 999],
-      seed: { 'exp:0:81': 5, 'item:90': 0 },
+      seed: { 'exp:0:81': 5, 'item:hold:90': 0 },
       mode: 'tail',
       expected: [
         50, 51, 52, 54, 55, 56, 59, 60, 64, 65, 66, 67, 68, 997, 999, 998,

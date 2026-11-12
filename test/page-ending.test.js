@@ -2915,11 +2915,11 @@ test('rampage 步（END10_15）：嘉德线 540、威望 −50、库存与全角
   fixture.era.addCharacter(5);
   fixture.store.set('exflag:2810', 170);
   fixture.store.set('exflag:99', 200); // 威望
-  fixture.store.set('item:100', 1000); // 库存减半
-  fixture.store.set('item:106', 62); // 减半到 31：恰在下限门槛外（<= 30 不成立）
-  fixture.store.set('item:189', 40); // 减半到 20 → 保底 30（189 < 190）
-  fixture.store.set('item:190', 40); // 减半到 20 → 不保底（190 < 190 不成立）
-  fixture.store.set('item:105', 40); // 减半到 20 → 保底 30
+  fixture.store.set('item:hold:100', 1000); // 库存减半
+  fixture.store.set('item:hold:106', 62); // 减半到 31：恰在下限门槛外（<= 30 不成立）
+  fixture.store.set('item:hold:189', 40); // 减半到 20 → 保底 30（189 < 190）
+  fixture.store.set('item:hold:190', 40); // 减半到 20 → 不保底（190 < 190 不成立）
+  fixture.store.set('item:hold:105', 40); // 减半到 20 → 保底 30
   fixture.store.set('base:0:0', 5000); // 魔王不在 FOR 域内（从 1 起）
   fixture.store.set('base:5:0', 5000);
   fixture.store.set('base:5:1', 5000);
@@ -2931,16 +2931,20 @@ test('rampage 步（END10_15）：嘉德线 540、威望 −50、库存与全角
 
   assert.equal(fixture.store.get('exflag:2810'), 540, '线值落到天神宫 540');
   assert.equal(fixture.store.get('exflag:99'), 150, '威望 −50');
-  assert.equal(fixture.store.get('item:100'), 500, '库存 /2（向零截断）');
+  assert.equal(fixture.store.get('item:hold:100'), 500, '库存 /2（向零截断）');
   assert.equal(
-    fixture.store.get('item:105'),
+    fixture.store.get('item:hold:105'),
     30,
     '减半后 <= 30 且 105 < 190 → 保底 30',
   );
-  assert.equal(fixture.store.get('item:106'), 31, '减半到 31：> 30，不保底');
-  assert.equal(fixture.store.get('item:189'), 30, '189 < 190 → 保底');
   assert.equal(
-    fixture.store.get('item:190'),
+    fixture.store.get('item:hold:106'),
+    31,
+    '减半到 31：> 30，不保底',
+  );
+  assert.equal(fixture.store.get('item:hold:189'), 30, '189 < 190 → 保底');
+  assert.equal(
+    fixture.store.get('item:hold:190'),
     20,
     '190 号不保底（< 190 不成立）',
   );

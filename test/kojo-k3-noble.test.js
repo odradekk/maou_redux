@@ -1422,7 +1422,7 @@ test('#623 死斗场·助手器具名整行', async () => {
         f.store.set('base:31:1', 100);
         f.store.set('talent:21:121', item.penis);
         f.store.set('talent:21:122', 0);
-        f.store.set('item:4', item.band);
+        f.store.set('item:hold:4', item.band);
       });
       fixture.seed_chara(21, { id: 21, name: '玛奥', callname: '玛奥' });
       fixture.era.addCharacter(21);

@@ -179,7 +179,7 @@ test('yml/E.yml 已撤除（战斗状态不再占用引擎变量表，新档不�
 
 test('monster_data：整列写进战斗状态对象，E 表一个键都不写', () => {
   const fixture = create_era_fixture();
-  fixture.store.set('item:100', 5);
+  fixture.store.set('item:hold:100', 5);
   fixture.store.set('itemname:100', '狗头人');
   const { monster_data } = fixture.load_module('system/dungeon/monster-data');
   const {
@@ -199,7 +199,7 @@ test('monster_data：整列写进战斗状态对象，E 表一个键都不写', 
   assert.equal(row.boss, 0, '数量 > 1 时不 Boss 化');
 
   // 数量恰好 1 时 Boss 化（Boss 化的判据是「只有一只」，不是「有多少只」）
-  fixture.store.set('item:101', 1);
+  fixture.store.set('item:hold:101', 1);
   monster_data(101, BATTLE_COLUMN.DEFENSE_2, -1, -1, -1, seq([0]));
   assert.equal(battle_column(BATTLE_COLUMN.DEFENSE_2).id, 101);
   assert.equal(battle_column(BATTLE_COLUMN.DEFENSE_2).boss, 1, '单体 Boss 化');
@@ -209,7 +209,7 @@ test('monster_data：整列写进战斗状态对象，E 表一个键都不写', 
 
 test('monster_data：列号 3/4 的勇者配下与列 0 互不干扰（对象列隔离）', () => {
   const fixture = create_era_fixture();
-  fixture.store.set('item:100', 4);
+  fixture.store.set('item:hold:100', 4);
   fixture.store.set('cflag:1:570', 100);
   const { monster_data } = fixture.load_module('system/dungeon/monster-data');
   const {

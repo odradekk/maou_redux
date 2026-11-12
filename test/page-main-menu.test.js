@@ -383,7 +383,7 @@ test('四个子面板：按 FLAG:36 分发——四支全部真身（#180/#395�
   {
     const { fixture } = draw_menu_with((f) => {
       f.store.set('flag:36', 1);
-      f.store.set('item:60', 1);
+      f.store.set('item:hold:60', 1);
       f.store.set('itemname:60', '落穴');
     });
     assert(
@@ -620,11 +620,11 @@ test('draw_have_items：技巧 Lv + 知识标签 + 两段道具网格 + 装饰�
     f.store.set('abl:0:12', 3);
     f.store.set('talent:0:55', 1); // 调合知识
     f.store.set('talent:0:327', 1); // 淫魔知识
-    f.store.set('item:0', 2);
+    f.store.set('item:hold:0', 2);
     f.store.set('itemname:0', '振动宝石');
-    f.store.set('item:91', 1);
+    f.store.set('item:hold:91', 1);
     f.store.set('itemname:91', '装饰的戒指');
-    f.store.set('item:300', 5);
+    f.store.set('item:hold:300', 5);
     f.store.set('itemname:300', '???');
   });
   const texts = fixture.text_lines();
@@ -659,7 +659,7 @@ test('draw_have_items：技巧 Lv + 知识标签 + 两段道具网格 + 装饰�
 test('draw_have_items：5 个一行，第 6 个换行', () => {
   const { fixture } = draw_menu_with((f) => {
     for (let i = 0; i <= 5; i += 1) {
-      f.store.set(`item:${i}`, 1);
+      f.store.set(`item:hold:${i}`, 1);
       f.store.set(`itemname:${i}`, `道具${i}`);
     }
   });
@@ -677,7 +677,7 @@ test('draw_have_items：5 个一行，第 6 个换行', () => {
 test('draw_have_traps：单一网格（ids 59-89）', () => {
   const { fixture } = draw_menu_with((f) => {
     f.store.set('flag:36', 1);
-    f.store.set('item:60', 3);
+    f.store.set('item:hold:60', 3);
     f.store.set('itemname:60', '落穴');
   });
   assert(
@@ -689,13 +689,13 @@ test('draw_have_traps：单一网格（ids 59-89）', () => {
 test('draw_have_traps：边界闭区间 [59, 89]，界外相邻号不画', () => {
   const { fixture } = draw_menu_with((f) => {
     f.store.set('flag:36', 1);
-    f.store.set('item:59', 1);
+    f.store.set('item:hold:59', 1);
     f.store.set('itemname:59', '下界陷阱');
-    f.store.set('item:89', 1);
+    f.store.set('item:hold:89', 1);
     f.store.set('itemname:89', '上界陷阱');
-    f.store.set('item:58', 1);
+    f.store.set('item:hold:58', 1);
     f.store.set('itemname:58', '界外低');
-    f.store.set('item:90', 1);
+    f.store.set('item:hold:90', 1);
     f.store.set('itemname:90', '界外高');
   });
   const texts = fixture.text_lines();

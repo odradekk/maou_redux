@@ -421,11 +421,11 @@ test('诅咒戒指制造接入（#174 真身）：EVENT_NEXTDAY:120 无条件调
   const fixture = create_era_fixture();
   fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
   fixture.era.addCharacter(0);
-  fixture.store.set('item:300', 1);
+  fixture.store.set('item:hold:300', 1);
   const { run_event_nextday } = fixture.load_module('event/event-nextday');
 
   await run_event_nextday();
-  assert.equal(fixture.store.get('item:300'), 0, '装饰戒指被消耗一件');
+  assert.equal(fixture.store.get('item:hold:300'), 0, '装饰戒指被消耗一件');
   assert.match(
     fixture.text_lines().join('\n'),
     /你把装饰戒指制造成.+了/,
@@ -1747,7 +1747,7 @@ test('遛狗（DOG_WALK）：只有魔王一人时自己带狗散步并早退', 
   const fixture = create_era_fixture();
   fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
   fixture.era.addCharacter(0);
-  fixture.store.set('item:22', 1);
+  fixture.store.set('item:hold:22', 1);
   const { dog_walk } = fixture.load_module('event/event-nextday');
 
   assert.equal(await dog_walk(() => 0), 0, 'CHARANUM - 1 == 0 → 返回 0');
@@ -1769,7 +1769,7 @@ test('遛狗（DOG_WALK）：当番 = RAND:(CHARANUM-1) 的下标，三条检查
   ];
   for (const [label, override, roll, expected] of cases) {
     const fixture = setup_chara_events();
-    fixture.store.set('item:22', 1);
+    fixture.store.set('item:hold:22', 1);
     seed_dog_walk_candidate(fixture, 31, '温妮');
     join_slave_chara(fixture, 32, '艾米'); // 加入序尾位：RAND 的排除项
     for (const [key, value] of Object.entries(override)) {
@@ -1816,7 +1816,7 @@ test('遛狗（DOG_WALK）：PLAY（兴奋度）的四项叠加与 OPEN（露出
   ];
   for (const [label, override, breeds] of cases) {
     const fixture = setup_chara_events();
-    fixture.store.set('item:22', 1);
+    fixture.store.set('item:hold:22', 1);
     seed_dog_walk_candidate(fixture, 31, '温妮');
     join_slave_chara(fixture, 32, '艾米');
     for (const [key, value] of Object.entries(override)) {
@@ -1842,7 +1842,7 @@ test('遛狗（DOG_WALK）：PLAY（兴奋度）的四项叠加与 OPEN（露出
 
 test('遛狗（DOG_WALK）：PLAY 计算的数值（动物耳只在 PLAY > 0 时加）', async () => {
   const fixture = setup_chara_events();
-  fixture.store.set('item:22', 1);
+  fixture.store.set('item:hold:22', 1);
   seed_dog_walk_candidate(fixture, 31, '温妮');
   join_slave_chara(fixture, 32, '艾米');
   fixture.store.set('abl:31:39', 2); // 兽奸中毒
@@ -1891,7 +1891,7 @@ test('遛狗（DOG_WALK）：NO_SEX 三支（处女 / 私处封印 / 贞操带�
   ];
   for (const [label, override] of cases) {
     const fixture = setup_chara_events();
-    fixture.store.set('item:22', 1);
+    fixture.store.set('item:hold:22', 1);
     seed_dog_walk_candidate(fixture, 31, '温妮');
     join_slave_chara(fixture, 32, '艾米');
     fixture.store.set('abl:31:39', 1); // PLAY = 1
@@ -1925,7 +1925,7 @@ test('遛狗（DOG_WALK）：NO_SEX 三支（处女 / 私处封印 / 贞操带�
 
 test('遛狗（DOG_WALK）：散步行拼装（服装 + 的 + 名字 + [项圈] + 和野狗一起逛）与 TARGET 还原', async () => {
   const fixture = setup_chara_events();
-  fixture.store.set('item:22', 1);
+  fixture.store.set('item:hold:22', 1);
   seed_dog_walk_candidate(fixture, 31, '温妮');
   join_slave_chara(fixture, 32, '艾米');
   fixture.store.set('abl:31:39', 1); // PLAY > 0 → 拼「戴上项圈」
@@ -1971,7 +1971,7 @@ test('遛狗（DOG_WALK）：露出基准 -2 与三项加成决定耻情支是�
   ];
   for (const [label, override, shames] of cases) {
     const fixture = setup_chara_events();
-    fixture.store.set('item:22', 1);
+    fixture.store.set('item:hold:22', 1);
     seed_dog_walk_candidate(fixture, 31, '温妮');
     join_slave_chara(fixture, 32, '艾米');
     fixture.store.set('abl:31:39', 1); // PLAY = 1
@@ -2407,13 +2407,13 @@ test('处女献上（OFFERVIRGIN_CHECK）：安全套两问（持有道具才问
   // 持有安全套 → 询问 → 选 0：TEQUIP:35 = 1 且道具 -1
   const with_condom = setup_chara_events();
   seed_virgin_offer(with_condom);
-  with_condom.store.set('item:24', 2);
+  with_condom.store.set('item:hold:24', 2);
   with_condom.set_inputs(0, 0);
   const mod = with_condom.load_module('event/event-nextday');
 
   await mod.offervirgin_check(() => 2);
 
-  assert.equal(with_condom.store.get('item:24'), 1, '安全套 -1');
+  assert.equal(with_condom.store.get('item:hold:24'), 1, '安全套 -1');
   const with_texts = with_condom.text_lines();
   assert(with_texts.includes('要使用安全套吗？'), '持有道具才问');
   // #572 审查返工：两枚按钮逐个钉住（）
@@ -3431,7 +3431,7 @@ test('随机上界：事件侧每个随机源的 n 逐个钉住（表驱动）',
     {
       label: '遛狗：RAND:(CHARANUM-1) = RAND:2（三位角色）',
       setup: (fixture) => {
-        fixture.store.set('item:22', 1);
+        fixture.store.set('item:hold:22', 1);
         for (const cid of [31, 32]) {
           join_slave_chara(fixture, cid, `奴隶${cid}`);
           fixture.store.set(`cflag:${cid}:0`, 1);

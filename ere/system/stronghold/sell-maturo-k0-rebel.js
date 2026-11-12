@@ -13,9 +13,10 @@
 'use strict';
 
 const era = require('#/era-electron');
+const EraChara = require('#/era-utils/era-chara');
 
 function she(id) {
-  return (era.get(`talent:${id}:122`) || 0) !== 0 ? '他' : '她';
+  return (EraChara.get(id).talent.male || 0) !== 0 ? '他' : '她';
 }
 
 /** rebel_matu_ge100k：反抗刻印 · 魔族 · 十万以上。 */
@@ -44,7 +45,7 @@ async function rebel_matu_ge100k(ctx) {
 /** rebel_matu_ge100k_arena：魔界中央奴隶市场买下；结局 角斗士 / 鲨鱼的食物。 */
 async function rebel_matu_ge100k_arena({ cid, target_name }) {
   let ending = '';
-  if (era.get(`cflag:${cid}:9`) >= 50) {
+  if (EraChara.get(cid).cflag.level >= 50) {
     await era.printAndWait(`${target_name}作为死斗场的角斗士在战斗着。`);
     await era.printAndWait(`貌似经历了许多相当严苛的死斗，依然活下来了。`);
     await era.printAndWait(
@@ -65,7 +66,10 @@ async function rebel_matu_ge100k_arena({ cid, target_name }) {
 /** rebel_matu_ge100k_captive：魔界中央奴隶市场买下；结局 神殿的人柱 / 苦力奴隶。 */
 async function rebel_matu_ge100k_captive({ cid, target_name }) {
   let ending = '';
-  if (era.get(`talent:${cid}:202`) == 1 || era.get(`talent:${cid}:206`) == 1) {
+  if (
+    EraChara.get(cid).talent.priest == 1 ||
+    EraChara.get(cid).talent.shrine_maiden == 1
+  ) {
     await era.printAndWait(`被选为新落成的神殿的祭品。`);
     await era.printAndWait(
       `${target_name}被带来了。听说${target_name}以前是高明的圣职者，神官们都因此非常满意。`,
@@ -151,9 +155,9 @@ async function rebel_matu_lt100k_runaway({ rand_n, target_name }) {
 async function rebel_matu_lt100k_butcher({ cid, target_name }) {
   let ending = '';
   if (
-    era.get(`talent:${cid}:110`) == 1 ||
-    era.get(`talent:${cid}:114`) == 1 ||
-    era.get(`talent:${cid}:119`) == 1
+    EraChara.get(cid).talent.large_breasts == 1 ||
+    EraChara.get(cid).talent.huge_breasts == 1 ||
+    EraChara.get(cid).talent.massive_breasts == 1
   ) {
     await era.printAndWait(
       `尚拥有反抗心的${target_name}在市场上引起暴动，把前来视察的地方领主的脸刮伤了。`,
@@ -192,12 +196,12 @@ async function rebel_other_ge100k(ctx) {
   let buyer = '';
   let route = 0;
   let ending = '';
-  if (era.get(`talent:${cid}:314`) == 5) {
+  if (EraChara.get(cid).talent.race == 5) {
     buyer = '魔界中央奴隶市场';
     route = 2;
   } else if (
-    era.get(`talent:${cid}:200`) == 1 ||
-    era.get(`talent:${cid}:203`) == 1
+    EraChara.get(cid).talent.warrior == 1 ||
+    EraChara.get(cid).talent.thief == 1
   ) {
     buyer = '魔界中央奴隶市场';
     route = 1;
@@ -245,7 +249,7 @@ async function rebel_other_ge100k_arena({ cid, target_name }) {
   let ending = '';
   await era.printAndWait(`${target_name}作为死斗场的角斗士在战斗着。`);
 
-  if (era.get(`cflag:${cid}:9`) >= 100) {
+  if (EraChara.get(cid).cflag.level >= 100) {
     await era.printAndWait(`和其它角斗士一起发动了叛乱，最后被镇压了。`);
     await era.printAndWait(`作为主谋的${target_name}一直行踪不明，无法处置。`);
     await era.printAndWait(`而其它在叛乱中被生擒的角斗士，全部拿去喂猛兽了。`);
@@ -261,7 +265,10 @@ async function rebel_other_ge100k_arena({ cid, target_name }) {
 /** rebel_other_ge100k_captive：魔界中央奴隶市场买下；结局 神殿的人柱 / 划桨奴隶。 */
 async function rebel_other_ge100k_captive({ cid, target_name }) {
   let ending = '';
-  if (era.get(`talent:${cid}:202`) == 1 || era.get(`talent:${cid}:206`) == 1) {
+  if (
+    EraChara.get(cid).talent.priest == 1 ||
+    EraChara.get(cid).talent.shrine_maiden == 1
+  ) {
     await era.printAndWait(`被选为新落成的神殿的祭品。`);
     await era.printAndWait(
       `${target_name}被带来了。听说${target_name}以前是高明的圣职者，神官们都非常满意。`,
@@ -340,9 +347,9 @@ async function rebel_other_lt100k_furniture({ cid, rand_n, target_name }) {
 async function rebel_other_lt100k_butcher({ cid, target_name }) {
   let ending = '';
   if (
-    era.get(`talent:${cid}:110`) == 1 ||
-    era.get(`talent:${cid}:114`) == 1 ||
-    era.get(`talent:${cid}:119`) == 1
+    EraChara.get(cid).talent.large_breasts == 1 ||
+    EraChara.get(cid).talent.huge_breasts == 1 ||
+    EraChara.get(cid).talent.massive_breasts == 1
   ) {
     await era.printAndWait(
       `尚拥有反抗心的${target_name}在市场上引起暴动，把前来视察的地方领主的脸刮伤了。`,

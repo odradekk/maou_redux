@@ -37,9 +37,8 @@
 'use strict';
 
 const era = require('#/era-electron');
+const EraChara = require('#/era-utils/era-chara');
 const { get_roster } = require('#/system/cross-save-sharing');
-const { chara } = require('#/facade/chara');
-const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
 const { char_body_generate_wapped } = require('#/system/chara/chara-body'); // #385 起真身
 const { st_up } = require('#/system/dungeon/dungeon-lvup');
@@ -95,7 +94,8 @@ function decode_table(cid, table, segment, is_string) {
  */
 function chara_make_inport(rand = default_rand) {
   // 外来勇者等级上限（FLAG:76，MAOUNET 菜单设定）<= 0 则直接返回 0
-  const level_cap = game.system.外来勇者等级上限;
+  // 走动态读数：混合引擎用例里 era.get 绑的是真引擎、raw() 仍是夹具，具名读会取错层
+  const level_cap = era_flag.get(76);
   if (level_cap <= 0) {
     return 0;
   }
@@ -118,7 +118,7 @@ function chara_make_inport(rand = default_rand) {
     const stamp = to_int(fields[0]); // CFLAG:190 通信勇者唯一标记
     let duplicated = false;
     for (const other of era.getAddedCharacters()) {
-      if (chara(other).system.通信勇者唯一标记 === stamp) {
+      if ((EraChara.get(other).cflag.get(190) || 0) === stamp) {
         duplicated = true;
         break;
       }
@@ -150,8 +150,8 @@ function chara_make_inport(rand = default_rand) {
 
   // 两槽都写记录里的称呼（ere 侧同落 -2，见文件头三）
   const nickname = record[3] ?? '';
-  era.set(`callname:${cid}:-2`, nickname); // callname:-2 称呼槽
-  era.set(`callname:${cid}:-1`, nickname); // callname:-1 姓名槽
+  EraChara.get(cid).callname = nickname; // callname:-2 称呼槽
+  EraChara.get(cid).name = nickname; // callname:-1 姓名槽
 
   // 十张二维表回填
   for (const [index, [table, is_string]] of TABLE_SEGMENTS.entries()) {
@@ -159,16 +159,16 @@ function chara_make_inport(rand = default_rand) {
   }
 
   // 侵入階層 / 侵攻度 / 侵攻中設定（跨域写走门面）
-  chara(cid).dungeon.侵攻阶层 = 1; // CFLAG:501
-  chara(cid).event.侵攻度 = 0; // CFLAG:502
-  chara(cid).invasion.状态 = 2; // CFLAG:1 = 2 侵攻中
+  EraChara.get(cid).cflag.set(501, 1); // CFLAG:501
+  EraChara.get(cid).cflag.set(502, 0); // CFLAG:502
+  EraChara.get(cid).cflag.set(1, 2); // CFLAG:1 = 2 侵攻中
 
   // FLAG:77「通信勇者登场时为等级 1」：压到 1 级后按 FLAG:60 补级
   if (era_flag.communication_hero_level_one) {
-    chara(cid).chara.等级 = 1; // CFLAG:9
-    chara(cid).dungeon.战斗经验 = 0; // EXP:80
+    EraChara.get(cid).cflag.set(9, 1); // CFLAG:9
+    EraChara.get(cid).exp.set(80, 0); // EXP:80
     // FLAG:60 勇者基础等级修正：逐级 st_up
-    const times = game.event.勇者基础等级修正;
+    const times = era_flag.hero_base_level_bonus;
     if (times > 0) {
       for (let i = 0; i < times; i += 1) {
         st_up(cid, rand); // 补一级
@@ -177,11 +177,11 @@ function chara_make_inport(rand = default_rand) {
   }
 
   // HP 与气力补到上限（BASE:0/1 = MAXBASE:0/1）
-  chara(cid).dungeon.体力 = era.get(`maxbase:${cid}:0`) || 0;
-  chara(cid).dungeon.气力 = era.get(`maxbase:${cid}:1`) || 0;
+  EraChara.get(cid).base.set(0, EraChara.get(cid).maxbase.get(0) || 0);
+  EraChara.get(cid).base.set(1, EraChara.get(cid).maxbase.get(1) || 0);
 
   // 身体データ未生成なら生成（#385 起真身；FLAG:5 的位检查在函数内部）
-  if (chara(cid).chara.年龄 === 0) {
+  if ((EraChara.get(cid).cflag.get(451) || 0) === 0) {
     char_body_generate_wapped(cid, rand);
   }
 

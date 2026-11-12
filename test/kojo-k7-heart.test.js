@@ -480,7 +480,7 @@ test('COLOSSEUM SELECTCOM==31：ITEM:PBAND(=4) 修正为 item:4，非字符串�
   era_flag.assi = 21;
   fixture.store.set('talent:21:121', 0);
   fixture.store.set('talent:21:122', 0);
-  fixture.store.set('item:4', 1); // PBAND
+  fixture.store.set('item:hold:4', 1); // PBAND
   era_flag.assiplay = 1;
   // 直调 colosseum_kojo_7 真身：kojo_message_com_7 头部 ASSI&&ASSIPLAY 检查
   // 先于 TEQUIP:55 分派，正常入口下二者不能同时为真，直调绕开这层不可达性。
@@ -1081,7 +1081,7 @@ test('#621 COLOSSEUM_KOJO_7 三处：性器名与收行段合成一条输出', a
     era_flag.assi = 21;
     fixture.store.set('talent:21:121', assi_penis ? 1 : 0);
     fixture.store.set('talent:21:122', 0);
-    fixture.store.set('item:4', 1); // PBAND
+    fixture.store.set('item:hold:4', 1); // PBAND
     era_flag.assiplay = 1;
     const { colosseum_kojo_7 } = fixture.load_module('kojo/kojo-k7-heart');
     await colosseum_kojo_7();

@@ -10,10 +10,9 @@
  * （配置界面）；cup_size 已随 #390 实现。
  */
 
-const era = require('#/era-electron');
+const EraChara = require('#/era-utils/era-chara');
+const era_flag = require('#/era-utils/era-flag');
 const { char_age_expect, rf_all } = require('#/system/chara/chara-family');
-const { game } = require('#/facade/game');
-const { chara } = require('#/facade/chara');
 const { default_rand } = require('#/utils/numeric');
 
 const int = Math.trunc;
@@ -106,7 +105,7 @@ function normal_range_pickup(low, middle, high, rand, scale = -1) {
 }
 
 function char_hweight_generate(cid, age, rand) {
-  const t = (index) => era.get(`talent:${cid}:${index}`) || 0;
+  const t = (index) => EraChara.get(cid).talent.get(index) || 0;
   const stats = statistics(age, t(122) !== 0);
   let heights;
   let weights;
@@ -175,7 +174,7 @@ function char_hweight_generate(cid, age, rand) {
 }
 
 function under_bust(cid, height) {
-  const t = (index) => era.get(`talent:${cid}:${index}`) || 0;
+  const t = (index) => EraChara.get(cid).talent.get(index) || 0;
   let value = int((height * (43100 + t(308))) / 100000);
   if (t(248)) value = int((value * 105) / 100);
   if (t(256)) value = int((value * 98) / 100);
@@ -191,7 +190,7 @@ function under_bust(cid, height) {
  * @returns {[number, number, number]} [胸围, 下胸围, 胸围差]（均 ×100 精度）
  */
 function char_bust_generate(cid, source_age, height, rand) {
-  const t = (index) => era.get(`talent:${cid}:${index}`) || 0;
+  const t = (index) => EraChara.get(cid).talent.get(index) || 0;
   let age = source_age;
   let age_count = 0;
   let difference;
@@ -262,8 +261,9 @@ function char_bust_generate(cid, source_age, height, rand) {
  * @returns {number} 该槽的三位设定值（百位算法档 / 十位数量级 / 个位倍数）
  */
 function race_config_value(slot) {
-  if (slot >= 0 && slot <= 5) return game.chara.种族年龄设定_0[slot] ?? 0;
-  if (slot === 6 || slot === 7) return game.chara.种族年龄设定_1[slot - 6] ?? 0;
+  if (slot >= 0 && slot <= 5) return era_flag.race_age_setting_0[slot] ?? 0;
+  if (slot === 6 || slot === 7)
+    return era_flag.race_age_setting_1[slot - 6] ?? 0;
   return 0;
 }
 
@@ -400,7 +400,7 @@ function race_age_generate(human_age, race_no, rand = default_rand) {
  * @returns {number} 人类换算年龄
  */
 function human_age_generate(race_age, cid) {
-  const race_no = era.get(`talent:${cid}:314`) || 0; // TALENT:314
+  const race_no = EraChara.get(cid).talent.get(314) || 0; // TALENT:314
   // 堕落种族（暗精灵 7 / 堕天使 8 / 魔族 9）：同 race_age_generate，
   // 三个编号都原样返回
   if (race_no >= 7 && race_no < 10) return race_age;
@@ -416,7 +416,7 @@ function human_age_generate(race_age, cid) {
     return int((race_age * 10 + 5) / (deg * 10 + num));
   }
   // 0～上限 / 上限/2～上限 / 年齢～上限 三档：CFLAG:452（种族年龄）
-  return era.get(`cflag:${cid}:452`) || 0;
+  return EraChara.get(cid).cflag.get(452) || 0;
 }
 
 /**
@@ -434,7 +434,7 @@ function human_age_generate(race_age, cid) {
  * @returns {number[]} [人类换算年龄, 种族年龄]
  */
 function char_age_generate(cid, rand = default_rand) {
-  const t = (index) => era.get(`talent:${cid}:${index}`) || 0;
+  const t = (index) => EraChara.get(cid).talent.get(index) || 0;
 
   // 根据经历推测年龄
   let age = 17 + char_age_expect(cid); // char_age_expect
@@ -444,7 +444,7 @@ function char_age_generate(cid, rand = default_rand) {
   // 家族成员的年龄约束。rf_all 的第三实参（return_type）为真时
   // 成对返回 [成员角色号, 关系码]，分支按关系码分档。
   for (const [member, relation] of rf_all(cid, -1, true)) {
-    const member_age = era.get(`cflag:${member}:451`) || 0; // CFLAG:451 年齢
+    const member_age = EraChara.get(member).cflag.get(451) || 0; // CFLAG:451 年齢
     if (relation === 1 || relation === 2) age = Math.min(age, member_age);
     else if (relation === 3 || relation === 4) age = Math.max(age, member_age);
     else if (relation === 5 || relation === 6)
@@ -454,12 +454,12 @@ function char_age_generate(cid, rand = default_rand) {
   }
 
   // 后代年龄按相当于人类 10 岁设定
-  if (era.get(`ex_talent:${cid}:2`)) age = 10;
+  if (EraChara.get(cid).ex_talent.get(2)) age = 10;
 
   const race_age = race_age_generate(age, t(314), rand);
 
   // 人类年龄低于 14 即为未熟（TALENT:135，train 域属性，走门面）
-  if (age <= 14) chara(cid).train.未熟 = 1;
+  if (age <= 14) EraChara.get(cid).talent.set(135, 1);
   return [age, race_age];
 }
 
@@ -477,10 +477,10 @@ function char_age_generate(cid, rand = default_rand) {
  * @param {(n: number) => number} [rand] 随机源
  */
 function char_body_generate_wapped(cid, rand = default_rand) {
-  const settings = era.get('flag:5') || 0; // FLAG:5 开局设置位图
+  const settings = era_flag.game_settings || 0; // FLAG:5 开局设置位图
   if (((settings >> 12) & 1) === 0 && ((settings >> 15) & 1) === 0) return;
 
-  const t = (index) => era.get(`talent:${cid}:${index}`) || 0;
+  const t = (index) => EraChara.get(cid).talent.get(index) || 0;
   let age = 0;
   if (t(165))
     age = rand(2) + 12; // 村娘Ａ
@@ -489,7 +489,7 @@ function char_body_generate_wapped(cid, rand = default_rand) {
 
   // 依次写入 CFLAG:451-457
   for (let offset = 0; offset < 7; offset += 1) {
-    era.set(`cflag:${cid}:${451 + offset}`, body[offset]);
+    EraChara.get(cid).cflag.set(451 + offset, body[offset]);
   }
 }
 
@@ -506,18 +506,18 @@ function char_body_generate_wapped(cid, rand = default_rand) {
  * @param {(n: number) => number} [rand] 随机源
  */
 function char_bust_regenerate_wapped(cid, rand = default_rand) {
-  const settings = era.get('flag:5') || 0;
+  const settings = era_flag.game_settings || 0;
   if (((settings >> 15) & 1) === 0) return;
 
-  const age = era.get(`cflag:${cid}:451`) || 0;
-  const height = era.get(`cflag:${cid}:453`) || 0;
+  const age = EraChara.get(cid).cflag.get(451) || 0;
+  const height = EraChara.get(cid).cflag.get(453) || 0;
   if (!age || !height) {
     char_body_generate_wapped(cid, rand);
     return;
   }
 
   const [bust] = char_bust_generate(cid, age, height * 100, rand);
-  era.set(`cflag:${cid}:455`, int(bust / 100));
+  EraChara.get(cid).cflag.set(455, int(bust / 100));
 }
 
 /**
@@ -534,7 +534,7 @@ function char_size_generate(
   mode = 0,
   rand = default_rand,
 ) {
-  const t = (index) => era.get(`talent:${cid}:${index}`) || 0;
+  const t = (index) => EraChara.get(cid).talent.get(index) || 0;
   let age = source_age;
   let race_age = 0;
   let height;
@@ -546,10 +546,10 @@ function char_size_generate(
   if (age <= 0) [age, race_age] = char_age_generate(cid, rand);
 
   if (mode === 1) {
-    height = (era.get(`cflag:${cid}:453`) || 0) * 100; // CFLAG:453 身高
-    weight = (era.get(`cflag:${cid}:454`) || 0) * 100; // CFLAG:454 体重
-    previous_difference = (era.get(`cflag:${cid}:458`) || 0) * 100; // 胸围差
-    previous_under = (era.get(`cflag:${cid}:459`) || 0) * 100; // 下胸围
+    height = (EraChara.get(cid).cflag.get(453) || 0) * 100; // CFLAG:453 身高
+    weight = (EraChara.get(cid).cflag.get(454) || 0) * 100; // CFLAG:454 体重
+    previous_difference = (EraChara.get(cid).cflag.get(458) || 0) * 100; // 胸围差
+    previous_under = (EraChara.get(cid).cflag.get(459) || 0) * 100; // 下胸围
   } else {
     [height, weight] = char_hweight_generate(cid, age, rand);
     waist = int((height * (3700 + t(308))) / 10000);
@@ -571,11 +571,11 @@ function char_size_generate(
   );
   if (t(100) && t(110)) bust_difference += 1500 + rand(1000);
   if (t(99)) bust_difference -= 2000 + rand(1000);
-  if (era.get(`exp:${cid}:60`)) bust_difference += 200 + rand(800); // EXP:60 出产经验
+  if (EraChara.get(cid).exp.get(60)) bust_difference += 200 + rand(800); // EXP:60 出产经验
   if (t(130) && t(119)) bust_difference += 8500 + rand(4000);
   bust = bust_under + bust_difference;
-  era.set(`cflag:${cid}:458`, int(bust_difference / 100));
-  era.set(`cflag:${cid}:459`, int(bust_under / 100));
+  EraChara.get(cid).cflag.set(458, int(bust_difference / 100));
+  EraChara.get(cid).cflag.set(459, int(bust_under / 100));
 
   if (mode !== 1) {
     hip = int((height * (5300 + t(308))) / 10000);
@@ -658,8 +658,8 @@ const CUP_LETTERS = [
  */
 function cup_size(cid) {
   // 身高 ×10 直接传给 under_bust
-  const height10 = era.get(`cflag:${cid}:453`) || 0; // CFLAG:453 身高(×10)
-  const bust10 = era.get(`cflag:${cid}:455`) || 0; // CFLAG:455 上胸围(×10)
+  const height10 = EraChara.get(cid).cflag.get(453) || 0; // CFLAG:453 身高(×10)
+  const bust10 = EraChara.get(cid).cflag.get(455) || 0; // CFLAG:455 上胸围(×10)
   const cal_var = int((bust10 - under_bust(cid, height10)) / 25);
   if (cal_var <= 1) return '-';
   return CUP_LETTERS[cal_var - 2] ?? '';

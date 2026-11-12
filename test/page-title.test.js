@@ -220,9 +220,7 @@ test('选项 1（新的猎物）：返回 FIRST 转场目标并当场结束函�
   // 标题侧变量写入只剩移植自建的 portcflag 版本戳（#67），此外零写入——
   // 全量断言，任何混入的意外写入都会当场暴露。魔王的 EX 素质自 #834 起由
   // 角色预设随 addCharacter 套用，不再是标题页的手工赋值
-  assert.deepEqual(fixture.var_writes, [
-    { name: 'portcflag:0:数据版本', value: 1 },
-  ]);
+  assert.deepEqual(fixture.var_writes, [{ name: 'portcflag:0:0', value: 1 }]);
 });
 
 test('选项 0（旧的奴隶）：进读档界面，[100] 返回后 RESTART 回标题', async () => {

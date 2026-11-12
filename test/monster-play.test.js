@@ -29,7 +29,7 @@ function setup() {
   for (const id of parse_yml_ids('Item.yml').keys()) {
     if (id < 100 || id >= 200) continue;
     fixture.store.set(`itemname:${id}`, `怪物${id}`);
-    fixture.store.set(`item:${id}`, 1);
+    fixture.store.set(`item:hold:${id}`, 1);
   }
   return fixture;
 }
@@ -146,14 +146,14 @@ test('MONSTER_SETUP 拒绝非法编号、缺钱和取消确认，兵种改造保
 
 test('MONSTERPLAY_LIST 只列出持有且已声明的 100-199 怪物', () => {
   const fixture = setup();
-  for (let id = 100; id < 200; id += 1) fixture.store.set(`item:${id}`, 0);
-  fixture.store.set('item:100', 2);
-  fixture.store.set('item:101', 0);
-  fixture.store.set('item:102', 1);
-  fixture.store.set('item:103', 1);
-  fixture.store.set('item:193', 1);
-  fixture.store.set('item:105', 30);
-  fixture.store.set('item:199', 30);
+  for (let id = 100; id < 200; id += 1) fixture.store.set(`item:hold:${id}`, 0);
+  fixture.store.set('item:hold:100', 2);
+  fixture.store.set('item:hold:101', 0);
+  fixture.store.set('item:hold:102', 1);
+  fixture.store.set('item:hold:103', 1);
+  fixture.store.set('item:hold:193', 1);
+  fixture.store.set('item:hold:105', 30);
+  fixture.store.set('item:hold:199', 30);
   const { monsterplay_list } = fixture.load_module(
     'system/dungeon/monster-play',
   );
@@ -403,7 +403,7 @@ test('MONSTER_PLAY 取消返回 0；野狗路径结算处女丧失并转入回�
   );
 
   const fixture = setup();
-  fixture.store.set('item:22', 1);
+  fixture.store.set('item:hold:22', 1);
   fixture.store.set('talent:0:0', 1); // TALENT:A:0 = 处女
   fixture.set_inputs(900);
   const { STATE } = fixture.load_module('system/flow/game-state');
@@ -442,7 +442,7 @@ test('MONSTER_PLAY 非狗先生成第 5 列，再按 E:507 分派并共用随机
 
 test('MONSTER_PLAY 只接受本轮按钮：未列出的编号在输入框里被拦下', async () => {
   const fixture = setup();
-  fixture.store.set('item:22', 1); // 野狗的库存挂在 22 号道具上，按钮却是 900
+  fixture.store.set('item:hold:22', 1); // 野狗的库存挂在 22 号道具上，按钮却是 900
   fixture.set_inputs(22);
   await assert.rejects(
     () =>

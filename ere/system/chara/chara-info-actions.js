@@ -25,14 +25,14 @@
  */
 
 const era = require('#/era-electron');
+const EraChara = require('#/era-utils/era-chara');
 const era_exflag = require('#/era-utils/era-exflag');
 const era_flag = require('#/era-utils/era-flag');
 const { party_del } = require('#/system/dungeon/dungeon-party');
 const { lvup } = require('#/system/dungeon/dungeon-lvup');
-const { chara } = require('#/facade/chara');
 
 function name_of(cid) {
-  return era.get(`callname:${cid}:-1`) ?? '';
+  return EraChara.get(cid).name ?? '';
 }
 
 /**
@@ -43,9 +43,9 @@ function name_of(cid) {
  * @returns {boolean}
  */
 function is_able_to_ability_up(cid) {
-  const state = era.get(`cflag:${cid}:1`) || 0; // CFLAG:1 状态
-  const master_lv = era.get('cflag:0:9') || 0; // CFLAG:0:9 魔王等级
-  const hp = era.get(`base:${cid}:0`) || 0; // BASE:0 体力
+  const state = EraChara.get(cid).cflag.get(1) || 0; // CFLAG:1 状态
+  const master_lv = EraChara.get(0).cflag.get(9) || 0; // CFLAG:0:9 魔王等级
+  const hp = EraChara.get(cid).base.get(0) || 0; // BASE:0 体力
   return (
     (state === 0 ||
       (master_lv >= 20 && state === 2) ||
@@ -61,8 +61,8 @@ function is_able_to_ability_up(cid) {
  * @returns {boolean}
  */
 function is_able_to_cloth(cid) {
-  const state = era.get(`cflag:${cid}:1`) || 0;
-  const hp = era.get(`base:${cid}:0`) || 0;
+  const state = EraChara.get(cid).cflag.get(1) || 0;
+  const hp = EraChara.get(cid).base.get(0) || 0;
   return state === 0 && hp >= 1;
 }
 
@@ -74,10 +74,10 @@ function is_able_to_cloth(cid) {
  * @param {number} cid 角色 ID
  */
 function chara_info_restore_state(cid) {
-  if ((era.get(`cflag:${cid}:1`) || 0) === 3) {
+  if ((EraChara.get(cid).cflag.get(1) || 0) === 3) {
     party_del(cid);
   }
-  chara(cid).invasion.状态 = 0;
+  EraChara.get(cid).cflag.set(1, 0);
 }
 
 /**
@@ -87,10 +87,10 @@ function chara_info_restore_state(cid) {
  * @returns {Promise<void>}
  */
 async function chara_info_recover_hp(cid) {
-  const max_hp = era.get(`maxbase:${cid}:0`) || 0;
-  const hp = era.get(`base:${cid}:0`) || 0;
-  const max_mp = era.get(`maxbase:${cid}:1`) || 0;
-  const mp = era.get(`base:${cid}:1`) || 0;
+  const max_hp = EraChara.get(cid).maxbase.get(0) || 0;
+  const hp = EraChara.get(cid).base.get(0) || 0;
+  const max_mp = EraChara.get(cid).maxbase.get(1) || 0;
+  const mp = EraChara.get(cid).base.get(1) || 0;
   const cost = Math.trunc(((max_hp - hp) * 10) / 3 + ((max_mp - mp) * 5) / 3);
 
   if (era_flag.money < cost) {
@@ -112,8 +112,8 @@ async function chara_info_recover_hp(cid) {
     await era.printAndWait(`花费${cost}G，恢复了${name_of(cid)}的体力与气力`);
     era_flag.money -= cost;
     era_exflag.legit_money -= cost;
-    chara(cid).dungeon.体力 = max_hp;
-    chara(cid).dungeon.气力 = max_mp;
+    EraChara.get(cid).base.set(0, max_hp);
+    EraChara.get(cid).base.set(1, max_mp);
   }
   // 白名单外的输入到不了游戏，不模拟重试循环
 }
@@ -129,16 +129,16 @@ async function chara_info_recover_hp(cid) {
  * @returns {Promise<void>}
  */
 async function chara_info_up_level(cid) {
-  const lv = era.get(`cflag:${cid}:9`) || 0; // CFLAG:9 等级
+  const lv = EraChara.get(cid).cflag.get(9) || 0; // CFLAG:9 等级
   let need;
   if (cid === 0) {
     need = lv * 10 + 10; // 魔王（与升级结算同曲线）
-  } else if ((era.get(`talent:${cid}:220`) || 0) === 1) {
+  } else if ((EraChara.get(cid).talent.get(220) || 0) === 1) {
     need = lv * 20 + 10; // 精英
   } else {
     need = lv * 10 + 10; // 通常
   }
-  need -= era.get(`exp:${cid}:80`) || 0; // EXP:80 战斗经验
+  need -= EraChara.get(cid).exp.get(80) || 0; // EXP:80 战斗经验
   if (need < 0) need = 0;
   const cost = need * 100;
 
@@ -161,7 +161,7 @@ async function chara_info_up_level(cid) {
     );
     era_flag.money -= cost;
     era_exflag.legit_money -= cost;
-    chara(cid).dungeon.战斗经验 += need;
+    EraChara.get(cid).exp.set(80, EraChara.get(cid).exp.get(80) + need);
     lvup(cid);
   }
 }
@@ -176,8 +176,8 @@ async function chara_info_up_level(cid) {
  * @returns {Promise<void>}
  */
 async function chara_info_callback(cid) {
-  const target_lv = era.get(`cflag:${cid}:9`) || 0;
-  const master_lv = era.get('cflag:0:9') || 0;
+  const target_lv = EraChara.get(cid).cflag.get(9) || 0;
+  const master_lv = EraChara.get(0).cflag.get(9) || 0;
   if (target_lv >= master_lv) {
     await era.printAndWait(
       `LV${master_lv}的${name_of(0)}无法对LV${target_lv}的${name_of(cid)}发动传送魔法`,
@@ -186,9 +186,9 @@ async function chara_info_callback(cid) {
   }
 
   const ratio = Math.trunc((target_lv * 100) / master_lv);
-  const master_max_mp = era.get('maxbase:0:1') || 0;
+  const master_max_mp = EraChara.get(0).maxbase.get(1) || 0;
   const cost = Math.trunc((ratio * ratio * master_max_mp) / 10000);
-  const master_mp = era.get('base:0:1') || 0;
+  const master_mp = EraChara.get(0).base.get(1) || 0;
   if (cost > master_mp) {
     await era.printAndWait(
       `${name_of(0)}的气力不足以对${name_of(cid)}发动传送魔法（需要${cost}点，当前${master_mp}点）`,
@@ -205,12 +205,12 @@ async function chara_info_callback(cid) {
     return;
   }
   if (result === 0) {
-    chara(0).dungeon.气力 = master_mp - cost;
+    EraChara.get(0).base.set(1, master_mp - cost);
     await era.printAndWait(
       `${name_of(0)}使用魔法把${name_of(cid)}传送了回来！`,
     );
     party_del(cid);
-    chara(cid).invasion.状态 = 0;
+    EraChara.get(cid).cflag.set(1, 0);
   }
 }
 

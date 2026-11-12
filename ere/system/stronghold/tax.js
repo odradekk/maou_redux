@@ -25,9 +25,10 @@
 'use strict';
 
 const era = require('#/era-electron');
-const { game } = require('#/facade/game');
+const EraChara = require('#/era-utils/era-chara');
 const era_exflag = require('#/era-utils/era-exflag');
 const era_flag = require('#/era-utils/era-flag');
+const era_item = require('#/era-utils/era-item');
 
 /** 税収日（DAY:2 == 10 || DAY:2 == 20 || DAY:2 == 30） */
 const TAX_DAYS = [10, 20, 30];
@@ -172,7 +173,7 @@ async function tax_get() {
     invasion,
     colony_label,
   } of TERRITORIES) {
-    const flag_value = era.get(`flag:${flag}`) || 0;
+    const flag_value = era_flag.get(flag) || 0;
     const is_conquered =
       conquered === null ? flag_value !== 0 : flag_value === conquered;
     if (is_conquered) {
@@ -183,7 +184,7 @@ async function tax_get() {
     if (invasion === null) {
       continue; // 第五块没有殖民地一支
     }
-    const invasion_value = era.get(`flag:${invasion}`) || 0;
+    const invasion_value = era_flag.get(invasion) || 0;
     if (invasion_value > 10) {
       const colonies = Math.trunc(invasion_value / 10);
       era.print(`${colony_label}${colonies}`);
@@ -192,7 +193,8 @@ async function tax_get() {
   }
 
   // 地下城（PRINTFORM 不换行 + PRINTFORML 取值 → 同一行）
-  const maze_level = era.get('cflag:0:9') || 0; // CFLAG:0:9 = 迷宫 Lv
+  // CFLAG:0:9 = 迷宫 Lv（魔王未必在已加入列表里，走动态读）
+  const maze_level = EraChara.get(0).cflag.get(9);
   const [, rate, base] = DUNGEON_TAX_BRACKETS.find(
     ([limit]) => maze_level < limit,
   );
@@ -211,14 +213,14 @@ async function tax_get() {
   era.print('*肉便器税*');
 
   // 展品观赏税（FLAG:84 = 展品数，> 0 才收，每件 10）
-  const exhibits = era.get('flag:84') || 0;
+  const exhibits = era_flag.exhibit_count || 0;
   if (exhibits > 0) {
     era.print(`├ 展品观赏税 ${exhibits * 10}`);
     toilet_tax += exhibits * 10;
   }
 
   // 肉便器使用税（FLAG:83 = 肉便器数，> 0 才收，每件 10）
-  const toilets = era.get('flag:83') || 0;
+  const toilets = era_flag.meat_toilet_count || 0;
   if (toilets > 0) {
     era.print(`├ 肉便器使用税 ${toilets * 10}`);
     toilet_tax += toilets * 10;
@@ -227,9 +229,9 @@ async function tax_get() {
   // 淫魔卖春税（无门槛）：ITEM:143 女巫 / 152 魅魔 / 182 莉莉丝
   // 各 ×2，另加固定 20
   const whores =
-    (era.get('item:143') || 0) * 2 +
-    (era.get('item:152') || 0) * 2 +
-    (era.get('item:182') || 0) * 2 +
+    (era_item.witch.count || 0) * 2 +
+    (era_item.succubus.count || 0) * 2 +
+    (era_item.lilith.count || 0) * 2 +
     20;
   era.print(`└ 淫魔卖春税 ${whores}`);
   toilet_tax += whores;
@@ -238,7 +240,7 @@ async function tax_get() {
   // 娼馆街（FLAG:350-358，九个下标、步长 1）每有一处就整体乘 1.1。
   // TIMES 是「整数 × 小数后截断」的指令，命中多次即逐个复合。
   for (let index = 1; index < 10; index += 1) {
-    if ((era.get(`flag:${index + 349}`) || 0) === 507) {
+    if ((era_flag.get(index + 349) || 0) === 507) {
       toilet_tax = Math.trunc(toilet_tax * 1.1);
     }
   }
@@ -254,13 +256,13 @@ async function tax_get() {
   era.print(''); // PRINTL + PRINTL
   era.print('*魔王特别税*');
   let surcharge_tax = Math.trunc(
-    (total * (game.stronghold.税金修正 + 100)) / 100,
+    (total * (era_flag.tax_surcharge + 100)) / 100,
   );
   surcharge_tax -= total;
   era.print(`合计 ${surcharge_tax}`); // PRINTFORMW
   await era.waitAnyKey();
   total += surcharge_tax; // TAX:0 += TAX:3
-  game.stronghold.税金修正 = 0; // FLAG:9 = 0
+  era_flag.tax_surcharge = 0; // FLAG:9 = 0
 
   // 合计税収
   era.drawLine(); // 段的 DRAWLINE + PRINTL

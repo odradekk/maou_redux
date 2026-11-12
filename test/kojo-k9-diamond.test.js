@@ -344,7 +344,7 @@ test('COLOSSEUM SELECTCOM==31：ITEM:PBAND(=4) 修正为 item:4，非字符串�
   era_flag.assi = 21;
   fixture.store.set('talent:21:121', 0);
   fixture.store.set('talent:21:122', 0);
-  fixture.store.set('item:4', 1); // PBAND
+  fixture.store.set('item:hold:4', 1); // PBAND
   era_flag.assiplay = 1;
   const { colosseum_kojo_9 } = fixture.load_module('kojo/kojo-k9-diamond');
   await colosseum_kojo_9();
@@ -854,7 +854,7 @@ test('#623 死斗场：助手器具名并入整行', async () => {
         f.store.set('tequip:20:55', 1);
         f.store.set('talent:21:121', item.penis);
         f.store.set('talent:21:122', 0);
-        f.store.set('item:4', item.band); // PBAND
+        f.store.set('item:hold:4', item.band); // PBAND
       }, group.selectcom);
       fixture.seed_chara(21, { id: 21, name: '玛奥', callname: '玛奥' });
       fixture.era.addCharacter(21);

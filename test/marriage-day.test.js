@@ -80,7 +80,7 @@ test('主函数：未婚角色只尝试恋人事件，不增加结婚爱情', as
 test('主函数：怪物库存不足时爱情已增加，但不进入婚后事件', async () => {
   const { fixture, api } = setup();
   fixture.store.set('cflag:1:601', 100);
-  fixture.store.set('item:100', 0);
+  fixture.store.set('item:hold:100', 0);
   assert.equal(await api.marriage_day(1, seq([])), 0);
   assert.equal(fixture.store.get('cflag:1:602'), 1);
   assert.equal(fixture.store.get('cflag:1:107') || 0, 0);
@@ -117,7 +117,7 @@ test('主函数：种族分支修改后的 Y 用于售乳双账本', async () =>
   const { fixture, api } = setup();
   fixture.store.set('cflag:1:601', 100);
   fixture.store.set('cflag:1:602', 50);
-  fixture.store.set('item:100', 1);
+  fixture.store.set('item:hold:100', 1);
   fixture.store.set('talent:1:130', 1);
   fixture.store.set('abl:1:11', 2);
   fixture.store.set('abl:1:13', 3);
@@ -130,7 +130,7 @@ test('主函数：种族分支修改后的 Y 用于售乳双账本', async () =>
 test('主函数：种类零回退到默认角色的同居正文', async () => {
   const { fixture, api } = setup();
   fixture.store.set('cflag:1:601', 104);
-  fixture.store.set('item:104', 1);
+  fixture.store.set('item:hold:104', 1);
 
   assert.equal(await api.marriage_day(1, seq([0, 0])), 'TURNEND');
   assert(texts(fixture).includes('*莉莉和丧尸的结婚生活*'));

@@ -98,7 +98,8 @@ function expected_init_writes(initial_slave) {
     writes.push(
       // 移植自建（#67，追加动作）：村娘加入点的 portcflag 版本戳，先于
       // 其后的 CFLAG 组（接入位置在 addCharacter/add_chara_ex 之后）
-      { name: 'portcflag:17:数据版本', value: 1 },
+      // 迁移到开发套件后写的是序号地址（同一槽）：断言值而非地址拼写
+      { name: 'portcflag:17:0', value: 1 },
       { name: 'flag:10005', value: 17 }, // TARGET = 1（序号）→ 角色 ID 17
       { name: 'cflag:17:420', value: 1 }, // 玛奥专属标记
       // CALL CHARA_NAME_DEFINE（无实参；#565 起真身 ere/system/chara/

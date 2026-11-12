@@ -314,18 +314,18 @@ test('[0] 的 600 只门槛：不足时是 [-] 文本占位，够则渲染为按
   // 门槛下沿：599 只仍不足（[0] 不是按钮，键入 0 被引擎拒收）
   const under = create_era_fixture();
   make_world(under);
-  under.store.set('item:100', 599);
+  under.store.set('item:hold:100', 599);
   await assert.rejects(
     () => run_invasion(under, [0], knob({ 100: 99 })),
     /输入不合法！请输入以下值之一：/,
     '599 只仍不够 600',
   );
-  assert.equal(under.store.get('item:100'), 599, '被拒后不扣怪物');
+  assert.equal(under.store.get('item:hold:100'), 599, '被拒后不扣怪物');
 
   // 700 只怪物（item:100 = 700 ≥ 600）后 [0] 变为可选按钮
   const monster = create_era_fixture();
   make_world(monster);
-  monster.store.set('item:100', 700);
+  monster.store.set('item:hold:100', 700);
   const { invasion } = monster.load_module('page/page-invasion');
   monster.set_inputs(0);
   assert.equal(
@@ -366,7 +366,7 @@ function seed_raidable(fixture, ids) {
 test('[0] 怪物出兵：怪物减半、战力按 monster_data 累加、战利品入账', async () => {
   const fixture = create_era_fixture();
   make_world(fixture);
-  fixture.store.set('item:100', 600); // 狗头人 600 只（正好过 600 门槛）
+  fixture.store.set('item:hold:100', 600); // 狗头人 600 只（正好过 600 门槛）
   // 100 号狗头人（等级 1/攻击 1/防御 2/速度 0/特殊 0/魔法 0）在魔王等级 0
   // 下：monster_data 写 E:2 = 1*2+2 = 4、E:3 = 2*2+2 = 6、E:4 = 0 →
   // MON_ATK = 4+6 = 10；减半后 300 只 → SINKOU = 10 * (⌊300/9⌋+1) = 340 →
@@ -375,7 +375,7 @@ test('[0] 怪物出兵：怪物减半、战力按 monster_data 累加、战利�
   const rand = knob({ 100: 99 });
   assert.equal(await run_invasion(fixture, [0], rand), 1);
 
-  assert.equal(fixture.store.get('item:100'), 300, 'ITEM:MON_ID /= 2');
+  assert.equal(fixture.store.get('item:hold:100'), 300, 'ITEM:MON_ID /= 2');
   assert.equal(fixture.store.get('flag:81'), 17, 'SINKOU 累加后 /20');
   assert.equal(fixture.store.get('flag:10004'), 170, 'MONEY += SINKOU*10');
   assert.equal(fixture.store.get('exflag:4444'), 170, 'EX_FLAG:4444 同步');
@@ -404,28 +404,28 @@ test('[0] 怪物出兵：怪物减半、战力按 monster_data 累加、战利�
 test('[0] 多个怪物识别号各自减半并累加（REPEAT 90 段）', async () => {
   const a = create_era_fixture();
   make_world(a);
-  a.store.set('item:100', 600);
+  a.store.set('item:hold:100', 600);
   assert.equal(await run_invasion(a, [0], knob({ 100: 99 })), 1);
   assert.equal(a.store.get('flag:81'), 17, '单队：340 / 20');
 
   const b = create_era_fixture();
   make_world(b);
-  b.store.set('item:100', 600);
-  b.store.set('item:101', 1200); // 哥布林（等级 1/攻击 2/防御 1）
+  b.store.set('item:hold:100', 600);
+  b.store.set('item:hold:101', 1200); // 哥布林（等级 1/攻击 2/防御 1）
   assert.equal(await run_invasion(b, [0], knob({ 100: 99 })), 1);
 
-  assert.equal(b.store.get('item:100'), 300, '每个识别号各自减半');
-  assert.equal(b.store.get('item:101'), 600);
+  assert.equal(b.store.get('item:hold:100'), 300, '每个识别号各自减半');
+  assert.equal(b.store.get('item:hold:101'), 600);
   assert.equal(b.store.get('flag:81'), 50, '(340 + 670) / 20：两队累加');
 });
 
 test('[0] 威望岌岌可危：侵攻失败早退，怪物照减半但零战利品', async () => {
   const fixture = create_era_fixture();
   make_world(fixture, { prestige: 10 });
-  fixture.store.set('item:100', 600);
+  fixture.store.set('item:hold:100', 600);
   assert.equal(await run_invasion(fixture, [0], knob({ 100: 99 })), 1);
 
-  assert.equal(fixture.store.get('item:100'), 300, '减半在威望判定之前');
+  assert.equal(fixture.store.get('item:hold:100'), 300, '减半在威望判定之前');
   assert.equal(fixture.store.get('flag:81'), 0, '侵攻失败不加侵攻度');
   assert.ok(
     !fixture.var_writes.some((w) => w.name === 'flag:10004'),
@@ -443,12 +443,12 @@ test('威望动荡不安档的提示是 PRINTW：比无修正档多一次等键'
   // 同一世界只换威望值，等键次数之差就落在这一处——删掉 waitAnyKey 即红。
   const calm = create_era_fixture();
   make_world(calm, { prestige: 70 });
-  calm.store.set('item:100', 600);
+  calm.store.set('item:hold:100', 600);
   await run_invasion(calm, [0], knob({ 100: 99 }));
 
   const restless = create_era_fixture();
   make_world(restless, { prestige: 30 });
-  restless.store.set('item:100', 600);
+  restless.store.set('item:hold:100', 600);
   await run_invasion(restless, [0], knob({ 100: 99 }));
 
   const t = history_texts(restless);
@@ -464,7 +464,7 @@ test('威望动荡不安档的提示是 PRINTW：比无修正档多一次等键'
 test('[0] 结算段 5% 抓捕：命中调 get_enemy，人数上限早退才有犒赏行', async () => {
   const fixture = create_era_fixture();
   make_world(fixture);
-  fixture.store.set('item:100', 600);
+  fixture.store.set('item:hold:100', 600);
   // 已加入数顶到 61 只（> 60）：get_enemy 的人数上限首支（FLAG:82 == 0 且
   // CHARANUM > 60）早退 0 → 才有「犒赏士兵」那一行。
   // 少于 61 只会走进 CHAR_MAKE——本用例的世界没有预设数据，那条路跑不下去
@@ -486,7 +486,7 @@ test('[0] 结算段 5% 抓捕：命中调 get_enemy，人数上限早退才有�
   // 的深水区（本用例的世界没有预设数据，那条路跑不下去）
   const edge = create_era_fixture();
   make_world(edge);
-  edge.store.set('item:100', 600);
+  edge.store.set('item:hold:100', 600);
   for (let id = 1; id <= 61; id += 1) {
     edge.chara_no.push(id);
   }
@@ -545,7 +545,7 @@ test('#612 征服后菜单：七个按钮的正文照写「- 」', async () => {
 test('[0] 已征服的人间界（经征服后菜单的 [0]）：强制征收 + 100000 封顶', async () => {
   const fixture = create_era_fixture();
   make_world(fixture, { fallen: 1 }); // FLAG:82 != 0
-  fixture.store.set('item:100', 600);
+  fixture.store.set('item:hold:100', 600);
   // 先经 post_conquest_menu 的 [0]，再走出兵菜单的 [0]
   assert.equal(await run_post_conquest(fixture, [0, 0], knob({ 100: 99 })), 1);
   assert.equal(fixture.store.get('flag:81'), 17, '已征服也是全额累加');
@@ -560,7 +560,7 @@ test('[0] 已征服且 SINKOU 超 100000 时封顶', async () => {
   const fixture = create_era_fixture();
   make_world(fixture, { fallen: 1 });
   // 400 万只 → 减半 200 万 → SINKOU = 10 * (⌊2000000/9⌋+1) / 20 = 111111
-  fixture.store.set('item:100', 4000000);
+  fixture.store.set('item:hold:100', 4000000);
   await run_post_conquest(fixture, [0, 0], knob({ 100: 99 }));
   assert(
     history_texts(fixture).includes('强制征收了1000000点！'),
@@ -929,7 +929,7 @@ test('invasion_event 的 RAND:10 真分发：9 → FORT、8 → CHALLENGE、其�
   const run_with = async (roll) => {
     const fixture = create_era_fixture();
     make_world(fixture);
-    fixture.store.set('item:100', 600); // 过 600 门槛，[0] 才是按钮
+    fixture.store.set('item:hold:100', 600); // 过 600 门槛，[0] 才是按钮
     const uppers = [];
     const rand = knob({ 10: roll, 100: 99 });
     const spy = (n) => {
@@ -1015,7 +1015,7 @@ test('FORT 入口检查按旧引擎的左结合求值：2/3 恒进、0 看 FLAG:
 
   const monster = create_era_fixture();
   make_world(monster, { fallen: 1 });
-  monster.store.set('item:100', 600);
+  monster.store.set('item:hold:100', 600);
   await run_post_conquest(monster, [0, 0], knob({ 10: 9, 100: 99 }));
   assert(
     !history_texts(monster).includes(
@@ -2776,7 +2776,7 @@ test('[2] 勇者出兵：怪物消耗三分之一、勇者补正、结果段', a
   const fixture = create_era_fixture();
   make_world(fixture);
   fixture.store.set('base:0:0', 10000); // 魔王体力（首次 inv_death_check 读它）
-  fixture.store.set('item:100', 600); // 过 600 门槛
+  fixture.store.set('item:hold:100', 600); // 过 600 门槛
   fixture.store.set('flag:10004', 0); // MONEY
   fixture.store.set('exflag:4444', 0); // EX_FLAG:4444 非作弊资金
   seed_brute_hero(fixture, 1);
@@ -2784,7 +2784,7 @@ test('[2] 勇者出兵：怪物消耗三分之一、勇者补正、结果段', a
   assert.equal(await run_invasion(fixture, [2, 1], knob({ 100: 99 })), 1);
 
   // 怪物 /= 3 后 *= 2（与 [0] 的 /= 2 不同）
-  assert.equal(fixture.store.get('item:100'), 400, 'ITEM /= 3 再 *= 2');
+  assert.equal(fixture.store.get('item:hold:100'), 400, 'ITEM /= 3 再 *= 2');
   // 战力 11 → 勇者补正 x1.10（等级 10）→ 12 → 侵攻度 +12
   assert.equal(fixture.store.get('flag:81'), 12, '未征服全额入账');
   // 未征服：战利品 = SINKOU*5、经验 = SINKOU/2
@@ -2827,7 +2827,7 @@ test('[2] 性格旁白七档 + 未命中空的 PRINTL', async () => {
     const fixture = create_era_fixture();
     make_world(fixture);
     fixture.store.set('base:0:0', 10000);
-    fixture.store.set('item:100', 600);
+    fixture.store.set('item:hold:100', 600);
     seed_brute_hero(fixture, 1);
     fixture.store.set(`talent:1:${talent}`, 1);
     await run_invasion(fixture, [2, 1], knob({ 100: 99 }));
@@ -2841,7 +2841,7 @@ test('[2] 性格旁白七档 + 未命中空的 PRINTL', async () => {
   const plain = create_era_fixture();
   make_world(plain);
   plain.store.set('base:0:0', 10000);
-  plain.store.set('item:100', 600);
+  plain.store.set('item:hold:100', 600);
   seed_brute_hero(plain, 1);
   await run_invasion(plain, [2, 1], knob({ 100: 99 }));
   assert.equal(
@@ -2854,7 +2854,7 @@ test('[2] 性格旁白七档 + 未命中空的 PRINTL', async () => {
   const loving = create_era_fixture();
   make_world(loving);
   loving.store.set('base:0:0', 10000);
-  loving.store.set('item:100', 600);
+  loving.store.set('item:hold:100', 600);
   seed_brute_hero(loving, 1);
   loving.store.set('talent:1:160', 1);
   await run_invasion(loving, [2, 1], knob({ 100: 99 }));
@@ -2931,7 +2931,7 @@ test('[2] 候选资格六条逐条', async () => {
     const fixture = create_era_fixture();
     make_world(fixture);
     fixture.store.set('base:0:0', 10000);
-    fixture.store.set('item:100', 600);
+    fixture.store.set('item:hold:100', 600);
     seed_brute_hero(fixture, 1);
     item.setup(fixture);
     await run_invasion(fixture, [2, 1], knob({ 100: 99 }));
@@ -2948,7 +2948,7 @@ test('[2] 候选资格六条逐条', async () => {
   const only_master = create_era_fixture();
   make_world(only_master);
   only_master.store.set('base:0:0', 10000);
-  only_master.store.set('item:100', 600);
+  only_master.store.set('item:hold:100', 600);
   only_master.store.set('talent:0:85', 1); // 除「是魔王自己」外全部放行
   only_master.seed_chara(0, { id: 0, name: '你', callname: '你' });
   only_master.era.addCharacter(0);
@@ -2969,7 +2969,7 @@ test('[2] 分页游标与 [2]/[3] 共用同一套页窗条件', async () => {
   const fixture = create_era_fixture();
   make_world(fixture);
   fixture.store.set('base:0:0', 10000);
-  fixture.store.set('item:100', 600);
+  fixture.store.set('item:hold:100', 600);
   for (const id of ids) {
     seed_brute_hero(fixture, id);
   }
@@ -4080,7 +4080,7 @@ test('[2] 已征服的人间界（经征服后菜单的 [0]）：强制征收 ×
   const fixture = create_era_fixture();
   make_world(fixture, { fallen: 1 });
   fixture.store.set('base:0:0', 10000);
-  fixture.store.set('item:100', 600);
+  fixture.store.set('item:hold:100', 600);
   fixture.store.set('flag:10004', 0);
   fixture.store.set('exflag:4444', 0);
   seed_brute_hero(fixture, 1);
@@ -4101,7 +4101,7 @@ test('[2] 结果段的 9% 抓捕：命中调 get_enemy 并 EX_FLAG:99 +1', async
     const fixture = create_era_fixture();
     make_world(fixture); // 威望 70
     fixture.store.set('base:0:0', 10000);
-    fixture.store.set('item:100', 600);
+    fixture.store.set('item:hold:100', 600);
     seed_brute_hero(fixture, 1);
     // 人数超过 60 → get_enemy 在人数上限分支直接早退 0（不掷骰、不建角色）
     for (let id = 2; id <= 62; id += 1) {
@@ -4453,7 +4453,7 @@ test('【地区续接·已征服分支】[0] 五个地区（含天神宫）已�
     if (region.result === 5) {
       fixture.store.set('exflag:2810', 510); // [5] 需 route_33 开放区间
     }
-    fixture.store.set('item:100', 600); // 过 600 门槛，SINKOU = 17（同 [0] 主用例）
+    fixture.store.set('item:hold:100', 600); // 过 600 门槛，SINKOU = 17（同 [0] 主用例）
     assert.equal(
       await run_invasion(fixture, [region.result, 0], knob({ 100: 99 })),
       1,
@@ -4487,7 +4487,7 @@ test('【地区续接·已征服分支】[0] 五个地区（含天神宫）已�
 test('【地区续接】结果段的地区名随 AREA 切换：[2] 到达 / [3] 掠夺', async () => {
   const brute = make_conquest_world(REGION_CASES[0]); // 精灵族的领域
   brute.store.set('base:0:0', 10000);
-  brute.store.set('item:100', 600);
+  brute.store.set('item:hold:100', 600);
   seed_brute_hero(brute, 1);
   assert.equal(await run_invasion(brute, [1, 2, 1], knob({ 100: 99 })), 1);
   assert(
@@ -4527,7 +4527,7 @@ test('【地区续接】凌辱演出的地区号按 AREA 分派', async () => {
     if (region.result === 5) {
       fixture.store.set('exflag:2810', 510);
     }
-    fixture.store.set('item:110', 600);
+    fixture.store.set('item:hold:110', 600);
     fixture.store.set('itemname:110', '兽人');
     assert.equal(
       await run_invasion(fixture, [region.result, 0], ravish_knob),
@@ -4542,7 +4542,7 @@ test('【地区续接】凌辱演出的地区号按 AREA 分派', async () => {
   // [2] 勇者出兵路线的同一分派：跑一条地区即可鉴别写死 1
   const brute = make_conquest_world(REGION_CASES[0]); // 精灵族的领域
   brute.store.set('base:0:0', 10000);
-  brute.store.set('item:110', 600);
+  brute.store.set('item:hold:110', 600);
   brute.store.set('itemname:110', '兽人');
   seed_brute_hero(brute, 1);
   assert.equal(await run_invasion(brute, [1, 2, 1], ravish_knob), 1);

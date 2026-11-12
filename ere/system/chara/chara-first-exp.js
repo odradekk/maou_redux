@@ -39,7 +39,7 @@
 
 'use strict';
 
-const era = require('#/era-electron');
+const EraChara = require('#/era-utils/era-chara');
 const { chara } = require('#/facade/chara');
 const { default_rand } = require('#/utils/numeric');
 
@@ -305,7 +305,7 @@ function pick_three(options, rand) {
  * @returns {void} 无返回值，调用点不读返回值
  */
 function chara_first_exp(cid, rand = default_rand) {
-  const t = (index) => era.get(`talent:${cid}:${index}`) || 0;
+  const t = (index) => EraChara.get(cid).talent.get(index) || 0;
   const train = chara(cid).train;
   const dungeon = chara(cid).dungeon;
   const not_virgin = () => t(0) === 0; // TALENT:0 処女 == 0（非処女）

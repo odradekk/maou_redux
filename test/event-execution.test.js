@@ -129,9 +129,9 @@ test('EXECUTION_MINI：回收装备、除名角色并结算处刑与勋章经验
   assert.equal(await execution_mini(31), 0);
 
   assert.deepEqual(fixture.era.getAddedCharacters(), [0, 47]);
-  assert.equal(fixture.store.get('item:301'), 1);
-  assert.equal(fixture.store.get('item:302'), 1);
-  assert.equal(fixture.store.get('item:303'), 1);
+  assert.equal(fixture.store.get('item:hold:301'), 1);
+  assert.equal(fixture.store.get('item:hold:302'), 1);
+  assert.equal(fixture.store.get('item:hold:303'), 1);
   assert.equal(fixture.store.get('cflag:31:550'), -1);
   assert.equal(fixture.store.get('cflag:31:551'), -1);
   assert.equal(fixture.store.get('cflag:31:552'), -1);

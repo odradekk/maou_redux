@@ -14,9 +14,10 @@
  */
 
 const era = require('#/era-electron');
+const EraChara = require('#/era-utils/era-chara');
+const era_tstr = require('#/era-utils/era-tstr');
 const { estimate_chara } = require('#/system/stronghold/sale');
 const { video_maturo } = require('#/system/stronghold/sell-video');
-const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
 const { search_family } = require('#/system/chara/chara-family');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
@@ -138,15 +139,15 @@ async function sell_maturo_k2(cid = era_flag.target, { price } = {}) {
   let branch;
   let ending;
 
-  if (era.get(`talent:${cid}:136`)) {
+  if (EraChara.get(cid).talent.bitch) {
     price += 50_000;
     await era.printAndWait(`已经是牝犬的${name}可以多卖50000点。`);
     [buyer, branch, ending] = k2_route(
       price,
-      era.get(`talent:${cid}:75`) === 1,
-      era.get(`abl:${cid}:15`) || 0,
+      EraChara.get(cid).talent.sex_maniac === 1,
+      EraChara.get(cid).abl.talk_skill || 0,
     );
-  } else if (era.get(`talent:${cid}:76`)) {
+  } else if (EraChara.get(cid).talent.lewd) {
     if (price >= 1_000_000)
       [buyer, branch, ending] = ['魔界土豪', 104, '高级牝犬'];
     else if (price >= 500_000)
@@ -167,8 +168,9 @@ async function sell_maturo_k2(cid = era_flag.target, { price } = {}) {
   await sell_maturo_k2_branch(branch, cid);
 
   const family_id = search_family(cid);
-  if (family_id >= 0) chara(family_id).event.家人末路 = `${ending}${name}`;
-  era.set('tstr:30', `${ending}${name}`);
+  if (family_id >= 0)
+    EraChara.get(family_id).cstr.family_fate = `${ending}${name}`;
+  era_tstr.set(30, `${ending}${name}`);
   await era.print('');
   await era.printAndWait(`就这样，${chara_name(0)}和${name}再也没有见面……`);
   await era.print('');

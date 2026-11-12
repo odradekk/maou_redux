@@ -28,6 +28,7 @@ const {
   load_engine_bundle,
 } = require('./helpers/engine-bundle');
 const {
+  yml_declared_ids,
   yml_extended_chara_tables,
   yml_extended_normal_tables,
 } = require('./helpers/static-names');
@@ -182,10 +183,12 @@ test('读没加入的角色的具名属性抛 TypeError（与引擎一致）', (
   fixture.era.addCharacter(31);
   const { data } = fixture.era.raw();
 
-  // 已加入的角色：行对象存在，列值没写过就是 undefined（稀疏语义）
+  // 已加入的角色：行对象存在，登记过的列是引擎的预置值（数字表 0）
   assert.equal(typeof data.abl[31], 'object');
   assert.deepEqual(Object.keys(data.abl), ['31'], '行集合只含已加入的角色');
-  assert.equal(data.abl[31][10], undefined);
+  assert.equal(data.abl[31][10], 0, '声明列由引擎预置 0（#825）');
+  // 未登记序号仍不预置：引擎的 fillData 只遍历名字表
+  assert.equal(data.abl[31][999], undefined, '未声明序号不预置');
   // 扩展角色表同样逐角色建行（引擎 addCharacter 的扩展表段）
   for (const table of yml_extended_chara_tables()) {
     assert.equal(typeof data[table][31], 'object', `${table} 的行随加入建`);
@@ -254,6 +257,41 @@ test('调教表与 data.no：调教期之外不存在，在训角色才有行', 
   assert.ok('source' in raw.data, '下一次 beginTrain 重建 source');
 });
 
+test('预置只做在读面：store 仍是「写了没」，raw()/era.get 是引擎的读面（#825）', () => {
+  const fixture = create_era_fixture();
+  fixture.seed_chara(31, { name: '琼' });
+  fixture.era.addCharacter(31);
+  const { data } = fixture.era.raw();
+
+  // talent:31:20（剛强）在 Talent.yml 里登记过、这一局没人写过：
+  //  - store 是夹具的写入记账面：未写 ⇒ undefined（182 处断言靠它观测「未写」）
+  //  - raw()/era.get 是引擎数据层的读面：真机 addCharacter 已按声明集落 0
+  assert.equal(
+    fixture.store.get('talent:31:20'),
+    undefined,
+    '记账面：没写过就没有',
+  );
+  assert.equal(data.talent[31][20], 0, '读面：声明列是引擎预置的 0');
+  assert.equal(fixture.era.get('talent:31:20'), 0, 'era.get 同样是读面');
+
+  // 未登记序号在哪里都没有：引擎的 fillData 只遍历名字表
+  assert.equal(data.talent[31][999], undefined, '未声明序号不预置');
+  assert.equal(
+    fixture.era.get('talent:31:999'),
+    undefined,
+    '未声明序号 era.get 仍是 undefined',
+  );
+
+  // 写入仍然照常落 store（记账面不丢）
+  fixture.era.set('talent:31:20', 3);
+  assert.equal(
+    fixture.store.get('talent:31:20'),
+    3,
+    '写过之后记账面记下这一笔',
+  );
+  assert.equal(data.talent[31][20], 3, '写面与读面同槽');
+});
+
 // —— 引擎比对（ADR-0005 第一层：假 this + 真方法）——
 // 引擎侧的 data / global 全部由 app.asar 里的真方法产生：resetData 的顶层
 // 字面量、fillData 的缺省、addCharacter 逐角色建的行、beginTrain 建的表、
@@ -263,6 +301,67 @@ test('调教表与 data.no：调教期之外不存在，在训角色才有行', 
 
 const engine = load_engine_bundle();
 const engine_test = engine ? test : test.skip;
+
+engine_test(
+  '引擎比对：item:<N> 与 item:hold:<N> 是同一个槽，data.item 不出现数字子键',
+  () => {
+    const fixture = create_era_fixture();
+    const engine_data = create_engine_data({
+      static_data: engine_static_data(fixture),
+    });
+    engine_data.reset_data();
+
+    // 引擎：两段式 item:90 落 default 支的 hold，三段式读回同一个槽
+    engine_data.set_var('item:hold:90', 5);
+    const engine_raw = engine_data.raw().data;
+    assert.equal(
+      engine_raw.item.hold[90],
+      5,
+      '引擎：item:90 写进 data.item.hold[90]',
+    );
+    assert.equal(
+      engine_data.set_var('item:hold:90'),
+      5,
+      '引擎：item:hold:90 读回同一槽',
+    );
+    engine_data.set_var('item:hold:91', 7);
+    assert.equal(
+      engine_data.set_var('item:hold:91'),
+      7,
+      '引擎：item:91 也读三段式写的槽',
+    );
+    assert.deepEqual(
+      Object.keys(engine_raw.item),
+      ['bought', 'hold', 'price', 'sales'],
+      '引擎的 data.item 只有四个子表',
+    );
+
+    // 夹具：同一组写入必须落同一处，顶层键与引擎逐键一致
+    fixture.era.set('item:hold:90', 5);
+    const fixture_raw = fixture.era.raw().data;
+    assert.equal(
+      fixture_raw.item.hold[90],
+      5,
+      '夹具：era.set(item:90) 写进 data.item.hold[90]',
+    );
+    assert.equal(
+      fixture.era.get('item:hold:90'),
+      5,
+      '夹具：item:hold:90 读回同一槽',
+    );
+    fixture.era.set('item:hold:91', 7);
+    assert.equal(
+      fixture.era.get('item:hold:91'),
+      7,
+      '夹具：item:91 读三段式写的槽',
+    );
+    assert.deepEqual(
+      Object.keys(fixture_raw.item),
+      Object.keys(engine_raw.item),
+      '夹具的 data.item 顶层键与引擎一致（没有数字子键）',
+    );
+  },
+);
 
 /**
  * 与实机同源的引擎静态表 + 一个角色预设。夹具的数据层结构与静态表登记了
@@ -326,6 +425,58 @@ function engine_extended_tables() {
     ]),
   ]);
 }
+
+engine_test(
+  '引擎比对：addCharacter 后声明列预置 0、未声明列 undefined（#825）',
+  () => {
+    const fixture = create_era_fixture();
+    const engine_data = create_engine_data({
+      static_data: engine_static_data(fixture),
+      extended_tables: engine_extended_tables(),
+    });
+    engine_data.reset_data();
+    engine_data.add(31);
+
+    const engine_raw = engine_data.raw().data;
+    // 真方法实测：initCharaTable 的七张表按名字表登记集逐格落「预设 ?? 0」
+    assert.equal(engine_raw.abl[31][10], 0, '引擎：已加入角色的声明列是 0');
+    assert.equal(
+      Object.keys(engine_raw.cflag[31]).length,
+      yml_declared_ids('cflag').size,
+      '引擎：cflag 的逐角色键数等于 CFlag.yml 的声明数',
+    );
+    assert.equal(engine_raw.abl[31][999], undefined, '引擎：未声明序号不预置');
+    assert.equal(
+      engine_raw.cstr[31][30],
+      undefined,
+      '引擎：未声明的 cstr 序号同样不写',
+    );
+
+    // 夹具读面与引擎读面同结论（夹具的写入记账面另有契约，见上一条用例）
+    fixture.seed_chara(31, { name: '琼' });
+    fixture.era.addCharacter(31);
+    const fixture_raw = fixture.era.raw().data;
+    assert.equal(
+      fixture_raw.abl[31][10],
+      engine_raw.abl[31][10],
+      '声明列的预置值两侧一致',
+    );
+    // 夹具的行是平表视图，ownKeys 只列写过的键（254 个声明列按需取值）；
+    // 比对读值而不是键数——键的枚举口径不是这套访问器的契约
+    for (const id of [0, 1, 2, 9, 151, 550]) {
+      assert.equal(
+        fixture_raw.cflag[31]?.[id] ?? 0,
+        engine_raw.cflag[31][id],
+        `cflag:31:${id} 两侧同值`,
+      );
+    }
+    assert.equal(
+      fixture_raw.abl[31][999],
+      engine_raw.abl[31][999],
+      '未声明序号两侧都 undefined',
+    );
+  },
+);
 
 engine_test('引擎比对：raw().data 的顶层表集合与 resetData 一致', () => {
   const fixture = create_era_fixture();

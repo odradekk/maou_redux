@@ -677,7 +677,7 @@ test('chara_info：1200 视图（默认）走包装入口——结婚成功的 1
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '甲');
-  fixture.store.set('item:100', 1);
+  fixture.store.set('item:hold:100', 1);
   fixture.store.set('itemname:100', '怪物');
   const { chara_info } = fixture.load_module('page/page-chara-info');
 
@@ -747,7 +747,7 @@ test('chara_info：切到非 1200 视图（[1300]）直调内层——结婚成�
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '甲');
-  fixture.store.set('item:100', 1);
+  fixture.store.set('item:hold:100', 1);
   fixture.store.set('itemname:100', '怪物');
   const { chara_info } = fixture.load_module('page/page-chara-info');
 
@@ -1020,7 +1020,7 @@ test('chara_info_individual_wrapped：包装入口透传内层返回值，结婚
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '甲');
-  fixture.store.set('item:100', 1);
+  fixture.store.set('item:hold:100', 1);
   fixture.store.set('itemname:100', '怪物');
   const { chara_info_individual_wrapped } = fixture.load_module(
     'page/page-chara-info',
@@ -1505,7 +1505,7 @@ test('三动作接入（#393）：结婚成功后 marriage 的返回 1 上浮为
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '甲');
-  fixture.store.set('item:100', 1);
+  fixture.store.set('item:hold:100', 1);
   fixture.store.set('itemname:100', '怪物');
   // [4] → 结婚菜单 → 选 100 号怪物 → 婚礼跑完（MARRIAGE 返回 1）→ 上浮
   fixture.set_inputs(4, 100, 100); // 末尾的 100 只在返回值没上浮时才会被消费
@@ -2368,8 +2368,10 @@ test('换号第二屏：只剩一名候选时也有出口——[3002] 取消回�
     '取消直接回第一屏、不进确认屏（漏掉这条支路时 1999 会落到确认屏的白名单外）',
   );
   assert.equal(thrown, null, '整条路走完不抛错：没有卡死');
+  // 观测「这一步没写」要看写入记账面（store）；era.get/raw() 是引擎读面，
+  // 声明列在引擎里恒有值（PORTCFLAG:排序编号 未设时读到 0，读侧回落角色 ID）
   assert.equal(
-    fixture.era.get('portcflag:17:排序编号'),
+    fixture.store.get('portcflag:17:1'),
     undefined,
     '取消不写排序编号',
   );

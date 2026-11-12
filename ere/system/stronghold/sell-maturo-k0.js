@@ -17,6 +17,8 @@
 'use strict';
 
 const era = require('#/era-electron');
+const EraChara = require('#/era-utils/era-chara');
+const era_tstr = require('#/era-utils/era-tstr');
 
 /** 卖春市场入口的三键：放弃 [999]、水晶球记录 [1000]（0-2 是三个市场） */
 const SELL_MARKET_GIVEUP_KEY = 999;
@@ -38,7 +40,6 @@ const {
   ROUTES: NORMAL_ROUTES,
 } = require('#/system/stronghold/sell-maturo-k0-normal');
 const { peek_sale_price } = require('#/event/event-aftertrain');
-const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { search_family } = require('#/system/chara/chara-family');
@@ -92,8 +93,8 @@ async function choose_market(cid, price, rand) {
 
 /** k0_route：按反抗刻印、爱慕、淫乱、常态与种族、售价给出末路编号。 */
 function k0_route(cid, price) {
-  if (era.get(`mark:${cid}:3`) == 3) {
-    if (era.get(`talent:${cid}:314`) == 9) {
+  if (EraChara.get(cid).mark.resistance_mark == 3) {
+    if (EraChara.get(cid).talent.race == 9) {
       if (price >= 100000) {
         return 'rebel_matu_ge100k';
       } else {
@@ -106,8 +107,8 @@ function k0_route(cid, price) {
         return 'rebel_other_lt100k';
       }
     }
-  } else if (era.get(`talent:${cid}:85`)) {
-    if (era.get(`talent:${cid}:314`) == 9) {
+  } else if (EraChara.get(cid).talent.in_love) {
+    if (EraChara.get(cid).talent.race == 9) {
       if (price >= 1000000) {
         return 'love_matu_ge1m';
       } else if (price >= 500000) {
@@ -128,8 +129,8 @@ function k0_route(cid, price) {
         return 'love_other_lt100k';
       }
     }
-  } else if (era.get(`talent:${cid}:76`)) {
-    if (era.get(`talent:${cid}:314`) == 9) {
+  } else if (EraChara.get(cid).talent.lewd) {
+    if (EraChara.get(cid).talent.race == 9) {
       if (price >= 1000000) {
         return 'lewd_matu_ge1m';
       } else if (price >= 500000) {
@@ -151,7 +152,7 @@ function k0_route(cid, price) {
       }
     }
   } else {
-    if (era.get(`talent:${cid}:314`) == 9) {
+    if (EraChara.get(cid).talent.race == 9) {
       if (price >= 500000) {
         return 'normal_matu_ge500k';
       } else if (price >= 100000) {
@@ -188,9 +189,9 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
 
   const family_id = search_family(cid);
   if (family_id >= 0) {
-    chara(family_id).event.家人末路 = `${ending}${target_name}`;
+    EraChara.get(family_id).cstr.family_fate = `${ending}${target_name}`;
   }
-  era.set('tstr:30', `${ending}${target_name}`);
+  era_tstr.set(30, `${ending}${target_name}`);
   await era.print('');
   await era.printAndWait(
     `就这样，${master_name}和${target_name}再也没有见面……`,

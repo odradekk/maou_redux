@@ -26,7 +26,7 @@
 'use strict';
 
 const era = require('#/era-electron');
-const { chara } = require('#/facade/chara');
+const EraChara = require('#/era-utils/era-chara');
 const era_flag = require('#/era-utils/era-flag');
 const { print_button_grid } = require('#/utils/button-grid');
 const { default_rand } = require('#/utils/numeric');
@@ -64,7 +64,7 @@ function talentname(index) {
 
 /** 读取素质（#13：未声明下标读回 undefined，缺省返回 0） */
 function talent(cid, index) {
-  return era.get(`talent:${cid}:${index}`) || 0;
+  return EraChara.get(cid).talent.get(index) || 0;
 }
 
 /**
@@ -80,11 +80,11 @@ function talent(cid, index) {
  */
 function set_talent(cid, index, value) {
   if (index === 174) {
-    chara(cid).system.贵公子 = value;
+    EraChara.get(cid).talent.set(174, value);
   } else if (index === 175) {
-    chara(cid).system.伶俐 = value;
+    EraChara.get(cid).talent.set(175, value);
   } else {
-    era.set(`talent:${cid}:${index}`, value);
+    EraChara.get(cid).talent.set(index, value);
   }
 }
 

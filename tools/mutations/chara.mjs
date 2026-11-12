@@ -42,9 +42,9 @@ export default [
   {
     desc: 'M11634 FLAG:1/2 的角色号调整复辟（恒空操作被写活）',
     file: 'ere/system/chara/chara-make.js',
-    find: '        // （#71；属主域是 event）。\n        era_flag.target = game.event.上次调教对象; // TARGET = FLAG:1',
+    find: '        // （#71；属主域是 event）。\n        era_flag.target = era_flag.last_train_target; // TARGET = FLAG:1',
     replace:
-      '        // （#71；属主域是 event）。\n        if (game.event.上次调教对象 > newchara) game.event.上次调教对象 -= 1; // 变异：调整复辟\n        era_flag.target = game.event.上次调教对象; // TARGET = FLAG:1',
+      '        // （#71；属主域是 event）。\n        if (era_flag.last_train_target > newchara) era_flag.last_train_target -= 1; // 变异：调整复辟\n        era_flag.target = era_flag.last_train_target; // TARGET = FLAG:1',
     tests: ['page-campaign'],
     must_mention: 'FLAG:1 不被改写',
   },
@@ -86,8 +86,8 @@ export default [
   {
     desc: 'M307 cm_stp 的 CFLAG:A:1 = 2 改 3（接入点触发条件被改坏——三分叉测试必须红）',
     file: 'ere/system/chara/chara-make.js',
-    find: '  chara(cid).invasion.状态 = 2; // CFLAG:1 侵攻中',
-    replace: '  chara(cid).invasion.状态 = 3; // CFLAG:1 侵攻中',
+    find: '  EraChara.get(cid).cflag.set(1, 2); // CFLAG:1 侵攻中',
+    replace: '  EraChara.get(cid).cflag.set(1, 3); // CFLAG:1 侵攻中',
     tests: ['chara-make'],
     must_mention: 'cflag:A:1 = 2 侵攻中',
   },
@@ -110,7 +110,7 @@ export default [
   {
     desc: 'M6522 karma 移除魂缚检查（魂缚角色会错误改变善恶值）',
     file: 'ere/system/chara/chara-stats.js',
-    find: 'function karma(cid, delta) {\n  if (chara(cid).stronghold.魂缚) {',
+    find: 'function karma(cid, delta) {\n  if (EraChara.get(cid).talent.get(274) || 0) {',
     replace: 'function karma(cid, delta) {\n  if (false) {',
     tests: ['chara-stubs'],
     must_mention: '魂缚阻止善恶值变化',
@@ -134,8 +134,8 @@ export default [
   {
     desc: 'M6525 chara_lv_check 的非负检查改为 > 0（零经验会错误降级）',
     file: 'ere/system/chara/chara-stats.js',
-    find: 'if (chara(cid).dungeon.战斗经验 >= 0) {',
-    replace: 'if (chara(cid).dungeon.战斗经验 > 0) {',
+    find: 'if ((EraChara.get(cid).exp.get(80) || 0) >= 0) {',
+    replace: 'if ((EraChara.get(cid).exp.get(80) || 0) > 0) {',
     tests: ['chara-stubs'],
     must_mention: '非负战斗经验不改状态',
   },
@@ -150,16 +150,16 @@ export default [
   {
     desc: 'M6527 CHARA_ID_OUTPUT 的经历权重 10 改 11',
     file: 'ere/system/chara/chara-stats.js',
-    find: '(era.get(`talent:${cid}:315`) || 0) * 10',
-    replace: '(era.get(`talent:${cid}:315`) || 0) * 11',
+    find: '(EraChara.get(cid).talent.get(315) || 0) * 10',
+    replace: '(EraChara.get(cid).talent.get(315) || 0) * 11',
     tests: ['chara-stubs'],
     must_mention: '组合经历、首个性格与家族构成编号',
   },
   {
     desc: 'M6528 CHARA_ID_OUTPUT 的家族权重少一个数量级',
     file: 'ere/system/chara/chara-stats.js',
-    find: '(era.get(`talent:${cid}:320`) || 0) * 100000',
-    replace: '(era.get(`talent:${cid}:320`) || 0) * 10000',
+    find: '(EraChara.get(cid).talent.get(320) || 0) * 100000',
+    replace: '(EraChara.get(cid).talent.get(320) || 0) * 10000',
     tests: ['chara-stubs'],
     must_mention: '家族构成编号',
   },
@@ -270,8 +270,8 @@ export default [
   {
     desc: 'M6543 chara_make_inherit 把裸 TALENT 写误绑回子代而非目标角色',
     file: 'ere/system/chara/chara-make-inherit.js',
-    find: 'chara(era_flag.target).chara.私处封印 = 0;',
-    replace: 'chara(child).chara.私处封印 = 0;',
+    find: 'EraChara.get(era_flag.target).talent.set(273, 0);',
+    replace: 'EraChara.get(child).talent.set(273, 0);',
     tests: ['chara-make-inherit'],
     must_mention: 'L_A（子代）不被裸写命中',
   },
@@ -430,8 +430,8 @@ export default [
   {
     desc: 'M7819 set_suit_selfcall CASE3 输出词两性倒接（#383）',
     file: 'ere/system/chara/chara-self-call.js',
-    find: "          era.set(`cstr:${cid}:60`, male ? '鄙人' : '人家');",
-    replace: "          era.set(`cstr:${cid}:60`, male ? '人家' : '鄙人');",
+    find: "          EraChara.get(cid).cstr.set(60, male ? '鄙人' : '人家')",
+    replace: "          EraChara.get(cid).cstr.set(60, male ? '人家' : '鄙人')",
     tests: ['chara-self-call'],
     must_mention: '非男性→人家',
   },
@@ -456,28 +456,18 @@ export default [
   {
     desc: 'M7823 set_nick_selfcall 洋名 CASE3 白名单判断被砍（#383）',
     file: 'ere/system/chara/chara-self-call.js',
-    find: `          if (!WEST_NICK_FIRST_CHARS.has(first)) {
-            continue;
-          }
-          era.set(\`cstr:\${cid}:60\`, \`\${first}儿\`);`,
-    replace: `          if (false) {
-            continue;
-          }
-          era.set(\`cstr:\${cid}:60\`, \`\${first}儿\`);`,
+    find: '          if (!WEST_NICK_FIRST_CHARS.has(first)) {\n            continue;\n          }\n          EraChara.get(cid).cstr.set(60, `${first}儿`)',
+    replace:
+      '          if (false) {\n            continue;\n          }\n          EraChara.get(cid).cstr.set(60, `${first}儿`)',
     tests: ['chara-self-call'],
     must_mention: '洋名CASE3白名单不含张三丰的张',
   },
   {
     desc: 'M7824 random_self_call 合适一人称表命中后的 CFLAG 偏移改错（#383）',
     file: 'ere/system/chara/chara-self-call.js',
-    find: `    if (result >= 0) {
-      chara(cid).chara.一人称档位 = result + 10;
-      return result + 10;
-    }`,
-    replace: `    if (result >= 0) {
-      chara(cid).chara.一人称档位 = result + 11;
-      return result + 11;
-    }`,
+    find: '    if (result >= 0) {\n      EraChara.get(cid).cflag.set(450, result + 10);\n      return result + 10;\n    }',
+    replace:
+      '    if (result >= 0) {\n      EraChara.get(cid).cflag.set(450, result + 11);\n      return result + 11;\n    }',
     tests: ['chara-self-call'],
     must_mention: '命中档+10委派合适一人称表',
   },
@@ -527,9 +517,9 @@ export default [
   {
     desc: 'M10604 「算了，不选了」支 DELCHARA 传「已加入数 - 1」（#487：刚招募的留在编制里）',
     file: 'ere/system/chara/chara-make.js',
-    find: '        era.removeCharacter(newchara); // 移除角色\n        cn_rebuild(); // 重建名字表\n        era_flag.target = game.event.上次调教对象; // TARGET = FLAG:1',
+    find: '        era.removeCharacter(newchara); // 移除角色\n        cn_rebuild(); // 重建名字表\n        era_flag.target = era_flag.last_train_target; // TARGET = FLAG:1',
     replace:
-      '        era.removeCharacter(era.getAddedCharacters().length - 1); // 变异\n        cn_rebuild(); // 重建名字表\n        era_flag.target = game.event.上次调教对象; // TARGET = FLAG:1',
+      '        era.removeCharacter(era.getAddedCharacters().length - 1); // 变异\n        cn_rebuild(); // 重建名字表\n        era_flag.target = era_flag.last_train_target; // TARGET = FLAG:1',
     tests: ['chara-make'],
     must_mention: '刚招募的 1 号（角色号，不是「已加入数 - 1」= 2）',
   },
@@ -545,9 +535,9 @@ export default [
   {
     desc: 'M10606 CFLAG:1 初始位置写「已加入数 - 1」（#487：归零落到别人身上）',
     file: 'ere/system/chara/chara-make.js',
-    find: '      chara(newchara).invasion.状态 = 0; // CFLAG:1 初始位置',
+    find: '      EraChara.get(newchara).cflag.set(1, 0); // CFLAG:1 初始位置',
     replace:
-      '      chara(era.getAddedCharacters().length - 1).invasion.状态 = 0; // 变异',
+      '      EraChara.get(era.getAddedCharacters().length - 1).cflag.set(1, 0); // 变异：写到「已加入数 - 1」',
     tests: ['chara-name'],
     must_mention: 'CFLAG:1 归零',
   },
@@ -614,8 +604,8 @@ export default [
   {
     desc: 'M10614 派遣奴隶标志置位改 0（FLAG:402 = 1 名存实亡，#494 补 #487 验收发现的覆盖缺口）',
     file: 'ere/system/chara/chara-make.js',
-    find: "        era.set('flag:402', 1); // 派遣奴隶标志（等级 1 生成）",
-    replace: "        era.set('flag:402', 0); // 变异：置位改成 0",
+    find: '        era_flag.dispatched_slave = 1; // 派遣奴隶标志（等级 1 生成）',
+    replace: '        era_flag.dispatched_slave = 0; // 变异：置位改成 0',
     tests: ['chara-name'],
     must_mention: '派遣奴隶标志置 1（等级 1 生成）',
   },
@@ -651,7 +641,7 @@ export default [
     file: 'ere/system/chara/chara-make.js',
     find: '        newchara = inport_cid; // 新角色的角色号',
     replace:
-      '        newchara = inport_cid; // 新角色的角色号\n        if (game.event.上次调教对象 === newchara) game.event.上次调教对象 = -1;\n        if (game.event.上次助手 === newchara) game.event.上次助手 = -1;\n        if (game.event.上次调教对象 > newchara) {\n          game.event.上次调教对象 -= 1; // 变异：异国也跑搬迁\n        }\n        if (game.event.上次助手 > newchara) {\n          game.event.上次助手 -= 1; // 变异：异国也跑搬迁\n        }',
+      '        newchara = inport_cid; // 新角色的角色号\n        if (era_flag.last_train_target === newchara) era_flag.last_train_target = -1;\n        if (era_flag.last_assistant === newchara) era_flag.last_assistant = -1;\n        if (era_flag.last_train_target > newchara) {\n          era_flag.last_train_target -= 1; // 变异：异国也跑搬迁\n        }\n        if (era_flag.last_assistant > newchara) {\n          era_flag.last_assistant -= 1; // 变异：异国也跑搬迁\n        }',
     tests: ['chara-name'],
     must_mention: 'FLAG:2 未前移（搬迁段未执行）',
   },
@@ -779,16 +769,16 @@ export default [
   {
     desc: 'M11535 MODE 1 的档位清零漏写（CFLAG:450 = 0 被删——自定义后档位仍留旧值）',
     file: 'ere/system/chara/chara-self-call.js',
-    find: '      era.set(`cstr:${cid}:60`, text);\n      chara(cid).chara.一人称档位 = 0;',
-    replace: '      era.set(`cstr:${cid}:60`, text);',
+    find: '      EraChara.get(cid).cstr.set(60, text);\n      EraChara.get(cid).cflag.set(450, 0);',
+    replace: '      EraChara.get(cid).cstr.set(60, text);',
     tests: ['chara-self-call'],
     must_mention: 'MODE 1：自由文本',
   },
   {
     desc: 'M11536 MODE 1 的一人称写错下标（CSTR:60 改 61）',
     file: 'ere/system/chara/chara-self-call.js',
-    find: '      era.set(`cstr:${cid}:60`, text);',
-    replace: '      era.set(`cstr:${cid}:61`, text);',
+    find: '      EraChara.get(cid).cstr.set(60, text)',
+    replace: '      EraChara.get(cid).cstr.set(61, text)',
     tests: ['chara-self-call'],
     must_mention: 'MODE 1：自由文本',
   },
@@ -803,9 +793,9 @@ export default [
   {
     desc: 'M11538 MODE 1 的自定义命中返回值改坏（return 0 改 return 1）',
     file: 'ere/system/chara/chara-self-call.js',
-    find: '      era.set(`cstr:${cid}:60`, text);\n      chara(cid).chara.一人称档位 = 0;\n      return 0;',
+    find: '      EraChara.get(cid).cstr.set(60, text);\n      EraChara.get(cid).cflag.set(450, 0);\n      return 0;',
     replace:
-      '      era.set(`cstr:${cid}:60`, text);\n      chara(cid).chara.一人称档位 = 0;\n      return 1;',
+      '      EraChara.get(cid).cstr.set(60, text);\n      EraChara.get(cid).cflag.set(450, 0);\n      return 1;',
     tests: ['chara-self-call'],
     must_mention: 'MODE 1：自由文本',
   },
@@ -833,8 +823,8 @@ export default [
   {
     desc: 'M15708 chara-make 的抖Ｓ气质预设写到半角属性名（门面不再收，abl:20 静默保持 0）',
     file: 'ere/system/chara/chara-make.js',
-    find: 'chara(cid).train.抖Ｓ气质 = 3;',
-    replace: 'chara(cid).train.抖S气质 = 3;',
+    find: 'EraChara.get(cid).abl.set(20, 3);',
+    replace: '// 变异：抖S气质预设不写（ABL:20 静默保持 0）',
     tests: ['chara-make'],
     must_mention: '抖S气质（train 门面）',
   },

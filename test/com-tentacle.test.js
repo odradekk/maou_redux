@@ -88,7 +88,7 @@ function printed_buttons(fixture) {
 
 function able_on(world) {
   world.fixture.store.set('talent:0:325', 1); // 调教者·秘密知识
-  world.fixture.store.set('item:90', 1); // 触手召唤道具
+  world.fixture.store.set('item:hold:90', 1); // 触手召唤道具
 }
 
 // —— 注册面 ——
@@ -116,21 +116,21 @@ test('able100：秘密知识 + 道具；未开启时装备互斥；浴室/新妻
   const { fixture, com_able_family } = world;
 
   // 先给道具、再查知识：两道检查拆开，删掉知识检查时本断言必红（M1330）
-  fixture.store.set('item:90', 1);
+  fixture.store.set('item:hold:90', 1);
   assert.equal(await com_able_family.call(100), 0, '缺秘密知识');
 
-  fixture.store.set('item:90', 0);
+  fixture.store.set('item:hold:90', 0);
   fixture.store.set('talent:0:325', 1);
   assert.equal(await com_able_family.call(100), 0, '缺 ITEM:90');
 
-  fixture.store.set('item:90', 1);
+  fixture.store.set('item:hold:90', 1);
   assert.equal(await com_able_family.call(100), 1, '秘密知识 + 道具 → 可');
 
-  fixture.store.set('item:90', 0);
+  fixture.store.set('item:hold:90', 0);
   fixture.seed_noitem(1);
   assert.equal(await com_able_family.call(100), 1, 'NOITEM 替代持有');
   fixture.seed_noitem(0);
-  fixture.store.set('item:90', 1);
+  fixture.store.set('item:hold:90', 1);
 
   fixture.store.set('tequip:31:11', 1);
   assert.equal(await com_able_family.call(100), 0, '未开启时震动器互斥');
@@ -273,9 +273,9 @@ test('able208：死斗场中 + 秘密知识 + 道具；助手调教不可；无�
   fixture.store.set('talent:0:325', 0);
   assert.equal(await com_able_family.call(208), 0, '缺秘密知识');
   fixture.store.set('talent:0:325', 1);
-  fixture.store.set('item:90', 0);
+  fixture.store.set('item:hold:90', 0);
   assert.equal(await com_able_family.call(208), 0, '缺 ITEM:90');
-  fixture.store.set('item:90', 1);
+  fixture.store.set('item:hold:90', 1);
 
   fixture.store.set('cflag:0:9', 0);
   assert.equal(

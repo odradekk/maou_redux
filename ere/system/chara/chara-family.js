@@ -12,6 +12,7 @@
 'use strict';
 
 const era = require('#/era-electron');
+const EraChara = require('#/era-utils/era-chara');
 const { pad_display } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 const { nid_get_type } = require('#/system/chara/chara-name-type');
 const { default_rand } = require('#/utils/numeric');
@@ -23,27 +24,27 @@ function digit(value, place) {
 }
 
 function is_former_male(cid) {
-  const male = (era.get(`talent:${cid}:122`) || 0) !== 0; // TALENT:122 男人
-  const changed = (era.get(`cflag:${cid}:70`) || 0) !== 0; // CFLAG:70 已性转
+  const male = (EraChara.get(cid).talent.get(122) || 0) !== 0; // TALENT:122 男人
+  const changed = (EraChara.get(cid).cflag.get(70) || 0) !== 0; // CFLAG:70 已性转
   return male !== changed;
 }
 
 function relation_fields(cid, kind) {
   if (kind === 'MARRIAGE') {
     return {
-      data: era.get(`cflag:${cid}:601`) || 0, // 结婚对象压缩数据
-      name: era.get(`cflag:${cid}:609`) || 0, // 结婚对象名字编号
+      data: EraChara.get(cid).cflag.get(601) || 0, // 结婚对象压缩数据
+      name: EraChara.get(cid).cflag.get(609) || 0, // 结婚对象名字编号
     };
   }
   if (kind === 'LOVE') {
     return {
-      data: era.get(`cflag:${cid}:610`) || 0, // 恋人压缩数据
-      name: era.get(`cflag:${cid}:608`) || 0, // 恋人名字编号
+      data: EraChara.get(cid).cflag.get(610) || 0, // 恋人压缩数据
+      name: EraChara.get(cid).cflag.get(608) || 0, // 恋人名字编号
     };
   }
   return {
-    data: era.get(`cflag:${cid}:605`) || 0, // 血缘关系压缩数据
-    name: era.get(`cflag:${cid}:604`) || 0, // 血缘名字编号
+    data: EraChara.get(cid).cflag.get(605) || 0, // 血缘关系压缩数据
+    name: EraChara.get(cid).cflag.get(604) || 0, // 血缘名字编号
   };
 }
 
@@ -122,22 +123,22 @@ function search_family(cid, kind = 'FAMILY') {
   const added = era.getAddedCharacters();
 
   // TALENT:165/171 = 村娘 A/B，两者不走压缩家族照，直接互找。
-  if (era.get(`talent:${cid}:165`)) {
+  if (EraChara.get(cid).talent.get(165)) {
     for (const candidate of added) {
-      if (era.get(`talent:${candidate}:171`)) found = candidate;
+      if (EraChara.get(candidate).talent.get(171)) found = candidate;
     }
     return found;
   }
-  if (era.get(`talent:${cid}:171`)) {
+  if (EraChara.get(cid).talent.get(171)) {
     for (const candidate of added) {
-      if (era.get(`talent:${candidate}:165`)) found = candidate;
+      if (EraChara.get(candidate).talent.get(165)) found = candidate;
     }
     return found;
   }
 
-  const char_name = era.get(`cflag:${cid}:6`) || 0; // CFLAG:6 名字编号
+  const char_name = EraChara.get(cid).cflag.get(6) || 0; // CFLAG:6 名字编号
   const source_relation = relation_fields(cid, kind);
-  const source_family = era.get(`talent:${cid}:320`) || 0; // 家族构成
+  const source_family = EraChara.get(cid).talent.get(320) || 0; // 家族构成
   const search_type = source_relation.data % 10;
   if (search_type === 0 && kind === 'FAMILY') return found;
 
@@ -153,18 +154,21 @@ function search_family(cid, kind = 'FAMILY') {
     if (target_relation.name !== char_name) continue;
 
     const former_life = Math.trunc((source_relation.data % 1_000) / 10);
-    const elite = (era.get(`talent:${candidate}:220`) || 0) !== 0;
-    if ((era.get(`talent:${candidate}:315`) || 0) !== former_life && !elite) {
+    const elite = (EraChara.get(candidate).talent.get(220) || 0) !== 0;
+    if (
+      (EraChara.get(candidate).talent.get(315) || 0) !== former_life &&
+      !elite
+    ) {
       continue;
     }
     const personality =
       Math.trunc((source_relation.data % 100_000) / 1_000) + 160;
-    if (candidate !== 0 && !era.get(`talent:${candidate}:${personality}`)) {
+    if (candidate !== 0 && !EraChara.get(candidate).talent.get(personality)) {
       continue;
     }
 
     const encoded_family = Math.trunc(source_relation.data / 100_000);
-    const target_family = era.get(`talent:${candidate}:320`) || 0;
+    const target_family = EraChara.get(candidate).talent.get(320) || 0;
     if (encoded_family === target_family && kind === 'MARRIAGE')
       return candidate;
     if (encoded_family === target_family && kind === 'LOVE') return candidate;
@@ -217,9 +221,9 @@ function search_family(cid, kind = 'FAMILY') {
 function nid(cid) {
   // nid：特殊角色的名字编号固定为 10000 + 角色 ID。
   if (cid === 0 || (cid >= 17 && cid <= 40)) {
-    era.set(`cflag:${cid}:6`, 10_000 + cid); // CFLAG:6 = 名字编号
+    EraChara.get(cid).cflag.set(6, 10_000 + cid); // CFLAG:6 = 名字编号
   }
-  return era.get(`cflag:${cid}:6`) || 0;
+  return EraChara.get(cid).cflag.get(6) || 0;
 }
 
 /** nid_r：按名字编号反查当前已加入角色；找不到返回 -1。 */
@@ -227,7 +231,7 @@ function nid_r(value) {
   return (
     era
       .getAddedCharacters()
-      .find((cid) => (era.get(`cflag:${cid}:6`) || 0) === value) ?? -1
+      .find((cid) => (EraChara.get(cid).cflag.get(6) || 0) === value) ?? -1
   );
 }
 
@@ -294,7 +298,7 @@ function r_check(cid = 0) {
 }
 
 function r_chara_to_name(cid) {
-  if (cid >= 0) return era.get(`callname:${cid}:-2`) || '';
+  if (cid >= 0) return EraChara.get(cid).callname || '';
   return { '-2': '野狗', '-3': '怪物', '-4': '狂王' }[cid] || '不明';
 }
 
@@ -462,8 +466,8 @@ function rf_join_to(a, b, type, is_father = 0, rand = default_rand) {
     const children = rf_all(b, 8);
     for (const child of children) {
       if (child === a) continue;
-      const age_a = era.get(`cflag:${a}:451`) || 0; // CFLAG:451 = 年龄
-      const age_child = era.get(`cflag:${child}:451`) || 0;
+      const age_a = EraChara.get(a).cflag.get(451) || 0; // CFLAG:451 = 年龄
+      const age_child = EraChara.get(child).cflag.get(451) || 0;
       const sibling_type =
         age_a === 0 || age_a === age_child
           ? rand(2) * 2 + 2
@@ -475,7 +479,7 @@ function rf_join_to(a, b, type, is_father = 0, rand = default_rand) {
     rf_set_both(a, b, type);
     return children.length + 1;
   }
-  if (era.get(`talent:${a}:220`)) {
+  if (EraChara.get(a).talent.get(220)) {
     throw new Error(
       `无效的操作：RF_JOINTO(${a},${b},${type}) 只能将生下的孩子加入到父母所在家族`,
     );
@@ -491,8 +495,8 @@ function rf_join_to(a, b, type, is_father = 0, rand = default_rand) {
     count += int(parents.length / 2);
     for (const sibling of rf_all(b, 2, false, 1, 1)) {
       if (sibling === a) continue;
-      const age_a = era.get(`cflag:${a}:451`) || 0;
-      const age_sibling = era.get(`cflag:${sibling}:451`) || 0;
+      const age_a = EraChara.get(a).cflag.get(451) || 0;
+      const age_sibling = EraChara.get(sibling).cflag.get(451) || 0;
       const sibling_type =
         age_a === 0 || age_a === age_sibling
           ? rand(2) * 2 + 2
@@ -560,7 +564,7 @@ function family_birth_to_dad(child, father, rand = default_rand) {
  */
 function char_age_expect(cid) {
   let age = 0;
-  const talent = (id) => era.get(`talent:${cid}:${id}`) || 0;
+  const talent = (id) => EraChara.get(cid).talent.get(id) || 0;
   if (talent(99)) age += 1; // 魁梧
   if (talent(100)) age -= 4; // 娇小；与魁梧可同时命中
   if (talent(109)) age -= 1; // 贫乳
@@ -581,11 +585,11 @@ function char_age_expect(cid) {
   else if (experience === 21) age += 6;
   if (talent(316) === 6) age += 2; // 经历无尽悲伤后
   if (talent(317) === 4 || talent(317) === 11) age += 2; // 故乡恋人/憧憬对象
-  if (era.get(`exp:${cid}:60`))
+  if (EraChara.get(cid).exp.get(60))
     age += 6; // 生育经验
-  else if (era.get(`exp:${cid}:5`))
+  else if (EraChara.get(cid).exp.get(5))
     age += 4; // 性交经验
-  else if (era.get(`exp:${cid}:10`))
+  else if (EraChara.get(cid).exp.get(10))
     age += 2; // 自慰经验
   else if (!talent(0) && !talent(1)) age += 1; // 非处女/童贞
   return age;
@@ -596,11 +600,11 @@ function f_is_same_race(a, b) {
   const elite_b = b >= 201 && b <= 210;
   if (elite_a && elite_b) return a === b;
   if (elite_a || elite_b) return false;
-  let race_a = era.get(`talent:${a}:314`) || 0; // TALENT:314 = 种族
-  let race_b = era.get(`talent:${b}:314`) || 0;
+  let race_a = EraChara.get(a).talent.get(314) || 0; // TALENT:314 = 种族
+  let race_b = EraChara.get(b).talent.get(314) || 0;
   if (race_a !== 9 && race_b !== 9) return race_a === race_b;
-  if (race_a === 9) race_a = era.get(`talent:${a}:321`) || 0; // TALENT:321 = 原种族
-  if (race_b === 9) race_b = era.get(`talent:${b}:321`) || 0;
+  if (race_a === 9) race_a = EraChara.get(a).talent.get(321) || 0; // TALENT:321 = 原种族
+  if (race_b === 9) race_b = EraChara.get(b).talent.get(321) || 0;
   return race_a === race_b;
 }
 
@@ -630,12 +634,15 @@ function f_check_relevant(a, b) {
     Math.min(1, Math.max(0, nid_get_type(nid(b))))
   )
     return 0;
-  const experience = era.get(`talent:${a}:315`) || 0;
-  if (!f_is_close_experience(experience, era.get(`talent:${b}:315`) || 0))
+  const experience = EraChara.get(a).talent.get(315) || 0;
+  if (!f_is_close_experience(experience, EraChara.get(b).talent.get(315) || 0))
     return 0;
   for (const member of rf_all(a)) {
     if (
-      !f_is_close_experience(experience, era.get(`talent:${member}:315`) || 0)
+      !f_is_close_experience(
+        experience,
+        EraChara.get(member).talent.get(315) || 0,
+      )
     )
       return 0;
   }
@@ -647,8 +654,11 @@ function family_register_slave(cid, rand = default_rand) {
   relation_rebuild();
   for (const other of era.getAddedCharacters()) {
     if (other === cid || other === 0) continue;
-    if (era.get(`talent:${other}:220`)) continue; // 后代
-    if (era.get(`talent:${other}:165`) || era.get(`talent:${other}:171`))
+    if (EraChara.get(other).talent.get(220)) continue; // 后代
+    if (
+      EraChara.get(other).talent.get(165) ||
+      EraChara.get(other).talent.get(171)
+    )
       continue; // 村娘 A/B
     if (other >= 17 && other <= 40) continue;
     if (!f_check_relevant(cid, other) || rf_count(other) >= 2) continue;
@@ -656,31 +666,39 @@ function family_register_slave(cid, rand = default_rand) {
     const difference = other_age - expected_age;
     let type = 0;
     // 分支顺序保留既有行为：其中男性分支会被前面的无性别分支遮蔽。
-    if (difference > 10 && era.get(`exp:${other}:60`) && expected_age < 0) {
-      const child_type = era.get(`talent:${cid}:122`) ? 7 : 8;
+    if (
+      difference > 10 &&
+      EraChara.get(other).exp.get(60) &&
+      expected_age < 0
+    ) {
+      const child_type = EraChara.get(cid).talent.get(122) ? 7 : 8;
       if (rf_count(other, child_type) <= 0) type = 6;
     } else if (
       difference > 10 &&
-      era.get(`talent:${other}:122`) &&
+      EraChara.get(other).talent.get(122) &&
       expected_age < 0 &&
-      era.get(`exp:${other}:5`)
+      EraChara.get(other).exp.get(5)
     ) {
-      const child_type = era.get(`talent:${cid}:122`) ? 7 : 8;
+      const child_type = EraChara.get(cid).talent.get(122) ? 7 : 8;
       if (rand(4) === 0 || rf_count(other, child_type) <= 0) type = 5;
-    } else if (difference < -10 && era.get(`exp:${cid}:60`) && other_age < 0) {
+    } else if (
+      difference < -10 &&
+      EraChara.get(cid).exp.get(60) &&
+      other_age < 0
+    ) {
       if (rf_count(other, 6) <= 0) type = 8;
     } else if (
       difference < -10 &&
-      era.get(`exp:${cid}:5`) &&
+      EraChara.get(cid).exp.get(5) &&
       other_age < 0 &&
-      era.get(`talent:${cid}:122`)
+      EraChara.get(cid).talent.get(122)
     ) {
       if (!(rf_count(other, 5) > 0 && rand(4) !== 0)) type = 8;
     } else if (difference > 1) {
-      const younger_type = era.get(`talent:${cid}:122`) ? 3 : 4;
+      const younger_type = EraChara.get(cid).talent.get(122) ? 3 : 4;
       if (rf_count(other, younger_type) <= 0) type = 2;
     } else if (difference < -1) {
-      const older_type = era.get(`talent:${cid}:122`) ? 1 : 2;
+      const older_type = EraChara.get(cid).talent.get(122) ? 1 : 2;
       if (rf_count(other, older_type) <= 0) type = 4;
     }
     if (type) {
@@ -692,15 +710,15 @@ function family_register_slave(cid, rand = default_rand) {
 }
 
 function family_register(cid, rand = default_rand) {
-  if (cid === 0 || era.get(`talent:${cid}:220`)) return [0, 0];
+  if (cid === 0 || EraChara.get(cid).talent.get(220)) return [0, 0];
   const added = era.getAddedCharacters();
-  if (era.get(`talent:${cid}:165`)) {
-    const other = added.find((id) => era.get(`talent:${id}:171`)) ?? -1;
+  if (EraChara.get(cid).talent.get(165)) {
+    const other = added.find((id) => EraChara.get(id).talent.get(171)) ?? -1;
     if (other >= 0) family_set_both(cid, other, 2);
     return [other, 2];
   }
-  if (era.get(`talent:${cid}:171`)) {
-    const other = added.find((id) => era.get(`talent:${id}:165`)) ?? -1;
+  if (EraChara.get(cid).talent.get(171)) {
+    const other = added.find((id) => EraChara.get(id).talent.get(165)) ?? -1;
     if (other >= 0) family_set_both(cid, other, 4);
     return [other, 4];
   }
@@ -745,7 +763,7 @@ function family_print_info(cid) {
 
 function family_info(cid) {
   relation_rebuild();
-  void ((era.get(`talent:${cid}:320`) || 0) % 10);
+  void ((EraChara.get(cid).talent.get(320) || 0) % 10);
   return 0;
 }
 

@@ -445,7 +445,7 @@ test('六九式初回·淫乱（TALENT:76）：调教者无 121/122 且 item:4 �
   const fixture = await setup_k5((f) => {
     f.store.set('talent:17:76', 1); // 淫乱分支
     f.store.set('talent:0:122', 0); // 调教者（PLAYER = 0）无男性器（unset 读 undefined，=== 0 不成立，须显式 0）
-    f.store.set('item:4', 1); // ITEM:PBAND
+    f.store.set('item:hold:4', 1); // ITEM:PBAND
   });
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.selectcom = 69;
@@ -465,7 +465,7 @@ test('六九式初回·爱慕（TALENT:85）：调教者无 121/122 且 item:4�
   const fixture = await setup_k5((f) => {
     f.store.set('talent:17:85', 1); // 爱慕分支
     f.store.set('talent:0:122', 0);
-    f.store.set('item:4', 1);
+    f.store.set('item:hold:4', 1);
   });
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.selectcom = 69;
@@ -482,7 +482,7 @@ test('六九式二回目·爱慕（CFLAG:364 == 1）：同条件复现「假阳�
   const fixture = await setup_k5((f) => {
     f.store.set('talent:17:85', 1);
     f.store.set('talent:0:122', 0);
-    f.store.set('item:4', 1);
+    f.store.set('item:hold:4', 1);
     f.store.set('cflag:17:364', 1); // 二回目以降
   });
   const era_flag = fixture.load_module('era-utils/era-flag');
@@ -517,7 +517,7 @@ test('COLOSSEUM_KOJO_5：SC31/21/27 助手无 121/122 且持假阳具（item:4�
   for (const { selectcom, line } of cases) {
     const fixture = await setup_k5((f) => {
       join_slave_chara(f, 5, '奴隶5');
-      f.store.set('item:4', 1); // ITEM:PBAND
+      f.store.set('item:hold:4', 1); // ITEM:PBAND
     });
     const era_flag = fixture.load_module('era-utils/era-flag');
     era_flag.selectcom = selectcom;

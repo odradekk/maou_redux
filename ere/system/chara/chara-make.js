@@ -46,6 +46,7 @@
  */
 
 const era = require('#/era-electron');
+const EraChara = require('#/era-utils/era-chara');
 const {
   GENERAL_CHARASTERISTICS,
   ARR_HAIRCOLOR,
@@ -62,8 +63,6 @@ const {
 const { chara_callname } = require('#/utils/callname-utils');
 // wearing_cloth_able 自 #215（J5）起为真身（ere/system/train/cloth.js）
 const { wearing_cloth_able } = require('#/system/train/cloth');
-const { chara } = require('#/facade/chara');
-const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
 const era_global = require('#/era-utils/era-global'); // #547：冒險者性別（global:3）
 const { add_chara_ex } = require('#/system/chara/chara-ex');
@@ -103,7 +102,7 @@ const { st_up } = require('#/system/dungeon/dungeon-lvup'); // #565 起接入
  */
 async function chara_make(cid, arg1 = 0, arg2 = 0, rand, template_id = cid) {
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
-  const offspring = (era.get(`ex_talent:${cid}:2`) || 0) !== 0; // EX_TALENT:2 后代
+  const offspring = (EraChara.get(cid).ex_talent.get(2) || 0) !== 0; // EX_TALENT:2 后代
 
   // 性别（后代不掷；赤森奴隶恒 0 见文件头）
   if (!offspring) {
@@ -116,28 +115,28 @@ async function chara_make(cid, arg1 = 0, arg2 = 0, rand, template_id = cid) {
   }
 
   // 等级与经验值
-  era.set(`cflag:${cid}:9`, 1); // CFLAG:9 等级
-  chara(cid).dungeon.战斗经验 = 0; // EXP:80 战斗经验
+  EraChara.get(cid).cflag.set(9, 1); // CFLAG:9 等级
+  EraChara.get(cid).exp.set(80, 0); // EXP:80 战斗经验
 
   // 家族初期化
-  era.set(`cflag:${cid}:605`, 0); // CFLAG:605 家族
+  EraChara.get(cid).cflag.set(605, 0); // CFLAG:605 家族
 
   // 売春への積極性
-  chara(cid).patch.卖春积极性 = 1; // CFLAG:120
+  EraChara.get(cid).cflag.set(120, 1); // CFLAG:120
 
   // 三分叉（本函数 JSDoc）：决定 CFLAG:1
-  const elite = (era.get(`talent:${cid}:220`) || 0) !== 0; // TALENT:精英
-  const ex1 = (era.get(`ex_talent:${cid}:1`) || 0) !== 0; // EX_TALENT:1
+  const elite = (EraChara.get(cid).talent.get(220) || 0) !== 0; // TALENT:精英
+  const ex1 = (EraChara.get(cid).ex_talent.get(1) || 0) !== 0; // EX_TALENT:1
   if (!elite && !ex1 && !offspring) {
     await cm_stp(cid); // 侵攻楼层·侵攻度·侵攻中·再起点
     await cm_base(cid); // 职业、基础
     await cm_st(cid, rand_n); // 勇者初始等级（rand_n 透传给 st_up 的掷骰）
   } else if (!offspring) {
-    chara(cid).invasion.状态 = 0; // 初始位置（精英部下）
+    EraChara.get(cid).cflag.set(1, 0); // 初始位置（精英部下）
     await cm_base(cid); // 职业、基础
     await cm_st_ace(cid, rand_n); // 精英部下初始等级
   } else {
-    chara(cid).invasion.状态 = 0; // 初始位置（后代）
+    EraChara.get(cid).cflag.set(1, 0); // 初始位置（后代）
     await cm_base(cid); // 职业、基础
   }
 
@@ -151,7 +150,7 @@ async function chara_make(cid, arg1 = 0, arg2 = 0, rand, template_id = cid) {
 
   // 初心者の烙印（DAY:0 <= 60；开局不写、留 0 恒命中）
   if (era_flag.day_count <= 60) {
-    era.set(`talent:${cid}:291`, 1); // TALENT:291 新手烙印
+    EraChara.get(cid).talent.set(291, 1); // TALENT:291 新手烙印
   }
 
   await cm_virgin(cid, rand_n); // 处女
@@ -162,7 +161,7 @@ async function chara_make(cid, arg1 = 0, arg2 = 0, rand, template_id = cid) {
 
   // 令后代来历生效
   if (offspring) {
-    era.set(`talent:${cid}:310`, 2); // TALENT:阴毛状态 = 2
+    EraChara.get(cid).talent.set(310, 2); // TALENT:阴毛状态 = 2
   }
 
   await cm_kind(cid, rand_n); // 善恶
@@ -189,7 +188,7 @@ async function chara_make(cid, arg1 = 0, arg2 = 0, rand, template_id = cid) {
   // 年齢/身長表示设定（FLAG:5 位 12/15）时生成身体数据（真身自
   // #385 起在 ere/system/chara/chara-body.js；此处只判 FLAG:5，不判身体数据
   // 是否已有——函数内部的检查条件与此处同源）
-  const settings = era.get('flag:5') || 0; // FLAG:5 开局设置位图
+  const settings = era_flag.game_settings || 0; // FLAG:5 开局设置位图
   if (((settings >> 12) & 1) !== 0 || ((settings >> 15) & 1) !== 0) {
     char_body_generate_wapped(cid, rand_n); // 生成身体数据
   }
@@ -207,10 +206,10 @@ async function chara_make(cid, arg1 = 0, arg2 = 0, rand, template_id = cid) {
  * @param {number} cid 角色 ID
  */
 function cm_stp(cid) {
-  chara(cid).dungeon.侵攻阶层 = 1; // CFLAG:501 侵入阶层
-  chara(cid).event.侵攻度 = 0; // CFLAG:502 侵攻度
-  chara(cid).invasion.状态 = 2; // CFLAG:1 侵攻中
-  chara(cid).dungeon.再起点 = 3; // CFLAG:508 再起点
+  EraChara.get(cid).cflag.set(501, 1); // CFLAG:501 侵入阶层
+  EraChara.get(cid).cflag.set(502, 0); // CFLAG:502 侵攻度
+  EraChara.get(cid).cflag.set(1, 2); // CFLAG:1 侵攻中
+  EraChara.get(cid).cflag.set(508, 3); // CFLAG:508 再起点
 }
 
 /**
@@ -219,87 +218,87 @@ function cm_stp(cid) {
  * @param {number} cid 角色 ID
  */
 async function cm_base(cid) {
-  const t = (n) => (era.get(`talent:${cid}:${n}`) || 0) !== 0;
-  const tv = (n) => era.get(`talent:${cid}:${n}`) || 0;
+  const t = (n) => (EraChara.get(cid).talent.get(n) || 0) !== 0;
+  const tv = (n) => EraChara.get(cid).talent.get(n) || 0;
 
   // 职业基础四维（CFLAG:11 攻击力 / 12 防御力 / 13 基础攻击 /
   // 14 基础防御；talent:200 战士、205 骑士、201 魔法师、206 巫女、
   // 202 神官、207 忍者、203 盗贼、208 弓手、212 魔物使、220 精英）
   if (t(200) || t(205)) {
     // 战士&骑士
-    chara(cid).dungeon.攻击力 = 20;
-    chara(cid).dungeon.防御力 = 20;
-    era.set(`cflag:${cid}:13`, 20);
-    era.set(`cflag:${cid}:14`, 20);
+    EraChara.get(cid).cflag.set(11, 20);
+    EraChara.get(cid).cflag.set(12, 20);
+    EraChara.get(cid).cflag.set(13, 20);
+    EraChara.get(cid).cflag.set(14, 20);
   } else if (t(201) || t(206)) {
     // 魔法师&巫女
-    chara(cid).dungeon.攻击力 = 15;
-    chara(cid).dungeon.防御力 = 15;
-    era.set(`cflag:${cid}:13`, 15);
-    era.set(`cflag:${cid}:14`, 15);
+    EraChara.get(cid).cflag.set(11, 15);
+    EraChara.get(cid).cflag.set(12, 15);
+    EraChara.get(cid).cflag.set(13, 15);
+    EraChara.get(cid).cflag.set(14, 15);
   } else if (t(202) || t(207)) {
     // 神官&忍者
-    chara(cid).dungeon.攻击力 = 15;
-    chara(cid).dungeon.防御力 = 20;
-    era.set(`cflag:${cid}:13`, 15);
-    era.set(`cflag:${cid}:14`, 20);
+    EraChara.get(cid).cflag.set(11, 15);
+    EraChara.get(cid).cflag.set(12, 20);
+    EraChara.get(cid).cflag.set(13, 15);
+    EraChara.get(cid).cflag.set(14, 20);
   } else if (t(203) || t(208) || t(212)) {
     // 盗贼&弓手&魔物使
-    chara(cid).dungeon.攻击力 = 20;
-    chara(cid).dungeon.防御力 = 15;
-    era.set(`cflag:${cid}:13`, 20);
-    era.set(`cflag:${cid}:14`, 15);
+    EraChara.get(cid).cflag.set(11, 20);
+    EraChara.get(cid).cflag.set(12, 15);
+    EraChara.get(cid).cflag.set(13, 20);
+    EraChara.get(cid).cflag.set(14, 15);
   } else if (t(220)) {
     // 精英（220）
-    chara(cid).dungeon.攻击力 = 15;
-    chara(cid).dungeon.防御力 = 15;
-    era.set(`cflag:${cid}:13`, 15);
-    era.set(`cflag:${cid}:14`, 15);
+    EraChara.get(cid).cflag.set(11, 15);
+    EraChara.get(cid).cflag.set(12, 15);
+    EraChara.get(cid).cflag.set(13, 15);
+    EraChara.get(cid).cflag.set(14, 15);
   } else {
     // その他
-    chara(cid).dungeon.攻击力 = 15;
-    chara(cid).dungeon.防御力 = 15;
-    era.set(`cflag:${cid}:13`, 15);
-    era.set(`cflag:${cid}:14`, 15);
+    EraChara.get(cid).cflag.set(11, 15);
+    EraChara.get(cid).cflag.set(12, 15);
+    EraChara.get(cid).cflag.set(13, 15);
+    EraChara.get(cid).cflag.set(14, 15);
   }
 
   // 神官&巫女持治愈（talent:117）+ 高信仰值（CFLAG:152）；
   // 战士&骑士&魔物使持鼓舞（talent:118）
   if (tv(202) === 1 || tv(206) === 1) {
-    era.set(`talent:${cid}:117`, 1);
-    chara(cid).chara.信仰值 = 20;
+    EraChara.get(cid).talent.set(117, 1);
+    EraChara.get(cid).cflag.set(152, 20);
   } else if (tv(200) === 1 || tv(205) === 1 || tv(212) === 1) {
-    era.set(`talent:${cid}:118`, 1);
+    EraChara.get(cid).talent.set(118, 1);
   }
 
   // 怪物种族加成（talent:319 种族2）：史莱姆（2）防御系 +5、
   // 触手（5）攻击系 +5、妖精（6）四维 -4、巨人（7）四维 +5
   const race2 = tv(319);
   if (race2 === 2) {
-    chara(cid).dungeon.防御力 += 5;
-    era.add(`cflag:${cid}:14`, 5);
+    EraChara.get(cid).cflag.set(12, EraChara.get(cid).cflag.get(12) + 5);
+    EraChara.get(cid).cflag.add(14, 5);
   } else if (race2 === 5) {
-    chara(cid).dungeon.攻击力 += 5;
-    era.add(`cflag:${cid}:13`, 5);
+    EraChara.get(cid).cflag.set(11, EraChara.get(cid).cflag.get(11) + 5);
+    EraChara.get(cid).cflag.add(13, 5);
   } else if (race2 === 6) {
-    chara(cid).dungeon.攻击力 -= 4;
-    chara(cid).dungeon.防御力 -= 4;
-    era.add(`cflag:${cid}:13`, -4);
-    era.add(`cflag:${cid}:14`, -4);
+    EraChara.get(cid).cflag.set(11, EraChara.get(cid).cflag.get(11) - 4);
+    EraChara.get(cid).cflag.set(12, EraChara.get(cid).cflag.get(12) - 4);
+    EraChara.get(cid).cflag.add(13, -4);
+    EraChara.get(cid).cflag.add(14, -4);
   } else if (race2 === 7) {
-    chara(cid).dungeon.攻击力 += 5;
-    chara(cid).dungeon.防御力 += 5;
-    era.add(`cflag:${cid}:13`, 5);
-    era.add(`cflag:${cid}:14`, 5);
+    EraChara.get(cid).cflag.set(11, EraChara.get(cid).cflag.get(11) + 5);
+    EraChara.get(cid).cflag.set(12, EraChara.get(cid).cflag.get(12) + 5);
+    EraChara.get(cid).cflag.add(13, 5);
+    EraChara.get(cid).cflag.add(14, 5);
   }
 
   // 精英持魔之刻印（talent:254）；神官&巫女持治愈；战士&骑士持鼓舞
   if (t(220)) {
-    era.set(`talent:${cid}:254`, 1); // 魔之刻印
+    EraChara.get(cid).talent.set(254, 1); // 魔之刻印
   } else if (t(202) || t(206)) {
-    era.set(`talent:${cid}:117`, 1); // 治愈
+    EraChara.get(cid).talent.set(117, 1); // 治愈
   } else if (tv(200) === 1 || tv(205) === 1) {
-    era.set(`talent:${cid}:118`, 1); // 鼓舞
+    EraChara.get(cid).talent.set(118, 1); // 鼓舞
   }
 }
 
@@ -311,13 +310,13 @@ async function cm_base(cid) {
  * @param {(n: number) => number} rand_n 随机源
  */
 async function cm_kj(cid, arg, rand_n) {
-  const is_male = (era.get(`talent:${cid}:122`) || 0) !== 0;
+  const is_male = (EraChara.get(cid).talent.get(122) || 0) !== 0;
   // 清 TALENT 160..179
   for (let i = 160; i < 180; i += 1) {
-    era.set(`talent:${cid}:${i}`, 0);
+    EraChara.get(cid).talent.set(i, 0);
   }
   if (arg >= 160 && arg <= 180) {
-    era.set(`talent:${cid}:${arg}`, 1);
+    EraChara.get(cid).talent.set(arg, 1);
   } else {
     // 重掷循环（入口在掷骰行之前）
     let x = rand_n(11) + 160;
@@ -350,7 +349,7 @@ async function cm_kj(cid, arg, rand_n) {
         x = 163;
       }
     }
-    era.set(`talent:${cid}:${x}`, 1);
+    EraChara.get(cid).talent.set(x, 1);
   }
 }
 
@@ -370,47 +369,47 @@ async function cm_gender(cid, rand_n) {
     case -1:
       // 女多男少（2%扶他，20%男性）
       if (rand_n(50) === 0) {
-        era.set(`talent:${cid}:121`, 1); // 扶她
+        EraChara.get(cid).talent.set(121, 1); // 扶她
       } else if (rand_n(5) === 0) {
-        era.set(`talent:${cid}:122`, 1); // 男人
+        EraChara.get(cid).talent.set(122, 1); // 男人
       }
       break;
     case 0:
       // 只有女性（2%扶他）
       if (rand_n(50) === 0) {
-        era.set(`talent:${cid}:121`, 1);
+        EraChara.get(cid).talent.set(121, 1);
       }
       break;
     case 1:
       // 只有男性（2%扶他）
       if (rand_n(50) === 0) {
-        era.set(`talent:${cid}:121`, 1);
+        EraChara.get(cid).talent.set(121, 1);
       } else if (rand_n(5) >= 0) {
         // 恒真
-        era.set(`talent:${cid}:122`, 1);
+        EraChara.get(cid).talent.set(122, 1);
       }
       break;
     case 2:
       // 男多女少（2%扶他，20%女性）
       if (rand_n(50) === 0) {
-        era.set(`talent:${cid}:121`, 1);
+        EraChara.get(cid).talent.set(121, 1);
       } else if (rand_n(5) >= 1) {
         // 五分之四
-        era.set(`talent:${cid}:122`, 1);
+        EraChara.get(cid).talent.set(122, 1);
       }
       break;
     case 3:
       // 男女持平（2%扶他）
       if (rand_n(50) === 0) {
-        era.set(`talent:${cid}:121`, 1);
+        EraChara.get(cid).talent.set(121, 1);
       } else if (rand_n(2) < 1) {
         // 二分之一
-        era.set(`talent:${cid}:122`, 1);
+        EraChara.get(cid).talent.set(122, 1);
       }
       break;
     case 4:
       // 全扶她
-      era.set(`talent:${cid}:121`, 1);
+      EraChara.get(cid).talent.set(121, 1);
       break;
     default:
       break;
@@ -424,66 +423,66 @@ async function cm_gender(cid, rand_n) {
  * @param {(n: number) => number} rand_n 随机源
  */
 async function cm_virgin(cid, rand_n) {
-  const t = (n) => era.get(`talent:${cid}:${n}`) || 0;
-  const offspring = (era.get(`ex_talent:${cid}:2`) || 0) !== 0;
+  const t = (n) => EraChara.get(cid).talent.get(n) || 0;
+  const offspring = (EraChara.get(cid).ex_talent.get(2) || 0) !== 0;
   if (t(122) === 1) {
     // 男人
-    era.set(`talent:${cid}:0`, 0); // 处女 = 0
+    EraChara.get(cid).talent.set(0, 0); // 处女 = 0
     if (rand_n(3)) {
       // 三分之二童贞
-      chara(cid).train.童贞 = 1;
-      chara(cid).train.初体验对象 = -1;
-      chara(cid).train.初吻对象 = -1;
+      EraChara.get(cid).talent.set(1, 1);
+      EraChara.get(cid).cflag.set(15, -1);
+      EraChara.get(cid).cflag.set(16, -1);
     } else {
-      chara(cid).train.初体验对象 = 0;
-      chara(cid).train.初吻对象 = 0;
+      EraChara.get(cid).cflag.set(15, 0);
+      EraChara.get(cid).cflag.set(16, 0);
     }
   } else if (offspring) {
     // 后代
-    era.set(`talent:${cid}:0`, 1); // 处女
-    chara(cid).train.初吻对象 = -1;
+    EraChara.get(cid).talent.set(0, 1); // 处女
+    EraChara.get(cid).cflag.set(16, -1);
   } else if (t(121) === 1) {
     // 扶她
     if (rand_n(8)) {
       // 八分之七扶她处女
-      era.set(`talent:${cid}:0`, 1);
+      EraChara.get(cid).talent.set(0, 1);
     }
     if (rand_n(3) > 0) {
       // 扶她初吻&童贞
-      chara(cid).train.童贞 = 1;
-      chara(cid).train.初吻对象 = -1;
+      EraChara.get(cid).talent.set(1, 1);
+      EraChara.get(cid).cflag.set(16, -1);
     } else {
-      chara(cid).train.初吻对象 = 0;
+      EraChara.get(cid).cflag.set(16, 0);
     }
     if (t(0) && t(1)) {
       // 扶她初体验（处女且童贞）
-      chara(cid).train.初体验对象 = -1;
+      EraChara.get(cid).cflag.set(15, -1);
     } else if (t(0) === 0 || t(1) === 0) {
-      chara(cid).train.初体验对象 = 0;
+      EraChara.get(cid).cflag.set(15, 0);
     }
-  } else if ((era.get('flag:82') || 0) === 1 && rand_n(2) === 0) {
+  } else if ((era_flag.human_realm_fallen || 0) === 1 && rand_n(2) === 0) {
     // 人间界征服后二分之一处女
-    era.set(`talent:${cid}:0`, 1);
-    chara(cid).train.初吻对象 = -1;
+    EraChara.get(cid).talent.set(0, 1);
+    EraChara.get(cid).cflag.set(16, -1);
   } else if (rand_n(8)) {
     // 八分之七处女
-    era.set(`talent:${cid}:0`, 1);
-    chara(cid).train.初吻对象 = -1;
+    EraChara.get(cid).talent.set(0, 1);
+    EraChara.get(cid).cflag.set(16, -1);
   }
   // 处女或童贞则初吻未定
   if (t(0) === 1 || t(1)) {
-    chara(cid).train.初吻对象 = -1;
+    EraChara.get(cid).cflag.set(16, -1);
   }
 
   // 处女随机贞操封印（精英除外）
   if (t(0) === 1 && rand_n(5) === 0 && t(220) !== 1) {
-    era.set(`talent:${cid}:273`, 1); // 贞操封印
+    EraChara.get(cid).talent.set(273, 1); // 贞操封印
   }
 
   // 人妻（女、非后代、十二分之一）
   if (rand_n(12) === 0 && t(122) === 0 && !offspring) {
-    era.set(`talent:${cid}:157`, 1); // 人妻
-    era.set(`talent:${cid}:0`, 0);
+    EraChara.get(cid).talent.set(157, 1); // 人妻
+    EraChara.get(cid).talent.set(0, 0);
   }
 }
 
@@ -498,8 +497,8 @@ async function cm_virgin(cid, rand_n) {
  * @param {(n: number) => number} rand_n 随机源
  */
 async function cm_talent(cid, rand_n) {
-  const t = (n) => era.get(`talent:${cid}:${n}`) || 0;
-  const set_t = (n, v = 1) => era.set(`talent:${cid}:${n}`, v);
+  const t = (n) => EraChara.get(cid).talent.get(n) || 0;
+  const set_t = (n, v = 1) => EraChara.get(cid).talent.set(n, v);
 
   // 胆怯（10）/ 嚣张（12）/ 文静（14）——性格联动
   let x = rand_n(3);
@@ -521,7 +520,7 @@ async function cm_talent(cid, rand_n) {
   // 反抗心（11）/ 坦率（13）/ 嚣张（16）
   x = rand_n(12);
   if (x === 0) {
-    chara(cid).event.反抗心 = 1;
+    EraChara.get(cid).talent.set(11, 1);
     if (rand_n(8) === 0) {
       set_t(18); // 反抗心偶发傲娇
     }
@@ -551,13 +550,13 @@ async function cm_talent(cid, rand_n) {
   // 冷漠（21）/ 好奇心（23）/ 感情淡薄（22）/ 克制（20）/ 献身的（63）
   x = rand_n(16);
   if (x === 0) {
-    chara(cid).event.冷漠 = 1;
+    EraChara.get(cid).talent.set(21, 1);
   } else if (x === 1) {
     set_t(23);
   } else if (x === 2) {
-    chara(cid).event.感情淡薄 = 1;
+    EraChara.get(cid).talent.set(22, 1);
   } else if (x === 3) {
-    chara(cid).event.克制 = 1;
+    EraChara.get(cid).talent.set(20, 1);
   } else if (x === 4) {
     set_t(63);
   }
@@ -569,13 +568,13 @@ async function cm_talent(cid, rand_n) {
   } else if (x === 1) {
     set_t(25);
   } else if (x === 2) {
-    chara(cid).event.悲观的 = 1;
+    EraChara.get(cid).talent.set(26, 1);
   }
 
   // 戒备森严（27）/ 爱表现（28）
   x = rand_n(8);
   if (x === 0) {
-    chara(cid).event.戒备森严 = 1;
+    EraChara.get(cid).talent.set(27, 1);
   } else if (x === 1) {
     set_t(28);
   }
@@ -583,7 +582,7 @@ async function cm_talent(cid, rand_n) {
   // 看重贞操（30）/ 看轻贞操（31）
   x = rand_n(12);
   if (x === 0) {
-    chara(cid).event.看重贞操 = 1;
+    EraChara.get(cid).talent.set(30, 1);
   } else if (x === 1) {
     set_t(31);
   }
@@ -591,14 +590,14 @@ async function cm_talent(cid, rand_n) {
   // 压抑（32）/ 开放（33）
   x = rand_n(12);
   if (x === 0) {
-    chara(cid).event.压抑 = 1;
+    EraChara.get(cid).talent.set(32, 1);
   } else if (x === 1) {
     set_t(33);
   }
 
   // 抵抗（34）
   if (rand_n(12) === 0) {
-    chara(cid).event.抵抗 = 1;
+    EraChara.get(cid).talent.set(34, 1);
   }
 
   // 害羞（35）/ 不知羞耻（36）
@@ -645,12 +644,12 @@ async function cm_talent(cid, rand_n) {
 
   // 擅用舌头（52）
   if (rand_n(8) === 0) {
-    chara(cid).event.擅用舌头 = 1;
+    EraChara.get(cid).talent.set(52, 1);
   }
 
   // 漏尿癖（57）
   if (rand_n(50) === 0) {
-    chara(cid).event.漏尿癖 = 1;
+    EraChara.get(cid).talent.set(57, 1);
   }
 
   // 容易自慰（60）
@@ -671,7 +670,7 @@ async function cm_talent(cid, rand_n) {
   if (x === 0) {
     set_t(70);
   } else if (x === 1) {
-    chara(cid).event.否定快感 = 1;
+    EraChara.get(cid).talent.set(71, 1);
   }
 
   // 容易上瘾（72）
@@ -698,20 +697,20 @@ async function cm_talent(cid, rand_n) {
   if (x === 0) {
     set_t(81);
   } else if (x === 1) {
-    chara(cid).event.讨厌男人 = 1;
+    EraChara.get(cid).talent.set(82, 1);
   }
 
   // 抖S气质（ABL:20）/ 抖M气质（ABL:21）
   x = rand_n(8);
   if (x === 0) {
-    chara(cid).train.抖Ｓ气质 = 3;
+    EraChara.get(cid).abl.set(20, 3);
   } else if (x === 1) {
-    chara(cid).system.抖Ｍ气质 = 3;
+    EraChara.get(cid).abl.set(21, 3);
   }
 
   // 嫉妒（84）
   if (rand_n(10) === 0) {
-    chara(cid).event.嫉妒 = 1;
+    EraChara.get(cid).talent.set(84, 1);
   }
 
   // 小恶魔（87）
@@ -721,7 +720,7 @@ async function cm_talent(cid, rand_n) {
 
   // 露出癖（ABL:17）
   if (rand_n(40) === 0) {
-    chara(cid).system.露出癖 = 3;
+    EraChara.get(cid).abl.set(17, 3);
   }
 
   // 魅惑（91）
@@ -801,7 +800,7 @@ async function cm_talent(cid, rand_n) {
 
   // 魅力（113）
   if (rand_n(8) === 0) {
-    chara(cid).dungeon.魅力 = 1;
+    EraChara.get(cid).talent.set(113, 1);
   }
 
   // 早泄（133）——男/扶他
@@ -814,7 +813,7 @@ async function cm_talent(cid, rand_n) {
   }
   // 未熟（135）偶发幼稚（132）与早泄（133）
   if (rand_n(12) === 0) {
-    chara(cid).train.未熟 = 1;
+    EraChara.get(cid).talent.set(135, 1);
     if (rand_n(8) === 0) {
       set_t(132);
     }
@@ -879,10 +878,10 @@ async function cm_talent(cid, rand_n) {
  * @param {(n: number) => number} rand_n 随机源
  */
 async function cm_kind(cid, rand_n) {
-  if ((era.get(`talent:${cid}:220`) || 0) !== 1) {
-    era.set(`cflag:${cid}:151`, rand_n(200));
+  if ((EraChara.get(cid).talent.get(220) || 0) !== 1) {
+    EraChara.get(cid).cflag.set(151, rand_n(200));
   } else {
-    era.set(`cflag:${cid}:151`, rand_n(100));
+    EraChara.get(cid).cflag.set(151, rand_n(100));
   }
 }
 
@@ -893,8 +892,8 @@ async function cm_kind(cid, rand_n) {
  * @param {(n: number) => number} rand_n 随机源
  */
 async function cm_skill(cid, rand_n) {
-  const t = (n) => era.get(`talent:${cid}:${n}`) || 0;
-  const set_t = (n, v = 1) => era.set(`talent:${cid}:${n}`, v);
+  const t = (n) => EraChara.get(cid).talent.get(n) || 0;
+  const set_t = (n, v = 1) => EraChara.get(cid).talent.set(n, v);
   const race2 = t(319); // 种族2（talent:319）
 
   // 使役（265）——魔物使（212）必持，其余四十分之一
@@ -1048,9 +1047,9 @@ async function cm_look(cid, arg, rand_n) {
 
   // 白虎（125）连同阴毛状态（310）/ 阴毛生长极限（311）
   if (rand_n(20) === 0) {
-    chara(cid).stronghold.白虎 = 1;
-    era.set(`talent:${cid}:310`, 1);
-    era.set(`talent:${cid}:311`, 1);
+    EraChara.get(cid).talent.set(125, 1);
+    EraChara.get(cid).talent.set(310, 1);
+    EraChara.get(cid).talent.set(311, 1);
   }
 }
 
@@ -1065,14 +1064,17 @@ async function cm_look(cid, arg, rand_n) {
  *   掷骰；缺省均匀随机——st_up 的缺省同款，#565 起接入）
  */
 async function cm_st(cid, rand_n) {
-  if ((era.get('flag:60') || 0) > 0 && (era.get('flag:402') || 0) === 0) {
-    const times = era.get('flag:60') || 0;
+  if (
+    (era_flag.hero_base_level_bonus || 0) > 0 &&
+    (era_flag.dispatched_slave || 0) === 0
+  ) {
+    const times = era_flag.hero_base_level_bonus || 0;
     for (let i = 0; i < times; i += 1) {
       st_up(cid, rand_n); // st_up（逐级一次；返回值无人读）
     }
   }
-  chara(cid).dungeon.体力 = era.get(`maxbase:${cid}:0`) || 0;
-  chara(cid).dungeon.气力 = era.get(`maxbase:${cid}:1`) || 0;
+  EraChara.get(cid).base.set(0, EraChara.get(cid).maxbase.get(0) || 0);
+  EraChara.get(cid).base.set(1, EraChara.get(cid).maxbase.get(1) || 0);
 }
 
 /**
@@ -1085,8 +1087,8 @@ async function cm_st(cid, rand_n) {
  * @param {(n: number) => number} rand_n 随机源
  */
 async function cm_st_ace(cid, rand_n) {
-  const maou_lv = era.get('cflag:0:9') || 0; // CFLAG:0:9 魔王等级
-  if ((era.get('flag:60') || 0) > 0 && maou_lv > 2) {
+  const maou_lv = EraChara.get(0).cflag.get(9) || 0; // CFLAG:0:9 魔王等级
+  if ((era_flag.hero_base_level_bonus || 0) > 0 && maou_lv > 2) {
     let local = maou_lv * 6; // local = 魔王等级 * 6
     local += rand_n(maou_lv) * 2;
     local = Math.floor(local / 10);
@@ -1111,15 +1113,15 @@ async function cm_family_talent(cid, rand_n) {
   const family_id = search_family(cid);
 
   if (family_id > 0) {
-    const f = (n) => era.get(`talent:${family_id}:${n}`) || 0;
-    const set_t = (n, v = 1) => era.set(`talent:${cid}:${n}`, v);
-    const is_male = (era.get(`talent:${cid}:122`) || 0) !== 0;
+    const f = (n) => EraChara.get(family_id).talent.get(n) || 0;
+    const set_t = (n, v = 1) => EraChara.get(cid).talent.set(n, v);
+    const is_male = (EraChara.get(cid).talent.get(122) || 0) !== 0;
 
     // 家族 <15 岁
-    if ((era.get(`cflag:${family_id}:451`) || 0) < 15) {
+    if ((EraChara.get(family_id).cflag.get(451) || 0) < 15) {
       // 大柄（魁梧）则体格升一段
       if (f(99) && rand_n(3) === 0) {
-        if ((era.get(`talent:${cid}:100`) || 0) !== 0) {
+        if ((EraChara.get(cid).talent.get(100) || 0) !== 0) {
           set_t(100, 0); // 娇小 → 无
         } else {
           set_t(99); // → 魁梧
@@ -1130,18 +1132,18 @@ async function cm_family_talent(cid, rand_n) {
       // `f(119) === 0`——家族无超乳即升
       if ((f(110) && rand_n(4)) || (f(114) && rand_n(2)) || f(119) === 0) {
         if (!is_male) {
-          if ((era.get(`talent:${cid}:116`) || 0) !== 0) {
+          if ((EraChara.get(cid).talent.get(116) || 0) !== 0) {
             set_t(116, 0); // 绝壁 → 贫乳
             set_t(109);
-          } else if ((era.get(`talent:${cid}:109`) || 0) !== 0) {
+          } else if ((EraChara.get(cid).talent.get(109) || 0) !== 0) {
             set_t(109, 0); // 贫乳 → 平
           } else if (
-            (era.get(`talent:${cid}:110`) || 0) === 0 &&
-            (era.get(`talent:${cid}:114`) || 0) === 0 &&
-            (era.get(`talent:${cid}:119`) || 0) === 0
+            (EraChara.get(cid).talent.get(110) || 0) === 0 &&
+            (EraChara.get(cid).talent.get(114) || 0) === 0 &&
+            (EraChara.get(cid).talent.get(119) || 0) === 0
           ) {
             set_t(110); // 平 → 巨乳
-          } else if ((era.get(`talent:${cid}:110`) || 0) !== 0) {
+          } else if ((EraChara.get(cid).talent.get(110) || 0) !== 0) {
             set_t(110, 0); // 巨乳 → 爆乳
             set_t(114);
           } else {
@@ -1151,10 +1153,10 @@ async function cm_family_talent(cid, rand_n) {
         }
       }
       // 家族 ≥18 岁
-    } else if ((era.get(`cflag:${family_id}:451`) || 0) > 17) {
+    } else if ((EraChara.get(family_id).cflag.get(451) || 0) > 17) {
       // 小柄（娇小）则体格降一段
       if (f(100) && rand_n(3) === 0) {
-        if ((era.get(`talent:${cid}:99`) || 0) !== 0) {
+        if ((EraChara.get(cid).talent.get(99) || 0) !== 0) {
           set_t(99, 0); // 魁梧 → 无
         } else {
           set_t(100); // → 娇小
@@ -1167,17 +1169,17 @@ async function cm_family_talent(cid, rand_n) {
       // 不同形，各自命中面保持原样。
       if ((f(109) && rand_n(4)) || (f(116) && rand_n(2)) === 0) {
         if (!is_male) {
-          if ((era.get(`talent:${cid}:119`) || 0) !== 0) {
+          if ((EraChara.get(cid).talent.get(119) || 0) !== 0) {
             set_t(119, 0); // 超乳 → 爆乳
             set_t(114);
-          } else if ((era.get(`talent:${cid}:114`) || 0) !== 0) {
+          } else if ((EraChara.get(cid).talent.get(114) || 0) !== 0) {
             set_t(114, 0); // 爆乳 → 巨乳
             set_t(110);
-          } else if ((era.get(`talent:${cid}:110`) || 0) !== 0) {
+          } else if ((EraChara.get(cid).talent.get(110) || 0) !== 0) {
             set_t(110, 0); // 巨乳 → 平
           } else if (
-            (era.get(`talent:${cid}:109`) || 0) === 0 &&
-            (era.get(`talent:${cid}:116`) || 0) === 0
+            (EraChara.get(cid).talent.get(109) || 0) === 0 &&
+            (EraChara.get(cid).talent.get(116) || 0) === 0
           ) {
             set_t(109); // 平 → 贫乳
           } else {
@@ -1267,20 +1269,20 @@ async function cm_family_talent(cid, rand_n) {
 
     // 瞳色继承（五分之四）
     if (rand_n(5) !== 0) {
-      era.set(`talent:${cid}:306`, f(306));
+      EraChara.get(cid).talent.set(306, f(306));
     }
     // 体型继承（三分之一）
     if (rand_n(3) === 0) {
-      era.set(`talent:${cid}:308`, f(308));
+      EraChara.get(cid).talent.set(308, f(308));
     }
     // 乳头继承（三分之一）
     if (rand_n(3) === 0) {
-      era.set(`talent:${cid}:309`, f(309));
+      EraChara.get(cid).talent.set(309, f(309));
     }
     // 阴毛状态与生长极限继承（三分之一）
     if (rand_n(3) === 0) {
-      era.set(`talent:${cid}:310`, f(310));
-      era.set(`talent:${cid}:311`, f(311));
+      EraChara.get(cid).talent.set(310, f(310));
+      EraChara.get(cid).talent.set(311, f(311));
     }
   }
 }
@@ -1292,7 +1294,7 @@ async function cm_family_talent(cid, rand_n) {
  * @param {(n: number) => number} rand_n 随机源
  */
 async function cm_ns_exp(cid, rand_n) {
-  const t = (n) => era.get(`talent:${cid}:${n}`) || 0;
+  const t = (n) => EraChara.get(cid).talent.get(n) || 0;
 
   // 出産経験：TALENT:320 编码的女儿/儿子数（%1000/100 与
   // %10000/1000 位）
@@ -1307,39 +1309,39 @@ async function cm_ns_exp(cid, rand_n) {
     p += Math.floor(sons / 1000);
   }
 
-  era.add(`exp:${cid}:60`, p); // EXP:60 出産経験（域内）
+  EraChara.get(cid).exp.add(60, p); // EXP:60 出産経験（域内）
 
   // 性交経験：非处女按 p 与随机；处女却有出産経験则消去处女
   if (t(0) === 0) {
     const v = rand_n(8) + 1 + p;
-    chara(cid).dungeon.私处经验 = v; // EXP:0
-    chara(cid).dungeon.性交经验 = v; // EXP:5 = EXP:0
+    EraChara.get(cid).exp.set(0, v); // EXP:0
+    EraChara.get(cid).exp.set(5, v); // EXP:5 = EXP:0
   } else if (p) {
     const v = rand_n(4) + 1 + p;
-    chara(cid).dungeon.私处经验 = v;
-    chara(cid).dungeon.性交经验 = v;
-    era.set(`talent:${cid}:0`, 0); // 処女を消す
+    EraChara.get(cid).exp.set(0, v);
+    EraChara.get(cid).exp.set(5, v);
+    EraChara.get(cid).talent.set(0, 0); // 処女を消す
   }
 
   // 自慰经验四连（偶发巨量 → 男/扶他 → 容易自慰 → 常态）
   if (rand_n(30) === 0) {
-    chara(cid).dungeon.自慰经验 = rand_n(50); // 猿みたいなオナニスト
+    EraChara.get(cid).exp.set(10, rand_n(50)); // 猿みたいなオナニスト
   } else if (t(121) === 1 || t(122) === 1) {
-    chara(cid).dungeon.自慰经验 = rand_n(30);
+    EraChara.get(cid).exp.set(10, rand_n(30));
   } else if (t(60) === 1) {
-    chara(cid).dungeon.自慰经验 = rand_n(20); // 容易自慰
+    EraChara.get(cid).exp.set(10, rand_n(20)); // 容易自慰
   } else if (rand_n(10) === 0) {
-    chara(cid).dungeon.自慰经验 = rand_n(10);
+    EraChara.get(cid).exp.set(10, rand_n(10));
   }
 
   // 善恶值高不自慰
-  if ((era.get(`cflag:${cid}:151`) || 0) > 150) {
-    chara(cid).dungeon.自慰经验 = 0;
+  if ((EraChara.get(cid).cflag.get(151) || 0) > 150) {
+    EraChara.get(cid).exp.set(10, 0);
   }
 
   // 男人无私处经验
   if (t(122)) {
-    chara(cid).dungeon.私处经验 = 0;
+    EraChara.get(cid).exp.set(0, 0);
   }
 
   // 初体验（#394 起真身，ere/system/chara/chara-first-exp.js），
@@ -1348,7 +1350,7 @@ async function cm_ns_exp(cid, rand_n) {
 
   // 使役技能（talent:265）持有且无从属怪物（CFLAG:570）时
   // 随机取得（循环的 break 位置决定阶层段，极稀有超强使役）
-  if ((era.get(`cflag:${cid}:570`) || 0) === 0 && t(265)) {
+  if ((EraChara.get(cid).cflag.get(570) || 0) === 0 && t(265)) {
     let local2 = 0;
     for (local2 = 0; local2 < 9; local2 += 1) {
       if (rand_n(3) === 0) {
@@ -1363,7 +1365,7 @@ async function cm_ns_exp(cid, rand_n) {
     if (rand_n(50) === 0) {
       local2 = 191 + rand_n(3); // ごく稀に超強い使役
     }
-    chara(cid).system.从属怪物 = local2;
+    EraChara.get(cid).cflag.set(570, local2);
   }
 }
 
@@ -1379,11 +1381,11 @@ async function cm_ns_exp(cid, rand_n) {
  * @param {(n: number) => number} rand_n 随机源
  */
 async function cm_cloth(cid, rand_n) {
-  const t = (n) => era.get(`talent:${cid}:${n}`) || 0;
-  const tv = (n) => (era.get(`talent:${cid}:${n}`) || 0) !== 0;
+  const t = (n) => EraChara.get(cid).talent.get(n) || 0;
+  const tv = (n) => (EraChara.get(cid).talent.get(n) || 0) !== 0;
   const is_male = tv(122);
   const race2 = t(319); // 种族2
-  const set_weapon = (v) => era.set(`cflag:${cid}:550`, v); // CFLAG:550 初始装备
+  const set_weapon = (v) => EraChara.get(cid).cflag.set(550, v); // CFLAG:550 初始装备
   let r = 0; // 服装类型
 
   if (tv(200) && is_male) {
@@ -1392,7 +1394,7 @@ async function cm_cloth(cid, rand_n) {
     set_weapon(40);
   } else if (tv(200)) {
     // 战士（女/扶她）
-    if ((era.get(`cflag:${cid}:6`) || 0) >= 4500 && rand_n(3) === 0) {
+    if ((EraChara.get(cid).cflag.get(6) || 0) >= 4500 && rand_n(3) === 0) {
       // 生成名高（CFLAG:6 >= 4500）偶发中华风旗袍
       r = 214;
       if (rand_n(2) === 0) {
@@ -1420,7 +1422,7 @@ async function cm_cloth(cid, rand_n) {
   } else if (tv(201) && is_male) {
     // 男魔法师：冒险服 + 护符 + 法杖
     r = 103;
-    era.set(`cflag:${cid}:42`, 85); // 护符（CFLAG:42 域内）
+    EraChara.get(cid).cflag.set(42, 85); // 护符（CFLAG:42 域内）
     set_weapon(41);
   } else if (tv(201)) {
     // 魔法师
@@ -1431,7 +1433,7 @@ async function cm_cloth(cid, rand_n) {
     } else {
       r = 103;
     }
-    era.set(`cflag:${cid}:42`, 85);
+    EraChara.get(cid).cflag.set(42, 85);
     set_weapon(41); // 法杖
   } else if (tv(202)) {
     // 神官
@@ -1587,11 +1589,11 @@ async function cm_cloth(cid, rand_n) {
   // 初始装备接頭語
   era.set(
     `cflag:${cid}:550`,
-    (era.get(`cflag:${cid}:550`) || 0) + rand_n(10) * 100000,
+    (EraChara.get(cid).cflag.get(550) || 0) + rand_n(10) * 100000,
   );
-  chara(cid).train.上衣类型 = r; // CFLAG:41
-  chara(cid).train.上衣上状态 = 0; // CFLAG:45
-  chara(cid).train.上衣下状态 = 0; // CFLAG:46
+  EraChara.get(cid).cflag.set(41, r); // CFLAG:41
+  EraChara.get(cid).cflag.set(45, 0); // CFLAG:45
+  EraChara.get(cid).cflag.set(46, 0); // CFLAG:46
   r = 0;
 
   // wearing_cloth_able 直接拿 cid（#5 决议第六条：指针不隐式读全局）；
@@ -1600,7 +1602,7 @@ async function cm_cloth(cid, rand_n) {
 
   // 眼镜素质配眼镜饰品
   if (t(48) === 1) {
-    era.set(`cflag:${cid}:42`, 83);
+    EraChara.get(cid).cflag.set(42, 83);
   }
 
   return 0;
@@ -1840,10 +1842,10 @@ async function rand_chara_make(rand, char_make_inport, campaign_slave = false) {
         // 登记序。动的是 FLAG:1/FLAG:2（「上一次的
         // 调教对象」，event-end.js:68-69 的同款槽位），跨域写走 game 域门面
         // （#71；属主域是 event）。
-        era_flag.target = game.event.上次调教对象; // TARGET = FLAG:1
-        era_flag.assi = game.event.上次助手; // ASSI = FLAG:2
+        era_flag.target = era_flag.last_train_target; // TARGET = FLAG:1
+        era_flag.assi = era_flag.last_assistant; // ASSI = FLAG:2
 
-        era.set('flag:402', 1); // 派遣奴隶标志（等级 1 生成）
+        era_flag.dispatched_slave = 1; // 派遣奴隶标志（等级 1 生成）
         // 调 chara_make —— 只给性格实参（xingge），
         // 种族设定缺省 0；xingge 来自上方的表格查询
         await chara_make(newchara, xingge, 0, rand_n, newchara);
@@ -1929,8 +1931,8 @@ async function rand_chara_make(rand, char_make_inport, campaign_slave = false) {
         party_char_del(newchara); // 退出队伍
         era.removeCharacter(newchara); // 移除角色
         cn_rebuild(); // 重建名字表
-        era_flag.target = game.event.上次调教对象; // TARGET = FLAG:1
-        era_flag.assi = game.event.上次助手; // ASSI = FLAG:2
+        era_flag.target = era_flag.last_train_target; // TARGET = FLAG:1
+        era_flag.assi = era_flag.last_assistant; // ASSI = FLAG:2
         return 0; // 复位后返回
       }
 
@@ -1942,10 +1944,10 @@ async function rand_chara_make(rand, char_make_inport, campaign_slave = false) {
         `${inport_cid === 0 ? '' : '异国的'}冒险者${chara_callname(newchara)}被囚禁在了地牢里！`,
       );
       era.drawLine({ isSolid: true });
-      chara(newchara).invasion.状态 = 0; // CFLAG:1 初始位置
-      era.set('flag:402', 0); // 用过的标志归位
-      era_flag.target = game.event.上次调教对象; // TARGET = FLAG:1
-      era_flag.assi = game.event.上次助手; // ASSI = FLAG:2
+      EraChara.get(newchara).cflag.set(1, 0); // CFLAG:1 初始位置
+      era_flag.dispatched_slave = 0; // 用过的标志归位
+      era_flag.target = era_flag.last_train_target; // TARGET = FLAG:1
+      era_flag.assi = era_flag.last_assistant; // ASSI = FLAG:2
       await era.waitAnyKey();
       return newchara;
     }

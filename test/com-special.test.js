@@ -53,7 +53,7 @@ async function run_com(world, id) {
 test('50–59 号可用性检查：默认所需道具下全部放行', async () => {
   const { fixture, com_able_family } = seed_world();
   for (const item of [6, 16, 18, 19, 25, 26, 27, 28]) {
-    fixture.store.set(`item:${item}`, 1);
+    fixture.store.set(`item:hold:${item}`, 1);
   }
   fixture.store.set('abl:31:10', 3);
   fixture.store.set('abl:31:0', 3);
@@ -66,9 +66,9 @@ test('50–59 号可用性检查：默认所需道具下全部放行', async () 
 
 test('50–52 号可用性检查：器具过滤、药物抗性、连续利尿各自拦截', async () => {
   const { fixture, com_able_family } = seed_world();
-  fixture.store.set('item:25', 1);
-  fixture.store.set('item:26', 1);
-  fixture.store.set('item:27', 1);
+  fixture.store.set('item:hold:25', 1);
+  fixture.store.set('item:hold:26', 1);
+  fixture.store.set('item:hold:27', 1);
 
   fixture.store.set('flag:25', 2);
   assert.equal(await com_able_family.call(50), 0, '润滑液受器具过滤拦截');
@@ -90,7 +90,7 @@ test('53–56 号可用性检查：录像解除随时、野外门槛、死斗与
   assert.equal(await com_able_family.call(53), 1, '录像中可无条件关闭');
   fixture.store.set('tequip:31:53', 0);
 
-  fixture.store.set('item:18', 1);
+  fixture.store.set('item:hold:18', 1);
   assert.equal(await com_able_family.call(54), 0, '顺从/抖M均不足 3 不可野外');
   fixture.store.set('abl:31:21', 3);
   assert.equal(await com_able_family.call(54), 1);
@@ -106,8 +106,8 @@ test('53–56 号可用性检查：录像解除随时、野外门槛、死斗与
   assert.equal(await com_able_family.call(56), 0, '失神中不可交谈');
   fixture.store.set('tflag:899', 0);
 
-  fixture.store.set('item:6', 1);
-  fixture.store.set('item:28', 1);
+  fixture.store.set('item:hold:6', 1);
+  fixture.store.set('item:hold:28', 1);
   fixture.store.set('tflag:224', 555);
   assert.equal(await com_able_family.call(53), 0, '自动调教不得开启录像');
 });
@@ -116,7 +116,7 @@ test('57–59 号可用性检查：镜子、浴室及新妻的关键门槛', asy
   const { fixture, era_flag, com_able_family } = seed_world();
   fixture.store.set('abl:31:10', 3);
   assert.equal(await com_able_family.call(57), 0, '缺镜子不可羞耻 PLAY');
-  fixture.store.set('item:16', 1);
+  fixture.store.set('item:hold:16', 1);
   assert.equal(await com_able_family.call(57), 1);
   fixture.store.set('tequip:31:58', 1);
   assert.equal(await com_able_family.call(57), 0, '浴室中不可羞耻 PLAY');
@@ -133,7 +133,7 @@ test('57–59 号可用性检查：镜子、浴室及新妻的关键门槛', asy
   fixture.store.set('abl:31:10', 3);
   assert.equal(await com_able_family.call(58), 1);
 
-  fixture.store.set('item:19', 1);
+  fixture.store.set('item:hold:19', 1);
   fixture.store.set('abl:31:0', 2);
   assert.equal(await com_able_family.call(59), 0, '新妻门槛是 ABL:0 > 2');
   fixture.store.set('abl:31:0', 3);
@@ -162,11 +162,11 @@ test('57–59 号可用性检查：镜子、浴室及新妻的关键门槛', asy
 
 test('com50：覆写 SOURCE、消耗润滑液并累积同性经验', async () => {
   const world = seed_world();
-  world.fixture.store.set('item:25', 2);
+  world.fixture.store.set('item:hold:25', 2);
   assert.equal(await run_com(world, 50), 1);
   assert.equal(world.fixture.store.get('source:31:10'), 10000);
   assert.equal(world.fixture.store.get('source:31:12'), 300);
-  assert.equal(world.fixture.store.get('item:25'), 1);
+  assert.equal(world.fixture.store.get('item:hold:25'), 1);
   assert.equal(
     world.fixture.store.get('exp:31:40'),
     1,
@@ -177,7 +177,7 @@ test('com50：覆写 SOURCE、消耗润滑液并累积同性经验', async () =>
 test('com51：调合知识、药物经验与成瘾状态按规则落盘', async () => {
   const world = seed_world();
   const { fixture } = world;
-  fixture.store.set('item:26', 1);
+  fixture.store.set('item:hold:26', 1);
   fixture.store.set('talent:0:55', 1);
   fixture.store.set('talent:31:46', 1);
   fixture.store.set('exp:31:57', 50);
@@ -196,11 +196,11 @@ test('com51：调合知识、药物经验与成瘾状态按规则落盘', async 
   assert.equal(fixture.store.get('tequip:31:21'), 1);
   assert.equal(fixture.store.get('cflag:31:31'), 1);
   assert.equal(fixture.store.get('cflag:31:32'), 1);
-  assert.equal(fixture.store.get('item:26'), 0);
+  assert.equal(fixture.store.get('item:hold:26'), 0);
   assert.equal(fixture.store.get('exp:31:57'), 51);
 
   const low_exp = seed_world();
-  low_exp.fixture.store.set('item:26', 1);
+  low_exp.fixture.store.set('item:hold:26', 1);
   assert.equal(await run_com(low_exp, 51), 1);
   assert.equal(
     low_exp.fixture.store.get('deltabase:31:0'),
@@ -214,7 +214,7 @@ test('com52：触手时抗药性例外，置利尿剂并不消耗实体道具', 
   const { fixture } = world;
   fixture.store.set('talent:31:56', 1);
   fixture.store.set('tequip:31:90', 1);
-  fixture.store.set('item:27', 1);
+  fixture.store.set('item:hold:27', 1);
 
   assert.equal(await run_com(world, 52), 1);
   assert.equal(fixture.store.get('deltabase:31:0'), -240);
@@ -222,7 +222,7 @@ test('com52：触手时抗药性例外，置利尿剂并不消耗实体道具', 
   assert.equal(fixture.store.get('source:31:14'), 2000);
   assert.equal(fixture.store.get('source:31:15'), 150);
   assert.equal(fixture.store.get('tequip:31:22'), 1);
-  assert.equal(fixture.store.get('item:27'), 1, '触手调教时不耗利尿剂');
+  assert.equal(fixture.store.get('item:hold:27'), 1, '触手调教时不耗利尿剂');
 });
 
 // —— COM53：录像的槽、tick、充能与停机 ——
@@ -230,8 +230,8 @@ test('com52：触手时抗药性例外，置利尿剂并不消耗实体道具', 
 test('com53：启动只清 480–489、首个持续 tick 不录帧', async () => {
   const world = seed_world();
   const { fixture, equip_com_family } = world;
-  fixture.store.set('item:6', 1);
-  fixture.store.set('item:28', 1);
+  fixture.store.set('item:hold:6', 1);
+  fixture.store.set('item:hold:28', 1);
   fixture.store.set('cflag:31:460', 99);
   fixture.store.set('cflag:31:480', 99);
   fixture.store.set('tequip:31:54', 1);
@@ -360,7 +360,7 @@ test('equip_com53：充能先注册按钮，成功时双扣资金，选择停止
 test('com54：首次开启记录野外露出经验；持续效果由装备分发调用', async () => {
   const world = seed_world();
   const { fixture, equip_com_family } = world;
-  fixture.store.set('item:18', 1);
+  fixture.store.set('item:hold:18', 1);
   fixture.store.set('abl:31:10', 3);
   assert.equal(await run_com(world, 54), 1);
   assert.equal(fixture.store.get('tequip:31:54'), 1);
@@ -578,7 +578,7 @@ test('com56：话术读取目标自身，歌唱/舞蹈显示量与实际加值�
 
 test('com57：单行条件只约束下一条语句，开启与持续的无素质路径均保留后续效果', async () => {
   const opening = seed_world();
-  opening.fixture.store.set('item:16', 1);
+  opening.fixture.store.set('item:hold:16', 1);
   opening.fixture.store.set('abl:31:10', 3);
   await run_com(opening, 57);
   assert.equal(opening.fixture.store.get('source:31:12'), 450);
@@ -599,7 +599,7 @@ test('com57：单行条件只约束下一条语句，开启与持续的无素质
 test('com57：开关、爱情经验与持续效果', async () => {
   const world = seed_world();
   const { fixture, equip_com_family } = world;
-  fixture.store.set('item:16', 1);
+  fixture.store.set('item:hold:16', 1);
   fixture.store.set('abl:31:10', 3);
   fixture.store.set('abl:31:17', 2);
   fixture.store.set('cflag:31:2', 1000);
@@ -658,7 +658,7 @@ test('equip_com58：两个主人经验条件分别累积', async () => {
 test('com59：爱情经验 +2，持续效果再 +1 与主人经验四条件', async () => {
   const world = seed_world();
   const { fixture, equip_com_family } = world;
-  fixture.store.set('item:19', 1);
+  fixture.store.set('item:hold:19', 1);
   fixture.store.set('abl:31:0', 3);
   fixture.store.set('abl:31:10', 3);
   fixture.store.set('talent:31:85', 1);
@@ -682,8 +682,8 @@ test('com59：爱情经验 +2，持续效果再 +1 与主人经验四条件', as
 test('SHOW_STATUS 事件：COM53 启动并推进后显示剩余录像次数和特殊持续状态，不落 show_equip_2 占位', async () => {
   const world = seed_world();
   const { fixture, equip_com_family } = world;
-  fixture.store.set('item:6', 1);
-  fixture.store.set('item:28', 1);
+  fixture.store.set('item:hold:6', 1);
+  fixture.store.set('item:hold:28', 1);
   await run_com(world, 53);
   world.era_flag.selectcom = 56;
   await equip_com_family.call(53); // 首 tick：录像时间 0 → 1，剩余 10 次
@@ -719,8 +719,8 @@ test('主循环加载特殊族：主循环加载后 COM53 的注册实际生效'
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.target = 31;
   era_flag.player = 0;
-  fixture.store.set('item:6', 1);
-  fixture.store.set('item:28', 1);
+  fixture.store.set('item:hold:6', 1);
+  fixture.store.set('item:hold:28', 1);
 
   const { com_family } = fixture.load_module('system/train/com-family');
   era_flag.selectcom = 53;

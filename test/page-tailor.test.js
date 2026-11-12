@@ -236,7 +236,7 @@ test('#612 换装铺：数据表驱动的菜单与两个持有列表也带「- �
 
   // 强化前缀 10 档
   const prefix = tailor_fixture({
-    'item:341': 1,
+    'item:hold:341': 1,
     'itemname:341': '剑',
     'cflag:0:9': 30,
     'cflag:1:550': -1,
@@ -250,7 +250,7 @@ test('#612 换装铺：数据表驱动的菜单与两个持有列表也带「- �
 
   // 持有装备品行（正文 `- 名字 (持有数)`）
   const held = tailor_fixture({
-    'item:300': 2,
+    'item:hold:300': 2,
     'itemname:300': '剑',
     'cflag:0:9': 30,
     'cflag:1:551': -1,
@@ -260,7 +260,7 @@ test('#612 换装铺：数据表驱动的菜单与两个持有列表也带「- �
 
   // 戒指页的灰字行：假编号与前缀保留；武器页那处的断言在 equip_magic_weapon 用例里
   const ring_low = tailor_fixture({
-    'item:300': 1,
+    'item:hold:300': 1,
     'itemname:300': '剑',
     'cflag:0:9': 29,
   });
@@ -412,7 +412,7 @@ test('tailor_accessory：43 件整表驱动（价格随件、CFLAG:42 = R）', a
   assert.equal(ACCESSORY_ITEMS.length, 43, '装备品表 43 件');
   {
     // 页数 = 5（标题行印当前页/总页数）
-    const page = tailor_fixture({ 'item:300': 1 });
+    const page = tailor_fixture({ 'item:hold:300': 1 });
     await run_core(page, [2, 999, 999]);
     assert.ok(
       texts(page.lines_history).some((t) => t.includes('5页')),
@@ -746,7 +746,7 @@ test('tailor_core：尿布（A = 11）清 CFLAG:47；装备品（A = 20）换 CF
 test('equip_magic_item：装备戒指与强化（千位强度、超限回退、扣钱）', async () => {
   // 装备 300 号（识别号 0）的戒指，强化档 2
   const fixture = tailor_fixture({
-    'item:300': 3,
+    'item:hold:300': 3,
     'cflag:0:9': 30,
     'cflag:1:551': -1, // 空槽用 -1（0 会被当成「装备 0 号」而多回一件）
   });
@@ -757,7 +757,7 @@ test('equip_magic_item：装备戒指与强化（千位强度、超限回退、�
     '存储编号 = 识别号 0 + 强度 2 × 1000',
   );
   assert.equal(fixture.store.get('flag:10004'), 10000000 - 2 * 10000);
-  assert.equal(fixture.store.get('item:300'), 2, '消耗一件');
+  assert.equal(fixture.store.get('item:hold:300'), 2, '消耗一件');
   // 编号 300 段的按钮同样不写 [编号] 前缀（引擎自动拼，PR #30）
   const ring_button = fixture.lines_history.find(
     (l) => l.type === 'button' && l.accelerator === 300,
@@ -809,7 +809,7 @@ test('equip_magic_item：装备槽条件（>= 0 才给强化/取下）与持有�
   const full = tailor_fixture({
     'cflag:0:9': 30,
     'cflag:1:551': 2000,
-    'item:300': 1,
+    'item:hold:300': 1,
   });
   const draw2 = await run_core(full, [7, 1, 999, 999, 999]);
   const ids2 = accs(draw2);
@@ -846,7 +846,7 @@ test('equip_magic_item：强化的两笔支出（所持金与跨域消费）一�
   // install 路径与强化路径各写一次 exflag:4444（累计消费），
   // 只断言所持金会漏掉这两句——两条路径各来一次
   const fixture = tailor_fixture({
-    'item:300': 3,
+    'item:hold:300': 3,
     'cflag:0:9': 30,
     'cflag:1:551': -1,
   });
@@ -878,7 +878,7 @@ test('equip_magic_item：强化的两笔支出（所持金与跨域消费）一�
 
 test('equip_magic_weapon：强化的跨域消费与装备路径', async () => {
   const fixture = tailor_fixture({
-    'item:341': 1,
+    'item:hold:341': 1,
     'cflag:0:9': 30,
     'cflag:1:550': -1,
   });
@@ -895,7 +895,7 @@ test('equip_magic_weapon：强化的跨域消费与装备路径', async () => {
 test('equip_magic_weapon：装备武器带前缀档（十万位）与武器化触手', async () => {
   // 装备 341 号的武器，档位 1，前缀 9（暗黑）
   const fixture = tailor_fixture({
-    'item:341': 1,
+    'item:hold:341': 1,
     'cflag:0:9': 30,
     'cflag:1:550': -1,
   });
@@ -908,7 +908,7 @@ test('equip_magic_weapon：装备武器带前缀档（十万位）与武器化�
   // [990] 武器化触手 → 349 号装备
   const tentacle = tailor_fixture({
     'itemname:349': '触手',
-    'item:90': 1,
+    'item:hold:90': 1,
     'cflag:0:9': 30,
     'cflag:1:550': -1,
   });
@@ -940,10 +940,10 @@ test('equip_magic_weapon：空手时不给强化/取下（w:0 <= -1）', async (
 
 test('equip_magic_weapon：武器段只列已声明的武器，跳过未声明库存', async () => {
   const fixture = tailor_fixture({
-    'item:352': 1,
-    'item:349': 1, // 武器化触手在段内但被过滤掉，只走 [990]
-    'item:359': 1,
-    'item:360': 1,
+    'item:hold:352': 1,
+    'item:hold:349': 1, // 武器化触手在段内但被过滤掉，只走 [990]
+    'item:hold:359': 1,
+    'item:hold:360': 1,
     'cflag:0:9': 30,
     'cflag:1:550': -1,
   });
@@ -978,7 +978,11 @@ test('equip_magic_weapon：等级不足的灰显与「取下」', async () => {
   const off = tailor_fixture({ 'cflag:1:550': 40, 'cflag:0:9': 30 });
   await run_core(off, [8, 998, 999, 999]);
   assert.equal(off.store.get('cflag:1:550'), -1, '槽置 -1');
-  assert.equal(off.store.get('item:340'), 1, '识别号 40 的道具回包（300+40）');
+  assert.equal(
+    off.store.get('item:hold:340'),
+    1,
+    '识别号 40 的道具回包（300+40）',
+  );
 });
 
 test('pick_enhance_amount：买不起的档位仍画在屏上，「钱不够！！」可命中（#953）', async () => {
@@ -986,7 +990,7 @@ test('pick_enhance_amount：买不起的档位仍画在屏上，「钱不够！�
   // 钱只够 3 档时屏上照样有 [4]/[6]/[8]，点下去走「钱不够！！」那一支。
   // 文件头 5b 原先写「打印出来的按钮集合里不会有超过它的档位」——那是错的。
   const fixture = tailor_fixture({
-    'item:300': 3,
+    'item:hold:300': 3,
     'cflag:0:9': 30,
     'cflag:1:551': -1,
     'flag:10004': 30000,

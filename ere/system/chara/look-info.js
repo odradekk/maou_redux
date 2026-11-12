@@ -44,6 +44,7 @@
 'use strict';
 
 const era = require('#/era-electron');
+const EraChara = require('#/era-utils/era-chara');
 
 /** 语言中立的回退字串 'ERROR'：未登记的 kind 与各 CASEELSE 的默认值 */
 const ERROR = 'ERROR';
@@ -426,7 +427,7 @@ const COMMON_SENSE_DAILY_DEFAULT = '不改变';
  * @returns {number}
  */
 function talent(cid, idx) {
-  return era.get(`talent:${cid}:${idx}`) || 0;
+  return EraChara.get(cid).talent.get(idx) || 0;
 }
 
 /**
@@ -624,7 +625,7 @@ function get_look_info(cid, kind) {
       const kind = Math.trunc((family % 10000000000) / FAMILY_MARRIAGE_PLACE);
       switch (marriage) {
         case 0:
-          return `${(era.get(`cflag:${cid}:601`) || 0) !== 0 ? '原' : ''}未婚`;
+          return `${(EraChara.get(cid).cflag.get(601) || 0) !== 0 ? '原' : ''}未婚`;
         case 1:
           return `已与${spouse_word(kind)}结婚`;
         case 2:

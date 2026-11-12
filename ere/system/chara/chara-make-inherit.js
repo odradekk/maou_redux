@@ -19,7 +19,7 @@
  */
 
 const era = require('#/era-electron');
-const { chara } = require('#/facade/chara');
+const EraChara = require('#/era-utils/era-chara');
 const era_flag = require('#/era-utils/era-flag');
 const { default_rand } = require('#/utils/numeric');
 
@@ -73,12 +73,12 @@ function chara_make_inherit(
 
   // 扶她 || 男人 || !处女 → 私处封印 = 0
   if (
-    era.get(`talent:${child}:121`) || // TALENT:扶她
-    era.get(`talent:${child}:122`) || // TALENT:男人
-    !era.get(`talent:${child}:0`) // TALENT:处女
+    EraChara.get(child).talent.get(121) || // TALENT:扶她
+    EraChara.get(child).talent.get(122) || // TALENT:男人
+    !EraChara.get(child).talent.get(0) // TALENT:处女
   ) {
     // 写当前 TARGET（era_flag.target），见文件头「移植说明」条
-    chara(era_flag.target).chara.私处封印 = 0;
+    EraChara.get(era_flag.target).talent.set(273, 0);
   }
 
   // 恋母情结等
@@ -107,17 +107,17 @@ function chara_make_inherit(
   }
 
   // 精英特技——只在亲本自身有该素质时逐项继承，且不再带第二亲本
-  if (era.get(`talent:${parent_a}:220`)) {
+  if (EraChara.get(parent_a).talent.get(220)) {
     // TALENT:精英
     for (let index = 470; index < 489; index += 1) {
-      if (era.get(`talent:${parent_a}:${index}`)) {
+      if (EraChara.get(parent_a).talent.get(index)) {
         cmi_settalent(index, child, parent_a, -1, rand);
       }
     }
   }
-  if (parent_b >= 0 && era.get(`talent:${parent_b}:220`)) {
+  if (parent_b >= 0 && EraChara.get(parent_b).talent.get(220)) {
     for (let index = 470; index < 489; index += 1) {
-      if (era.get(`talent:${parent_b}:${index}`)) {
+      if (EraChara.get(parent_b).talent.get(index)) {
         cmi_settalent(index, child, parent_b, -1, rand);
       }
     }
@@ -152,7 +152,7 @@ function cmi_settalent(
     if (rand(4)) {
       era.set(
         `talent:${child}:${index}`,
-        era.get(`talent:${parent_a}:${index}`),
+        EraChara.get(parent_a).talent.get(index),
       );
     }
   } else if (parent_a === 0) {
@@ -160,16 +160,16 @@ function cmi_settalent(
     if (rand(3)) {
       era.set(
         `talent:${child}:${index}`,
-        era.get(`talent:${parent_b}:${index}`),
+        EraChara.get(parent_b).talent.get(index),
       );
     }
   } else if (rand(16)) {
     // 双亲 → child 有 15/16 概率继承 parent_a 或 parent_b 的素质，
     // rand(2) 非零时取 parent_a 侧（第一亲本）。
     const value = rand(2)
-      ? era.get(`talent:${parent_a}:${index}`)
-      : era.get(`talent:${parent_b}:${index}`);
-    era.set(`talent:${child}:${index}`, value);
+      ? EraChara.get(parent_a).talent.get(index)
+      : EraChara.get(parent_b).talent.get(index);
+    EraChara.get(child).talent.set(index, value);
   }
 }
 
@@ -182,37 +182,42 @@ function cmi_settalent(
  * @returns {void}
  */
 function cmi_mom_complex(child, parent, rand = default_rand) {
-  const child_male = (era.get(`talent:${child}:122`) || 0) !== 0; // TALENT:男人
-  const child_futa = (era.get(`talent:${child}:121`) || 0) !== 0; // TALENT:扶她
+  const child_male = (EraChara.get(child).talent.get(122) || 0) !== 0; // TALENT:男人
+  const child_futa = (EraChara.get(child).talent.get(121) || 0) !== 0; // TALENT:扶她
 
-  if (era.get(`talent:${parent}:82`) && (child_male || child_futa)) {
+  if (EraChara.get(parent).talent.get(82) && (child_male || child_futa)) {
     // 母亲讨厌男人，孩子是男人——不设情结
-  } else if (era.get(`talent:${parent}:79`) && !child_male && !child_futa) {
+  } else if (
+    EraChara.get(parent).talent.get(79) &&
+    !child_male &&
+    !child_futa
+  ) {
     // 母亲讨厌女人，孩子是女人——不设情结
   } else {
     // 母性
-    if (era.get(`talent:${parent}:155`) && rand(2)) {
-      era.set(`talent:${child}:140`, 1); // 恋母情结
+    if (EraChara.get(parent).talent.get(155) && rand(2)) {
+      EraChara.get(child).talent.set(140, 1); // 恋母情结
     }
     // 人妻（rand(3) 恰 == 1 才算命中，与另几处 rand(2) 的真值判定不同）
-    if (era.get(`talent:${parent}:157`) && rand(3) === 1) {
-      era.set(`talent:${child}:140`, 1); // 恋母情结
+    if (EraChara.get(parent).talent.get(157) && rand(3) === 1) {
+      EraChara.get(child).talent.set(140, 1); // 恋母情结
     }
     // 父性
-    if (era.get(`talent:${parent}:156`) && rand(2)) {
-      era.set(`talent:${child}:141`, 1); // 恋父情结
+    if (EraChara.get(parent).talent.get(156) && rand(2)) {
+      EraChara.get(child).talent.set(141, 1); // 恋父情结
     }
     // 未熟或娇小 → 按亲本性别分派正太控/萝莉控
-    const parent_male = (era.get(`talent:${parent}:122`) || 0) !== 0; // TALENT:男人
-    const parent_futa = (era.get(`talent:${parent}:121`) || 0) !== 0; // TALENT:扶她
+    const parent_male = (EraChara.get(parent).talent.get(122) || 0) !== 0; // TALENT:男人
+    const parent_futa = (EraChara.get(parent).talent.get(121) || 0) !== 0; // TALENT:扶她
     if (
-      (era.get(`talent:${parent}:135`) || era.get(`talent:${parent}:100`)) &&
+      (EraChara.get(parent).talent.get(135) ||
+        EraChara.get(parent).talent.get(100)) &&
       rand(3) === 1
     ) {
       if (parent_male || parent_futa) {
-        era.set(`talent:${child}:143`, 1); // 正太控（父亲未熟娇小）
+        EraChara.get(child).talent.set(143, 1); // 正太控（父亲未熟娇小）
       } else {
-        era.set(`talent:${child}:142`, 1); // 萝莉控（母亲未熟娇小）
+        EraChara.get(child).talent.set(142, 1); // 萝莉控（母亲未熟娇小）
       }
     }
   }
@@ -231,14 +236,14 @@ function cmi_conflict_check(child, rand = default_rand) {
     const left = PAIRS[pair * 2];
     const right = PAIRS[pair * 2 + 1];
     if (
-      era.get(`talent:${child}:${left}`) &&
-      era.get(`talent:${child}:${right}`)
+      EraChara.get(child).talent.get(left) &&
+      EraChara.get(child).talent.get(right)
     ) {
       // rand(2) 非零清 left（本对的前一项），否则清 right（后一项）
       if (rand(2)) {
-        era.set(`talent:${child}:${left}`, 0);
+        EraChara.get(child).talent.set(left, 0);
       } else {
-        era.set(`talent:${child}:${right}`, 0);
+        EraChara.get(child).talent.set(right, 0);
       }
     }
   }

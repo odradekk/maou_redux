@@ -458,7 +458,7 @@ test('方法 4 做成肉便器：计数、威望、录像归档、除名与经�
     1,
     '非精英非 EX_TALENT:2 → 水晶球储存数 +1',
   );
-  assert.equal(fixture.store.get('item:302'), 1, '装饰回收进道具栏');
+  assert.equal(fixture.store.get('item:hold:302'), 1, '装饰回收进道具栏');
   assert.equal(fixture.store.get('cflag:31:551'), -1, '装饰槽清空');
   assert.deepEqual(fixture.era.getAddedCharacters(), [0], '角色被除名');
   assert.equal(fixture.store.get('flag:230'), 1, 'FLAG:(NO+199) 处刑済');
@@ -777,7 +777,7 @@ test('自動處刑1：装备回收、除名、威望、勋章与经验、称呼�
   await auto_execution_one(31);
 
   assert.deepEqual(fixture.era.getAddedCharacters(), [0, 47]);
-  assert.equal(fixture.store.get('item:301'), 1, '武装回收');
+  assert.equal(fixture.store.get('item:hold:301'), 1, '武装回收');
   assert.equal(fixture.store.get('cflag:31:550'), -1);
   assert.equal(fixture.store.get('flag:230'), 1);
   assert.equal(fixture.store.get('flag:80'), 1);

@@ -21,7 +21,7 @@
  * 只被名册页读写、跨域写径尚未出现，与「数据版本」同款保持直连。
  */
 
-const era = require('#/era-electron');
+const EraChara = require('#/era-utils/era-chara');
 
 /**
  * 移植数据标准的当前版本（#135 起为诊断戳，ADR-0006）。预设基线 0 = 纯
@@ -44,7 +44,7 @@ const PORT_DATA_VERSION = 1;
  * @returns {number} 写入后的值（era.set 的返回值）
  */
 function init_portcflag(cid) {
-  return era.set(`portcflag:${cid}:数据版本`, PORT_DATA_VERSION);
+  return EraChara.get(cid).portcflag.set(0, PORT_DATA_VERSION);
 }
 
 /**
@@ -56,7 +56,7 @@ function init_portcflag(cid) {
  * @returns {number} 排序编号（未设时为该角色的 ID）
  */
 function sort_number_of(cid) {
-  return era.get(`portcflag:${cid}:排序编号`) || cid;
+  return EraChara.get(cid).portcflag.get(1) || cid;
 }
 
 /**
@@ -72,8 +72,8 @@ function sort_number_of(cid) {
 function swap_sort_numbers(a, b) {
   const a_number = sort_number_of(a);
   const b_number = sort_number_of(b);
-  era.set(`portcflag:${a}:排序编号`, b_number);
-  era.set(`portcflag:${b}:排序编号`, a_number);
+  EraChara.get(a).portcflag.set(1, b_number);
+  EraChara.get(b).portcflag.set(1, a_number);
 }
 
 /**
