@@ -6,6 +6,7 @@ const { test } = require('node:test');
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { register_handlers } = require('./helpers/event-registration');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
+const { com_context } = require('./helpers/com-context');
 
 function seed_world() {
   const fixture = create_era_fixture();
@@ -141,7 +142,7 @@ test('#769 三人调教：主人和助手的射精档位与余量分别结算', 
   fixture.load_module('system/train/com-assistant');
   const { com_family } = fixture.load_module('system/train/com-family');
 
-  assert.equal(await com_family.call(64), 1);
+  assert.equal(await com_family.call(64, { args: [com_context(flags)] }), 1);
   assert.ok(fixture.text_lines().includes('射精'));
   assert.ok(fixture.text_lines().includes('大量射精（助手）'));
   assert.equal(fixture.era.get('exp:0:3'), 1);
