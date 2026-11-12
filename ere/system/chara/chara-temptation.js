@@ -530,7 +530,7 @@ function mark_of(arg, index) {
 
 /** 好感度写入（CFLAG:2） */
 function add_affection(arg, delta) {
-  era.set(`cflag:${arg}:2`, (EraChara.get(arg).cflag.get(2) || 0) + delta);
+  EraChara.get(arg).cflag.set(2, (EraChara.get(arg).cflag.get(2) || 0) + delta);
 }
 
 /** 屈服/欲情点数写入（JUEL:n） */

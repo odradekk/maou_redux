@@ -498,7 +498,7 @@ async function cm_virgin(cid, rand_n) {
  */
 async function cm_talent(cid, rand_n) {
   const t = (n) => EraChara.get(cid).talent.get(n) || 0;
-  const set_t = (n, v = 1) => era.set(`talent:${cid}:${n}`, v);
+  const set_t = (n, v = 1) => EraChara.get(cid).talent.set(n, v);
 
   // 胆怯（10）/ 嚣张（12）/ 文静（14）——性格联动
   let x = rand_n(3);
@@ -893,7 +893,7 @@ async function cm_kind(cid, rand_n) {
  */
 async function cm_skill(cid, rand_n) {
   const t = (n) => EraChara.get(cid).talent.get(n) || 0;
-  const set_t = (n, v = 1) => era.set(`talent:${cid}:${n}`, v);
+  const set_t = (n, v = 1) => EraChara.get(cid).talent.set(n, v);
   const race2 = t(319); // 种族2（talent:319）
 
   // 使役（265）——魔物使（212）必持，其余四十分之一
@@ -1114,7 +1114,7 @@ async function cm_family_talent(cid, rand_n) {
 
   if (family_id > 0) {
     const f = (n) => EraChara.get(family_id).talent.get(n) || 0;
-    const set_t = (n, v = 1) => era.set(`talent:${cid}:${n}`, v);
+    const set_t = (n, v = 1) => EraChara.get(cid).talent.set(n, v);
     const is_male = (EraChara.get(cid).talent.get(122) || 0) !== 0;
 
     // 家族 <15 岁
@@ -1385,7 +1385,7 @@ async function cm_cloth(cid, rand_n) {
   const tv = (n) => (EraChara.get(cid).talent.get(n) || 0) !== 0;
   const is_male = tv(122);
   const race2 = t(319); // 种族2
-  const set_weapon = (v) => era.set(`cflag:${cid}:550`, v); // CFLAG:550 初始装备
+  const set_weapon = (v) => EraChara.get(cid).cflag.set(550, v); // CFLAG:550 初始装备
   let r = 0; // 服装类型
 
   if (tv(200) && is_male) {

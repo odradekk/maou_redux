@@ -283,7 +283,10 @@ async function transfer_soul(cid, mode = 0, rand = default_rand) {
         EraChara.get(partner).cflag.get(601) || 0,
       );
       EraChara.get(partner).cflag.set(601, 901);
-      era.set(`cflag:${partner}:609`, EraChara.get(partner).cflag.get(6) || 0);
+      EraChara.get(partner).cflag.set(
+        609,
+        EraChara.get(partner).cflag.get(6) || 0,
+      );
     }
   }
 

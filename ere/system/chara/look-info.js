@@ -625,7 +625,7 @@ function get_look_info(cid, kind) {
       const kind = Math.trunc((family % 10000000000) / FAMILY_MARRIAGE_PLACE);
       switch (marriage) {
         case 0:
-          return `${(era.get(`cflag:${cid}:601`) || 0) !== 0 ? '原' : ''}未婚`;
+          return `${(EraChara.get(cid).cflag.get(601) || 0) !== 0 ? '原' : ''}未婚`;
         case 1:
           return `已与${spouse_word(kind)}结婚`;
         case 2:

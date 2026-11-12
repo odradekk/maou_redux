@@ -119,9 +119,9 @@ export default [
   {
     desc: 'M7194 后代种族2误写回旧下标 315',
     file: 'ere/system/chara/chara-pregnancy.js',
-    find: '  era.set(`talent:${child}:319`, EraChara.get(mother).talent.get(319) || 0);',
+    find: '  EraChara.get(child).talent.set(\n    319,\n    EraChara.get(mother).talent.get(319) || 0,\n  );',
     replace:
-      '  era.set(`talent:${child}:315`, EraChara.get(mother).talent.get(319) || 0);',
+      '  EraChara.get(child).talent.set(\n    315,\n    EraChara.get(mother).talent.get(319) || 0,\n  );',
     tests: ['chara-pregnancy'],
     must_mention: '种族字段使用 319/321/322',
   },

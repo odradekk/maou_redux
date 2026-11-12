@@ -568,14 +568,18 @@ async function gb_add_guard(mother = 0, father = 0, rand = default_rand) {
   EraChara.get(child).ex_talent.set(1, 1); // EX_TALENT:1 近卫后代
   EraChara.get(child).ex_talent.set(2, 1); // EX_TALENT:2 后代
   if (other > 0) {
-    era.set(`talent:${child}:319`, EraChara.get(other).talent.get(319) || 0); // TALENT:319 种族2
-    if (source >= 201 && source <= 211) era.set(`talent:${child}:322`, source); // TALENT:322 现种族
+    EraChara.get(child).talent.set(
+      319,
+      EraChara.get(other).talent.get(319) || 0,
+    ); // TALENT:319 种族2
+    if (source >= 201 && source <= 211)
+      EraChara.get(child).talent.set(322, source); // TALENT:322 现种族
   }
   EraChara.get(child).talent.set(314, 9); // TALENT:314 种族=魔族
   EraChara.get(child).talent.set(321, 9); // TALENT:321 原种族=魔族
   if ((EraChara.get(child).talent.get(322) || 0) < 190)
-    era.set(`talent:${child}:322`, 191 + rand(3));
-  if (father === 0 || mother === 0) era.set(`ex_talent:${child}:3`, 1); // 魔王替身
+    EraChara.get(child).talent.set(322, 191 + rand(3));
+  if (father === 0 || mother === 0) EraChara.get(child).ex_talent.set(3, 1); // 魔王替身
   const base_level =
     other >= 0
       ? int_div(
@@ -601,10 +605,13 @@ async function gb_add_slave(mother, father, rand = default_rand) {
   EraChara.get(child).ex_talent.set(2, 1); // EX_TALENT:2 后代
   const race = EraChara.get(mother).talent.get(314) || 0;
   EraChara.get(child).talent.set(314, race);
-  era.set(`talent:${child}:319`, EraChara.get(mother).talent.get(319) || 0);
+  EraChara.get(child).talent.set(
+    319,
+    EraChara.get(mother).talent.get(319) || 0,
+  );
   EraChara.get(child).talent.set(321, race);
-  era.set(
-    `talent:${child}:322`,
+  EraChara.get(child).talent.set(
+    322,
     source >= 201 && source <= 211
       ? source
       : EraChara.get(mother).talent.get(322) || 0,
