@@ -11,6 +11,8 @@
 'use strict';
 
 const era = require('#/era-electron');
+const EraChara = require('#/era-utils/era-chara');
+const era_flag = require('#/era-utils/era-flag');
 
 /** 恋人派遣屏的取消键 */
 const LOVERS_CANCEL_KEY = 999;
@@ -78,10 +80,10 @@ async function enter_lover(cid) {
   const selected = await era.input({ rule: accepted });
   if (selected === LOVERS_CANCEL_KEY) return 0;
 
-  const previous = era.get(`cflag:${cid}:606`) || 0; // CFLAG:606 = 恋人类型
-  era.set(`cflag:${cid}:606`, selected);
+  const previous = EraChara.get(cid).cflag.lover; // CFLAG:606 = 恋人类型
+  EraChara.get(cid).cflag.lover = selected;
   if (selected !== previous) {
-    era.set(`cflag:${cid}:607`, 0); // CFLAG:607 = 爱情度/交往日数
+    EraChara.get(cid).cflag.lover_love = 0; // CFLAG:607 = 爱情度/交往日数
   }
   if (selected > 0) {
     era.print(`${name_of(cid)}为目标`);
@@ -909,15 +911,15 @@ function play_character_lover_scene(cid, love_exp) {
   if (lover_id < 0) return 0;
   const hero_name = name_of(cid);
   const lover_name = name_of(lover_id);
-  const hero_place = era.get(`cflag:${cid}:1`) || 0; // CFLAG:1 = 状态
-  const lover_place = era.get(`cflag:${lover_id}:1`) || 0;
-  const hero_fallen = (era.get(`cflag:${cid}:0`) || 0) > 0; // CFLAG:0 = 陷落
-  const lover_fallen = (era.get(`cflag:${lover_id}:0`) || 0) > 0;
+  const hero_place = EraChara.get(cid).cflag.state; // CFLAG:1 = 状态
+  const lover_place = EraChara.get(lover_id).cflag.state;
+  const hero_fallen = EraChara.get(cid).cflag.sale_and_assistant > 0; // CFLAG:0 = 陷落
+  const lover_fallen = EraChara.get(lover_id).cflag.sale_and_assistant > 0;
   let output;
 
   if (hero_place === 2 && lover_place === 2) {
-    const party = era.get(`cflag:${cid}:533`) || 0; // CFLAG:533 = 队伍编号
-    if (party <= 0 || party !== (era.get(`cflag:${lover_id}:533`) || 0))
+    const party = EraChara.get(cid).cflag.leader_memory; // CFLAG:533 = 队伍编号
+    if (party <= 0 || party !== EraChara.get(lover_id).cflag.leader_memory)
       return 0;
     output = `${hero_name}吻了${lover_name}……`;
     love_exp[0] += 1;
@@ -1042,14 +1044,14 @@ function play_character_lover_scene(cid, love_exp) {
 }
 
 function apply_love_bonuses(cid, love_lv, love_exp) {
-  const talent = (index) => era.get(`talent:${cid}:${index}`) || 0;
-  const abl = (index) => era.get(`abl:${cid}:${index}`) || 0;
+  const talent = (index) => EraChara.get(cid).talent.get(index);
+  const abl = (index) => EraChara.get(cid).abl.get(index);
 
   // 贞操带/处女封印：V 行为全部转作 A 行为。
   if (
-    ((era.get(`cflag:${cid}:42`) || 0) === 79 &&
-      ((era.get(`cflag:${cid}:40`) || 0) & 64) !== 0 &&
-      (era.get('flag:37') || 0) !== 0) ||
+    (EraChara.get(cid).cflag.special_costume_type === 79 &&
+      (EraChara.get(cid).cflag.clothing_state & 64) !== 0 &&
+      era_flag.clothing_system !== 0) ||
     talent(273)
   ) {
     love_exp[5] += love_exp[4];
@@ -1129,21 +1131,21 @@ async function settle_love_exp(
   rand,
 ) {
   const view = chara(cid);
-  const first_kiss = era.get(`cflag:${cid}:16`) ?? 0; // -1 有语义，不走门面 getter
+  const first_kiss = EraChara.get(cid).cflag.first_kiss_partner ?? 0; // -1 有语义，不走门面 getter
   if (love_exp[0] > 0 && first_kiss === 0) {
     era.print('?初吻?');
-    view.train.初吻对象 = 1; // CFLAG:16（跨域写，属主 train）
-    view.train.初吻对象名 = lover_name; // CSTR:4（跨域写）
+    EraChara.get(cid).cflag.first_kiss_partner = 1; // CFLAG:16（跨域写，属主 train）
+    EraChara.get(cid).cstr.first_kiss_partner_name = lover_name; // CSTR:4（跨域写）
   } else if (love_exp[3] > 0 && first_kiss === 0) {
     era.print('?初吻?');
-    view.train.初吻对象 = 101;
-    view.train.初吻对象名 = lover_name;
+    EraChara.get(cid).cflag.first_kiss_partner = 101;
+    EraChara.get(cid).cstr.first_kiss_partner_name = lover_name;
   }
-  if (view.chara.处女 === 1 && love_exp[4] > 0) {
+  if (EraChara.get(cid).talent.virgin === 1 && love_exp[4] > 0) {
     era.print('?处女丧失?');
-    view.chara.处女 = 0; // TALENT:0（跨域写，属主 chara）
-    view.train.初体验对象 = 100; // CFLAG:15（跨域写，属主 train）
-    view.train.初体验对象名 = lover_name; // CSTR:3（跨域写）
+    EraChara.get(cid).talent.virgin = 0; // TALENT:0（跨域写，属主 chara）
+    EraChara.get(cid).cflag.first_sex_partner = 100; // CFLAG:15（跨域写，属主 train）
+    EraChara.get(cid).cstr.first_sex_partner_name = lover_name; // CSTR:3（跨域写）
   }
   if (love_exp[8] > 0) {
     era.print(`${name_of(cid)}特意将水晶球保留了下来、向认识的人炫耀……`);
@@ -1154,47 +1156,47 @@ async function settle_love_exp(
   if (love_exp[1] > 0) summary.push(`吸烟：${love_exp[1]}根 `);
   if (love_exp[2] > 0) {
     summary.push(`药物经验＋${love_exp[2]} `);
-    era.add(`exp:${cid}:57`, love_exp[2]); // EXP:57 = 药物经验
+    EraChara.get(cid).exp.drug_exp += love_exp[2]; // EXP:57 = 药物经验
   }
   if (love_exp[3] > 0) {
     summary.push(`口交经验＋${love_exp[3]} `);
-    era.add(`exp:${cid}:22`, love_exp[3]); // EXP:22 = 口交经验
+    EraChara.get(cid).exp.oral_exp += love_exp[3]; // EXP:22 = 口交经验
   }
   if (love_exp[9] > 0) {
     summary.push(`${era.get('palamname:0') || ''}点数＋${love_exp[9] * 5} `);
-    era.add(`juel:${cid}:0`, love_exp[9] * 5);
+    EraChara.get(cid).jewel.clitoris += love_exp[9] * 5;
     summary.push(`${era.get('palamname:14') || ''}点数＋${love_exp[9] * 5} `);
-    era.add(`juel:${cid}:14`, love_exp[9] * 5);
+    EraChara.get(cid).jewel.breast += love_exp[9] * 5;
   }
   if (love_exp[4] > 0) {
     summary.push(`私处经验＋${love_exp[4]} `);
-    era.add(`exp:${cid}:0`, love_exp[4]); // EXP:0 = 私处经验
+    EraChara.get(cid).exp.vagina_exp += love_exp[4]; // EXP:0 = 私处经验
     summary.push(`${era.get('palamname:1') || ''}点数＋${love_exp[4] * 5} `);
-    era.add(`juel:${cid}:1`, love_exp[4] * 5);
+    EraChara.get(cid).jewel.vagina += love_exp[4] * 5;
   }
   if (love_exp[5] > 0) {
     summary.push(`肛门经验＋${love_exp[5]} `);
-    era.add(`exp:${cid}:1`, love_exp[5]); // EXP:1 = 肛门经验
+    EraChara.get(cid).exp.anal_exp += love_exp[5]; // EXP:1 = 肛门经验
     summary.push(`${era.get('palamname:2') || ''}点数＋${love_exp[5] * 5} `);
-    era.add(`juel:${cid}:2`, love_exp[5] * 5);
+    EraChara.get(cid).jewel.anus += love_exp[5] * 5;
   }
   const intercourse = love_exp[5] + love_exp[4];
   if (intercourse > 0) {
     summary.push(`性交经验＋${intercourse} `);
-    era.add(`exp:${cid}:5`, intercourse); // EXP:5 = 性交经验
+    EraChara.get(cid).exp.intercourse_exp += intercourse; // EXP:5 = 性交经验
   }
   const semen = Math.trunc((love_exp[5] + love_exp[4] + love_exp[3]) / 2);
   if (semen > 0) {
     summary.push(`精液经验＋${semen} `);
-    era.add(`exp:${cid}:20`, semen); // EXP:20 = 精液经验
+    EraChara.get(cid).exp.semen_exp += semen; // EXP:20 = 精液经验
   }
   if (love_exp[7] > 0) {
     summary.push(`兽奸经验＋${love_exp[7]} `);
-    era.add(`exp:${cid}:56`, love_exp[7]); // EXP:56 = 兽奸经验
+    EraChara.get(cid).exp.bestiality_exp += love_exp[7]; // EXP:56 = 兽奸经验
   }
   if (love_exp[8] > 0) {
     summary.push(`拍摄经验＋${love_exp[8]} `);
-    view.train.拍摄经验 += love_exp[8]; // EXP:70（跨域写，属主 train）
+    EraChara.get(cid).exp.shooting_exp += love_exp[8]; // EXP:70（跨域写，属主 train）
   }
   if (summary.length > 0) era.print(summary.join(''));
 
@@ -1202,13 +1204,13 @@ async function settle_love_exp(
     let race = 0;
     if ((lover >= 1 && lover <= 20) || (lover >= 41 && lover <= 80)) {
       race = 4;
-      view.dungeon.客膣内射精 = love_exp[4]; // CFLAG:105
+      EraChara.get(cid).cflag.customer_vaginal_ejaculation = love_exp[4]; // CFLAG:105
     } else if (lover === 81) {
       race = 5;
-      view.dungeon.犬膣内射精 = love_exp[4]; // CFLAG:106
+      EraChara.get(cid).cflag.dog_vaginal_ejaculation = love_exp[4]; // CFLAG:106
     } else if ((lover >= 21 && lover <= 40) || (lover >= 82 && lover <= 100)) {
       race = 6;
-      view.dungeon.怪物膣内射精 = love_exp[4]; // CFLAG:107
+      EraChara.get(cid).cflag.monster_vaginal_ejaculation = love_exp[4]; // CFLAG:107
     }
     await nakadashi_check(cid, race, rand);
   }
@@ -1224,14 +1226,14 @@ async function settle_love_exp(
 /** dungeon_town_lover：城镇恋人事件与经验结算。 */
 async function dungeon_town_lover(cid, rand = default_rand) {
   if (cid <= 0) return 0;
-  let lover = chara(cid).dungeon.恋人;
+  let lover = EraChara.get(cid).cflag.lover;
   if (lover <= 0) {
     const entered = await dungeon_town_lover_chara_enter(cid, rand);
     if (entered === 0) return 0;
-    lover = chara(cid).dungeon.恋人;
+    lover = EraChara.get(cid).cflag.lover;
   }
-  const love_lv = chara(cid).dungeon.恋人爱情;
-  const marriage = chara(cid).chara.结婚对象;
+  const love_lv = EraChara.get(cid).cflag.lover_love;
+  const marriage = EraChara.get(cid).cflag.spouse;
   const love_exp = Array(50).fill(0);
   let lover_name;
   if (lover === 200) {
@@ -1251,61 +1253,69 @@ async function dungeon_town_lover(cid, rand = default_rand) {
   }
   apply_love_bonuses(cid, love_lv, love_exp);
   await settle_love_exp(cid, lover, lover_name, marriage, love_exp, rand);
-  chara(cid).dungeon.恋人爱情 += 1; // CFLAG:607
+  EraChara.get(cid).cflag.lover_love += 1; // CFLAG:607
   return 1;
 }
 
 /** dungeon_town_lover_chara_enter：随机撮合两名在场角色。 */
 async function dungeon_town_lover_chara_enter(cid, rand = default_rand) {
-  if (((era.get('flag:8') || 0) & 4) === 0) return 0; // FLAG:8 bit2 = 角色间恋爱
+  if ((era_flag.adventurer_flags & 4) === 0) return 0; // FLAG:8 bit2 = 角色间恋爱
   const source = chara(cid);
-  if (source.dungeon.恋人 > 0 || source.chara.结婚对象 > 0) return 0;
+  if (EraChara.get(cid).cflag.lover > 0 || EraChara.get(cid).cflag.spouse > 0)
+    return 0;
 
   const added = era.getAddedCharacters();
   if (added.length === 0) return 0;
   const candidate = added[rand(added.length)]; // RAND:CHARANUM；允许抽到自己
   const target = chara(candidate);
-  if (target.invasion.状态 !== source.invasion.状态) return 0;
-  if (target.dungeon.恋人 > 0 || target.chara.结婚对象 > 0) return 0;
+  if (EraChara.get(candidate).cflag.state !== EraChara.get(cid).cflag.state)
+    return 0;
+  if (
+    EraChara.get(candidate).cflag.lover > 0 ||
+    EraChara.get(candidate).cflag.spouse > 0
+  )
+    return 0;
 
-  const source_male = (era.get(`talent:${cid}:122`) || 0) === 1;
-  const target_male = (era.get(`talent:${candidate}:122`) || 0) === 1;
+  const source_male = EraChara.get(cid).talent.male === 1;
+  const target_male = EraChara.get(candidate).talent.male === 1;
   if (
     source_male &&
     target_male &&
-    (era.get(`abl:${cid}:23`) || 0) === 0 &&
-    (era.get(`abl:${candidate}:23`) || 0) === 0
+    EraChara.get(cid).abl.gay_temper === 0 &&
+    EraChara.get(candidate).abl.gay_temper === 0
   ) {
     return 0;
   }
   if (
     !source_male &&
     !target_male &&
-    (era.get(`abl:${cid}:22`) || 0) === 0 &&
-    (era.get(`abl:${candidate}:22`) || 0) === 0
+    EraChara.get(cid).abl.lesbian_temper === 0 &&
+    EraChara.get(candidate).abl.lesbian_temper === 0
   ) {
     return 0;
   }
   if (
-    source.invasion.状态 === 2 &&
-    (era.get(`cflag:${cid}:533`) || 0) !==
-      (era.get(`cflag:${candidate}:533`) || 0) // CFLAG:533 = 队伍编号
+    EraChara.get(cid).cflag.state === 2 &&
+    EraChara.get(cid).cflag.leader_memory !==
+      EraChara.get(candidate).cflag.leader_memory // CFLAG:533 = 队伍编号
   ) {
     return 0;
   }
   if (candidate === 0) {
-    if ((era.get(`talent:${cid}:85`) || 0) === 0) return 0; // TALENT:85 = 爱
+    if (EraChara.get(cid).talent.in_love === 0) return 0; // TALENT:85 = 爱
     era.print(`${name_of(cid)}向你表白了……`);
     era.print('要接受吗？');
     if ((await select_yes_no()) === 1) return 0;
   }
 
-  target.dungeon.恋人ID = chara_id_output(cid); // CFLAG:LOCAL:610
-  source.dungeon.恋人ID = chara_id_output(candidate); // CFLAG:ARG:610
-  target.dungeon.恋人名字 = era.get(`cflag:${cid}:6`) || 0; // CFLAG:608
-  source.dungeon.恋人名字 = era.get(`cflag:${candidate}:6`) || 0;
-  target.dungeon.恋人 = 200;
-  source.dungeon.恋人 = 200;
+  EraChara.get(candidate).cflag.lover_id = chara_id_output(cid); // CFLAG:LOCAL:610
+  EraChara.get(cid).cflag.lover_id = chara_id_output(candidate); // CFLAG:ARG:610
+  EraChara.get(candidate).cflag.lover_name =
+    EraChara.get(cid).cflag.random_name_index; // CFLAG:608
+  EraChara.get(cid).cflag.lover_name =
+    EraChara.get(candidate).cflag.random_name_index;
+  EraChara.get(candidate).cflag.lover = 200;
+  EraChara.get(cid).cflag.lover = 200;
 
   if (cid !== 0 && candidate !== cid) {
     await era.printAndWait(

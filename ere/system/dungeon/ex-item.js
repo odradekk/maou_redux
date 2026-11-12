@@ -12,6 +12,8 @@
 'use strict';
 
 const era = require('#/era-electron');
+const EraChara = require('#/era-utils/era-chara');
+const era_flag = require('#/era-utils/era-flag');
 const { chara } = require('#/facade/chara');
 const { get_equip_num } = require('#/system/equip/equip-lookup');
 const { equip_weapon_spans } = require('#/system/equip/equip-print');
@@ -26,34 +28,29 @@ const ITEM_MIN = 400;
 const ITEM_COUNT = 14;
 
 function name_of(cid) {
-  return era.get(`callname:${cid}:-1`) ?? '';
+  return EraChara.get(cid).name ?? '';
 }
 
 function show_log() {
-  return ((era.get('flag:5') || 0) & 32) !== 0;
+  return (era_flag.game_settings & 32) !== 0;
 }
 
 function add_juel(cid, index, delta) {
-  era.set(
-    `juel:${cid}:${index}`,
-    (era.get(`juel:${cid}:${index}`) || 0) + delta,
-  );
+  EraChara.get(cid).jewel.add(index, delta);
 }
 
 function add_exp(cid, index, delta) {
-  era.set(`exp:${cid}:${index}`, (era.get(`exp:${cid}:${index}`) || 0) + delta);
+  EraChara.get(cid).exp.add(index, delta);
 }
 
 function add_maxbase(cid, index, delta) {
-  era.set(
-    `maxbase:${cid}:${index}`,
-    (era.get(`maxbase:${cid}:${index}`) || 0) + delta,
-  );
+  EraChara.get(cid).maxbase.add(index, delta);
 }
 
 /** CFLAG:503 位 7 = 透明化、位 8 = 英雄状态。 */
 function set_status_bit(cid, bit) {
-  era.set(`cflag:${cid}:503`, (era.get(`cflag:${cid}:503`) || 0) | (1 << bit));
+  EraChara.get(cid).cflag.rest_flag =
+    EraChara.get(cid).cflag.rest_flag | (1 << bit);
 }
 
 function item_line(cid, appraise, known, unknown, verb, result) {
@@ -77,10 +74,10 @@ function harb_item(cid, appraise, rand = default_rand) {
   if (cursed) {
     add_juel(cid, 5, 30); // JUEL:A:5 欲情点数
   } else {
-    const max_hp = era.get(`maxbase:${cid}:0`) || 0;
+    const max_hp = EraChara.get(cid).maxbase.stamina;
     era.set(
       `base:${cid}:0`,
-      Math.min((era.get(`base:${cid}:0`) || 0) + 500, max_hp),
+      Math.min(EraChara.get(cid).base.stamina + 500, max_hp),
     );
   }
   item_line(
@@ -100,10 +97,10 @@ function potion_item(cid, appraise, rand = default_rand) {
   if (cursed) {
     add_exp(cid, 20, 1); // EXP:A:20 精液经验
   } else {
-    const max_mp = era.get(`maxbase:${cid}:1`) || 0;
+    const max_mp = EraChara.get(cid).maxbase.willpower;
     era.set(
       `base:${cid}:1`,
-      Math.min((era.get(`base:${cid}:1`) || 0) + 500, max_mp),
+      Math.min(EraChara.get(cid).base.willpower + 500, max_mp),
     );
   }
   item_line(
@@ -125,10 +122,10 @@ function heal_rod_item(cid, appraise, rand = default_rand) {
     add_juel(cid, 0, 10); // JUEL:A:0 阴核点数
     add_juel(cid, 5, 20); // JUEL:A:5 欲情点数
   } else {
-    const max_hp = era.get(`maxbase:${cid}:0`) || 0;
+    const max_hp = EraChara.get(cid).maxbase.stamina;
     era.set(
       `base:${cid}:0`,
-      Math.min((era.get(`base:${cid}:0`) || 0) + 200, max_hp),
+      Math.min(EraChara.get(cid).base.stamina + 200, max_hp),
     );
   }
   if (show_log()) {
@@ -154,7 +151,7 @@ function heal_rod_item(cid, appraise, rand = default_rand) {
 /** mind_rod_item：精神之杖；无肛门经验时诅咒不发动。 */
 function mind_rod_item(cid, appraise, rand = default_rand) {
   let cursed = appraise === 1 && rand(2) === 0;
-  if ((era.get(`exp:${cid}:1`) || 0) === 0) {
+  if (EraChara.get(cid).exp.anal_exp === 0) {
     cursed = false;
   }
   if (cursed) {
@@ -163,10 +160,10 @@ function mind_rod_item(cid, appraise, rand = default_rand) {
     add_juel(cid, 2, 10); // JUEL:A:2 肛门点数
     add_juel(cid, 5, 20); // JUEL:A:5 欲情点数
   } else {
-    const max_mp = era.get(`maxbase:${cid}:1`) || 0;
+    const max_mp = EraChara.get(cid).maxbase.willpower;
     era.set(
       `base:${cid}:1`,
-      Math.min((era.get(`base:${cid}:1`) || 0) + 200, max_mp),
+      Math.min(EraChara.get(cid).base.willpower + 200, max_mp),
     );
   }
   if (show_log()) {
@@ -195,17 +192,18 @@ function power_seed_item(cid, appraise, rand = default_rand) {
   const view = chara(cid);
   const cursed = appraise === 1 && rand(4) === 0;
   if (cursed) {
-    if (view.chara.阴蒂钝感 === 1) {
-      view.chara.阴蒂钝感 = 0;
-    } else if (view.chara.阴蒂敏感 === 0) {
-      view.chara.阴蒂敏感 = 1;
+    if (EraChara.get(cid).talent.dull_clitoris === 1) {
+      EraChara.get(cid).talent.dull_clitoris = 0;
+    } else if (EraChara.get(cid).talent.sensitive_clitoris === 0) {
+      EraChara.get(cid).talent.sensitive_clitoris = 1;
     } else {
       add_juel(cid, 0, 10);
     }
   } else {
-    view.chara.基础攻击 += 1;
+    EraChara.get(cid).cflag.base_attack += 1;
   }
-  const male = era.get(`talent:${cid}:121`) || era.get(`talent:${cid}:122`);
+  const male =
+    EraChara.get(cid).talent.futanari || EraChara.get(cid).talent.male;
   item_line(
     cid,
     appraise,
@@ -226,15 +224,15 @@ function def_seed_item(cid, appraise, rand = default_rand) {
   const view = chara(cid);
   const cursed = appraise === 1 && rand(4) === 0;
   if (cursed) {
-    if (view.chara.乳房钝感 === 1) {
-      view.chara.乳房钝感 = 0;
-    } else if (view.chara.乳房敏感 === 0) {
-      view.chara.乳房敏感 = 1;
+    if (EraChara.get(cid).talent.dull_breast === 1) {
+      EraChara.get(cid).talent.dull_breast = 0;
+    } else if (EraChara.get(cid).talent.sensitive_breast === 0) {
+      EraChara.get(cid).talent.sensitive_breast = 1;
     } else {
       add_juel(cid, 14, 10);
     }
   } else {
-    view.chara.基础防御 += 1;
+    EraChara.get(cid).cflag.base_defense += 1;
   }
   item_line(
     cid,
@@ -270,14 +268,14 @@ function exp_medal_item(cid, appraise, rand = default_rand) {
 function hp_seed_item(cid, appraise, rand = default_rand) {
   const view = chara(cid);
   let cursed = appraise === 1 && rand(4) === 0;
-  if (era.get(`talent:${cid}:122`)) {
+  if (EraChara.get(cid).talent.male) {
     cursed = false;
   }
   if (cursed) {
-    if (view.chara.私处钝感 === 1) {
-      view.chara.私处钝感 = 0;
-    } else if (view.chara.私处敏感 === 0) {
-      view.chara.私处敏感 = 1;
+    if (EraChara.get(cid).talent.dull_vagina === 1) {
+      EraChara.get(cid).talent.dull_vagina = 0;
+    } else if (EraChara.get(cid).talent.sensitive_vagina === 0) {
+      EraChara.get(cid).talent.sensitive_vagina = 1;
     } else {
       add_juel(cid, 5, 10);
     }
@@ -300,10 +298,10 @@ function mp_seed_item(cid, appraise, rand = default_rand) {
   const view = chara(cid);
   const cursed = appraise === 1 && rand(4) === 0;
   if (cursed) {
-    if (view.chara.肛门钝感 === 1) {
-      view.chara.肛门钝感 = 0;
-    } else if (view.chara.肛门敏感 === 0) {
-      view.chara.肛门敏感 = 1;
+    if (EraChara.get(cid).talent.dull_anus === 1) {
+      EraChara.get(cid).talent.dull_anus = 0;
+    } else if (EraChara.get(cid).talent.sensitive_anus === 0) {
+      EraChara.get(cid).talent.sensitive_anus = 1;
     } else {
       add_juel(cid, 2, 10);
     }
@@ -342,7 +340,7 @@ function exp_silver_item(cid, appraise, rand = default_rand) {
 
 /** detox_worm_item：圣水。 */
 async function detox_worm_item(cid, appraise, rand = default_rand) {
-  const former_saint = (era.get(`talent:${cid}:315`) || 0) === 12;
+  const former_saint = EraChara.get(cid).talent.pre_hero_life === 12;
   const cursed = appraise === 1 && rand(2) === 0;
   item_line(
     cid,
@@ -367,8 +365,8 @@ async function detox_worm_item(cid, appraise, rand = default_rand) {
       era.print('圣水增强了圣女的力量……（攻击+1/防御+1）');
     }
     const view = chara(cid);
-    view.chara.基础攻击 += 1;
-    view.chara.基础防御 += 1;
+    EraChara.get(cid).cflag.base_attack += 1;
+    EraChara.get(cid).cflag.base_defense += 1;
   }
   item_detox(cid);
   await era.printAndWait('(善恶值上升了:1)');
@@ -387,7 +385,7 @@ function juel_box_item(cid, appraise) {
     '（屈服之珠+5）',
   );
   add_juel(cid, 6, 5);
-  return (era.get(`cflag:${cid}:1`) || 0) === 3 ? 1 : 0;
+  return EraChara.get(cid).cflag.state === 3 ? 1 : 0;
 }
 
 /** invisible_potion_item：透明化之药。 */
@@ -403,7 +401,7 @@ function invisible_potion_item(cid, appraise, rand = default_rand) {
       era.print('竟然是衣服透明化之药啊！');
       era.print(`${name_of(cid)}变得赤身裸体了……(耻情点数+15)`);
     }
-    if (era.get(`talent:${cid}:35`)) {
+    if (EraChara.get(cid).talent.shy) {
       if (show_log()) {
         era.print('脸像西红柿一样红透了……（屈服点数+10）');
       }
@@ -421,13 +419,13 @@ function invisible_potion_item(cid, appraise, rand = default_rand) {
 
 /** hero_potion_item：英雄之药。 */
 function hero_potion_item(cid, appraise, rand = default_rand) {
-  const up_value = Math.trunc((era.get(`cflag:${cid}:9`) || 0) / 10) + 10;
+  const up_value = Math.trunc(EraChara.get(cid).cflag.level / 10) + 10;
   const cursed = appraise === 1 && rand(3) === 0;
   if (cursed) {
     add_juel(cid, 10, 10);
   } else {
-    chara(cid).dungeon.攻击力 += up_value;
-    chara(cid).dungeon.防御力 += up_value;
+    EraChara.get(cid).cflag.attack += up_value;
+    EraChara.get(cid).cflag.defense += up_value;
     set_status_bit(cid, 8);
   }
   item_line(
@@ -464,26 +462,26 @@ const ITEM_HANDLERS = {
 async function use_ex_item(timing, cid, rand = default_rand) {
   for (let offset = 0; offset < ITEM_SLOT_COUNT; offset += 1) {
     const slot = ITEM_FIRST_SLOT + offset;
-    const stored = era.get(`cflag:${cid}:${slot}`) || 0;
+    const stored = EraChara.get(cid).cflag.get(slot);
     const appraise = stored > 1000 ? 1 : 0;
     const item_no = appraise ? stored - 1000 : stored;
     let usable = false;
     if (item_no === 400) {
       usable =
-        (era.get(`base:${cid}:0`) || 0) <
-        Math.trunc(((era.get(`maxbase:${cid}:0`) || 0) * 6) / 10);
+        EraChara.get(cid).base.stamina <
+        Math.trunc((EraChara.get(cid).maxbase.stamina * 6) / 10);
     } else if (item_no === 401) {
       usable =
-        (era.get(`base:${cid}:1`) || 0) <
-        Math.trunc(((era.get(`maxbase:${cid}:1`) || 0) * 6) / 10);
+        EraChara.get(cid).base.willpower <
+        Math.trunc((EraChara.get(cid).maxbase.willpower * 6) / 10);
     } else if (item_no === 402) {
       usable =
-        (era.get(`base:${cid}:0`) || 0) <
-        Math.trunc(((era.get(`maxbase:${cid}:0`) || 0) * 8) / 10);
+        EraChara.get(cid).base.stamina <
+        Math.trunc((EraChara.get(cid).maxbase.stamina * 8) / 10);
     } else if (item_no === 403) {
       usable =
-        (era.get(`base:${cid}:1`) || 0) <
-        Math.trunc(((era.get(`maxbase:${cid}:1`) || 0) * 8) / 10);
+        EraChara.get(cid).base.willpower <
+        Math.trunc((EraChara.get(cid).maxbase.willpower * 8) / 10);
     } else if (item_no >= 404 && item_no <= 410) {
       usable = true;
     } else if (item_no === 411) {
@@ -491,15 +489,15 @@ async function use_ex_item(timing, cid, rand = default_rand) {
     } else if (item_no === 412) {
       usable =
         timing === '战斗中' &&
-        (((era.get(`cflag:${cid}:503`) || 0) >> 7) & 1) === 0;
+        ((EraChara.get(cid).cflag.rest_flag >> 7) & 1) === 0;
     } else if (item_no === 413) {
       usable =
         timing === '战斗中' &&
-        (((era.get(`cflag:${cid}:503`) || 0) >> 8) & 1) === 0;
+        ((EraChara.get(cid).cflag.rest_flag >> 8) & 1) === 0;
     }
     const used = usable ? await ITEM_HANDLERS[item_no](cid, appraise, rand) : 0;
     if (used !== 0) {
-      era.set(`cflag:${cid}:${slot}`, 0);
+      EraChara.get(cid).cflag.set(slot, 0);
     }
   }
   return 0;
@@ -511,23 +509,23 @@ function sell_ex_item(cid, rand = default_rand) {
   let money = 0;
   for (let offset = 0; offset < ITEM_SLOT_COUNT; offset += 1) {
     const slot = ITEM_FIRST_SLOT + offset;
-    const stored = era.get(`cflag:${cid}:${slot}`) || 0;
+    const stored = EraChara.get(cid).cflag.get(slot);
     const item_no = stored > 1000 ? stored - 1000 : stored;
     // 的 RAND 每个槽都掷一次；即使未鉴定品已经确定卖出也会消费随机数。
     const random_sale = rand(10) === 0;
     if (stored <= 1000 && !random_sale) {
       continue;
     }
-    era.set(`cflag:${cid}:${slot}`, 0);
+    EraChara.get(cid).cflag.set(slot, 0);
     sold += 1;
     money += item_no === 411 ? 1000 : 200;
-    if ((era.get(`talent:${cid}:315`) || 0) === 15) {
+    if (EraChara.get(cid).talent.pre_hero_life === 15) {
       money += 100;
     }
   }
   if (sold > 0 && money > 0) {
     era.print(`${name_of(cid)}卖掉了${sold}个道具，获得了${money}点资金。`);
-    chara(cid).dungeon.所持金 += money;
+    EraChara.get(cid).cflag.money += money;
   }
   return 0;
 }
@@ -541,8 +539,8 @@ async function add_ex_item(kind, cid, source, rand = default_rand) {
 
   if (rand(4) === 0 || item_no === -2) {
     const view = chara(cid);
-    const floor = view.dungeon.侵攻阶层;
-    const current = view.chara.武装;
+    const floor = EraChara.get(cid).cflag.invasion_floor;
+    const current = EraChara.get(cid).cflag.weapon;
     const current_level = Math.trunc((current % 100000) / 1000);
     era.print([
       '现持武器是',
@@ -568,7 +566,7 @@ async function add_ex_item(kind, cid, source, rand = default_rand) {
 
     w.存储编号 += floor * 1000;
     w.存储编号 += rand(10) * 100000;
-    view.chara.武装 = w.存储编号;
+    EraChara.get(cid).cflag.weapon = w.存储编号;
     era.print(['经过考虑，更换成', ...equip_weapon_spans(w), '了']);
     return weapon_item;
   }
@@ -576,7 +574,7 @@ async function add_ex_item(kind, cid, source, rand = default_rand) {
   if (item_no === -3) {
     item_no = rand(ITEM_COUNT) + ITEM_MIN;
   }
-  if (chara(cid).invasion.状态 === 2 && rand(4) === 0) {
+  if (EraChara.get(cid).cflag.state === 2 && rand(4) === 0) {
     item_no += 1000;
   }
   if (item_no > 1000 && source >= 1) {
@@ -586,7 +584,7 @@ async function add_ex_item(kind, cid, source, rand = default_rand) {
   let appraise_result = 0;
   if (item_no > 1000) {
     appraise_result =
-      era.get(`talent:${cid}:202`) || era.get(`talent:${cid}:203`)
+      EraChara.get(cid).talent.priest || EraChara.get(cid).talent.thief
         ? rand(2)
         : rand(5);
   }
@@ -598,10 +596,10 @@ async function add_ex_item(kind, cid, source, rand = default_rand) {
 
   for (let offset = 0; offset < ITEM_SLOT_COUNT; offset += 1) {
     const slot = ITEM_FIRST_SLOT + offset;
-    if ((era.get(`cflag:${cid}:${slot}`) || 0) > 0) {
+    if (EraChara.get(cid).cflag.get(slot) > 0) {
       continue;
     }
-    era.set(`cflag:${cid}:${slot}`, item_no);
+    EraChara.get(cid).cflag.set(slot, item_no);
     era.print(
       `${appraise_text}${name_of(cid)}将${ex_item_name(item_no)}${source === 1 ? '买下了' : '入手了'}`,
     );
@@ -629,43 +627,43 @@ async function add_ex_item(kind, cid, source, rand = default_rand) {
 async function get_junk_item(cid, rand) {
   const rand_n = rand ?? default_rand;
   // CFLAG:MASTER:9 魔王等级（MASTER 恒角色 0）；SQRT 整数平方根
-  const master_lv = era.get('cflag:0:9') || 0;
-  const lv = era.get(`cflag:${cid}:9`) || 0;
+  const master_lv = EraChara.get(0).cflag.level;
+  const lv = EraChara.get(cid).cflag.level;
   let local = 100 + lv * rand_n(Math.floor(Math.sqrt(master_lv + lv + 1)));
 
   // 好奇心ボーナス（TALENT:23）
-  if (era.get(`talent:${cid}:23`)) {
+  if (EraChara.get(cid).talent.curious) {
     local += 10;
   }
   // 金のためボーナス（TALENT:316 成为勇者的契机 == 2）
-  if ((era.get(`talent:${cid}:316`) || 0) === 2) {
+  if (EraChara.get(cid).talent.hero_trigger === 2) {
     local += 20;
   }
   // ホビット（種族 TALENT:314 == 10）・ドワーフ（== 11）+30
   if (
-    (era.get(`talent:${cid}:314`) || 0) === 10 ||
-    (era.get(`talent:${cid}:314`) || 0) === 11
+    EraChara.get(cid).talent.race === 10 ||
+    EraChara.get(cid).talent.race === 11
   ) {
     local += 30;
   }
   // 盗賊は収入が多い（1.5倍；TALENT:203）
-  if (era.get(`talent:${cid}:203`)) {
+  if (EraChara.get(cid).talent.thief) {
     local += Math.floor(local / 2);
   }
 
   // LOCAL *= CFLAG:ARG:501（阶层）
-  local *= chara(cid).dungeon.侵攻阶层;
+  local *= EraChara.get(cid).cflag.invasion_floor;
 
   // SIF LOCAL < 1 → 1
   if (local < 1) {
     local = 1;
   }
-  if (((era.get('flag:5') || 0) & 32) !== 0) {
+  if ((era_flag.game_settings & 32) !== 0) {
     era.print(`${name_of(cid)}找到了价值${local}的财物。`);
   }
 
   // CFLAG:ARG:581 += LOCAL（dungeon 属主域内）
-  era.set(`cflag:${cid}:581`, (era.get(`cflag:${cid}:581`) || 0) + local);
+  EraChara.get(cid).cflag.loot_value += local;
   return 0;
 }
 

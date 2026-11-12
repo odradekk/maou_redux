@@ -30,6 +30,7 @@
  */
 
 const era = require('#/era-electron');
+const EraChara = require('#/era-utils/era-chara');
 const { search_family } = require('#/system/chara/chara-family');
 const { chara } = require('#/facade/chara');
 
@@ -51,33 +52,33 @@ function party_unite() {
   // まず行動終了フラグOFF（全角色）
   for (const charid of era.getAddedCharacters()) {
     // CFLAG:530 = 0（行动完了复位）
-    era.set(`cflag:${charid}:530`, 0);
+    EraChara.get(charid).cflag.action_done = 0;
   }
 
   // 次に、リーダー以外のキャラを行動終了にしていく——仲間A/B 两段
   // 同构，slot 即 531/532
   for (const charid of era.getAddedCharacters()) {
     for (const slot of [531, 532]) {
-      const rest = era.get(`cflag:${charid}:${slot}`) || 0; // RESTCHAR = 仲間勇者控え
+      const rest = EraChara.get(charid).cflag.get(slot); // RESTCHAR = 仲間勇者控え
       if (rest >= charanum()) {
         // 仲間指定を外しておく（越界引用）
-        era.set(`cflag:${charid}:${slot}`, 0);
-      } else if (rest > 0 && (era.get(`cflag:${rest}:530`) || 0) === 1) {
+        EraChara.get(charid).cflag.set(slot, 0);
+      } else if (rest > 0 && EraChara.get(rest).cflag.action_done === 1) {
         // 仲間のはずなのにすでに他の誰かの仲間になっている → 解除
-        era.set(`cflag:${charid}:${slot}`, 0);
+        EraChara.get(charid).cflag.set(slot, 0);
       } else if (rest > 0) {
         // リーダー指定を返しているか見る（CFLAG:533 队长记忆）
-        const leader = era.get(`cflag:${rest}:533`) || 0;
+        const leader = EraChara.get(rest).cflag.leader_memory;
         if (leader === charid) {
           // 合っていたら行動終了になる（同伴以行动完了追随队长）
-          era.set(`cflag:${rest}:530`, 1);
+          EraChara.get(rest).cflag.action_done = 1;
         } else {
           // 変な指定——バグの元なので初期化して戻す
-          era.set(`cflag:${charid}:${slot}`, 0);
-          era.set(`cflag:${rest}:530`, 0);
-          era.set(`cflag:${rest}:531`, 0);
-          era.set(`cflag:${rest}:532`, 0);
-          era.set(`cflag:${rest}:533`, 0);
+          EraChara.get(charid).cflag.set(slot, 0);
+          EraChara.get(rest).cflag.action_done = 0;
+          EraChara.get(rest).cflag.companion_a = 0;
+          EraChara.get(rest).cflag.companion_b = 0;
+          EraChara.get(rest).cflag.leader_memory = 0;
         }
       }
     }
@@ -97,37 +98,37 @@ function party_unite() {
  * @returns {number} 可入队的角色号；0 = 未找到
  */
 function search_free(floor, caller) {
-  const type = era.get(`cflag:${caller}:1`) || 0; // TYPE = 搜索者的行动状态
+  const type = EraChara.get(caller).cflag.state; // TYPE = 搜索者的行动状态
   for (const charid of era.getAddedCharacters()) {
     if (charid === 0) {
       continue; // FOR CHARID, 1, CHARANUM——跳过魔王
     }
     // 行動完了（仲間済み）を除く
-    if ((era.get(`cflag:${charid}:530`) || 0) === 1) {
+    if (EraChara.get(charid).cflag.action_done === 1) {
       continue;
     }
     // 同階層以外を除く（CFLAG:501 侵攻阶层）
-    if (floor !== (era.get(`cflag:${charid}:501`) || 0)) {
+    if (floor !== EraChara.get(charid).cflag.invasion_floor) {
       continue;
     }
     // 狂王独行（特殊角色标记 = 4）
-    if (chara(charid).system.特殊角色标记 === 4) {
+    if (EraChara.get(charid).cflag.special_chara_mark === 4) {
       continue;
     }
     // 仲間A/B を見る——已有同伴的不入队
-    if ((era.get(`cflag:${charid}:531`) || 0) > 0) {
+    if (EraChara.get(charid).cflag.companion_a > 0) {
       continue;
     }
-    if ((era.get(`cflag:${charid}:532`) || 0) > 0) {
+    if (EraChara.get(charid).cflag.companion_b > 0) {
       continue;
     }
     // そもそも侵攻中？（与搜索者同状态）
-    if ((era.get(`cflag:${charid}:1`) || 0) === type) {
+    if (EraChara.get(charid).cflag.state === type) {
       return charid;
     }
     if (
-      (era.get(`cflag:${charid}:1`) || 0) === 3 &&
-      (era.get(`cflag:${charid}:500`) || 0) === 4
+      EraChara.get(charid).cflag.state === 3 &&
+      EraChara.get(charid).cflag.dungeon_action === 4
     ) {
       // 忍び寄る潜入工作の魔の手
       return charid;
@@ -147,7 +148,7 @@ function search_free(floor, caller) {
  * @returns {Promise<boolean>} true = 已入队
  */
 async function try_join_slot(charid, slot, floor) {
-  if ((era.get(`cflag:${charid}:${slot}`) || 0) !== 0) {
+  if (EraChara.get(charid).cflag.get(slot) !== 0) {
     return true; // 枠非空，无事可做（IF RESTCHAR == 0 才进）
   }
   // フリーの勇者を勧誘する
@@ -155,21 +156,21 @@ async function try_join_slot(charid, slot, floor) {
   if (new_member === 0) {
     return false; // SIF RESULT == 0 → GOTO FINALIZE
   }
-  if ((era.get(`cflag:${charid}:533`) || 0) === 0 && charid === new_member) {
+  if (EraChara.get(charid).cflag.leader_memory === 0 && charid === new_member) {
     // 自己填进空枠且尚无队长记忆 → 成为队长
-    const name = era.get(`callname:${charid}:-1`) ?? '';
+    const name = EraChara.get(charid).name ?? '';
     era.print(`${name}成为队伍的队长了！`);
     await era.waitAnyKey();
   }
   // 枠に入れて、行動完了と、リーダー記憶と、初期化を行う
-  era.set(`cflag:${charid}:${slot}`, new_member);
-  era.set(`cflag:${new_member}:530`, 1);
-  era.set(`cflag:${new_member}:531`, 0);
-  era.set(`cflag:${new_member}:532`, 0);
-  era.set(`cflag:${new_member}:533`, charid);
+  EraChara.get(charid).cflag.set(slot, new_member);
+  EraChara.get(new_member).cflag.action_done = 1;
+  EraChara.get(new_member).cflag.companion_a = 0;
+  EraChara.get(new_member).cflag.companion_b = 0;
+  EraChara.get(new_member).cflag.leader_memory = charid;
   if (charid !== new_member) {
-    const leader_name = era.get(`callname:${charid}:-1`) ?? '';
-    const member_name = era.get(`callname:${new_member}:-1`) ?? '';
+    const leader_name = EraChara.get(charid).name ?? '';
+    const member_name = EraChara.get(new_member).name ?? '';
     era.print(`${member_name}加入了${leader_name}的队伍！`);
     await era.waitAnyKey();
   }
@@ -190,20 +191,20 @@ async function party_join() {
 
   for (const charid of era.getAddedCharacters()) {
     // 行動完了を除く
-    if ((era.get(`cflag:${charid}:530`) || 0) === 1) {
+    if (EraChara.get(charid).cflag.action_done === 1) {
       continue;
     }
     // 侵攻中以外を除く
-    const place = era.get(`cflag:${charid}:1`) || 0;
+    const place = EraChara.get(charid).cflag.state;
     if (place !== 2 && place !== 12) {
       continue;
     }
     // 狂王独行（特殊角色标记 = 4）
-    if (chara(charid).system.特殊角色标记 === 4) {
+    if (EraChara.get(charid).cflag.special_chara_mark === 4) {
       continue;
     }
     // 階層（CFLAG:501 侵攻阶层）
-    const floor = era.get(`cflag:${charid}:501`) || 0;
+    const floor = EraChara.get(charid).cflag.invasion_floor;
 
     // 仲間A → 仲間B；A 找不到人即 GOTO FINALIZE（跳过 B）
     const joined_a = await try_join_slot(charid, 531, floor);
@@ -215,13 +216,13 @@ async function party_join() {
     // 自分をメンバー登録する前に SEARCH_FREE の条件から外れてしまうため
     // 改めてここで自分をリーダーとして設定する
     if (
-      (era.get(`cflag:${charid}:533`) || 0) === 0 &&
-      (era.get(`cflag:${charid}:531`) || 0) !== 0
+      EraChara.get(charid).cflag.leader_memory === 0 &&
+      EraChara.get(charid).cflag.companion_a !== 0
     ) {
-      const name = era.get(`callname:${charid}:-1`) ?? '';
+      const name = EraChara.get(charid).name ?? '';
       era.print(`${name}成为队伍的队长了！`);
       await era.waitAnyKey();
-      era.set(`cflag:${charid}:533`, charid);
+      EraChara.get(charid).cflag.leader_memory = charid;
     }
   }
 }
@@ -237,50 +238,50 @@ async function party_join() {
  * @returns {void} 恒 return 0
  */
 function party_del(cid) {
-  const leader = era.get(`cflag:${cid}:533`) || 0; // LEADER = リーダー
-  const rest_a = era.get(`cflag:${leader}:531`) || 0; // 仲間A
-  const rest_b = era.get(`cflag:${leader}:532`) || 0; // 仲間B
+  const leader = EraChara.get(cid).cflag.leader_memory; // LEADER = リーダー
+  const rest_a = EraChara.get(leader).cflag.companion_a; // 仲間A
+  const rest_b = EraChara.get(leader).cflag.companion_b; // 仲間B
 
   if (cid === leader) {
     // 脱退キャラがリーダーの場合：パーティ解散
-    era.set(`cflag:${leader}:530`, 0);
-    era.set(`cflag:${leader}:531`, 0);
-    era.set(`cflag:${leader}:532`, 0);
-    era.set(`cflag:${leader}:533`, 0);
-    era.set(`cflag:${rest_a}:530`, 0);
-    era.set(`cflag:${rest_a}:533`, 0);
-    era.set(`cflag:${rest_b}:530`, 0);
-    era.set(`cflag:${rest_b}:533`, 0);
+    EraChara.get(leader).cflag.action_done = 0;
+    EraChara.get(leader).cflag.companion_a = 0;
+    EraChara.get(leader).cflag.companion_b = 0;
+    EraChara.get(leader).cflag.leader_memory = 0;
+    EraChara.get(rest_a).cflag.action_done = 0;
+    EraChara.get(rest_a).cflag.leader_memory = 0;
+    EraChara.get(rest_b).cflag.action_done = 0;
+    EraChara.get(rest_b).cflag.leader_memory = 0;
   } else if (cid === rest_a) {
     // 脱退キャラがLEADERの仲間Aだった場合
-    era.set(`cflag:${leader}:531`, 0);
-    era.set(`cflag:${rest_a}:530`, 0);
-    era.set(`cflag:${rest_a}:533`, 0);
+    EraChara.get(leader).cflag.companion_a = 0;
+    EraChara.get(rest_a).cflag.action_done = 0;
+    EraChara.get(rest_a).cflag.leader_memory = 0;
   } else if (cid === rest_b) {
     // 脱退キャラがLEADERの仲間Bだった場合
-    era.set(`cflag:${leader}:532`, 0);
-    era.set(`cflag:${rest_b}:530`, 0);
-    era.set(`cflag:${rest_b}:533`, 0);
+    EraChara.get(leader).cflag.companion_b = 0;
+    EraChara.get(rest_b).cflag.action_done = 0;
+    EraChara.get(rest_b).cflag.leader_memory = 0;
   } else {
     // バグ対策、パーティ解散と同じ
-    era.set(`cflag:${leader}:530`, 0);
-    era.set(`cflag:${leader}:531`, 0);
-    era.set(`cflag:${leader}:532`, 0);
-    era.set(`cflag:${leader}:533`, 0);
-    era.set(`cflag:${rest_a}:530`, 0);
-    era.set(`cflag:${rest_a}:533`, 0);
-    era.set(`cflag:${rest_b}:530`, 0);
-    era.set(`cflag:${rest_b}:533`, 0);
+    EraChara.get(leader).cflag.action_done = 0;
+    EraChara.get(leader).cflag.companion_a = 0;
+    EraChara.get(leader).cflag.companion_b = 0;
+    EraChara.get(leader).cflag.leader_memory = 0;
+    EraChara.get(rest_a).cflag.action_done = 0;
+    EraChara.get(rest_a).cflag.leader_memory = 0;
+    EraChara.get(rest_b).cflag.action_done = 0;
+    EraChara.get(rest_b).cflag.leader_memory = 0;
   }
 
   // 结婚对象编号清除：尾数 9（对象是勇者编号段）时经
   // search_family 找到对方后清掉登记
-  let marriage = era.get(`cflag:${cid}:601`) || 0;
+  let marriage = EraChara.get(cid).cflag.spouse;
   marriage %= 10;
   if (marriage === 9) {
     const partner = search_family(cid, 'MARRIAGE');
     if (partner > 0) {
-      chara(partner).chara.结婚对象 = 0; // CFLAG:RESULT:601 = 0
+      EraChara.get(partner).cflag.spouse = 0; // CFLAG:RESULT:601 = 0
     }
   }
 }
