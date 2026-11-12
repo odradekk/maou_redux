@@ -394,12 +394,28 @@ export default [
   // 12. 对应指令处理器；未实现 → 重新要求输入（见 train-loop.js 文件头）；
   // 返回 0 → 回合取消（不结算、不进 EVENTCOMEND、PREVCOM 不推——文件头第
   // 12 步的取消语义，子菜单指令全出口返回 0）
+  //
+  // 目标/调教者/助手指针在这里读一次后随参数下传：一回合内三者不变，读一次
+  // 与旧行为等价（旧行为是每个指令函数各读一次全局指针），指令函数因此不再
+  // 依赖全局。
+  const com_context = {
+    target: era_flag.target,
+    player: era_flag.player,
+    assi: era_flag.assi,
+  };
   const com_result = await com_family.call(result, {
     whenMissing: COM_MISSING,
+    args: [com_context],
   });`,
     replace: `  // 11. 变异：COM 分发先于指令前的旗标清理
+  const com_context = {
+    target: era_flag.target,
+    player: era_flag.player,
+    assi: era_flag.assi,
+  };
   const com_result = await com_family.call(result, {
     whenMissing: COM_MISSING,
+    args: [com_context],
   });
   await handle_com();`,
     tests: ['com-register', 'train-loop'],
@@ -2974,7 +2990,7 @@ export default [
   {
     desc: 'M1103 com22 爱慕三格乘数漏乘（SOURCE:7/16 不翻倍）（#221）',
     file: 'ere/system/train/com-sex.js',
-    find: `  const extra = player_skill_source(cid, false);
+    find: `  const extra = player_skill_source(com_context, cid, false);
   // EXPLV 槽零 >= 3：读数组槽零（0），恒不成立，保留。
   if (EXPLV[0] >= 3) add_src(cid, 1, extra);
   if (tal(cid, 85))
@@ -2983,7 +2999,7 @@ export default [
       [7, 2],
       [16, 2],
     ]);`,
-    replace: `  const extra = player_skill_source(cid, false);
+    replace: `  const extra = player_skill_source(com_context, cid, false);
   // EXPLV 槽零 >= 3：读数组槽零（0），恒不成立，保留。
   if (EXPLV[0] >= 3) add_src(cid, 1, extra);
   if (tal(cid, 85))

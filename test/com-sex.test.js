@@ -3,6 +3,7 @@
 const assert = require('node:assert/strict');
 const { test } = require('node:test');
 const { seed_train_world } = require('./helpers/train-world');
+const { com_context } = require('./helpers/com-context');
 
 function seed_world({ assi = -1, player = 0 } = {}) {
   const world = seed_train_world({
@@ -22,7 +23,9 @@ function seed_world({ assi = -1, player = 0 } = {}) {
 
 async function run_com(world, id) {
   world.era_flag.selectcom = id;
-  return world.com_family.call(id);
+  return world.com_family.call(id, {
+    args: [com_context(world.era_flag)],
+  });
 }
 
 test('注册 20–29：真身、可用性检查、B/A 与升格 CASE 全部进族', async () => {
@@ -268,7 +271,7 @@ test('COM26–28：欲情段乘肛门快感与屈从格，不得误乘情爱格'
     world.fixture.store.set('palam:31:5', 3000);
     world.fixture.store.set('exp:31:1', 10);
     const sex = world.fixture.load_module('system/train/com-sex');
-    sex[`source${id}`]();
+    sex[`source${id}`](com_context(world.era_flag));
     assert.deepEqual(
       [2, 3, 13, 15].map((index) =>
         world.fixture.store.get(`source:31:${index}`),
@@ -288,7 +291,7 @@ test('COM29：顺从段三格各取独立倍率并逐次截断', () => {
   world.fixture.store.set('exp:31:1', 10);
   const { source29 } = world.fixture.load_module('system/train/com-sex');
 
-  source29();
+  source29(com_context(world.era_flag));
 
   assert.deepEqual(
     [2, 3, 13, 15].map((index) =>
@@ -422,7 +425,7 @@ test('COM22：爱慕三格乘数不同，成瘾与恭顺不能漏乘', () => {
   world.fixture.store.set('talent:31:85', 1);
   const { source22 } = world.fixture.load_module('system/train/com-sex');
 
-  source22();
+  source22(com_context(world.era_flag));
 
   assert.deepEqual(
     [3, 7, 16].map((index) => world.fixture.store.get(`source:31:${index}`)),
