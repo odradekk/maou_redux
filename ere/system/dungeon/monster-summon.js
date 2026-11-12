@@ -143,10 +143,15 @@ async function summon_monster(arg = 0, rand = default_rand) {
       ) {
         if (race === 3) {
           era.print('哦呀？！生了双胞胎呢！生了一只吸血鬼');
-          if (era_item.vampire.count < 999) era_item.vampire.count += 1;
+          // 未持有的道具在读面上是 undefined（引擎只建 item.hold 桶，不按
+          // 序号预置），`undefined < 999` 恒假、`undefined + 1` 是 NaN——
+          // 先按 0 兜底再写回，与 add_monsters 的 `|| 0` 同一个口径
+          const owned = era_item.vampire.count || 0;
+          if (owned < 999) era_item.vampire.count = owned + 1;
         } else {
           era.print('哦呀？！生了双胞胎呢！生了一只无头骑士');
-          if (era_item.dullahan.count < 999) era_item.dullahan.count += 1;
+          const owned = era_item.dullahan.count || 0;
+          if (owned < 999) era_item.dullahan.count = owned + 1;
         }
       }
     }
