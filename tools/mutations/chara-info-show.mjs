@@ -2,7 +2,7 @@
 // 字段与运行方式见 tools/mutation-check.mjs 头注释。desc 里的 M 编号不人工
 // 分配，只作引用编号，但全表必须唯一——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 79; // #822 +1（M15704：装备状态行的大镜子ＰＬＡＹ标签退回半角）； 数据地址缺陷修复 +1（M15421：外观阴毛段的魔王判断改用角色 ID）； // #724 返工 +1（M14516「该状态不可操作」等键删除）；此前 +2（M14494/M14495） // #652 -2（M8737 删：HEXtoDEC ×15 笔误已改正；M8719 删：SHOW_TALENT 328 检查的反向钉，笔误已改正）
+export const COUNT = 78; // #859 -1（删 M11633：SHOW_CHARA_INFO 的 TARGET 换手，断言出处 test/kojo-family-coverage.test.js 随 #859 删除，且现存用例自己播种 TARGET，换手删掉也红不了——实测见 PR 的条目清单）；#822 +1（M15704：装备状态行的大镜子ＰＬＡＹ标签退回半角）； 数据地址缺陷修复 +1（M15421：外观阴毛段的魔王判断改用角色 ID）； // #724 返工 +1（M14516「该状态不可操作」等键删除）；此前 +2（M14494/M14495） // #652 -2（M8737 删：HEXtoDEC ×15 笔误已改正；M8719 删：SHOW_TALENT 328 检查的反向钉，笔误已改正）
 // M11900 的 must_mention 在 #593 随核对文案更新（旧核对只认特定写法，已被替换）
 
 const SHOW = 'ere/page/components/chara-info-title.js';
@@ -40,22 +40,6 @@ const make = (id, desc, file, find, replace, must_mention, tests) => ({
 });
 
 export default [
-  // —— #565 返工：SHOW_CHARA_INFO 的 TARGET 换手 ——
-  make(
-    11633,
-    'show_chara_info 的 TARGET 换手删除（语尾按调用方而非被显示角色取）',
-    MAIN,
-    `  const target_pool = era_flag.target;
-  era_flag.target = cid;
-  try {
-    return await show_chara_info_body(cid, page, rand, background);
-  } finally {
-    era_flag.target = target_pool;
-  }`,
-    `  return await show_chara_info_body(cid, page, rand, background); // 变异：TARGET 不换手`,
-    '语尾按被显示角色',
-    ['kojo-family-coverage'],
-  ),
   make(
     8701,
     'cup_size：cal_var ≤ 1 的档位由 1 放宽到 2',

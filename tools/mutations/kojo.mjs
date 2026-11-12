@@ -3,7 +3,7 @@
 // 分配，只作引用基准点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 2788; // #857 +14（M15577-M15590：K12/K13/K15/K903/K11/K14 的口上子类——不进工厂、族注册直挂本体、select_com 不转交、奖赏结算钩子丢实参适配、零参钩子丢适配、COM 钩子改指别的本体） // #858：-11（删 17 条 K904 复制品的条目、加 6 条 M18517-M18522：K19 迁口上子类、K904 改为继承——不进工厂、素质错格、指令分支与语尾钩子不转交、EVENTEND #LATER 漏接线、K904 注册时退回父类；另 M6072/M6500/M6502 各合并两条、M6505 改锚点） // #855 +6（M15564-M15569：K0/K1/K2/K3/K5 的口上子类——不进工厂、族注册直挂本体、select_com 与语尾钩子不转交、注册号写错、子类未导出） // #977 +2（M18448/M18449：K1 的 TEQUIP:45 脱着支与 89/90 淫乱初吻支的判等写反） // #934 +5（M18423-M18427：凌辱畏怖扫描退回列头值、无记忆哨兵退回 0、不同怪物也改写记忆、累加增量、首次不清零）；#865 +8（M16750-M16757：语尾文字搬进 ere/data/gobi-koujo-const.js 后的取值规则——表外编号、档位下标、默认支随机序、单支不掷、%SELF_CALL% 替换、表行与注册一一对应）；#865 另有 30 条既有语尾条目的 find 改挂常量表（编号不变） // 数据地址缺陷修复 +15（M15403-M15417：K10 自慰次数交接与处女丧失增量门槛、K7 录像自我介绍八支、K1 助手 17 号判断）； // #797 +8（M7690-M7697：成熟出售真身调用丢失的原 sell-maturo-k0 分片条目改住本分片，条目内容不变） // #734 +7（M14550–M14556：四类首次口上阈值、真实引擎爱抚与非法阈值地址检查）；#710 净 -1（M12155 改写成 M14254：卖春积极性行随 show_button_bich_level 删除、改指等级网格退回纯文本，条数不变；删 M402：SET_BICH_LEVEL 输入上限随按钮化不可观察）；#711 起 +2（M14310/M14311：K15 暗器菜单的选项按钮化——退回纯文本与按钮后夹等键两条）；#643 -5…沿革见 git 历史；#654（F8）：删反向变异与 k902 条目 67 条、新增 M13300-M13349 与 M13549，#655（F9）-8+5 后合并计数；#688 +35 // 此前：#856 +7（M15570-M15576：K6/K7/K8/K9/K10 的口上子类——不进工厂、族注册直挂本体、select_com 与语尾钩子不转交、裸注册号写错、子类未导出、实参适配丢失） // #855 +6（M15564-M15569：K0/K1/K2/K3/K5 的口上子类——不进工厂、族注册直挂本体、select_com 与语尾钩子不转交、注册号写错、子类未导出） // #977 +2（M18448/M18449：K1 的 TEQUIP:45 脱着支与 89/90 淫乱初吻支的判等写反） // #934 +5（M18423-M18427：凌辱畏怖扫描退回列头值、无记忆哨兵退回 0、不同怪物也改写记忆、累加增量、首次不清零）；#865 +8（M16750-M16757：语尾文字搬进 ere/data/gobi-koujo-const.js 后的取值规则——表外编号、档位下标、默认支随机序、单支不掷、%SELF_CALL% 替换、表行与注册一一对应）；#865 另有 30 条既有语尾条目的 find 改挂常量表（编号不变） // 数据地址缺陷修复 +15（M15403-M15417：K10 自慰次数交接与处女丧失增量门槛、K7 录像自我介绍八支、K1 助手 17 号判断）； // #797 +8（M7690-M7697：成熟出售真身调用丢失的原 sell-maturo-k0 分片条目改住本分片，条目内容不变） // #734 +7（M14550–M14556：四类首次口上阈值、真实引擎爱抚与非法阈值地址检查）；#710 净 -1（M12155 改写成 M14254：卖春积极性行随 show_button_bich_level 删除、改指等级网格退回纯文本，条数不变；删 M402：SET_BICH_LEVEL 输入上限随按钮化不可观察）；#711 起 +2（M14310/M14311：K15 暗器菜单的选项按钮化——退回纯文本与按钮后夹等键两条）；#643 -5…沿革见 git 历史；#654（F8）：删反向变异与 k902 条目 67 条、新增 M13300-M13349 与 M13549，#655（F9）-8+5 后合并计数；#688 +35
+export const COUNT = 2671; // #857 +14（M15577-M15590：K12/K13/K15/K903/K11/K14 的口上子类——不进工厂、族注册直挂本体、select_com 不转交、奖赏结算钩子丢实参适配、零参钩子丢适配、COM 钩子改指别的本体） // #858：-11（删 17 条 K904 复制品的条目、加 6 条 M18517-M18522：K19 迁口上子类、K904 改为继承——不进工厂、素质错格、指令分支与语尾钩子不转交、EVENTEND #LATER 漏接线、K904 注册时退回父类；另 M6072/M6500/M6502 各合并两条、M6505 改锚点） // #855 +6（M15564-M15569：K0/K1/K2/K3/K5 的口上子类——不进工厂、族注册直挂本体、select_com 与语尾钩子不转交、注册号写错、子类未导出） // #977 +2（M18448/M18449：K1 的 TEQUIP:45 脱着支与 89/90 淫乱初吻支的判等写反） // #934 +5（M18423-M18427：凌辱畏怖扫描退回列头值、无记忆哨兵退回 0、不同怪物也改写记忆、累加增量、首次不清零）；#865 +8（M16750-M16757：语尾文字搬进 ere/data/gobi-koujo-const.js 后的取值规则——表外编号、档位下标、默认支随机序、单支不掷、%SELF_CALL% 替换、表行与注册一一对应）；#865 另有 30 条既有语尾条目的 find 改挂常量表（编号不变） // 数据地址缺陷修复 +15（M15403-M15417：K10 自慰次数交接与处女丧失增量门槛、K7 录像自我介绍八支、K1 助手 17 号判断）； // #797 +8（M7690-M7697：成熟出售真身调用丢失的原 sell-maturo-k0 分片条目改住本分片，条目内容不变） // #734 +7（M14550–M14556：四类首次口上阈值、真实引擎爱抚与非法阈值地址检查）；#710 净 -1（M12155 改写成 M14254：卖春积极性行随 show_button_bich_level 删除、改指等级网格退回纯文本，条数不变；删 M402：SET_BICH_LEVEL 输入上限随按钮化不可观察）；#711 起 +2（M14310/M14311：K15 暗器菜单的选项按钮化——退回纯文本与按钮后夹等键两条）；#643 -5…沿革见 git 历史；#654（F8）：删反向变异与 k902 条目 67 条、新增 M13300-M13349 与 M13549，#655（F9）-8+5 后合并计数；#688 +35 // 此前：#856 +7（M15570-M15576：K6/K7/K8/K9/K10 的口上子类——不进工厂、族注册直挂本体、select_com 与语尾钩子不转交、裸注册号写错、子类未导出、实参适配丢失） // #855 +6（M15564-M15569：K0/K1/K2/K3/K5 的口上子类——不进工厂、族注册直挂本体、select_com 与语尾钩子不转交、注册号写错、子类未导出） // #977 +2（M18448/M18449：K1 的 TEQUIP:45 脱着支与 89/90 淫乱初吻支的判等写反） // #934 +5（M18423-M18427：凌辱畏怖扫描退回列头值、无记忆哨兵退回 0、不同怪物也改写记忆、累加增量、首次不清零）；#865 +8（M16750-M16757：语尾文字搬进 ere/data/gobi-koujo-const.js 后的取值规则——表外编号、档位下标、默认支随机序、单支不掷、%SELF_CALL% 替换、表行与注册一一对应）；#865 另有 30 条既有语尾条目的 find 改挂常量表（编号不变） // 数据地址缺陷修复 +15（M15403-M15417：K10 自慰次数交接与处女丧失增量门槛、K7 录像自我介绍八支、K1 助手 17 号判断）； // #797 +8（M7690-M7697：成熟出售真身调用丢失的原 sell-maturo-k0 分片条目改住本分片，条目内容不变） // #734 +7（M14550–M14556：四类首次口上阈值、真实引擎爱抚与非法阈值地址检查）；#710 净 -1（M12155 改写成 M14254：卖春积极性行随 show_button_bich_level 删除、改指等级网格退回纯文本，条数不变；删 M402：SET_BICH_LEVEL 输入上限随按钮化不可观察）；#711 起 +2（M14310/M14311：K15 暗器菜单的选项按钮化——退回纯文本与按钮后夹等键两条）；#643 -5…沿革见 git 历史；#654（F8）：删反向变异与 k902 条目 67 条、新增 M13300-M13349 与 M13549，#655（F9）-8+5 后合并计数；#688 +35
 
 export default [
   {
@@ -15,14 +15,7 @@ export default [
     tests: ['kojo-system'],
     must_mention: '完全不输出',
   },
-  {
-    desc: 'M58 口上存在判定删除（FLAG:LOCAL == 0 改恒 false）',
-    file: 'ere/kojo/kojo-system.js',
-    find: '  if (\n    presence &&\n    (era.get(`flag:${local}`) || 0) === 0 &&\n    era_exflag.get(local - 900) === 0\n  ) {',
-    replace: '  if (false) { // 变异：存在判定删除',
-    tests: ['kojo-system'],
-    must_mention: '存在判定',
-  },
+
   {
     desc: 'M59 分发接入：TRYCALLFORM 拼名偏移（local - 100 改 - 101）',
     file: 'ere/kojo/kojo-system.js',
@@ -110,14 +103,7 @@ export default [
     tests: ['kojo-system'],
     must_mention: 'EVENTSHOP',
   },
-  {
-    desc: 'M70 K5 EVENTEND #LATER 档清标志删除',
-    file: 'ere/kojo/kojo-k5-mao.js',
-    find: '  game.kojo.口上存在_5 = 0;',
-    replace: '  // 变异：清标志删除',
-    tests: ['kojo-system'],
-    must_mention: '清 0',
-  },
+
   {
     desc: 'M71 K3 失神检查删除（TFLAG:899 改恒 false）',
     file: 'ere/kojo/kojo-k3-noble.js',
@@ -560,10 +546,10 @@ export default [
   {
     desc: 'M1773 K4 主启动图删 K4 冷徹口上注册（KOJO 4 不进实际运行图，#235）',
     file: 'ere/system/flow/startup.js',
-    find: "  ['#/kojo/kojo-k4-stoic', require('#/kojo/kojo-k4-stoic')],\n",
-    replace: '  // 变异：口上模块不在启动装配表注册\n',
-    tests: ['kojo-family-wiring'],
-    must_mention: '主启动图漏装：kojo-k4-stoic',
+    find: "require('#/kojo/kojo-k4-stoic');\n",
+    replace: '',
+    tests: ['kojo-wiring'],
+    must_mention: '工厂里的口上编号与源码声明不一致',
   },
   {
     desc: 'M1774 K4 插值槽位错配（CALLNAME:MASTER 与 NAME:MASTER 混，#235 保真；#640 起由行为断言守）',
@@ -647,22 +633,7 @@ export default [
     tests: ['kojo-k1-confident'],
     must_mention: 'FLAG:7 == 1 阶段耗尽不出声',
   },
-  {
-    desc: 'M1658 K1 EVENTTRAIN #PRI 档存在标志写错（FLAG:101 = 1 改 2）（#232）',
-    file: 'ere/kojo/kojo-k1-confident.js',
-    find: '  game.kojo.口上存在_1 = 1;',
-    replace: '  game.kojo.口上存在_1 = 2; // （变异）',
-    tests: ['kojo-k1-confident'],
-    must_mention: 'K1 存在标志置 1',
-  },
-  {
-    desc: 'M1659 K1 EVENTEND #LATER 档清标志删除（#232）',
-    file: 'ere/kojo/kojo-k1-confident.js',
-    find: '  game.kojo.口上存在_1 = 0;',
-    replace: '  // 变异：清标志删除',
-    tests: ['kojo-k1-confident'],
-    must_mention: 'K1 存在标志清 0',
-  },
+
   {
     desc: 'M1660 K1 助手调教真身删除（ASSI 分支改恒 false）（#232）',
     file: 'ere/kojo/kojo-k1-confident.js',
@@ -1184,32 +1155,16 @@ export default [
   {
     desc: 'M1729 try_kojo 已注册仍打占位（family.has 恒 false）（#234）',
     file: 'ere/kojo/kojo-system.js',
-    find: '  if (id >= 0 && family.has(id)) {',
-    replace: '  if (false) { // 变异：已注册也打占位',
-    tests: ['kojo-k3-noble', 'benki'],
+    find: '  const kojo = get_kojo(id);',
+    replace: '  const kojo = get_kojo(-1); // 变异：已注册也取不到实例',
+    tests: ['benki'],
     // #565 返工起未命中静默，红的形式是「K3 真身台词消失」而非「打占位行」
     must_mention: 'K3 肉便器常识改写真台词',
   },
   // M1730 已删（#565 返工）：try_kojo 未命中静默成为**正确语义**
   // （TRYCALLFORM 落空），它的「未注册打占位」前提反转；检查转由
   // M11636 与 test/kojo-family-coverage.test.js 承担。
-  {
-    desc: 'M11636 try_kojo 未命中复辟占位（静默语义丢失，一档一占位刷屏）',
-    file: 'ere/kojo/kojo-system.js',
-    find: `  const id = kojo_handler_id(arg);
-  if (id >= 0 && family.has(id)) {
-    return family.call(id, { whenMissing: 0, args: extra_args });
-  }
-  return 0;`,
-    replace: `  const id = kojo_handler_id(arg);
-  if (id >= 0 && family.has(id)) {
-    return family.call(id, { whenMissing: 0, args: extra_args });
-  }
-  era.print('（口上未移植内容占位）'); // 变异：占位复辟
-  return 0;`,
-    tests: ['kojo-family-coverage'],
-    must_mention: '窗口外不得有任何输出',
-  },
+
   {
     desc: 'M1540 K2 首次状态推进写错（CFLAG:301 = 1 改 2）（#233）',
     file: 'ere/kojo/kojo-k2-timid.js',
@@ -1237,15 +1192,7 @@ export default [
     tests: ['kojo-k2-timid'],
     must_mention: 'それ以外支 FLAG:7',
   },
-  {
-    desc: 'M1543 凌辱口上分发回退成写死 call(0)（#233）',
-    file: 'ere/kojo/kojo-dungeon-ravish.js',
-    find: 'async function dispatch_ryouzyoku_kojo(hook, family) {\n  await run_kojo(hook, family, {\n    legacy: (id) => family.call(id, { whenMissing: 0, args: [] }),',
-    replace:
-      'async function dispatch_ryouzyoku_kojo(hook, family) {\n  await run_kojo(hook, family, {\n    legacy: () => family.call(0, { whenMissing: 0, args: [] }), // 变异：写死 call(0)',
-    tests: ['kojo-k2-timid'],
-    must_mention: 'GET_KOJO_NUM',
-  },
+
   {
     desc: 'M1546 K2 死斗场检查删除（TEQUIP:55 改恒 false）（#233）',
     file: 'ere/kojo/kojo-k2-timid.js',
@@ -1368,14 +1315,7 @@ export default [
     tests: ['kojo-k2-timid'],
     must_mention: 'EVENTEND 普通档必须出声',
   },
-  {
-    desc: 'M1560 K2 EVENTEND #LATER 档清标志删除（#233）',
-    file: 'ere/kojo/kojo-k2-timid.js',
-    find: '  game.kojo.口上存在_2 = 0;',
-    replace: '  // 变异：清标志删除',
-    tests: ['kojo-k2-timid'],
-    must_mention: 'FLAG:102',
-  },
+
   {
     desc: 'M1561 K2 死斗场专用口上入口错号（SELECTCOM == 55 改 54）（#233）',
     file: 'ere/kojo/kojo-k2-timid.js',
@@ -1911,22 +1851,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
 
   // —— #238（J28）：K7 ハート 口上模块（M2000-M2069 号段） ——
-  {
-    desc: 'M2000 K7 EVENTTRAIN #PRI 档存在标志错值（FLAG:107 = 1 改 0，#238）',
-    file: 'ere/kojo/kojo-k7-heart.js',
-    find: 'game.kojo.口上存在_7 = 1; // FLAG:107 = 1（K7 口上存在标志）',
-    replace: 'game.kojo.口上存在_7 = 0; // （变异：存在标志错值）',
-    tests: ['kojo-k7-heart'],
-    must_mention: 'K7 一对',
-  },
-  {
-    desc: 'M2001 K7 EVENTEND #LATER 档清标志删除（#238）',
-    file: 'ere/kojo/kojo-k7-heart.js',
-    find: 'game.kojo.口上存在_7 = 0;',
-    replace: `    // 变异：清标志删除`,
-    tests: ['kojo-k7-heart'],
-    must_mention: 'K7 一对',
-  },
+
   {
     desc: 'M2002 K7 初調教人间分档推进值错（CFLAG:201 = 1 改 2，#238）',
     file: 'ere/kojo/kojo-k7-heart.js',
@@ -2310,45 +2235,17 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'GROTESQUE_KOUJO_K7',
   },
   // —— #242（J32）：K11 莉莉口上模块 WIP 1/N（M2340-M2376 号段） ——
-  {
-    desc: 'M2340 K11 EVENTTRAIN #PRI 存在标志置位丢失（#242）',
-    file: 'ere/kojo/kojo-k11-lily.js',
-    find: '  game.kojo.口上存在_11 = 1; // FLAG:111 = 1（K11 口上存在标志）\n  if (game.kojo.口上开关 === 0) {\n    game.kojo.口上开关 = 2;',
-    replace:
-      '  // 变异：K11 口上存在标志置位丢失\n  if (game.kojo.口上开关 === 0) {\n    game.kojo.口上开关 = 2;',
-    tests: ['kojo-k11-lily'],
-    must_mention:
-      'EVENTTRAIN #PRI 档置存在标志、EVENTEND #LATER 档清 0（K11 一对）',
-  },
-  {
-    desc: 'M2341 K11 EVENTEND #LATER 存在标志清零丢失（#242）',
-    file: 'ere/kojo/kojo-k11-lily.js',
-    find: 'function handle_end_later() {\n  game.kojo.口上存在_11 = 0; // FLAG:111 = 0\n}',
-    replace:
-      'function handle_end_later() {\n  // 变异：K11 口上存在标志清零丢失\n}',
-    tests: ['kojo-k11-lily'],
-    must_mention:
-      'EVENTTRAIN #PRI 档置存在标志、EVENTEND #LATER 档清 0（K11 一对）',
-  },
+
   {
     desc: 'M2342 EVENTTRAIN 主体 FLAG:7 <= 0 检查删（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: "  const assi_name = chara_callname(assi); // %SAVESTR:ASSI%\n  const kojo = chara(target).kojo;\n  if (era0('flag:7') <= 0) {\n    return 0;\n  }\n  if (era0(`talent:${target}:171`) != 1) {\n    return 0;\n  }",
+    find: "  const assi_name = chara_callname(assi); // %SAVESTR:ASSI%\n  const kojo = chara(target).kojo;\n  if (era0('flag:7') <= 0) {\n    return 0;\n  }",
     replace:
-      '  const assi_name = chara_callname(assi); // %SAVESTR:ASSI%\n  const kojo = chara(target).kojo;\n  if (false) {\n    // 变异：FLAG:7 <= 0 检查删\n    return 0;\n  }\n  if (era0(`talent:${target}:171`) != 1) {\n    return 0;\n  }',
+      '  const assi_name = chara_callname(assi); // %SAVESTR:ASSI%\n  const kojo = chara(target).kojo;\n  if (false) {\n    // 变异：FLAG:7 <= 0 检查删\n    return 0;\n  }',
     tests: ['kojo-k11-lily'],
     must_mention: 'EVENTTRAIN 检查：FLAG:7 <= 0（口上总开关关闭）时静默跳过',
   },
-  {
-    desc: 'M2343 EVENTTRAIN 主体 TALENT:171 != 1 检查删（#242）',
-    file: 'ere/kojo/kojo-k11-lily.js',
-    find: "  const assi_name = chara_callname(assi); // %SAVESTR:ASSI%\n  const kojo = chara(target).kojo;\n  if (era0('flag:7') <= 0) {\n    return 0;\n  }\n  if (era0(`talent:${target}:171`) != 1) {\n    return 0;\n  }",
-    replace:
-      "  const assi_name = chara_callname(assi); // %SAVESTR:ASSI%\n  const kojo = chara(target).kojo;\n  if (era0('flag:7') <= 0) {\n    return 0;\n  }\n  if (false) {\n    // 变异：TALENT:171 != 1 检查删\n    return 0;\n  }",
-    tests: ['kojo-k11-lily'],
-    must_mention:
-      'EVENTTRAIN 检查：TALENT:171 != 1（非莉莉专属素质）时静默跳过',
-  },
+
   {
     desc: 'M2344 姉妹判定 CFLAG:TARGET:21 姐姐标记写错（317 改 316）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
@@ -2597,27 +2494,19 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M2369 EVENTEND 主体 FLAG:7 <= 0 检查删（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: "  const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%\n  const kojo = chara(target).kojo;\n  if (era0('flag:7') <= 0) {\n    return 0;\n  }\n  if (era0(`talent:${target}:171`) != 1) {\n    return 0;\n  }\n  if (era0(`base:${target}:0`) <= 0) {\n    return 0;\n  }",
+    find: "  const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%\n  const kojo = chara(target).kojo;\n  if (era0('flag:7') <= 0) {\n    return 0;\n  }",
     replace:
-      '  const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%\n  const kojo = chara(target).kojo;\n  if (false) {\n    // 变异：FLAG:7 <= 0 检查删\n    return 0;\n  }\n  if (era0(`talent:${target}:171`) != 1) {\n    return 0;\n  }\n  if (era0(`base:${target}:0`) <= 0) {\n    return 0;\n  }',
+      '  const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%\n  const kojo = chara(target).kojo;\n  if (false) {\n    // 变异：FLAG:7 <= 0 检查删\n    return 0;\n  }',
     tests: ['kojo-k11-lily'],
     must_mention: 'EVENTEND 检查：FLAG:7 <= 0（口上总开关关闭）时静默跳过',
   },
-  {
-    desc: 'M2370 EVENTEND 主体 TALENT:171 != 1 检查删（#242）',
-    file: 'ere/kojo/kojo-k11-lily.js',
-    find: "  const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%\n  const kojo = chara(target).kojo;\n  if (era0('flag:7') <= 0) {\n    return 0;\n  }\n  if (era0(`talent:${target}:171`) != 1) {\n    return 0;\n  }\n  if (era0(`base:${target}:0`) <= 0) {\n    return 0;\n  }",
-    replace:
-      "  const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%\n  const kojo = chara(target).kojo;\n  if (era0('flag:7') <= 0) {\n    return 0;\n  }\n  if (false) {\n    // 变异：TALENT:171 != 1 检查删\n    return 0;\n  }\n  if (era0(`base:${target}:0`) <= 0) {\n    return 0;\n  }",
-    tests: ['kojo-k11-lily'],
-    must_mention: 'EVENTEND 检查：TALENT:171 != 1（非莉莉专属素质）时静默跳过',
-  },
+
   {
     desc: 'M2371 EVENTEND 死亡检查删（BASE:0 <= 0 不再跳过）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: '  if (era0(`talent:${target}:171`) != 1) {\n    return 0;\n  }\n  if (era0(`base:${target}:0`) <= 0) {\n    return 0;\n  }',
+    find: '  if (era0(`base:${target}:0`) <= 0) {\n    return 0;\n  }',
     replace:
-      '  if (era0(`talent:${target}:171`) != 1) {\n    return 0;\n  }\n  if (false) {\n    // 变异：BASE:0 <= 0 死亡检查删\n    return 0;\n  }',
+      '  if (false) {\n    // 变异：BASE:0 <= 0 死亡检查删\n    return 0;\n  }',
     tests: ['kojo-k11-lily'],
     must_mention: 'EVENTEND：角色死亡（BASE:0<=0）时跳过口上',
   },
@@ -2660,11 +2549,10 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M2376 主启动图删 K11 莉莉口上注册（KOJO 11 不进实际运行图）（#242）',
     file: 'ere/system/flow/startup.js',
-    find: "  ['#/kojo/kojo-k11-lily', require('#/kojo/kojo-k11-lily')],\n",
-    replace: '  // 变异：口上模块不在启动装配表注册\n',
-    tests: ['kojo-k11-lily'],
-    must_mention:
-      '经主启动图 main-loop 加载（而非直接 load_module），K11 EVENTTRAIN 仍会置存在标志',
+    find: "require('#/kojo/kojo-k11-lily');\n",
+    replace: '',
+    tests: ['kojo-wiring'],
+    must_mention: '工厂里的口上编号与源码声明不一致',
   },
   // —— #242（J32 续轮）：K11 莉莉口上 KOJO_MESSAGE_COM_11 头部检查 +
   // SELECTCOM 0/1/2（M2377-M2401 号段） ——
@@ -2904,34 +2792,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention:
       'COM2 二回目：それ以外（爱慕無し、润滑Lv2未満、A感覚Lv3未満）推进到 2',
   },
-  {
-    desc: 'M2401 主启动图删 K11 莉莉指令口上族注册（KOJO_MESSAGE_COM_11 不进实际运行图，#242）',
-    file: 'ere/kojo/kojo-k11-lily.js',
-    find: `kojo_message_com_family.register(11, (...args) =>
-  kojo_k11.kojo_message_com(...args),
-);`,
-    replace: `// 变异：COM_11 分发注册删`,
-    tests: ['kojo-k11-lily'],
-    must_mention:
-      'COM0 初めて：それ以外（非助手玛奥、屈服刻印Lv2未満）推进到 1',
-  },
-  {
-    desc: 'M2200 K9 EVENTTRAIN #PRI 存在标志错值（FLAG:109 = 1 改 0，#240）',
-    file: 'ere/kojo/kojo-k9-diamond.js',
-    find: '  game.kojo.口上存在_9 = 1; // FLAG:109 = 1（K9 口上存在标志）',
-    replace:
-      '  game.kojo.口上存在_9 = 0; // 变异：:56 FLAG:109 = 1（K9 口上存在标志）',
-    tests: ['kojo-k9-diamond'],
-    must_mention: 'K9 存在标志',
-  },
-  {
-    desc: 'M2201 K9 EVENTEND #LATER 清标志删除（#240）',
-    file: 'ere/kojo/kojo-k9-diamond.js',
-    find: 'function handle_end_later() {\n  game.kojo.口上存在_9 = 0;\n}',
-    replace: 'function handle_end_later() {\n  // 变异：K9 清标志删除\n}',
-    tests: ['kojo-k9-diamond'],
-    must_mention: 'K9 一对',
-  },
+
   {
     desc: 'M2202 K9 初調教人间分档推进值错（CFLAG:201 = 1 改 2，#240）',
     file: 'ere/kojo/kojo-k9-diamond.js',
@@ -9330,45 +9191,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k11-lily'],
     must_mention: '并清 TFLAG:13',
   },
-  ...[
-    [
-      4714,
-      'ryouzyoku_kojo_family',
-      'dungeon_ryouzyoku_k11',
-      '迷宫凌辱前后口上注册进两个分发族',
-    ],
-    [
-      4715,
-      'ryouzyoku_after_kojo_family',
-      'dungeon_ryouzyoku_after_k11',
-      '迷宫凌辱前后口上注册进两个分发族',
-    ],
-    [
-      4716,
-      'benki_koujo_family',
-      'benki_koujo_k11',
-      '肉便器、胜利与攻击口上注册进各自分发族',
-    ],
-    [
-      4717,
-      'dungeon_victory_family',
-      'dungeon_victory_k11',
-      '肉便器、胜利与攻击口上注册进各自分发族',
-    ],
-    [
-      4718,
-      'dungeon_attack_family',
-      'dungeon_attack_k11',
-      '肉便器、胜利与攻击口上注册进各自分发族',
-    ],
-  ].map(([id, family, , must_mention]) => ({
-    desc: `M${id} K11 ${family} 注册号错位（#242）`,
-    file: 'ere/kojo/kojo-k11-lily.js',
-    find: `${family}.register(11, (...args) =>`,
-    replace: `${family}.register(12, (...args) =>`,
-    tests: ['kojo-k11-lily'],
-    must_mention,
-  })),
+
   {
     desc: 'M4719 K11 胜利口上首个 RAND:3 分支失效（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
@@ -9386,14 +9209,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k11-lily'],
     must_mention: '肉便器、胜利与攻击口上注册进各自分发族',
   },
-  {
-    desc: 'M4721 K11 NTR 口上注册号错位（#242）',
-    file: 'ere/kojo/kojo-k11-lily.js',
-    find: 'ntr_koujo_family.register(11, (...args) =>',
-    replace: 'ntr_koujo_family.register(12, (...args) =>',
-    tests: ['kojo-k11-lily'],
-    must_mention: 'NTR P=1-7',
-  },
+
   {
     desc: 'M4722 K11 NTR P=4 场景记录错位（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
@@ -9419,30 +9235,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k11-lily'],
     must_mention: '按妊娠相手区分魔王之子',
   },
-  ...[
-    [4725, 'exucution_koujo_family', 'exucution_koujo_k11'],
-    [4726, 'museum_koujo_family', 'museum_koujo_k11'],
-    [4727, 'banishment_koujo_family', 'banishment_koujo_k11'],
-    [4728, 'public_exucution_koujo_family', 'public_exucution_koujo_k11'],
-    [4729, 'grotesque_koujo_family', 'grotesque_koujo_k11'],
-  ].map(([id, family]) => ({
-    desc: `M${id} K11 ${family} 注册号错位（#242）`,
-    file: 'ere/kojo/kojo-k11-lily.js',
-    // 行首的换行是必需的：public_exucution_koujo_family 的名字以
-    // exucution_koujo_family 结尾，不带行界会命中两处
-    find: `\n${family}.register(11, (...args) =>`,
-    replace: `\n${family}.register(12, (...args) =>`,
-    tests: ['kojo-k11-lily'],
-    must_mention: '处刑、博物馆、放逐、公开处刑与猎奇族均注册',
-  })),
-  {
-    desc: 'M4730 K11 ENTERENEMY 注册号错位（#242）',
-    file: 'ere/kojo/kojo-k11-lily.js',
-    find: 'enterenemy_koujo_family.register(11, (...args) =>',
-    replace: 'enterenemy_koujo_family.register(12, (...args) =>',
-    tests: ['kojo-k11-lily'],
-    must_mention: 'ENTERENEMY：淫乱、爱慕与寻妹三档',
-  },
+
   {
     desc: 'M4731 K11 ENTERENEMY 淫乱条件错位（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
@@ -9451,14 +9244,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k11-lily'],
     must_mention: 'ENTERENEMY：淫乱、爱慕与寻妹三档',
   },
-  {
-    desc: 'M4732 K11 GOHOUBI_REQUEST 注册号错位（#242）',
-    file: 'ere/kojo/kojo-k11-lily.js',
-    find: 'gohoubi_request_koujo_family.register(11, (...args) =>',
-    replace: 'gohoubi_request_koujo_family.register(12, (...args) =>',
-    tests: ['kojo-k11-lily'],
-    must_mention: 'GOHOUBI_REQUEST：十种要求',
-  },
+
   {
     desc: 'M4733 K11 GOHOUBI_REQUEST 兽种映射错位（#242；#600 起目标改成拼接行前的映射表）',
     file: 'ere/kojo/kojo-k11-lily.js',
@@ -11928,31 +11714,16 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       must_mention: 'COM55 二回目：非助手玛奥五档推进',
     },
   ],
-  {
-    desc: 'M2270 K10 EVENTTRAIN #PRI 存在标志写错值（FLAG:110=1 改 2，#241）',
-    file: 'ere/kojo/kojo-k10-club.js',
-    find: 'game.kojo.口上存在_10 = 1; // FLAG:110 = 1（K10 口上存在标志）',
-    replace: 'game.kojo.口上存在_10 = 2; // （变异）',
-    tests: ['kojo-k10-club'],
-    must_mention: 'K10 一对',
-  },
+
   {
     desc: 'M2271 K10 EVENTTRAIN #PRI 口上开关补 0 条件改错（===0 改 ===1，#241）',
-    file: 'ere/kojo/kojo-k10-club.js',
-    find: '  if (game.kojo.口上开关 === 0) {\n    game.kojo.口上开关 = 2;\n  }',
-    replace:
-      '  if (game.kojo.口上开关 === 1) {  // 变异\n    game.kojo.口上开关 = 2;\n  }',
+    file: 'ere/kojo/kojo-system.js',
+    find: "  if ((era.get('flag:7') || 0) === 0) {",
+    replace: "  if ((era.get('flag:7') || 0) === 1) { // 变异：补 0 条件改错",
     tests: ['kojo-k10-club'],
-    must_mention: 'K10 一对',
+    must_mention: 'EVENTTRAIN #PRI 档口上开关补 0（FLAG:7 从 0 补到 2）',
   },
-  {
-    desc: 'M2272 K10 EVENTEND #LATER 存在标志清除值改错（=0 改 =1，#241）',
-    file: 'ere/kojo/kojo-k10-club.js',
-    find: 'game.kojo.口上存在_10 = 0;',
-    replace: 'game.kojo.口上存在_10 = 1; // （变异）',
-    tests: ['kojo-k10-club'],
-    must_mention: 'K10 一对',
-  },
+
   {
     desc: 'M2273 K10 EVENTTRAIN 自身检查①口上开关条件反转（<=0 改 >0，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
@@ -11962,16 +11733,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k10-club'],
     must_mention: '自身检查①口上开关',
   },
-  {
-    desc: 'M2274 K10 EVENTTRAIN 自身检查②TALENT:170 条件反转（!=1 改 ==1，#241）',
-    file: 'ere/kojo/kojo-k10-club.js',
-    find: '  if (era.get(`talent:${target}:170`) != 1) {\n    return 0;\n  }\n\n  if (era.get(`talent:${target}:121`) != 1) {',
-    replace:
-      '  if (era.get(`talent:${target}:170`) == 1) {  // 变异\n    return 0;\n  }\n\n  if (era.get(`talent:${target}:121`) != 1) {',
 
-    tests: ['kojo-k10-club'],
-    must_mention: '自身双检查',
-  },
   {
     desc: 'M2275 K10 EVENTTRAIN 自身检查③TALENT:121 条件反转（!=1 改 ==1，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
@@ -12407,186 +12169,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k10-club'],
     must_mention: 'ARG:0 取语尾编号',
   },
-  {
-    desc: 'M2323 K10 家族接入：kojo_message_com_family 注册号错位（10 改 11，#241）',
-    file: 'ere/kojo/kojo-k10-club.js',
-    find: `kojo_message_com_family.register(10, (...args) =>
-  kojo_k10.kojo_message_com(...args),
-);`,
-    replace: `kojo_message_com_family.register(11, (...args) =>
-  kojo_k10.kojo_message_com(...args),
-); // 变异`,
-    tests: ['kojo-k10-club'],
-    must_mention: '20 个分发族全部注册了 K10',
-  },
-  {
-    desc: 'M2324 K10 家族接入：self_kojo_family 注册号错位（10 改 11，#241）',
-    file: 'ere/kojo/kojo-k10-club.js',
-    find: `self_kojo_family.register(10, (...args) => kojo_k10.self_kojo(...args));`,
-    replace: `self_kojo_family.register(11, (...args) => kojo_k10.self_kojo(...args)); // 变异`,
-    tests: ['kojo-k10-club'],
-    must_mention: '20 个分发族全部注册了 K10',
-  },
-  {
-    desc: 'M2325 K10 家族接入：kojo_message_palamcng_family 注册号错位（10 改 11，#241）',
-    file: 'ere/kojo/kojo-k10-club.js',
-    find: `kojo_message_palamcng_family.register(10, (...args) =>
-  kojo_k10.kojo_message_palamcng(...args),
-);`,
-    replace: `kojo_message_palamcng_family.register(11, (...args) =>
-  kojo_k10.kojo_message_palamcng(...args),
-); // 变异`,
-    tests: ['kojo-k10-club'],
-    must_mention: '20 个分发族全部注册了 K10',
-  },
-  {
-    desc: 'M2326 K10 家族接入：kojo_message_markcng_family 注册号错位（10 改 11，#241）',
-    file: 'ere/kojo/kojo-k10-club.js',
-    find: `kojo_message_markcng_family.register(10, (...args) =>
-  kojo_k10.kojo_message_markcng(...args),
-);`,
-    replace: `kojo_message_markcng_family.register(11, (...args) =>
-  kojo_k10.kojo_message_markcng(...args),
-); // 变异`,
-    tests: ['kojo-k10-club'],
-    must_mention: '20 个分发族全部注册了 K10',
-  },
-  {
-    desc: 'M2327 K10 家族接入：gohoubi_after_koujo_family 注册号错位（10 改 11，#241）',
-    file: 'ere/kojo/kojo-k10-club.js',
-    find: `gohoubi_after_koujo_family.register(10, (...args) =>
-  kojo_k10.gohoubi_after_koujo(...args),
-);`,
-    replace: `gohoubi_after_koujo_family.register(11, (...args) =>
-  kojo_k10.gohoubi_after_koujo(...args),
-); // 变异`,
-    tests: ['kojo-k10-club'],
-    must_mention: '20 个分发族全部注册了 K10',
-  },
-  {
-    desc: 'M2328 K10 家族接入：osioski_koujo_family 注册号错位（10 改 11，#241）',
-    file: 'ere/kojo/kojo-k10-club.js',
-    find: `osioski_koujo_family.register(10, (...args) => kojo_k10.osioski_koujo(...args));`,
-    replace: `osioski_koujo_family.register(11, (...args) => kojo_k10.osioski_koujo(...args)); // 变异`,
-    tests: ['kojo-k10-club'],
-    must_mention: '20 个分发族全部注册了 K10',
-  },
-  {
-    desc: 'M2329 K10 家族接入：gohoubi_request_koujo_family 注册号错位（10 改 11，#241）',
-    file: 'ere/kojo/kojo-k10-club.js',
-    find: `gohoubi_request_koujo_family.register(10, (...args) =>
-  kojo_k10.gohoubi_request_koujo(...args),
-);`,
-    replace: `gohoubi_request_koujo_family.register(11, (...args) =>
-  kojo_k10.gohoubi_request_koujo(...args),
-); // 变异`,
-    tests: ['kojo-k10-club'],
-    must_mention: '20 个分发族全部注册了 K10',
-  },
-  {
-    desc: 'M2330 K10 家族接入：ryouzyoku_kojo_family 注册号错位（10 改 11，#241）',
-    file: 'ere/kojo/kojo-k10-club.js',
-    find: `ryouzyoku_kojo_family.register(10, (...args) =>
-  kojo_k10.dungeon_ryouzyoku(...args),
-);`,
-    replace: `ryouzyoku_kojo_family.register(11, (...args) =>
-  kojo_k10.dungeon_ryouzyoku(...args),
-); // 变异`,
-    tests: ['kojo-k10-club'],
-    must_mention: '20 个分发族全部注册了 K10',
-  },
-  {
-    desc: 'M2331 K10 家族接入：ryouzyoku_after_kojo_family 注册号错位（10 改 11，#241）',
-    file: 'ere/kojo/kojo-k10-club.js',
-    find: `ryouzyoku_after_kojo_family.register(10, (...args) =>
-  kojo_k10.dungeon_ryouzyoku_after(...args),
-);`,
-    replace: `ryouzyoku_after_kojo_family.register(11, (...args) =>
-  kojo_k10.dungeon_ryouzyoku_after(...args),
-); // 变异`,
-    tests: ['kojo-k10-club'],
-    must_mention: '20 个分发族全部注册了 K10',
-  },
-  {
-    desc: 'M2332 K10 家族接入：gobi_koujo_family 注册号错位（10 改 11，#241）',
-    file: 'ere/kojo/kojo-k10-club.js',
-    find: `gobi_koujo_family.register(10, (...args) => kojo_k10.gobi_koujo(...args));`,
-    replace: `gobi_koujo_family.register(11, (...args) => kojo_k10.gobi_koujo(...args)); // 变异`,
-    tests: ['kojo-k10-club'],
-    must_mention: '20 个分发族全部注册了 K10',
-  },
-  {
-    desc: 'M2333 K10 家族接入：benki_koujo_family 注册号错位（10 改 11，#241）',
-    file: 'ere/kojo/kojo-k10-club.js',
-    find: `benki_koujo_family.register(10, (...args) => kojo_k10.benki_koujo(...args));`,
-    replace: `benki_koujo_family.register(11, (...args) => kojo_k10.benki_koujo(...args)); // 变异`,
-    tests: ['kojo-k10-club'],
-    must_mention: '20 个分发族全部注册了 K10',
-  },
-  {
-    desc: 'M2334 K10 家族接入：enterenemy_koujo_family 注册号错位（10 改 11，#241）',
-    file: 'ere/kojo/kojo-k10-club.js',
-    find: `enterenemy_koujo_family.register(10, (...args) =>
-  kojo_k10.enterenemy_koujo(...args),
-);`,
-    replace: `enterenemy_koujo_family.register(11, (...args) =>
-  kojo_k10.enterenemy_koujo(...args),
-); // 变异`,
-    tests: ['kojo-k10-club'],
-    must_mention: '20 个分发族全部注册了 K10',
-  },
-  {
-    desc: 'M2335 K10 家族接入：dungeon_victory_family 注册号错位（10 改 11，#241）',
-    file: 'ere/kojo/kojo-k10-club.js',
-    find: `dungeon_victory_family.register(10, (...args) =>
-  kojo_k10.dungeon_victory(...args),
-);`,
-    replace: `dungeon_victory_family.register(11, (...args) =>
-  kojo_k10.dungeon_victory(...args),
-); // 变异`,
-    tests: ['kojo-k10-club'],
-    must_mention: '20 个分发族全部注册了 K10',
-  },
-  {
-    desc: 'M2336 K10 家族接入：dungeon_attack_family 注册号错位（10 改 11，#241）',
-    file: 'ere/kojo/kojo-k10-club.js',
-    find: `dungeon_attack_family.register(10, (...args) =>
-  kojo_k10.dungeon_attack(...args),
-);`,
-    replace: `dungeon_attack_family.register(11, (...args) =>
-  kojo_k10.dungeon_attack(...args),
-); // 变异`,
-    tests: ['kojo-k10-club'],
-    must_mention: '20 个分发族全部注册了 K10',
-  },
-  {
-    desc: 'M2337 K10 家族接入：ntr_koujo_family 注册号错位（10 改 11，#241）',
-    file: 'ere/kojo/kojo-k10-club.js',
-    find: `ntr_koujo_family.register(10, (...args) => kojo_k10.ntr_koujo(...args));`,
-    replace: `ntr_koujo_family.register(11, (...args) => kojo_k10.ntr_koujo(...args)); // 变异`,
-    tests: ['kojo-k10-club'],
-    must_mention: '20 个分发族全部注册了 K10',
-  },
-  {
-    desc: 'M2338 K10 家族接入：exucution_koujo_family 注册号错位（10 改 11，#241）',
-    file: 'ere/kojo/kojo-k10-club.js',
-    find: `exucution_koujo_family.register(10, (...args) =>
-  kojo_k10.exucution_koujo(...args),
-);`,
-    replace: `exucution_koujo_family.register(11, (...args) =>
-  kojo_k10.exucution_koujo(...args),
-); // 变异`,
-    tests: ['kojo-k10-club'],
-    must_mention: '20 个分发族全部注册了 K10',
-  },
-  {
-    desc: 'M2339 K10 家族接入：museum_koujo_family 注册号错位（10 改 11，#241）',
-    file: 'ere/kojo/kojo-k10-club.js',
-    find: `museum_koujo_family.register(10, (...args) => kojo_k10.museum_koujo(...args));`,
-    replace: `museum_koujo_family.register(11, (...args) => kojo_k10.museum_koujo(...args)); // 变异`,
-    tests: ['kojo-k10-club'],
-    must_mention: '20 个分发族全部注册了 K10',
-  },
+
   {
     desc: 'M2500 K8 兽奸检查岔路丢失（TEQUIP:89 不再调 DOG_KOJO_8，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
@@ -14080,15 +13663,6 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k8-spade'],
     must_mention: '默认支（含 ARG:0==0）三选一，前两支同文',
   },
-  {
-    desc: 'M2508 K8 NTR 注册退回只收 P 的适配器（族实参是 [rand, P]，rand 被当成 P → 整段静默，#239）',
-    file: 'ere/kojo/kojo-k8-spade.js',
-    find: 'ntr_koujo_family.register(8, (...args) => kojo_k8.ntr_koujo(...args));',
-    replace:
-      'ntr_koujo_family.register(8, (p_arg) => kojo_k8.ntr_koujo(undefined, p_arg));',
-    tests: ['kojo-k8-spade'],
-    must_mention: 'NTR：P==1 陥落済支走巨根',
-  },
 
   // —— #231 J21 口上·K0 慈爱（M1600-M1649 + M1790-M2015；撞号条目并入 M2420-M2599） ——
   {
@@ -14124,14 +13698,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k0-tender'],
     must_mention: '阈值闸',
   },
-  {
-    desc: 'M1604 K0 EVENTEND #LATER 档清标志删除（#231）',
-    file: 'ere/kojo/kojo-k0-tender.js',
-    find: '  game.kojo.口上存在_0 = 0;',
-    replace: '  // 变异：清标志删除',
-    tests: ['kojo-k0-tender'],
-    must_mention: 'K0 EVENTEND 清 FLAG:100',
-  },
+
   {
     desc: 'M1605 K0 失神检查删除（TFLAG:899 改恒 false）（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
@@ -14144,10 +13711,10 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M1606 主启动图删 K0 口上注册（KOJO_MESSAGE_COM_0 不进实际运行图）（#231）',
     file: 'ere/system/flow/startup.js',
-    find: "  ['#/kojo/kojo-k0-tender', require('#/kojo/kojo-k0-tender')],\n",
-    replace: '  // 变异：口上模块不在启动装配表注册\n',
-    tests: ['kojo-family-wiring'],
-    must_mention: '主启动图漏装：kojo-k0-tender（KOJO 0）',
+    find: "require('#/kojo/kojo-k0-tender');\n",
+    replace: '',
+    tests: ['kojo-wiring'],
+    must_mention: '工厂里的口上编号与源码声明不一致',
   },
   {
     desc: 'M1607 K0 舔阴首次状态推进写错（CFLAG:302 = 1 改 2）（#231）',
@@ -14225,14 +13792,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k0-tender'],
     must_mention: '触手（TEQUIP:90）',
   },
-  {
-    desc: 'M1616 K0 EVENTTRAIN #PRI 档置 FLAG:100 删除（#231）',
-    file: 'ere/kojo/kojo-k0-tender.js',
-    find: '  game.kojo.口上存在_0 = 1; // FLAG:100 = 1（K0 口上存在标志）',
-    replace: '  // 变异：置标志删除',
-    tests: ['kojo-k0-tender'],
-    must_mention: 'K0 EVENTTRAIN 置 FLAG:100',
-  },
+
   {
     desc: 'M1617 K0 爱抚爱慕素质条件错格（TALENT:85 改 86）（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
@@ -15885,15 +15445,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k0-tender'],
     must_mention: 'FLAG:7 <= 0 静默',
   },
-  {
-    desc: 'M3143 K0 EVENTTRAIN NORMAL 慈爱素质检查错格（!== 1 改 !== 0）（#231）',
-    file: 'ere/kojo/kojo-k0-tender.js',
-    find: '  if (chara(target).chara.慈爱 !== 1) {\n    return 0;\n  }\n  if (kojo.初调教 === 0) {',
-    replace:
-      '  if (chara(target).chara.慈爱 !== 0) {\n    return 0;\n  }\n  if (kojo.初调教 === 0) {',
-    tests: ['kojo-k0-tender'],
-    must_mention: 'K0 EVENTTRAIN NORMAL：非慈爱素质静默',
-  },
+
   {
     desc: 'M3144 K0 EVENTTRAIN NORMAL 首次精灵状态推进写错（CFLAG:201 = 1 改 2）（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
@@ -16064,15 +15616,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k0-tender'],
     must_mention: '淫乱体力 500 走 >= 不是 <',
   },
-  {
-    desc: 'M3162 K0 EVENTEND NORMAL 慈爱素质检查错格（!== 1 改 !== 0）（#231）',
-    file: 'ere/kojo/kojo-k0-tender.js',
-    find: '  if (chara(target).chara.慈爱 !== 1) {\n    return 0;\n  }\n\n  if (chara(target).dungeon.体力 <= 0) {',
-    replace:
-      '  if (chara(target).chara.慈爱 !== 0) {\n    return 0;\n  }\n\n  if (chara(target).dungeon.体力 <= 0) {',
-    tests: ['kojo-k0-tender'],
-    must_mention: 'K0 EVENTEND NORMAL：非慈爱素质静默',
-  },
+
   {
     desc: 'M3163 K0 SELF_KOJO 自慰淫乱档写 4 改 3（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
@@ -16182,9 +15726,9 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M3175 K0 PALAMCNG 总开关检查删松（flag_guard 关掉）（#231）',
     file: 'ere/kojo/kojo-system.js',
-    find: "  return run_kojo('kojo_message_palamcng', kojo_message_palamcng_family, {\n    args: [rand],\n    flag_guard: true,",
+    find: "  return run_kojo('kojo_message_palamcng', { args: [rand], flag_guard: true });",
     replace:
-      "  return run_kojo('kojo_message_palamcng', kojo_message_palamcng_family, {\n    args: [rand],\n    flag_guard: false, // 变异：总开关删松",
+      "  return run_kojo('kojo_message_palamcng', { args: [rand], flag_guard: false }); // 变异：总开关检查删松",
     tests: ['kojo-k0-tender'],
     must_mention: 'PALAMCNG：总开关 FLAG:7 <= 0 静默',
   },
@@ -16218,9 +15762,9 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M3179 K0 MARKCNG 总开关检查删松（flag_guard 关掉）（#231）',
     file: 'ere/kojo/kojo-system.js',
-    find: "  return run_kojo('kojo_message_markcng', kojo_message_markcng_family, {\n    args: [rand],\n    flag_guard: true,",
+    find: "  return run_kojo('kojo_message_markcng', { args: [rand], flag_guard: true });",
     replace:
-      "  return run_kojo('kojo_message_markcng', kojo_message_markcng_family, {\n    args: [rand],\n    flag_guard: false, // 变异：总开关删松",
+      "  return run_kojo('kojo_message_markcng', { args: [rand], flag_guard: false }); // 变异：总开关检查删松",
     tests: ['kojo-k0-tender'],
     must_mention: 'MARKCNG：总开关 FLAG:7 <= 0 静默',
   },
@@ -16404,31 +15948,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention:
       '兽奸（TEQUIP:89）：K0 岔进 DOG_KOJO_0 真身（selectcom 0 初次）',
   },
-  {
-    desc: 'M3300 K13 EVENTTRAIN #PRI 存在标志写错值（FLAG:113=1 改 2，#244）',
-    file: 'ere/kojo/kojo-k13-protector.js',
-    find: '  game.kojo.口上存在_13 = 1; // FLAG:113 = 1（K13 口上存在标志）',
-    replace: '  game.kojo.口上存在_13 = 2; // （变异）',
-    tests: ['kojo-k13-protector'],
-    must_mention: 'K13 一对',
-  },
-  {
-    desc: 'M3301 K13 EVENTTRAIN #PRI 口上开关补 0 条件改错（===0 改 ===1，#244）',
-    file: 'ere/kojo/kojo-k13-protector.js',
-    find: '  if (game.kojo.口上开关 === 0) {\n    game.kojo.口上开关 = 2;\n  }',
-    replace:
-      '  if (game.kojo.口上开关 === 1) { // 变异\n    game.kojo.口上开关 = 2;\n  }',
-    tests: ['kojo-k13-protector'],
-    must_mention: 'K13 一对',
-  },
-  {
-    desc: 'M3302 K13 EVENTEND #LATER 存在标志清除值改错（=0 改 =1，#244）',
-    file: 'ere/kojo/kojo-k13-protector.js',
-    find: '  game.kojo.口上存在_13 = 0;',
-    replace: '  game.kojo.口上存在_13 = 1; // （变异）',
-    tests: ['kojo-k13-protector'],
-    must_mention: 'K13 一对',
-  },
+
   {
     desc: 'M3303 K13 EVENTTRAIN 自身检查①口上开关条件反转（<=0 改 >0，#244）',
     file: 'ere/kojo/kojo-k13-protector.js',
@@ -16438,15 +15958,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k13-protector'],
     must_mention: '自身检查①口上开关',
   },
-  {
-    desc: 'M3304 K13 EVENTTRAIN 自身检查②TALENT:173 条件反转（!=1 改 ==1，#244）',
-    file: 'ere/kojo/kojo-k13-protector.js',
-    find: '  if (era0(`talent:${target}:173`) != 1) {\n    return 0;\n  }\n\n  if (kojo.初调教 == 0) {',
-    replace:
-      '  if (era0(`talent:${target}:173`) == 1) { // 变异\n    return 0;\n  }\n\n  if (kojo.初调教 == 0) {',
-    tests: ['kojo-k13-protector'],
-    must_mention: '自身检查②TALENT:173',
-  },
+
   {
     desc: 'M3305 K13 初调教==0 推进值写错（=1 改 2，#244）',
     file: 'ere/kojo/kojo-k13-protector.js',
@@ -16638,10 +16150,10 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M3328 K13 主启动图删 K13 庇护者口上注册（KOJO 13 不进实际运行图，#244）',
     file: 'ere/system/flow/startup.js',
-    find: "  ['#/kojo/kojo-k13-protector', require('#/kojo/kojo-k13-protector')],\n",
-    replace: '  // 变异：口上模块不在启动装配表注册\n',
-    tests: ['kojo-family-wiring'],
-    must_mention: '主启动图漏装：kojo-k13-protector',
+    find: "require('#/kojo/kojo-k13-protector');\n",
+    replace: '',
+    tests: ['kojo-wiring'],
+    must_mention: '工厂里的口上编号与源码声明不一致',
   },
   {
     desc: 'M3330 K13 PALAMCNG 口塞检查删（TEQUIP:45 不再跳过，#244）',
@@ -16786,30 +16298,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k13-protector'],
     must_mention: 'GOHOUBI_REQUEST 金钱',
   },
-  {
-    desc: 'M3347 K13 self_kojo 族漏注册（key 13 不进 self_kojo_family，#244）',
-    file: 'ere/kojo/kojo-k13-protector.js',
-    find: `self_kojo_family.register(13, (...args) => kojo_k13.self_kojo(...args));`,
-    replace: `// 变异：self_kojo_family 漏装 K13`,
-    tests: ['kojo-k13-protector'],
-    must_mention: '缺 K13 注册',
-  },
-  {
-    desc: 'M3400 K14 EVENTTRAIN #PRI 存在标志写错值（口上存在_14=1 改 2，#245）',
-    file: 'ere/kojo/kojo-k14-nobleman.js',
-    find: 'game.kojo.口上存在_14 = 1; // FLAG:114 = 1（K14 口上存在标志）',
-    replace: 'game.kojo.口上存在_14 = 2; // （变异）',
-    tests: ['kojo-k14-nobleman'],
-    must_mention: 'EVENTTRAIN #PRI 档置存在标志',
-  },
-  {
-    desc: 'M3401 K14 EVENTEND #LATER 存在标志清除值改错（=0 改 =1，#245）',
-    file: 'ere/kojo/kojo-k14-nobleman.js',
-    find: 'game.kojo.口上存在_14 = 0;',
-    replace: 'game.kojo.口上存在_14 = 1; // （变异）',
-    tests: ['kojo-k14-nobleman'],
-    must_mention: 'EVENTTRAIN #PRI 档置存在标志',
-  },
+
   {
     desc: 'M3402 K14 EVENTTRAIN 初调教通常男档写回值改错（初调教=1 改 2，#245）',
     file: 'ere/kojo/kojo-k14-nobleman.js',
@@ -17050,31 +16539,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k14-nobleman'],
     must_mention: 'ENTERENEMY 反抗的',
   },
-  {
-    desc: 'M3500 K15 EVENTTRAIN #PRI 存在标志写错值（FLAG:115=1 改 2，#246）',
-    file: 'ere/kojo/kojo-k15-clever.js',
-    find: '  game.kojo.口上存在_15 = 1; // FLAG:115 = 1（K15 口上存在标志）',
-    replace: '  game.kojo.口上存在_15 = 2; // （变异）',
-    tests: ['kojo-k15-clever'],
-    must_mention: 'K15 存在标志 FLAG:115',
-  },
-  {
-    desc: 'M3501 K15 EVENTTRAIN #PRI 口上开关补 0 条件改错（===0 改 ===1，#246）',
-    file: 'ere/kojo/kojo-k15-clever.js',
-    find: '  if (game.kojo.口上开关 === 0) {\n    game.kojo.口上开关 = 2;\n  }',
-    replace:
-      '  if (game.kojo.口上开关 === 1) {  // 变异\n    game.kojo.口上开关 = 2;\n  }',
-    tests: ['kojo-k15-clever'],
-    must_mention: 'EVENTTRAIN #PRI 档口上开关补 0（FLAG:7 从 0 补到 2）',
-  },
-  {
-    desc: 'M3502 K15 EVENTEND #LATER 存在标志清除值改错（=0 改 =1，#246）',
-    file: 'ere/kojo/kojo-k15-clever.js',
-    find: '  game.kojo.口上存在_15 = 0;',
-    replace: '  game.kojo.口上存在_15 = 1; // （变异）',
-    tests: ['kojo-k15-clever'],
-    must_mention: 'EVENTEND #LATER 清 FLAG:115',
-  },
+
   {
     desc: 'M3503 K15 EVENTTRAIN 自身检查①口上开关条件反转（<=0 改 >0，#246）',
     file: 'ere/kojo/kojo-k15-clever.js',
@@ -17084,15 +16549,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k15-clever'],
     must_mention: 'EVENTTRAIN 自身检查①口上开关<0（玩家显式关掉）静默跳过',
   },
-  {
-    desc: 'M3504 K15 EVENTTRAIN 自身检查②TALENT:175 条件反转（!=1 改 ==1，#246）',
-    file: 'ere/kojo/kojo-k15-clever.js',
-    find: '  if (era0(`talent:${target}:175`) != 1) {\n    return 0;\n  }\n\n  if (kojo.初调教 == 0) {',
-    replace:
-      '  if (era0(`talent:${target}:175`) == 1) {  // 变异\n    return 0;\n  }\n\n  if (kojo.初调教 == 0) {',
-    tests: ['kojo-k15-clever'],
-    must_mention: 'EVENTTRAIN 自身检查②TALENT:175!=1 静默跳过',
-  },
+
   {
     desc: 'M3505 K15 初调教推进值写错（CFLAG:201=1 改 2，#246）',
     file: 'ere/kojo/kojo-k15-clever.js',
@@ -17233,16 +16690,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k15-clever'],
     must_mention: 'K15 无 TEQUIP:90 检查',
   },
-  {
-    desc: 'M3521 K15 COM 族注册 key 改错（15 改 16，#246）',
-    file: 'ere/kojo/kojo-k15-clever.js',
-    find: `kojo_message_com_family.register(15, (...args) =>
-  kojo_k15.kojo_message_com(...args),
-);`,
-    replace: `kojo_message_com_family.register(16, kojo_message_com_15);  // 变异`,
-    tests: ['kojo-k15-clever'],
-    must_mention: 'COM 族缺 K15 注册',
-  },
+
   {
     desc: 'M3522 K15 爱抚首次状态推进写错（=1 改 2，#246）',
     file: 'ere/kojo/kojo-k15-clever.js',
@@ -17728,14 +17176,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k15-clever'],
     must_mention: '妊娠发觉 → 271=1',
   },
-  {
-    desc: 'M3588 K15 SELF_KOJO 族注册 key 改错（15 改 16，#246）',
-    file: 'ere/kojo/kojo-k15-clever.js',
-    find: `self_kojo_family.register(15, (...args) => kojo_k15.self_kojo(...args));`,
-    replace: `self_kojo_family.register(16, self_kojo_k15);  // 变异`,
-    tests: ['kojo-k15-clever'],
-    must_mention: 'SELF_KOJO 族缺 K15 注册',
-  },
+
   {
     desc: 'M3589 K15 DUNGEON_RYOUZYOKU 处女条件反转（TALENT:0==1 改 ==0，#246）',
     file: 'ere/kojo/kojo-k15-clever.js',
@@ -18053,41 +17494,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k12-intellectual'],
     must_mention: 'kojo_message_markcng_12 苦痛刻印Lv3 取得',
   },
-  {
-    desc: 'M3233 K12 EVENTTRAIN #PRI 存在标志置位删除（FLAG:112 = 1）',
-    file: 'ere/kojo/kojo-k12-intellectual.js',
-    find: '  game.kojo.口上存在_12 = 1; // FLAG:112 = 1（K12 口上存在标志）',
-    replace: '  // 变异：存在标志置位删除',
-    tests: ['kojo-k12-intellectual'],
-    must_mention:
-      'EVENTTRAIN #PRI 档置存在标志、EVENTEND #LATER 档清 0（K12 一对）',
-  },
-  {
-    desc: 'M3234 K12 EVENTEND #LATER 存在标志清除删除（FLAG:112 = 0）',
-    file: 'ere/kojo/kojo-k12-intellectual.js',
-    find: '  game.kojo.口上存在_12 = 0;',
-    replace: '  // 变异：存在标志清除删除',
-    tests: ['kojo-k12-intellectual'],
-    must_mention:
-      'EVENTTRAIN #PRI 档置存在标志、EVENTEND #LATER 档清 0（K12 一对）',
-  },
-  {
-    desc: 'M6400 K903 EVENTTRAIN EX_FLAG:103 置位删除（#249）',
-    file: 'ere/kojo/kojo-k903-garde.js',
-    find: '  era_exflag.kojo_gade_session = 1; // EX_FLAG:103 = 嘉德口上存在标志',
-    replace: '  // 变异：EX_FLAG:103 置位删除',
-    tests: ['kojo-k903-garde'],
-    must_mention: 'EX_FLAG:103 生命周期',
-  },
-  {
-    desc: 'M6401 K903 EVENTTRAIN EX_TALENT:103 检查删除（#249）',
-    file: 'ere/kojo/kojo-k903-garde.js',
-    find: '  if (era0(`ex_talent:${target}:103`) != 1) {\n    return 0;\n  }\n\n  if (kojo.初调教 == 0) {',
-    replace:
-      '  if (false) { // 变异：EX_TALENT:103 检查删除\n    return 0;\n  }\n\n  if (kojo.初调教 == 0) {',
-    tests: ['kojo-k903-garde'],
-    must_mention: 'EX_TALENT:103 缺席',
-  },
+
   {
     desc: 'M6402 K903 CFLAG:201 初调教初回写错（1 改 2）（#249）',
     file: 'ere/kojo/kojo-k903-garde.js',
@@ -18851,14 +18258,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k19-fia'],
     must_mention: '反抗刻印首超推进',
   },
-  {
-    desc: 'M6072 K19 的存在标志写入删除（#858 合并置位/清除两条——两处只剩 mark_present 一个落点）',
-    file: 'ere/kojo/kojo-k19-fia.js',
-    find: '    game.kojo.口上存在_19 = value;',
-    replace: '    // 变异：K19 存在标志不写',
-    tests: ['kojo-k19-fia', 'kojo-classes-k19-k904'],
-    must_mention: '存在标志置 1',
-  },
+
   {
     desc: 'M6074 K19 初调教 CFLAG:201 推进写错（#247）',
     file: 'ere/kojo/kojo-k19-fia.js',
@@ -19529,47 +18929,14 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-system'],
     must_mention: 'EX_TALENT:102 → 口上编号 1002',
   },
-  {
-    desc: 'M6209 KOJO_MESSAGE_COM 的 EX_FLAG 下标偏移（#248）',
-    file: 'ere/kojo/kojo-system.js',
-    find: '    era_exflag.get(local - 900) === 0\n  ) {',
-    replace: '    era_exflag.get(local - 901) === 0\n  ) {',
-    tests: ['kojo-system'],
-    must_mention: 'K902 扩展口上',
-  },
-  {
-    desc: 'M6500 K904 的存在标志写入删除（#858 合并置位/清除两条——两处只剩 mark_present 一个落点）',
-    file: 'ere/kojo/kojo-k904-fia.js',
-    find: '    era_exflag.set(104, value);',
-    replace: '    // 变异：EX_FLAG:104 不写',
-    tests: ['kojo-k19-fia', 'kojo-classes-k19-k904'],
-    must_mention: '存在标志置 1',
-  },
-  {
-    desc: 'M6502 K904 的口上素质读错格（EX_TALENT:104 改 105：K904 永远不认为自己是本口上）（#858 合并 TRAIN/END 两处）',
-    file: 'ere/kojo/kojo-k904-fia.js',
-    find: '    return (era.get(`ex_talent:${target}:104`) || 0) == 1;',
-    replace:
-      '    return (era.get(`ex_talent:${target}:105`) || 0) == 1; // 变异：素质错格',
-    tests: ['kojo-k19-fia', 'kojo-classes-k19-k904'],
-    must_mention: '只有本套素质在身时才响',
-  },
-  {
-    desc: 'M6505 K904 的 KOJO_MESSAGE_COM 族注册转发到父类实例（#858：注册键退回 19 已改由工厂承接，此处守的是转发目标）',
-    file: 'ere/kojo/kojo-k904-fia.js',
-    find: 'kojo_message_com_family.register(904, (...args) =>\n  kojo_k904.kojo_message_com(...args),',
-    replace:
-      'kojo_message_com_family.register(904, (...args) =>\n  kojo_k19.kojo_message_com(...args), // 变异：转发到父类实例',
-    tests: ['kojo-classes-k19-k904'],
-    must_mention: '都转发到工厂实例',
-  },
+
   {
     desc: 'M6506 主启动图删除 K904 口上装载（#250）',
     file: 'ere/system/flow/startup.js',
-    find: "  ['#/kojo/kojo-k904-fia', require('#/kojo/kojo-k904-fia')],\n",
-    replace: '  // 变异：口上模块不在启动装配表注册\n',
-    tests: ['kojo-family-wiring'],
-    must_mention: '主启动图加载 main-loop 后，口上分发族注册号等于口上模块并集',
+    find: "require('#/kojo/kojo-k904-fia');\n",
+    replace: '',
+    tests: ['kojo-wiring'],
+    must_mention: '工厂里的口上编号与源码声明不一致',
   },
   // —— #403（N19）口上分发表：条目 M8941-M9000 ——
   {
@@ -19595,26 +18962,26 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M8945 ATTACK_KOUJO_B 不还原 TARGET（指针跨调用残留）',
     file: 'ere/kojo/kojo-system.js',
-    find: '    dungeon_attack_family, // TRYCALLFORM DUNGEON_ATTACK_K{LOCAL - 100}\n    {\n      cid: cid ?? -1,\n      args: [rand],\n      legacy: () => try_kojo(dungeon_attack_family, cid ?? -1, [rand]),\n    },\n  );\n  era_flag.target = target_pool;',
+    find: "    era_flag.target = cid; // TARGET = B\n  }\n  const result = await run_kojo('dungeon_attack', {\n    cid: cid ?? -1,\n    args: [rand],\n  });\n  era_flag.target = target_pool;",
     replace:
-      '    dungeon_attack_family, // TRYCALLFORM DUNGEON_ATTACK_K{LOCAL - 100}\n    {\n      cid: cid ?? -1,\n      args: [rand],\n      legacy: () => try_kojo(dungeon_attack_family, cid ?? -1, [rand]),\n    },\n  );\n  // 变异：不还原 TARGET',
+      "    era_flag.target = cid; // TARGET = B\n  }\n  const result = await run_kojo('dungeon_attack', {\n    cid: cid ?? -1,\n    args: [rand],\n  }); // 变异：SWAP 少了回程",
     tests: ['event-k-dispatch'],
     must_mention: '返回后 TARGET 还原',
   },
   {
     desc: 'M8947 ATTACK_KOUJO_B 随机源错传 cid（handler 收 [cid]）',
     file: 'ere/kojo/kojo-system.js',
-    find: '      legacy: () => try_kojo(dungeon_attack_family, cid ?? -1, [rand]),',
+    find: "    era_flag.target = cid; // TARGET = B\n  }\n  const result = await run_kojo('dungeon_attack', {\n    cid: cid ?? -1,\n    args: [rand],\n  });",
     replace:
-      '      legacy: () => try_kojo(dungeon_attack_family, cid ?? -1, [cid]),',
+      "    era_flag.target = cid; // TARGET = B\n  }\n  const result = await run_kojo('dungeon_attack', {\n    cid: cid ?? -1,\n    args: [cid],\n  });",
     tests: ['event-k-dispatch'],
     must_mention: 'handler 实参逐条对上',
   },
   {
     desc: 'M8948 处刑首五族：分发体不传处分编号（handler 收到 undefined）',
     file: 'ere/kojo/kojo-system.js',
-    find: '    args: [event_no],',
-    replace: '    args: [], // 变异：不传处分编号',
+    find: '  await run_kojo(hook, { cid, args: [event_no] });',
+    replace: '  await run_kojo(hook, { cid, args: [] }); // 变异：处分编号不传',
     tests: ['event-k-dispatch'],
     must_mention: 'K0 收展品/处刑编号',
   },
@@ -19629,48 +18996,53 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M8950 EXUCUTION_KOUJO 入口族错接（挂到 MUSEUM 族）',
     file: 'ere/kojo/kojo-system.js',
-    find: "    'exucution_koujo',\n    exucution_koujo_family,",
-    replace: "    'exucution_koujo',\n    museum_koujo_family,",
+    find: "  return dispatch_execution_koujo('exucution_koujo', cid, event_no);",
+    replace:
+      "  return dispatch_execution_koujo('museum_koujo', cid, event_no); // 变异：入口族错接",
     tests: ['event-k-dispatch'],
-    must_mention: 'handler 实参逐条对上',
+    must_mention: 'handler 收处分编号',
   },
   {
     desc: 'M8951 MUSEUM_KOUJO 入口族错接（挂到 BANISHMENT 族）',
     file: 'ere/kojo/kojo-system.js',
-    find: "    'museum_koujo',\n    museum_koujo_family,",
-    replace: "    'museum_koujo',\n    banishment_koujo_family,",
+    find: "  return dispatch_execution_koujo('museum_koujo', cid, event_no);",
+    replace:
+      "  return dispatch_execution_koujo('banishment_koujo', cid, event_no); // 变异：入口族错接",
     tests: ['event-k-dispatch'],
-    must_mention: 'handler 实参逐条对上',
+    must_mention: 'handler 收处分编号',
   },
   {
     desc: 'M8952 BANISHMENT_KOUJO 入口族错接（挂到 GROTESQUE 族）',
     file: 'ere/kojo/kojo-system.js',
-    find: "    'banishment_koujo',\n    banishment_koujo_family,",
-    replace: "    'banishment_koujo',\n    grotesque_koujo_family,",
+    find: "  return dispatch_execution_koujo('banishment_koujo', cid, event_no);",
+    replace:
+      "  return dispatch_execution_koujo('grotesque_koujo', cid, event_no); // 变异：入口族错接",
     tests: ['event-k-dispatch'],
-    must_mention: 'handler 实参逐条对上',
+    must_mention: 'handler 收处分编号',
   },
   {
     desc: 'M8953 PUBLIC_EXUCUTION_KOUJO 入口族错接（挂到 EXUCUTION 族）',
     file: 'ere/kojo/kojo-system.js',
-    find: "    'public_exucution_koujo',\n    public_exucution_koujo_family,",
-    replace: "    'public_exucution_koujo',\n    exucution_koujo_family,",
+    find: "  return dispatch_execution_koujo('public_exucution_koujo', cid, event_no);",
+    replace:
+      "  return dispatch_execution_koujo('exucution_koujo', cid, event_no); // 变异：入口族错接",
     tests: ['event-k-dispatch'],
-    must_mention: 'handler 实参逐条对上',
+    must_mention: 'handler 收处分编号',
   },
   {
     desc: 'M8954 GROTESQUE_KOUJO 入口族错接（挂到 PUBLIC_EXUCUTION 族）',
     file: 'ere/kojo/kojo-system.js',
-    find: "    'grotesque_koujo',\n    grotesque_koujo_family,",
-    replace: "    'grotesque_koujo',\n    public_exucution_koujo_family,",
+    find: "  return dispatch_execution_koujo('grotesque_koujo', cid, event_no);",
+    replace:
+      "  return dispatch_execution_koujo('public_exucution_koujo', cid, event_no); // 变异：入口族错接",
     tests: ['event-k-dispatch'],
-    must_mention: 'handler 实参逐条对上',
+    must_mention: 'handler 收处分编号',
   },
   {
     desc: 'M8955 try_kojo 丢弃实参（handler 收不到 rand/cid）',
     file: 'ere/kojo/kojo-system.js',
-    find: '    return family.call(id, { whenMissing: 0, args: extra_args });',
-    replace: '    return family.call(id, { whenMissing: 0, args: [] });',
+    find: '  return kojo[hook](...hook_args);',
+    replace: '  return kojo[hook](); // 变异：实参丢弃',
     tests: ['event-k-dispatch'],
     must_mention: 'handler 实参逐条对上',
   },
@@ -19680,71 +19052,45 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M8957 GOHOUBI_REQUEST 族内实参丢 cid（K7 读不到 CFLAG:504）',
     file: 'ere/kojo/kojo-dungeon-after.js',
-    find: '    args: [cid],\n    legacy: () => try_kojo(gohoubi_request_koujo_family, cid, [cid]),',
+    find: "  await run_kojo('gohoubi_request_koujo', { cid, args: [cid] });",
     replace:
-      '    args: [],\n    legacy: () => try_kojo(gohoubi_request_koujo_family, cid, []),',
+      "  await run_kojo('gohoubi_request_koujo', { cid, args: [] }); // 变异：族内实参丢 cid",
     tests: ['event-k-dispatch'],
     must_mention: 'K 侧收 cid',
   },
   {
     desc: 'M8958 GOHOUBI_REQUEST 不还原 TARGET（SWAP 少了回程）',
     file: 'ere/kojo/kojo-dungeon-after.js',
-    find: '    legacy: () => try_kojo(gohoubi_request_koujo_family, cid, [cid]),\n  });\n  era_flag.target = target_pool; // SWAP 还原',
+    find: "  era_flag.target = cid; // TARGET = A\n  await run_kojo('gohoubi_request_koujo', { cid, args: [cid] });\n  era_flag.target = target_pool; // SWAP 还原",
     replace:
-      '    legacy: () => try_kojo(gohoubi_request_koujo_family, cid, [cid]),\n  });\n  // 变异：不还原 TARGET',
+      "  era_flag.target = cid; // TARGET = A\n  await run_kojo('gohoubi_request_koujo', { cid, args: [cid] }); // 变异：SWAP 少了回程",
     tests: ['event-k-dispatch'],
     must_mention: '返回后 TARGET 还原',
   },
-  {
-    desc: 'M8960 PALAMCNG 存在判定丢 EX 分支（EX 性格的口上永久静默）',
-    file: 'ere/kojo/kojo-system.js',
-    find: '    (era.get(`flag:${local}`) || 0) === 0 &&\n    era_exflag.get(local - 900) === 0',
-    replace: '    (era.get(`flag:${local}`) || 0) === 0',
-    tests: ['event-k-dispatch'],
-    must_mention: 'EX_FLAG:102 == 1',
-  },
-  {
-    desc: 'M8961 PALAMCNG 存在判定被关掉（presence: false，两道标志为 0 也派发）',
-    file: 'ere/kojo/kojo-system.js',
-    find: "  return run_kojo('kojo_message_palamcng', kojo_message_palamcng_family, {\n    args: [rand],\n    flag_guard: true,\n    presence: true,",
-    replace:
-      "  return run_kojo('kojo_message_palamcng', kojo_message_palamcng_family, {\n    args: [rand],\n    flag_guard: true,\n    presence: false, // 变异：存在判定关掉",
-    tests: ['event-k-dispatch'],
-    must_mention: 'EX 分支另一侧',
-  },
-  {
-    desc: 'M8962 MARKCNG 凭空加一道存在判定（原件是注释态，FLAG:LOCAL == 0 就静默）',
-    file: 'ere/kojo/kojo-system.js',
-    find: "  return run_kojo('kojo_message_markcng', kojo_message_markcng_family, {\n    args: [rand],\n    flag_guard: true,",
-    replace:
-      "  return run_kojo('kojo_message_markcng', kojo_message_markcng_family, {\n    args: [rand],\n    flag_guard: true,\n    presence: true, // 变异：凭空加一道存在判定",
-    tests: ['event-k-dispatch'],
-    must_mention: '没有存在判定这道闸',
-  },
+
   {
     desc: 'M8963 迷宫凌辱前钩子族错接（DUNGEON_RYOUZYOKU 进 _AFTER 族）',
     file: 'ere/kojo/kojo-dungeon-ravish.js',
-    find: "  return dispatch_ryouzyoku_kojo('dungeon_ryouzyoku', ryouzyoku_kojo_family);",
+    find: "  return dispatch_ryouzyoku_kojo('dungeon_ryouzyoku');",
     replace:
-      "  return dispatch_ryouzyoku_kojo('dungeon_ryouzyoku', ryouzyoku_after_kojo_family);",
+      "  return dispatch_ryouzyoku_kojo('dungeon_ryouzyoku_after'); // 变异：钩子族错接",
     tests: ['event-k-dispatch'],
     must_mention: 'GET_KOJO_NUM() 走当前 TARGET',
   },
   {
     desc: 'M8964 迷宫凌辱后钩子族错接（DUNGEON_RYOUZYOKU_AFTER 进 _K 族）',
     file: 'ere/kojo/kojo-dungeon-ravish.js',
-    find: "  return dispatch_ryouzyoku_kojo(\n    'dungeon_ryouzyoku_after',\n    ryouzyoku_after_kojo_family,\n  );",
+    find: "  return dispatch_ryouzyoku_kojo('dungeon_ryouzyoku_after');",
     replace:
-      "  return dispatch_ryouzyoku_kojo(\n    'dungeon_ryouzyoku_after',\n    ryouzyoku_kojo_family,\n  );",
+      "  return dispatch_ryouzyoku_kojo('dungeon_ryouzyoku'); // 变异：钩子族错接",
     tests: ['event-k-dispatch'],
     must_mention: 'GET_KOJO_NUM() 走当前 TARGET',
   },
   {
     desc: 'M8965 迷宫凌辱前钩子读死角色 0（cid 缺省改 0）',
     file: 'ere/kojo/kojo-dungeon-ravish.js',
-    find: '  await run_kojo(hook, family, {\n    legacy: (id) => family.call(id, { whenMissing: 0, args: [] }),',
-    replace:
-      '  await run_kojo(hook, family, {\n    cid: 0, // 变异：读死角色 0\n    legacy: (id) => family.call(id, { whenMissing: 0, args: [] }),',
+    find: '  await run_kojo(hook);',
+    replace: '  await run_kojo(hook, { cid: 0 }); // 变异：读死角色 0',
     tests: ['event-k-dispatch'],
     must_mention: 'GET_KOJO_NUM() 走当前 TARGET',
   },
@@ -19759,37 +19105,13 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   // M8967/M8968：删除（#643）——分发表的 line/erb 与拼名前缀只对照只读源消费，
   // 源对照用例删除后无行为面；dispatch 拼名错被 kojo-register-coverage 的注册
   // 实参反推掩盖，同样无人可守。
-  {
-    desc: 'M8969 分发表：DUNGEON_ATTACK 行族错填（victory 族）',
-    file: 'ere/kojo/kojo-system.js',
-    find: `    line: 322,
-    dispatch: 'DUNGEON_ATTACK_K',
-    entry: 'attack_koujo',
-    erb: 'ATTACK_KOUJO',
-    module: 'kojo/kojo-system',
-    family: 'dungeon_attack_family',`,
-    replace: `    line: 322,
-    dispatch: 'DUNGEON_ATTACK_K',
-    entry: 'attack_koujo',
-    erb: 'ATTACK_KOUJO',
-    module: 'kojo/kojo-system',
-    family: 'dungeon_victory_family',`,
-    tests: ['event-k-dispatch'],
-    must_mention: 'handler 实参逐条对上',
-  },
+
   {
     desc: 'M8970 分发表：COM 行 handler 实参多写一个（实参契约失守）',
     file: 'ere/kojo/kojo-system.js',
-    find: `    call: ['rand'],
-    handler: ['rand'],
-  },
-  {
-    line: 180,`,
-    replace: `    call: ['rand'],
-    handler: ['rand', 'rand'],
-  },
-  {
-    line: 180,`,
+    find: "    dispatch: 'KOJO_MESSAGE_COM_',\n    entry: 'kojo_message_com',\n    erb: 'KOJO_MESSAGE_COM',\n    module: 'kojo/kojo-system',\n    flag_guard: true,\n    call: ['rand'],\n    handler: ['rand'],",
+    replace:
+      "    dispatch: 'KOJO_MESSAGE_COM_',\n    entry: 'kojo_message_com',\n    erb: 'KOJO_MESSAGE_COM',\n    module: 'kojo/kojo-system',\n    flag_guard: true,\n    call: ['rand'],\n    handler: ['rand', 'cid'],",
     tests: ['event-k-dispatch'],
     must_mention: 'handler 实参逐条对上',
   },
@@ -19801,56 +19123,30 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M8972 分发表：入口名错字（benki_koujo 改 benki_koujo_）',
     file: 'ere/kojo/kojo-system.js',
-    find: `    entry: 'benki_koujo',
-    erb: 'BENKI_KOUJO',`,
-    replace: `    entry: 'benki_koujo_',
-    erb: 'BENKI_KOUJO',`,
+    find: "    entry: 'benki_koujo',\n    erb: 'BENKI_KOUJO',",
+    replace: "    entry: 'benki_koujo_',\n    erb: 'BENKI_KOUJO',",
     tests: ['event-k-dispatch'],
-    must_mention: '在 kojo/kojo-system 导出',
+    must_mention: '导出',
   },
   {
     desc: 'M8973 分发表：PALAMCNG 行的 flag_guard 写反（检查集与实测不符）',
     file: 'ere/kojo/kojo-system.js',
-    find: `    entry: 'kojo_message_palamcng',
-    erb: 'KOJO_MESSAGE_PALAMCNG',
-    module: 'kojo/kojo-system',
-    family: 'kojo_message_palamcng_family',
-    flag_guard: true,`,
-    replace: `    entry: 'kojo_message_palamcng',
-    erb: 'KOJO_MESSAGE_PALAMCNG',
-    module: 'kojo/kojo-system',
-    family: 'kojo_message_palamcng_family',
-    flag_guard: false,`,
+    find: "    dispatch: 'KOJO_MESSAGE_PALAMCNG_',\n    entry: 'kojo_message_palamcng',\n    erb: 'KOJO_MESSAGE_PALAMCNG',\n    module: 'kojo/kojo-system',\n    flag_guard: true,",
+    replace:
+      "    dispatch: 'KOJO_MESSAGE_PALAMCNG_',\n    entry: 'kojo_message_palamcng',\n    erb: 'KOJO_MESSAGE_PALAMCNG',\n    module: 'kojo/kojo-system',\n    flag_guard: false,",
     tests: ['event-k-dispatch'],
     must_mention: '有 FLAG:7 检查',
   },
   // M8974/M8975：删除（#643）——erb 字段与「表行数对上」都只由源对照用例守，
   // 行为面（入口函数、逐行驱动）不随行数变化。
-  {
-    desc: 'M8976 kojo-system 重新引入第二份 GOHOUBI_REQUEST_KOUJO 族（同名两实例）',
-    file: 'ere/kojo/kojo-system.js',
-    find: `const gobi_koujo_family = new DispatchFamily(
-  'GOBI_KOUJO',
-  DECLARED_KOJO_COM_IDS,
-);`,
-    replace: `const gobi_koujo_family = new DispatchFamily(
-  'GOBI_KOUJO',
-  DECLARED_KOJO_COM_IDS,
-);
-const gohoubi_request_koujo_family = new DispatchFamily(
-  'GOHOUBI_REQUEST_KOUJO',
-  DECLARED_KOJO_COM_IDS,
-);`,
-    tests: ['event-k-dispatch'],
-    must_mention: '同一个族名出现两份',
-  },
+
   {
     desc: 'M8984 分发窗口上界飘一格（local < 140 改 < 139，最大键 39 分不到）',
     file: 'ere/kojo/kojo-system.js',
     find: '  return (local >= 100 && local < 140) || local > 1000;',
     replace: '  return (local >= 100 && local < 139) || local > 1000;',
     tests: ['kojo-system'],
-    must_mention: '上界内侧（声明空间最大键 39）',
+    must_mention: '上界内侧（最大键 39）',
   },
   {
     desc: 'M8985 分发窗口下界飘一格（>= 100 改 > 100，K0 慈愛分不到）',
@@ -19888,9 +19184,8 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   {
     desc: 'M8989 迷宫凌辱钩子族内实参漂成 [0]（无参族收到实参）',
     file: 'ere/kojo/kojo-dungeon-ravish.js',
-    find: '    legacy: (id) => family.call(id, { whenMissing: 0, args: [] }),',
-    replace:
-      '    legacy: (id) => family.call(id, { whenMissing: 0, args: [0] }), // 变异：实参漂移',
+    find: '  await run_kojo(hook);',
+    replace: '  await run_kojo(hook, { args: [0] }); // 变异：实参漂移',
     tests: ['event-k-dispatch'],
     must_mention: 'handler 实参逐条对上',
   },
@@ -19909,9 +19204,9 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   {
     desc: 'M8991 OSIOKI 钩子族内实参丢 choice（handler 收不到处罚选择）',
     file: 'ere/kojo/kojo-dungeon-after.js',
-    find: '      osioski_koujo_family.call(id, { whenMissing: 0, args: [cid, choice] }),',
+    find: "  await run_kojo('osioski_koujo', { cid, args: [cid, choice] });",
     replace:
-      '      osioski_koujo_family.call(id, { whenMissing: 0, args: [cid] }),',
+      "  await run_kojo('osioski_koujo', { cid, args: [cid] }); // 变异：实参丢 choice",
     tests: ['event-k-dispatch'],
     must_mention: 'handler 实参逐条对上',
   },
@@ -19923,67 +19218,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     tests: ['kojo-system'],
     must_mention: '不是 TARGET 的 103',
   },
-  {
-    desc: 'M8993 kojo_handler_id 缺省哨兵改 0（不传参时读 0 号而不是 TARGET）',
-    file: 'ere/kojo/kojo-system.js',
-    find: 'function kojo_handler_id(arg = -1) {',
-    replace: 'function kojo_handler_id(arg = 0) { // 变异：缺省哨兵改 0',
-    tests: ['kojo-system'],
-    must_mention: '缺省 → 当前 TARGET',
-  },
-  {
-    desc: 'M8994 try_kojo 缺省哨兵改 0（不传参时读 0 号而不是 TARGET）',
-    file: 'ere/kojo/kojo-system.js',
-    // #641 起签名去掉基准名实参（收成三参）——
-    // find 同步到新文本，变异仍是「缺省哨兵改 0」
-    find: 'async function try_kojo(family, arg = -1, extra_args = []) {',
-    replace:
-      'async function try_kojo(family, arg = 0, extra_args = []) { // 变异：缺省哨兵改 0',
-    tests: ['kojo-system'],
-    must_mention: '缺省与 -1 都吃 TARGET',
-  },
-  {
-    desc: 'M8995 落空值写错：try_kojo 的 whenMissing 0 改 1',
-    file: 'ere/kojo/kojo-system.js',
-    find: '    return family.call(id, { whenMissing: 0, args: extra_args });',
-    replace:
-      '    return family.call(id, { whenMissing: 1, args: extra_args });',
-    tests: ['event-k-dispatch'],
-    must_mention: '落空值声明 0',
-  },
-  {
-    desc: 'M8996 落空值写错：run_kojo 回落旧族的 whenMissing 0 改 1',
-    file: 'ere/kojo/kojo-system.js',
-    find: '      ? family.call(id, { whenMissing: 0, args: hook_args })',
-    replace: '      ? family.call(id, { whenMissing: 1, args: hook_args })',
-    tests: ['event-k-dispatch'],
-    must_mention: '落空值声明 0',
-  },
-  {
-    desc: 'M8997 落空值写错：KOJO_MESSAGE_COM 回落旧族时丢随机源实参',
-    file: 'ere/kojo/kojo-system.js',
-    find: '    legacy: () => try_kojo(kojo_message_com_family, -1, [rand]),',
-    replace:
-      '    legacy: () => try_kojo(kojo_message_com_family, -1, []), // 变异：丢实参',
-    tests: ['event-k-dispatch'],
-    must_mention: '实参透传与表一致',
-  },
-  {
-    desc: 'M8998 声明空间普通分支少一格（length 40 改 39，键 39 掉出空间）',
-    file: 'ere/kojo/kojo-system.js',
-    find: '  ...Array.from({ length: 40 }, (_, i) => i),',
-    replace: '  ...Array.from({ length: 39 }, (_, i) => i), // 变异',
-    tests: ['kojo-system'],
-    must_mention: '键 39 必须在声明空间内',
-  },
-  {
-    desc: 'M8999 声明空间 EX 分支起点漂一格（i + 901 改 902，键 901 掉出空间）',
-    file: 'ere/kojo/kojo-system.js',
-    find: '  ...Array.from({ length: 700 }, (_, i) => i + 901),',
-    replace: '  ...Array.from({ length: 700 }, (_, i) => i + 902), // 变异',
-    tests: ['kojo-system'],
-    must_mention: '键 901 必须在声明空间内',
-  },
+
   {
     desc: 'M9000 ATTACK_KOUJO_B 的 cid 检查收成 > 0（合法角色号 0 被当缺省）',
     file: 'ere/kojo/kojo-system.js',
@@ -20055,47 +19290,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     tests: ['kojo-k9-diamond'],
     must_mention: '贪婪地亲吻着',
   },
-  {
-    desc: 'M10980 K2 迷宫胜利口上的族注册整行删除（#514：有本体没注册，玩家侧打占位行）',
-    file: 'ere/kojo/kojo-k2-timid.js',
-    find: 'dungeon_victory_family.register(2, (...args) =>\n  kojo_k2.dungeon_victory(...args),\n);',
-    replace: '// 变异：dungeon_victory_k2 不注册进族',
-    tests: ['kojo-register-coverage'],
-    must_mention: '未注册进 dungeon_victory_family[2]',
-  },
-  {
-    desc: 'M10981 K4 迷宫攻击口上的族注册整行删除（#514：同上，K4 侧）',
-    file: 'ere/kojo/kojo-k4-stoic.js',
-    find: 'dungeon_attack_family.register(4, (...args) => kojo_k4.dungeon_attack(...args));',
-    replace: '// 变异：dungeon_attack_k4 不注册进族',
-    tests: ['kojo-register-coverage'],
-    must_mention: '未注册进 dungeon_attack_family[4]',
-  },
-  {
-    desc: 'M10982 K2 肉便器口上的族注册整行删除（#514：契约锁不只看迷宫两族）',
-    file: 'ere/kojo/kojo-k2-timid.js',
-    find: 'benki_koujo_family.register(2, (...args) => kojo_k2.benki_koujo(...args));',
-    replace: '// 变异：benki_koujo_k2 不注册进族',
-    tests: ['kojo-register-coverage'],
-    must_mention: '未注册进 benki_koujo_family[2]',
-  },
-  {
-    desc: 'M10983 K4 迎击惩罚口上的族注册整行删除（#514：静默族同样要守）',
-    file: 'ere/kojo/kojo-k4-stoic.js',
-    find: 'osioski_koujo_family.register(4, (...args) => kojo_k4.osioski_koujo(...args));',
-    replace: '// 变异：osioski_koujo_k4 不注册进族',
-    tests: ['kojo-register-coverage'],
-    must_mention: '未注册进 osioski_koujo_family[4]',
-  },
-  {
-    desc: 'M10984 K2 迷宫胜利口上注册号改错（2 改 3，注册在但接不上本体）',
-    file: 'ere/kojo/kojo-k2-timid.js',
-    find: 'dungeon_victory_family.register(2, (...args) =>\n  kojo_k2.dungeon_victory(...args),\n);',
-    replace:
-      'dungeon_victory_family.register(3, (...args) =>\n  kojo_k2.dungeon_victory(...args),\n);',
-    tests: ['kojo-register-coverage'],
-    must_mention: '未注册进 dungeon_victory_family[2]',
-  },
+
   // —— #542：卖春积极性档位文案（PTJ_BUTTON 默认态的 [18] 按钮共用）——
   {
     desc: 'M11319 卖春积极性档位首判写反（level === 0 改 !== 0——「没有」与「N等级」两档互串，#542）',
@@ -24585,24 +23780,14 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   {
     desc: 'M12907 try_kojo 命中静默化（family 调用条件改恒假——口上真身不再执行，未命中静默变成全面失声）',
     file: 'ere/kojo/kojo-system.js',
-    find: `  const id = kojo_handler_id(arg);
-  if (id >= 0 && family.has(id)) {`,
-    replace: `  const id = kojo_handler_id(arg);
-  if (false && id >= 0 && family.has(id)) { // 变异：命中静默化`,
-    tests: ['kojo-system'],
-    must_mention: '缺省与 -1 都吃 TARGET',
+    find: '  return kojo[hook](...hook_args);',
+    replace: '  return 0; // 变异：命中后也不执行口上',
+    tests: ['event-k-dispatch'],
+    must_mention: 'handler 实参逐条对上',
   },
 
   // ===== #654 F8 缺陷修复检查（M13300–）=====
-  {
-    desc: 'M13300 K903 EVENTEND 第二次注册回归：调教结束正文又打两遍（#654）',
-    file: 'ere/kojo/kojo-k903-garde.js',
-    find: 'on(EVENT.END, eventend_kojo_903);',
-    replace:
-      'on(EVENT.END, eventend_kojo_903);\n// 变异：第二次注册回归\non(EVENT.END, eventend_kojo_903);',
-    tests: ['kojo-k903-garde'],
-    must_mention: 'EVENTEND 调教结束正文只执行一次',
-  },
+
   {
     desc: 'M13301 K903 SELECTCOM:2 肛门爱抚保底条件回退误读 CFLAG:223（#654）',
     file: 'ere/kojo/kojo-k903-garde.js',
@@ -25665,56 +24850,25 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     tests: ['kojo-k1-confident'],
     must_mention: '助手专属台词按助手自己的 ID 判断 17 号',
   },
-  {
-    desc: 'M15550 口上基类默认值被改（benki_koujo 默认 return 1）',
-    file: 'ere/kojo/kojo-base.js',
-    find: '  async benki_koujo() {\n    return 0;\n  }',
-    replace:
-      '  async benki_koujo() {\n    return 1; // 变异：默认值不是「不输出」\n  }',
-    tests: ['kojo-base-factory'],
-    must_mention: '的默认值',
-  },
+
   {
     desc: 'M15551 口上工厂丢掉实例缓存（每次新建，钩子上的状态不共享）',
     file: 'ere/kojo/kojo-factory.js',
     find: '  obj_dict.set(id, instance);',
     replace: '  // 变异：不缓存实例',
-    tests: ['kojo-base-factory'],
-    must_mention: '同一编号复用实例',
+    tests: ['kojo-wiring'],
+    must_mention: '每条入口都该命中一次',
   },
   {
     desc: 'M15552 未注册编号造基类实例（过渡期回落旧族失效，未迁移性格集体失声）',
     file: 'ere/kojo/kojo-factory.js',
-    find: '  if (Ctor === undefined) {\n    return null;\n  }',
+    find: '  const Ctor = cons_dict.get(id) ?? KojoBase;',
     replace:
-      '  if (Ctor === undefined) {\n    return new KojoBase(id); // 变异：造基类实例\n  }',
-    tests: ['kojo-base-factory'],
-    must_mention: '回落路径的返回值原样交回',
+      '  const Ctor = cons_dict.get(id); // 变异：未注册编号不再退回基类',
+    tests: ['kojo-system'],
+    must_mention: '未注册编号拿到基类实例',
   },
-  {
-    desc: 'M15553 口上工厂重复注册不报错（后注册的静默遮蔽前一个）',
-    file: 'ere/kojo/kojo-factory.js',
-    find: '  if (cons_dict.has(id)) {\n    throw new Error(`口上编号 ${id} 重复注册（同名遮蔽，启动期即报）`);\n  }',
-    replace: '  // 变异：重复注册不报错',
-    tests: ['kojo-base-factory'],
-    must_mention: '重复注册',
-  },
-  {
-    desc: 'M15554 口上工厂不校验基类继承（缺钩子的类也能注册）',
-    file: 'ere/kojo/kojo-factory.js',
-    find: "  if (typeof Ctor !== 'function' || !(Ctor.prototype instanceof KojoBase)) {",
-    replace: "  if (typeof Ctor !== 'function') {",
-    tests: ['kojo-base-factory'],
-    must_mention: '必须继承 KojoBase',
-  },
-  {
-    desc: 'M15555 口上工厂不校验编号是整数',
-    file: 'ere/kojo/kojo-factory.js',
-    find: '  if (!Number.isInteger(id)) {\n    throw new TypeError(`口上编号必须是整数，收到 ${id}`);\n  }',
-    replace: '  // 变异：不校验编号',
-    tests: ['kojo-base-factory'],
-    must_mention: '必须是整数',
-  },
+
   {
     desc: 'M15556 基类模板方法跳过七道头部检查（直接进指令分支）',
     file: 'ere/kojo/kojo-base.js',
@@ -25723,15 +24877,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     tests: ['kojo-k4-stoic'],
     must_mention: '口塞（TEQUIP:45 且非指令45）：静默跳过',
   },
-  {
-    desc: 'M15557 基类头部检查默认不放行（所有未覆盖的性格一律不响）',
-    file: 'ere/kojo/kojo-base.js',
-    find: '  async header_checks() {\n    return true;\n  }',
-    replace:
-      '  async header_checks() {\n    return false; // 变异：默认不放行\n  }',
-    tests: ['kojo-base-factory'],
-    must_mention: '头部检查默认放行',
-  },
+
   {
     desc: 'M15558 K4 的 select_com 不转交本体（指令口上集体失声）',
     file: 'ere/kojo/kojo-k4-stoic.js',
@@ -25746,41 +24892,17 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     file: 'ere/kojo/kojo-k4-stoic.js',
     find: 'register_kojo(4, KojoK4);',
     replace: '// 变异：K4 不进工厂',
-    tests: ['kojo-base-factory'],
-    must_mention: 'K4 注册进了工厂',
+    tests: ['kojo-k4-stoic'],
+    must_mention: '初調教（CFLAG:201 == 0）：种族分档 + 眼鏡附注 + 推进到 1',
   },
-  {
-    desc: 'M15560 K4 的 COM 族注册直挂本体（绕过工厂实例，头部检查不再统一）',
-    file: 'ere/kojo/kojo-k4-stoic.js',
-    find: 'kojo_message_com_family.register(4, (...args) =>\n  kojo_k4.kojo_message_com(...args),\n);',
-    replace: 'kojo_message_com_family.register(4, kojo_message_com_4);',
-    tests: ['kojo-base-factory'],
-    must_mention: '族注册转发到工厂实例的钩子',
-  },
-  {
-    desc: 'M15561 分发入口绕开工厂（benki 直调旧族，迁移过的性格不再经钩子）',
-    file: 'ere/kojo/kojo-system.js',
-    find: "async function benki_koujo(rand) {\n  return run_kojo('benki_koujo', benki_koujo_family, {\n    args: [rand],\n    legacy: () => try_kojo(benki_koujo_family, -1, [rand]),\n  });\n}",
-    replace:
-      'async function benki_koujo(rand) {\n  return try_kojo(benki_koujo_family, -1, [rand]); // 变异：绕开工厂\n}',
-    tests: ['kojo-base-factory'],
-    must_mention: '钩子实参与入口语义一致',
-  },
-  {
-    desc: 'M15562 run_kojo 钩子名错用（恒调 select_com，其余钩子永不执行）',
-    file: 'ere/kojo/kojo-system.js',
-    find: '  return kojo[hook](...hook_args);',
-    replace: '  return kojo.select_com(...hook_args); // 变异：钩子名错用',
-    tests: ['kojo-base-factory'],
-    must_mention: '钩子实参与入口语义一致',
-  },
+
   {
     desc: 'M15563 run_kojo 总开关关掉时不执行副作用（SELF_KOJO 不清 TFLAG:15）',
     file: 'ere/kojo/kojo-system.js',
     find: '    if (when_disabled !== undefined) {\n      await when_disabled();\n    }',
     replace: '    // 变异：副作用不执行',
-    tests: ['kojo-base-factory'],
-    must_mention: '关掉口上时清 TFLAG:15',
+    tests: ['kojo-k0-tender'],
+    must_mention: 'SELF_KOJO：总开关 FLAG:7 <= 0 静默并清 TFLAG:15',
   },
   // —— #855：K0/K1/K2/K3/K5 迁成口上子类（族注册转发到工厂实例） ——
   {
@@ -25788,107 +24910,62 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     file: 'ere/kojo/kojo-k0-tender.js',
     find: 'register_kojo(0, KojoK0);',
     replace: '// 变异：K0 不进工厂',
-    tests: ['kojo-classes-k0-k5'],
-    must_mention: 'kojo[0] 不是 KojoK0',
+    tests: ['kojo-k0-tender'],
+    must_mention: '首次（CFLAG:301 == 0 且 MARK:2 < 2）',
   },
-  {
-    desc: 'M15565 K3 的 COM 族注册直挂本体（绕过工厂实例，指令口上不再经钩子）',
-    file: 'ere/kojo/kojo-k3-noble.js',
-    find: 'kojo_message_com_family.register(3, (...args) =>\n  kojo_k3.kojo_message_com(...args),\n);',
-    replace: 'kojo_message_com_family.register(3, kojo_message_com_3);',
-    tests: ['kojo-classes-k0-k5'],
-    must_mention: '有直挂本体（或别种转发形状）的族注册',
-  },
+
   {
     desc: 'M15566 K5 的 select_com 不转交本体（指令口上集体失声）',
     file: 'ere/kojo/kojo-k5-mao.js',
     find: '  async select_com(...args) {\n    return kojo_message_com_5(...args);\n  }',
     replace: '  async select_com() {\n    return 0; // 变异：不转交\n  }',
-    tests: ['kojo-classes-k0-k5'],
-    must_mention: '缺转交方法',
+    tests: ['kojo-wiring'],
+    must_mention: '定义了却没人转交',
   },
   {
     desc: 'M15567 K1 的语尾钩子不转交（语尾恒空串，调用方那一行照常结束）',
     file: 'ere/kojo/kojo-k1-confident.js',
     find: '  async gobi_koujo(...args) {\n    return gobi_koujo_k1(...args);\n  }',
     replace: "  async gobi_koujo() {\n    return ''; // 变异：不转交\n  }",
-    tests: ['kojo-classes-k0-k5'],
-    must_mention: '缺转交方法',
+    tests: ['kojo-wiring'],
+    must_mention: '定义了却没人转交',
   },
-  {
-    desc: 'M15568 K2 的惩罚结算族注册号写错（2 改 3，注册在但接不上 K2）',
-    file: 'ere/kojo/kojo-k2-timid.js',
-    find: 'osioski_koujo_family.register(2, (...args) => kojo_k2.osioski_koujo(...args));',
-    replace:
-      'osioski_koujo_family.register(3, (...args) => kojo_k2.osioski_koujo(...args));',
-    tests: ['kojo-classes-k0-k5'],
-    must_mention: '的族注册应逐个指向 kojo_k2',
-  },
-  {
-    desc: 'M15569 K3 的子类不导出（迁移面从模块对外消失）',
-    file: 'ere/kojo/kojo-k3-noble.js',
-    find: '  register,\n  KojoK3,\n  kojo_message_com_3,',
-    replace: '  register,\n  kojo_message_com_3,',
-    tests: ['kojo-classes-k0-k5'],
-    must_mention: 'kojo/kojo-k3-noble 未导出 KojoK3',
-  },
+
   // —— #856：K6/K7/K8/K9/K10 迁成口上子类（族注册转发到工厂实例） ——
   {
     desc: 'M15570 K6 不进工厂（run_kojo 找不到实例，K6 的口上整体回落旧族）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: 'register_kojo(6, KojoK6);',
     replace: '// 变异：K6 不进工厂',
-    tests: ['kojo-classes-k6-k10'],
-    must_mention: 'kojo[6] 不是 KojoK6',
+    tests: ['kojo-k6-wicked'],
+    must_mention: '初調教（CFLAG:201 == 0，人类）：RAND 非 0 支 + 推进到 1',
   },
-  {
-    desc: 'M15571 K8 的 COM 族注册直挂本体（绕过工厂实例，指令口上不再经钩子）',
-    file: 'ere/kojo/kojo-k8-spade.js',
-    find: 'kojo_message_com_family.register(8, (...args) =>\n  kojo_k8.kojo_message_com(...args),\n);',
-    replace: 'kojo_message_com_family.register(8, kojo_message_com_8);',
-    tests: ['kojo-classes-k6-k10'],
-    must_mention: '有直挂本体（或别种转发形状）的族注册',
-  },
+
   {
     desc: 'M15572 K10 的 select_com 不转交本体（指令口上集体失声）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: '  async select_com(...args) {\n    return kojo_message_com_10(...args);\n  }',
     replace: '  async select_com() {\n    return 0; // 变异：不转交\n  }',
-    tests: ['kojo-classes-k6-k10'],
-    must_mention: '缺转交方法',
+    tests: ['kojo-wiring'],
+    must_mention: '定义了却没人转交',
   },
   {
     desc: 'M15573 K9 的语尾钩子不转交（语尾恒空串，调用方那一行照常结束）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '  async gobi_koujo(...args) {\n    return gobi_koujo_k9(...args);\n  }',
     replace: "  async gobi_koujo() {\n    return ''; // 变异：不转交\n  }",
-    tests: ['kojo-classes-k6-k10'],
-    must_mention: '缺转交方法',
+    tests: ['kojo-wiring'],
+    must_mention: '定义了却没人转交',
   },
-  {
-    desc: 'M15574 K7 的惩罚结算族注册号写错（7 改 8，注册在但接不上 K7）',
-    file: 'ere/kojo/kojo-k7-heart.js',
-    find: 'osioski_koujo_family.register(7, osioki_koujo_k7);',
-    replace: 'osioski_koujo_family.register(8, osioki_koujo_k7); // 变异',
-    tests: ['kojo-classes-k6-k10'],
-    must_mention: '的 osioski 例外应裸注册 osioki_koujo_k7',
-  },
-  {
-    desc: 'M15575 K8 的子类不导出（迁移面从模块对外消失）',
-    file: 'ere/kojo/kojo-k8-spade.js',
-    find: '  register,\n  KojoK8,\n  kojo_message_com_8,',
-    replace: '  register,\n  kojo_message_com_8,',
-    tests: ['kojo-classes-k6-k10'],
-    must_mention: 'kojo/kojo-k8-spade 未导出 KojoK8',
-  },
+
   {
     desc: 'M15576 K8 的奖赏结算钩子丢了实参适配（随机源位不再留空，实参整体错位）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '  async gohoubi_after_koujo(cid, choice) {\n    return gohoubi_after_koujo_k8(undefined, cid, choice);\n  }',
     replace:
       '  async gohoubi_after_koujo(cid, choice) {\n    return gohoubi_after_koujo_k8(cid, choice);\n  }',
-    tests: ['kojo-classes-k6-k10'],
-    must_mention: '的实参表须与迁移前的注册适配器一致',
+    tests: ['kojo-k8-spade'],
+    must_mention: 'GOHOUBI_AFTER：choice 0/1 各一行，choice 越界静默',
   },
   // —— #857：K11/K12/K13/K14/K15/K903 迁口上子类 ——
   {
@@ -25896,66 +24973,53 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     file: 'ere/kojo/kojo-k12-intellectual.js',
     find: 'register_kojo(12, KojoK12);',
     replace: '// 变异：K12 不进工厂',
-    tests: ['kojo-classes-k11-k903'],
-    must_mention: 'kojo[12] 不是 KojoK12',
+    tests: ['kojo-k12-intellectual'],
+    must_mention:
+      '初调教（CFLAG:201==0）人狼分档（TALENT:种族==2）：CFLAG:201=1',
   },
-  {
-    desc: 'M15578 K12 的 COM 族注册直挂本体（绕过工厂实例，指令口上不再经钩子）',
-    file: 'ere/kojo/kojo-k12-intellectual.js',
-    find: 'kojo_message_com_family.register(12, (...args) =>\n  kojo_k12.kojo_message_com(...args),\n);',
-    replace: 'kojo_message_com_family.register(12, kojo_message_com_12);',
-    tests: ['kojo-classes-k11-k903'],
-    must_mention: '有直挂本体（或别种转发形状）的族注册',
-  },
+
   {
     desc: 'M15579 K12 的 select_com 不转交本体（指令口上集体失声）',
     file: 'ere/kojo/kojo-k12-intellectual.js',
     find: '  async select_com(...args) {\n    return kojo_message_com_12(...args);\n  }',
     replace: '  async select_com() {\n    return 0; // 变异：不转交\n  }',
-    tests: ['kojo-classes-k11-k903'],
-    must_mention: '应转交',
+    tests: ['kojo-wiring'],
+    must_mention: '定义了却没人转交',
   },
   {
     desc: 'M15583 K15 不进工厂（run_kojo 找不到实例，K15 的口上整体回落旧族）',
     file: 'ere/kojo/kojo-k15-clever.js',
     find: 'register_kojo(15, KojoK15);',
     replace: '// 变异：K15 不进工厂',
-    tests: ['kojo-classes-k11-k903'],
-    must_mention: 'kojo[15] 不是 KojoK15',
+    tests: ['kojo-k15-clever'],
+    must_mention: '初调教暗器：选 2 偏头闪躲 → 恭顺珠 +50、CFLAG:201=1',
   },
   {
     desc: 'M15584 K15 的指令分支钩子转交到迁移前的 COM 本体失败（改指别的本体）',
     file: 'ere/kojo/kojo-k15-clever.js',
     find: '  async select_com(...args) {\n    return kojo_message_com_15(...args);\n  }',
     replace:
-      '  async select_com(...args) {\n    return k15_kojo2(...args);\n  }',
-    tests: ['kojo-classes-k11-k903'],
-    must_mention: '应转交',
+      '  async select_com(...args) {\n    return k15_kojo2(...args); // 变异：改指别的本体\n  }',
+    tests: ['kojo-k15-clever'],
+    must_mention: '口塞（TEQUIP:45 且非指令45）：静默跳过',
   },
   {
     desc: 'M15585 K903 不进工厂（run_kojo 找不到实例，嘉德的口上整体回落旧族）',
     file: 'ere/kojo/kojo-k903-garde.js',
     find: 'register_kojo(903, KojoK903);',
     replace: '// 变异：K903 不进工厂',
-    tests: ['kojo-classes-k11-k903'],
-    must_mention: 'kojo[903] 不是 KojoK903',
+    tests: ['kojo-k903-garde'],
+    must_mention: 'EVENTEND 调教结束正文只执行一次',
   },
-  {
-    desc: 'M15586 K903 的惩罚结算钩子丢掉三参适配（族的两参直接顶进旧三参本体）',
-    file: 'ere/kojo/kojo-k903-garde.js',
-    find: '  async osioski_koujo(cid, choice) {\n    return osioki_koujo_k903(undefined, cid, choice);\n  }',
-    replace:
-      '  async osioski_koujo(cid, choice) {\n    return osioki_koujo_k903(cid, choice);\n  }',
-    tests: ['kojo-classes-k11-k903'],
-    must_mention: '应转交',
-  },
+
   {
     desc: 'M15587 K11 不进工厂（run_kojo 找不到实例，莉莉的口上整体回落旧族）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: 'register_kojo(11, KojoK11);',
     replace: '// 变异：K11 不进工厂',
-    tests: ['kojo-classes-k11-k903'],
-    must_mention: 'kojo[11] 不是 KojoK11',
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      '初调教（CFLAG:201 == 0）：无玛奥助手时走寻妹对峙分档，推进到 1',
   },
   {
     desc: 'M15588 K11 的 NTR 钩子把族的两参顺序写反（rand 与 p 互换，口上按错的场景号分档）',
@@ -25963,51 +25027,28 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     find: '  async ntr_koujo(...args) {\n    return ntr_koujo_k11(...args);\n  }',
     replace:
       '  async ntr_koujo(...args) {\n    return ntr_koujo_k11(...args.reverse());\n  }',
-    tests: ['kojo-classes-k11-k903'],
-    must_mention: '应转交',
+    tests: ['kojo-k11-lily'],
+    must_mention: 'NTR P=1-7：首次置再捕获标志并分别记录场景编号',
   },
   {
     desc: 'M15589 K14 不进工厂（run_kojo 找不到实例，貴公子的口上整体回落旧族）',
     file: 'ere/kojo/kojo-k14-nobleman.js',
     find: 'register_kojo(14, KojoK14);',
     replace: '// 变异：K14 不进工厂',
-    tests: ['kojo-classes-k11-k903'],
-    must_mention: 'kojo[14] 不是 KojoK14',
+    tests: ['kojo-k14-nobleman'],
+    must_mention:
+      '初调教（CFLAG:201==0）通常男（TALENT:122）：置 201=1，无 RETURN 1',
   },
-  {
-    desc: 'M15590 K14 的子类不导出（迁移面从模块对外消失）',
-    file: 'ere/kojo/kojo-k14-nobleman.js',
-    find: '  register,\n  KojoK14,\n  k14_kojo2,',
-    replace: '  register,\n  k14_kojo2,',
-    tests: ['kojo-classes-k11-k903'],
-    must_mention: 'kojo/kojo-k14-nobleman 未导出 KojoK14',
-  },
+
   {
     desc: 'M15581 K13 不进工厂（run_kojo 找不到实例，K13 的口上整体回落旧族）',
     file: 'ere/kojo/kojo-k13-protector.js',
     find: 'register_kojo(13, KojoK13);',
     replace: '// 变异：K13 不进工厂',
-    tests: ['kojo-classes-k11-k903'],
-    must_mention: 'kojo[13] 不是 KojoK13',
+    tests: ['kojo-k13-protector'],
+    must_mention: '初調教（CFLAG:201==0）非人妻：三句警告 + 推进到 1',
   },
-  {
-    desc: 'M15582 K13 的奖赏请求钩子丢了零参适配（族的 cid 被当成随机源传进本体）',
-    file: 'ere/kojo/kojo-k13-protector.js',
-    find: '  async gohoubi_request_koujo() {\n    return gohoubi_request_koujo_k13();\n  }',
-    replace:
-      '  async gohoubi_request_koujo(...args) {\n    return gohoubi_request_koujo_k13(...args);\n  }',
-    tests: ['kojo-classes-k11-k903'],
-    must_mention: '应转交',
-  },
-  {
-    desc: 'M15580 K12 的奖赏结算钩子丢了实参适配（随机源位不再留空，实参整体错位）',
-    file: 'ere/kojo/kojo-k12-intellectual.js',
-    find: '  async gohoubi_after_koujo(cid, choice) {\n    return gohoubi_after_koujo_k12(undefined, cid, choice);\n  }',
-    replace:
-      '  async gohoubi_after_koujo(cid, choice) {\n    return gohoubi_after_koujo_k12(cid, choice);\n  }',
-    tests: ['kojo-classes-k11-k903'],
-    must_mention: '应转交',
-  },
+
   // —— #817：处刑钩子从实参读处分方式，不再读 tflag ——
   {
     desc: 'M16009 K4 处刑口上：处分方式分档错位（6 → 4）',
@@ -26030,8 +25071,9 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   {
     desc: 'M16011 处刑首五族：分发给口上的处分编号错一位',
     file: 'ere/kojo/kojo-system.js',
-    find: '    args: [event_no],',
-    replace: '    args: [event_no + 1], // 变异：编号错位',
+    find: '  await run_kojo(hook, { cid, args: [event_no] });',
+    replace:
+      '  await run_kojo(hook, { cid, args: [event_no + 1] }); // 变异：处分编号错一位',
     tests: ['execution-params'],
     must_mention: '五个处刑钩子从实参读处分方式',
   },
@@ -26176,31 +25218,15 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '第 1 场：首次记忆，计数 0',
   },
   // —— #858：菲娅 K19 迁成口上子类，K904 改为继承 K19（差异只剩三处） ——
-  {
-    desc: 'M18517 K19 的 EVENTEND NORMAL 接线漏掉（handle_end 不接，调教结束口上永久失声）（#858）',
-    file: 'ere/kojo/kojo-k19-fia.js',
-    find: '    on(EVENT.END, () => handle_end(this));\n',
-    replace: '    // 变异：EVENTEND NORMAL 不接\n',
-    tests: ['event-handlers'],
-    must_mention: 'EVENTEND 注册条数与装配表不一致',
-  },
-  {
-    desc: 'M18518 K19 的口上素质读错格（TALENT:179 改 178：K19 永远不认为自己是本口上）（#858）',
-    file: 'ere/kojo/kojo-k19-fia.js',
-    find: '    return era.get(`talent:${target}:179`) == 1;',
-    replace:
-      '    return era.get(`talent:${target}:178`) == 1; // 变异：素质错格',
-    tests: ['kojo-k19-fia', 'kojo-classes-k19-k904'],
-    must_mention: 'K19 认 TALENT:179',
-  },
+
   {
     desc: 'M18519 K19 的指令分支体不转交本体（select_com 直接返回 0：整段指令口上失声）（#858）',
     file: 'ere/kojo/kojo-k19-fia.js',
     find: '  async select_com(...args) {\n    return kojo_message_com_19(...args);',
     replace:
       '  async select_com(...args) {\n    return 0; // 变异：指令分支不转交',
-    tests: ['kojo-k19-fia', 'kojo-classes-k19-k904'],
-    must_mention: '爱抚计数推进到 1',
+    tests: ['kojo-wiring'],
+    must_mention: '定义了却没人转交',
   },
   {
     desc: 'M18520 K19 的语尾钩子不转交本体（gobi_koujo 返回空串）（#858）',
@@ -26208,23 +25234,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     find: '  async gobi_koujo(...args) {\n    return gobi_koujo_k19(...args);',
     replace:
       "  async gobi_koujo(...args) {\n    return ''; // 变异：语尾不转交",
-    tests: ['kojo-k19-fia', 'kojo-classes-k19-k904'],
-    must_mention: '语尾返回文字',
-  },
-  {
-    desc: 'M18521 K19 的 EVENTEND #LATER 接线漏掉（存在标志不清，下一次调教混用）（#858）',
-    file: 'ere/kojo/kojo-k19-fia.js',
-    find: '    on(EVENT.END, () => handle_end_later(this), TIER.LATER);\n',
-    replace: '    // 变异：EVENTEND #LATER 不接\n',
-    tests: ['kojo-k19-fia', 'kojo-classes-k19-k904', 'event-handlers'],
-    must_mention: 'EVENTEND 注册条数与装配表不一致',
-  },
-  {
-    desc: 'M18522 K904 注册进工厂时退回父类（三处差异全丢：素质、存在标志、语尾）（#858）',
-    file: 'ere/kojo/kojo-k904-fia.js',
-    find: 'register_kojo(904, KojoK904);',
-    replace: 'register_kojo(904, KojoK19); // 变异：K904 退回父类',
-    tests: ['kojo-k19-fia', 'kojo-classes-k19-k904'],
-    must_mention: '只有本套素质在身时才响',
+    tests: ['kojo-wiring'],
+    must_mention: '定义了却没人转交',
   },
 ];

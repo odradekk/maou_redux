@@ -1,6 +1,6 @@
 // issue #333：阶段 5a 段 0 的九个跨域前置函数。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 41; // #710 -1：M6576（SELECT_YES_NO 接受非法输入）随按钮化删除——越界输入由引擎拒收，该分支不可观察；同轮 M6577（纯文本行的 0/1 含义互换）改写成按钮版 M14235（条数不变，断言消息改成「0 = 是的、1 = 不要」）
+export const COUNT = 39; // #710 -1：M6576（SELECT_YES_NO 接受非法输入）随按钮化删除——越界输入由引擎拒收，该分支不可观察；同轮 M6577（纯文本行的 0/1 含义互换）改写成按钮版 M14235（条数不变，断言消息改成「0 = 是的、1 = 不要」）
 
 export default [
   {
@@ -272,9 +272,9 @@ export default [
   {
     desc: 'M6595 NTR_KOUJO 分发参数顺序颠倒',
     file: 'ere/kojo/kojo-system.js',
-    find: '    args: [rand, p],\n    legacy: () => try_kojo(ntr_koujo_family, -1, [rand, p]),',
+    find: "  await run_kojo('ntr_koujo', { args: [rand, p] });",
     replace:
-      '    args: [p, rand],\n    legacy: () => try_kojo(ntr_koujo_family, -1, [p, rand]),',
+      "  await run_kojo('ntr_koujo', { args: [p, rand] }); // 变异：参数顺序颠倒",
     tests: ['cross-stubs'],
     must_mention: '父亲分支输出后以 P=20 调用已有 NTR 口上族',
   },
@@ -286,14 +286,7 @@ export default [
     tests: ['cross-stubs'],
     must_mention: 'K2 与 K4 真身按统一的 rand、P 参数注册',
   },
-  {
-    desc: 'M6597 NTR_KOUJO_K4 未注册进分发族',
-    file: 'ere/kojo/kojo-k4-stoic.js',
-    find: 'ntr_koujo_family.register(4, (...args) => kojo_k4.ntr_koujo(...args));',
-    replace: '// NTR_KOUJO_K4 未注册',
-    tests: ['kojo-register-coverage'],
-    must_mention: '未注册进 ntr_koujo_family[4]',
-  },
+
   {
     desc: 'M6598 party_del 不再调用 search_family 真身',
     file: 'ere/system/dungeon/dungeon-party.js',
@@ -310,14 +303,7 @@ export default [
     tests: ['cross-stubs'],
     must_mention: '慈爱来袭口上会找到家人并按关系称呼',
   },
-  {
-    desc: 'M6600 NTR_KOUJO 旧单参数适配器错误传入 rand',
-    file: 'ere/kojo/kojo-system.js',
-    find: '  return (rand, p) => handler(p ?? rand);',
-    replace: '  return (rand, p) => handler(rand ?? p);',
-    tests: ['cross-stubs'],
-    must_mention: '旧单参数口上适配器优先传 P',
-  },
+
   {
     desc: 'M6601 慈爱来袭口上的弟弟称呼分支文本改错',
     file: 'ere/kojo/kojo-k0-tender.js',

@@ -798,18 +798,20 @@ export default [
   {
     desc: 'M6955 MUSEUM K2 口上：漏注册博物馆处理器',
     file: 'ere/kojo/kojo-k2-timid.js',
-    find: 'museum_koujo_family.register(2, (...args) => kojo_k2.museum_koujo(...args));',
-    replace: '// 变异：K2 博物馆口上未注册',
-    tests: ['event-museum'],
-    must_mention: 'K2 与 K4 口上模块注册博物馆处理器',
+    find: '  async museum_koujo(...args) {\n    return museum_koujo_k2(...args);\n  }',
+    replace:
+      '  async museum_koujo() {\n    return 0; // 变异：博物馆处理器未接本体\n  }',
+    tests: ['kojo-wiring'],
+    must_mention: '定义了却没人转交',
   },
   {
     desc: 'M6956 MUSEUM K4 口上：漏注册博物馆处理器',
     file: 'ere/kojo/kojo-k4-stoic.js',
-    find: 'museum_koujo_family.register(4, (...args) => kojo_k4.museum_koujo(...args));',
-    replace: '// 变异：K4 博物馆口上未注册',
-    tests: ['event-museum'],
-    must_mention: 'K2 与 K4 口上模块注册博物馆处理器',
+    find: '  async museum_koujo(event_no) {\n    return museum_koujo_k4(event_no);\n  }',
+    replace:
+      '  async museum_koujo() {\n    return 0; // 变异：博物馆处理器未接本体\n  }',
+    tests: ['kojo-wiring'],
+    must_mention: '定义了却没人转交',
   },
   {
     desc: 'M6957 MUSEUM 石像材质：ELSEIF 漏掉第二次 RAND',

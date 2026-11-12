@@ -156,8 +156,11 @@ test('转交：类方法一行转交本体，且没有「定义了却没人转�
       if (prefix === undefined) continue;
       if (body === `${prefix}${''}`) continue; // 前缀本身（无编号的形式）
       bodies += 1;
-      const uses = src.split(new RegExp(`\\b${body}\\b`)).length - 1;
-      if (uses < 2) {
+      // 数「调用点」而不是「标识符出现次数」：定义行 `function body(` 占一次，
+      // 所以要它 ≥ 2。module.exports 里的那一行不是调用——只导出、没人转交的
+      // 死本体，用出现次数数不出来（#859 迁移变异条目时实测过）。
+      const calls = src.split(new RegExp(`\\b${body}\\(`)).length - 1;
+      if (calls < 2) {
         problems.push(`${file} 的 ${body}() 定义了却没人转交（玩家侧不会响）`);
       }
     }
