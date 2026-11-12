@@ -294,7 +294,9 @@ test('com100：B 在翻转之前（未开启 → 缠上了）；置位并按 EXP
   const world = seed_world();
   const { fixture } = world;
   able_on(world);
-  fixture.store.set('flag:10030', 7); // 先置非零：尾段 T = 0 的写入必须看得出来
+  // 先把回合计数置成非零：com100 尾段的 T = 0 是一次**清零**，从 0 起跑
+  // 时它写与不写看不出差别（M1367 因此存活过）。
+  fixture.store.set('flag:10030', 3);
   const result = await run_com(world, 100);
   assert.equal(result, 1);
   assert.equal(fixture.store.get('tequip:31:90'), 1);
