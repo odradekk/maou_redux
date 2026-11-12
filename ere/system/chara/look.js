@@ -44,7 +44,6 @@ const { default_rand } = require('#/utils/numeric');
 const kojo_system = require('#/kojo/kojo-system');
 const { heart, self_call } = require('#/kojo/kojo-text');
 const { LOVER_NAMES } = require('#/system/dungeon/dungeon-lovers');
-const { chara } = require('#/facade/chara');
 
 /** 素质下标（yml/Talent.yml；与 ere/system/chara/look-info.js 的同名常量各写一份，两边都只服务本文件） */
 const T_处女 = 0;

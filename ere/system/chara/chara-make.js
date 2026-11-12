@@ -63,8 +63,6 @@ const {
 const { chara_callname } = require('#/utils/callname-utils');
 // wearing_cloth_able 自 #215（J5）起为真身（ere/system/train/cloth.js）
 const { wearing_cloth_able } = require('#/system/train/cloth');
-const { chara } = require('#/facade/chara');
-const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
 const era_global = require('#/era-utils/era-global'); // #547：冒險者性別（global:3）
 const { add_chara_ex } = require('#/system/chara/chara-ex');

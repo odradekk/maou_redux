@@ -233,9 +233,7 @@ test('端到端：标题选「新的猎物」→ 加入角色 0 → 经注册表
   // add_chara_ex(0) 已经没有实现（#834：魔王的高贵标识由角色预设套用），
   // 所以这里的唯一写入是移植自建的 portcflag 版本戳（#67；全量断言，任何
   // 意外写入都会暴露）
-  assert.deepEqual(fixture.var_writes, [
-    { name: 'portcflag:0:数据版本', value: 1 },
-  ]);
+  assert.deepEqual(fixture.var_writes, [{ name: 'portcflag:0:0', value: 1 }]);
 });
 
 // —— 独立性：分发注册表与事件注册表是两套机制（#7 的边界判断）——

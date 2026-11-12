@@ -39,8 +39,6 @@
 const era = require('#/era-electron');
 const EraChara = require('#/era-utils/era-chara');
 const { get_roster } = require('#/system/cross-save-sharing');
-const { chara } = require('#/facade/chara');
-const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
 const { char_body_generate_wapped } = require('#/system/chara/chara-body'); // #385 起真身
 const { st_up } = require('#/system/dungeon/dungeon-lvup');

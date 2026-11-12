@@ -64,7 +64,6 @@ const era = require('#/era-electron');
 const EraChara = require('#/era-utils/era-chara');
 const { nid_get_type } = require('#/system/chara/chara-name');
 const { get_look_info } = require('#/system/chara/look-info');
-const { chara } = require('#/facade/chara');
 
 const { chara_callname } = require('#/utils/callname-utils');
 const { input_text } = require('#/utils/input-text');

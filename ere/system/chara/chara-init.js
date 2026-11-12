@@ -17,7 +17,6 @@
  *     非 0，等级段照旧不进；身体数据段看 FLAG:5 的开工设置位，与预设无关。
  */
 
-const era = require('#/era-electron');
 const EraChara = require('#/era-utils/era-chara');
 const era_flag = require('#/era-utils/era-flag');
 // wearing_cloth_able 自 #215（J5）起为真身（ere/system/train/cloth.js）
@@ -25,7 +24,6 @@ const { wearing_cloth_able } = require('#/system/train/cloth');
 const { random_self_call } = require('#/system/chara/chara-self-call'); // #383 起真身
 const { char_body_generate_wapped } = require('#/system/chara/chara-body'); // #385 起真身
 const { st_up } = require('#/system/dungeon/dungeon-lvup');
-const { chara } = require('#/facade/chara');
 
 /**
  * char_init：初始化从预设加入的角色。

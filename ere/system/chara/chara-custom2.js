@@ -74,7 +74,6 @@ const {
 const {
   set_personality: set_personality_talent,
 } = require('#/system/chara/chara-and-hair');
-const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const {

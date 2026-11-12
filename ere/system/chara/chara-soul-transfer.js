@@ -35,7 +35,6 @@ const era = require('#/era-electron');
 const EraChara = require('#/era-utils/era-chara');
 const { char_size_generate } = require('#/system/chara/chara-body');
 const { ex_talentname } = require('#/system/chara/chara-ex');
-const { chara } = require('#/facade/chara');
 const {
   search_family,
   relation_swap_rebuild,

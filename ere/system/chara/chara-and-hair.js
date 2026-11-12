@@ -27,7 +27,6 @@
 
 const era = require('#/era-electron');
 const EraChara = require('#/era-utils/era-chara');
-const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
 const { print_button_grid } = require('#/utils/button-grid');
 const { default_rand } = require('#/utils/numeric');

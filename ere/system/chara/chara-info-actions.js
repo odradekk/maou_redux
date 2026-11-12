@@ -30,7 +30,6 @@ const era_exflag = require('#/era-utils/era-exflag');
 const era_flag = require('#/era-utils/era-flag');
 const { party_del } = require('#/system/dungeon/dungeon-party');
 const { lvup } = require('#/system/dungeon/dungeon-lvup');
-const { chara } = require('#/facade/chara');
 
 function name_of(cid) {
   return EraChara.get(cid).name ?? '';

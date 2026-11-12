@@ -10,12 +10,9 @@
  * （配置界面）；cup_size 已随 #390 实现。
  */
 
-const era = require('#/era-electron');
 const EraChara = require('#/era-utils/era-chara');
 const era_flag = require('#/era-utils/era-flag');
 const { char_age_expect, rf_all } = require('#/system/chara/chara-family');
-const { game } = require('#/facade/game');
-const { chara } = require('#/facade/chara');
 const { default_rand } = require('#/utils/numeric');
 
 const int = Math.trunc;

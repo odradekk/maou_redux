@@ -21,7 +21,6 @@
  * 只被名册页读写、跨域写径尚未出现，与「数据版本」同款保持直连。
  */
 
-const era = require('#/era-electron');
 const EraChara = require('#/era-utils/era-chara');
 
 /**

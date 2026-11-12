@@ -39,7 +39,6 @@ const era = require('#/era-electron');
 const EraChara = require('#/era-utils/era-chara');
 const { chara_name_reset } = require('#/system/chara/chara-name');
 const { random_self_call } = require('#/system/chara/chara-self-call');
-const { chara } = require('#/facade/chara');
 const { confirm_output_since } = require('#/utils/screen-change');
 const { input_text } = require('#/utils/input-text');
 

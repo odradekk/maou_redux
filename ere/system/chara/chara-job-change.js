@@ -53,7 +53,6 @@ const EraChara = require('#/era-utils/era-chara');
 const { KIND, get_look_info } = require('#/system/chara/look-info');
 const { monster_name } = require('#/system/dungeon/monster-data');
 const { monsterplay_list } = require('#/system/dungeon/monster-play');
-const { chara } = require('#/facade/chara');
 const { chara_callname } = require('#/utils/callname-utils');
 const { NBSP } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 
@@ -80,9 +79,6 @@ const COMMON_SENSE_BATTLE_MOD = 3;
 const COMMON_SENSE_DAILY_MOD = 6;
 /** 「日常」档的兽奸过滤位（等于 5 且没养狗时跳过一档） */
 const COMMON_SENSE_DAILY_BEAST = 5;
-/** 兽奸过滤判断条件里的狗（item:22 = 野良犬）持有数 */
-const DOG_ITEM = 22;
-
 /** 转职后重新设定的体力/气力上限（体力与气力两行同值） */
 const JOB_MAX_BASE = 2000;
 /** 上位职的额外上限 */

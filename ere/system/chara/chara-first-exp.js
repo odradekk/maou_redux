@@ -39,7 +39,6 @@
 
 'use strict';
 
-const era = require('#/era-electron');
 const EraChara = require('#/era-utils/era-chara');
 const { chara } = require('#/facade/chara');
 const { default_rand } = require('#/utils/numeric');

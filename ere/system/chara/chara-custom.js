@@ -48,8 +48,6 @@
 const era = require('#/era-electron');
 const EraChara = require('#/era-utils/era-chara');
 const { wearing_cloth_able } = require('#/system/train/cloth');
-const { chara } = require('#/facade/chara');
-const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
 const { add_chara_ex } = require('#/system/chara/chara-ex');
 const { char_init } = require('#/system/chara/chara-init');

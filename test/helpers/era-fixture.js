@@ -841,6 +841,63 @@ function create_era_fixture() {
   // yml 现算的两类地址（#821）：`<表>name:<序号>` 读名字、`<表>keys` 读声明
   // 序号集。store 命中优先（用例播种的键与假名字仍然有效），播种的名字键
   // 也算作声明——引擎里两者同源于同一张名字表，夹具的播种是它的代身。
+  /**
+   * 引擎的「声明即预置」：已加入角色的登记列在读面上有值（数字表 0、cstr
+   * 空串、角色预设里写了的取预设值）。见 #825。
+   *
+   * 为什么只做在读面（era.get / raw()）而不落进 store：真机上数据层只有一份，
+   * 夹具里却有两层——`store` 是**「这一步写了什么」的记账面**（全库 182 处
+   * `store.get(...) === undefined` 靠它观测「未写」），`era.get` 与 `raw()`
+   * 是**引擎数据层的读面**。把预置塞进 store 会把「未写」与「写了 0」压成
+   * 同一格，记账面就没了；所以预置只出现在读路径上。
+   *
+   * 边界与真机一致：未加入的角色没有行（读法另有处理：era.get 得 undefined、
+   * 具名访问器抛 TypeError）；未登记序号不预置（引擎 fillData 只遍历名字表）。
+   * @param {string} address 归一后的地址
+   * @returns {number|string|undefined} 预置值；不适用时 undefined
+   */
+  // 引擎按声明集预置的逐角色表：initCharaTable 的七张 + fillData 的 base/maxbase
+  // + 登记过的扩展角色表 + 按角色预填空串的 cstr
+  const DECLARED_DEFAULT_TABLES = [
+    'abl',
+    'talent',
+    'cflag',
+    'equip',
+    'mark',
+    'exp',
+    'juel',
+    'base',
+    'maxbase',
+    'portcflag',
+    'ex_talent',
+    'cstr',
+  ];
+
+  function declared_default_value(address) {
+    const match = /^([a-z0-9_]+):(\d+):(-?\d+)$/.exec(address);
+    if (match === null) {
+      return undefined;
+    }
+    const table = match[1];
+    const cid = Number(match[2]);
+    const id = Number(match[3]);
+    // 引擎 initCharaTable 的七张表 + fillData 的 base/maxbase 分支 +
+    // 登记过的扩展角色表（portcflag / ex_talent）与按角色预填空串的 cstr
+    if (!DECLARED_DEFAULT_TABLES.includes(table)) {
+      return undefined;
+    }
+    if (!chara_no.includes(cid)) {
+      return undefined; // 行不存在：引擎里也一样没有这一格
+    }
+    const ids = yml_declared_ids(table);
+    if (ids === undefined || !ids.has(id)) {
+      return undefined; // 未登记序号：fillData 不碰
+    }
+    const preset = chara_preset_of.get(cid) ?? {};
+    const value = preset[table]?.[id] ?? preset[table]?.[match[3]];
+    return value ?? (table === 'cstr' ? '' : 0);
+  }
+
   function yml_derived_value(var_name) {
     const name_match = /^([a-z0-9_]+)name:(\d+)$/.exec(var_name);
     if (name_match !== null) {
@@ -903,7 +960,7 @@ function create_era_fixture() {
       value = global_constant(address.slice('global:'.length));
     }
     if (value === undefined) {
-      value = yml_derived_value(address);
+      value = yml_derived_value(address) ?? declared_default_value(address);
     }
     var_reads.push({ name: var_name, value });
     return value;
@@ -1562,6 +1619,7 @@ function create_era_fixture() {
   // 叶子值：store 里有什么就是什么；global 的两枚盖章常量取自 save_gate
   const raw_leaf_value = (key) =>
     store.get(key) ??
+    declared_default_value(key) ??
     (key.startsWith('global:')
       ? global_constant(key.slice('global:'.length))
       : undefined);
@@ -1683,6 +1741,8 @@ function create_era_fixture() {
   // seed_chara 提供（夹具不读 yml/——静态表正确性由 test/chara-yml.test.js
   // 直接驱动引擎代码比对，两层不重复）。
   const chara_presets = new Map(); // 源编号 → 预设对象（对应引擎 staticData.chara）
+  // 角色号 → 加入时用的预设对象（双号写法下与源编号不同）：读面补预置要用它
+  const chara_preset_of = new Map();
   const chara_no = []; // 已加入角色（对应引擎 data.no：先滤同号再入列）
   // 加入动作本体：两条入口共用（游戏代码的 era.addCharacter 与 resetData 的
   // 自动创建，#848）。记不记 calls 由调用方决定——引擎 resetData 内部也调
@@ -1706,6 +1766,7 @@ function create_era_fixture() {
       // era.set：引擎侧这是数据层赋值、不经 setVar，var_writes 只收录游戏
       // 代码经 era.set 的写入（全量断言的写清单不被引擎内部动作混入）。
       const preset = chara_presets.get(source);
+      chara_preset_of.set(target, preset);
       store.set(`callname:${target}:-1`, preset.name);
       store.set(`callname:${target}:-2`, preset.callname ?? preset.name);
       // cstr 是字符串表：引擎给 CStr.yml 的每个声明序号取预设值，
