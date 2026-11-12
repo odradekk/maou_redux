@@ -11,6 +11,8 @@
 'use strict';
 
 const era = require('#/era-electron');
+const EraChara = require('#/era-utils/era-chara');
+const era_flag = require('#/era-utils/era-flag');
 const { karma, chara_lv_check } = require('#/system/chara/chara-stats');
 const { battle_column } = require('#/system/dungeon/battle-state');
 const { monstername } = require('#/system/dungeon/monster-data');
@@ -20,7 +22,7 @@ const { chara_callname } = require('#/utils/callname-utils');
 const { default_rand } = require('#/utils/numeric');
 
 async function print_battle_line(text) {
-  if ((game.dungeon.游戏设定 & 32) !== 0) {
+  if ((era_flag.game_settings & 32) !== 0) {
     await era.printAndWait(text);
   }
 }
@@ -69,7 +71,7 @@ function skill_user(user, user_type, user_name = '') {
 
 async function monster_skill(target, skill, user, rand = default_rand) {
   const self = skill_user(user, 1);
-  const level = self.level + chara(0).chara.等级;
+  const level = self.level + EraChara.get(0).cflag.level;
   let dmg = level;
   let palam_down = Math.trunc(dmg / 5) + 1;
   if (rand(3) === 0) {
@@ -83,7 +85,7 @@ async function monster_skill(target, skill, user, rand = default_rand) {
 
   if (skill === 1) {
     await print_battle_line(`${monster_name}的粘液四处飞散！（气力-${level}）`);
-    chara(target).dungeon.气力 -= level;
+    EraChara.get(target).base.willpower -= level;
   } else if (skill === 2) {
     await print_battle_line(`对手掉下了${monster_name}的落穴！（HP-${level}）`);
     target_view.dungeon.体力 -= level;
@@ -109,7 +111,7 @@ async function monster_skill(target, skill, user, rand = default_rand) {
   } else if (skill === 8) {
     if (rand(3) === 0) {
       await print_battle_line(`${chara_callname(target)}迷失了！`);
-      era.set(`cflag:${target}:509`, 1); // CFLAG:509 = 迷失标志
+      EraChara.get(target).cflag.lost_state = 1; // CFLAG:509 = 迷失标志
     }
   } else if (skill === 9) {
     const breath = Math.trunc((dmg * 3) / 2);
@@ -168,8 +170,8 @@ async function monster_skill(target, skill, user, rand = default_rand) {
 async function monster_room_skill(target, user, user_type, user_name = '') {
   const self = skill_user(user, user_type, user_name);
   const monster_name = self.name;
-  const level = self.level + chara(0).chara.等级;
-  const room = chara(target).dungeon.侵攻阶层; // CFLAG:501 = 所在房间
+  const level = self.level + EraChara.get(0).cflag.level;
+  const room = EraChara.get(target).cflag.invasion_floor; // CFLAG:501 = 所在房间
   const target_view = chara(target);
 
   if (room === 500) {
@@ -184,7 +186,7 @@ async function monster_room_skill(target, user, user_type, user_name = '') {
     );
     target_view.dungeon.气力 -= level * 2;
     self.add_attack(2);
-  } else if (room === 502 && game.invasion.肉便器数 > 0) {
+  } else if (room === 502 && era_flag.meat_toilet_count > 0) {
     await print_battle_line(
       `${monster_name}抓起一只肉便器来打人……（攻击-${level * 2}）`,
     );
@@ -202,7 +204,7 @@ async function monster_room_skill(target, user, user_type, user_name = '') {
   } else if (room === 505) {
     await print_battle_line(`${monster_name}躲进了迷宫里。（防御+5）`);
     self.add_defense(5);
-  } else if (room === 506 && game.event.装饰品数 > 0) {
+  } else if (room === 506 && era_flag.exhibit_count > 0) {
     const damage = Math.trunc((level * 3) / 2);
     await print_battle_line(
       `${monster_name}利用展示品攻击！！（气力-${damage}）`,
@@ -219,7 +221,7 @@ async function slave_monster_skill(target, cid, rand = default_rand) {
 
   const skills = [];
   for (let talent = 401; talent < 500; talent += 1) {
-    if (era.get(`talent:${cid}:${talent}`) === 1) {
+    if (EraChara.get(cid).talent.get(talent) === 1) {
       skills.push(talent);
     }
   }
@@ -233,7 +235,7 @@ async function slave_monster_skill(target, cid, rand = default_rand) {
     return 0;
   }
 
-  const level = chara(cid).chara.等级 * 3;
+  const level = EraChara.get(cid).cflag.level * 3;
   await use_monster_skill(
     target,
     skill,
@@ -258,7 +260,7 @@ async function use_monster_skill(
   const self = skill_user(user, user_type, user_name);
   const monster_name = self.name;
   // 函数体会覆盖形参 dmg；精英等级 ×3 因而无效，有意保留。
-  dmg = self.level + chara(0).chara.等级;
+  dmg = self.level + EraChara.get(0).cflag.level;
   const palam_down = Math.trunc(dmg / 3) + 1;
   const target_view = chara(target);
   const add_defence = (value) => {
@@ -296,7 +298,7 @@ async function use_monster_skill(
   } else if (skill === 8) {
     if (rand(3) === 0) {
       await print_battle_line(`${chara_callname(target)}迷失了！`);
-      era.set(`cflag:${target}:509`, 1); // CFLAG:509 = 迷失标志
+      EraChara.get(target).cflag.lost_state = 1; // CFLAG:509 = 迷失标志
     }
   } else if (skill === 9) {
     const breath = Math.trunc((dmg * 3) / 2);

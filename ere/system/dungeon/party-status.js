@@ -12,7 +12,7 @@
  */
 
 const era = require('#/era-electron');
-const { chara } = require('#/facade/chara');
+const EraChara = require('#/era-utils/era-chara');
 const { chara_callname } = require('#/utils/callname-utils');
 
 /**
@@ -36,10 +36,10 @@ const { chara_callname } = require('#/utils/callname-utils');
 function check_status_one(cid, mode) {
   const name = chara_callname(cid);
   const hp_pct = Math.floor(
-    (chara(cid).dungeon.体力 * 100) / (era.get(`maxbase:${cid}:0`) || 0),
+    (EraChara.get(cid).base.stamina * 100) / EraChara.get(cid).maxbase.stamina,
   );
   const wp_pct = Math.floor(
-    (chara(cid).dungeon.气力 * 100) / (era.get(`maxbase:${cid}:1`) || 0),
+    (EraChara.get(cid).base.willpower * 100) / EraChara.get(cid).maxbase.willpower,
   );
   // 阈值（S1_HP 60 / S1_MP 50）内联在首分支里；S2/S3 两档的阈值只在
   // 原脚本的分支顺序下成立，这里由首分支吞并、不写成代码（见函数注释）
@@ -47,13 +47,13 @@ function check_status_one(cid, mode) {
     if (!mode) {
       era.print(`${name}轻伤。`);
     }
-    chara(cid).dungeon.已接任务 = 2; // CFLAG:534 = 2
+    EraChara.get(cid).cflag.accepted_quest = 2; // CFLAG:534 = 2
     return 1;
   }
   if (!mode) {
     era.print(`${name}元气满满。`);
   }
-  chara(cid).dungeon.已接任务 = 1; // CFLAG:534 = 1
+  EraChara.get(cid).cflag.accepted_quest = 1; // CFLAG:534 = 1
   return 0;
 }
 
@@ -73,15 +73,15 @@ function check_status_one(cid, mode) {
 async function check_status(arg0, mode = 0) {
   let sidea;
   let sideb;
-  if ((era.get(`cflag:${arg0}:533`) || 0) === arg0) {
+  if (EraChara.get(arg0).cflag.leader_memory === arg0) {
     // 自己是队长
-    sidea = era.get(`cflag:${arg0}:531`) || 0;
-    sideb = era.get(`cflag:${arg0}:532`) || 0;
+    sidea = EraChara.get(arg0).cflag.companion_a;
+    sideb = EraChara.get(arg0).cflag.companion_b;
   } else {
     // 视角换队长；自己占同伴位时把自己换成队长号
-    const leader = era.get(`cflag:${arg0}:533`) || 0;
-    sidea = era.get(`cflag:${leader}:531`) || 0;
-    sideb = era.get(`cflag:${leader}:532`) || 0;
+    const leader = EraChara.get(arg0).cflag.leader_memory;
+    sidea = EraChara.get(leader).cflag.companion_a;
+    sideb = EraChara.get(leader).cflag.companion_b;
     if (sidea === arg0) {
       sidea = leader;
     }
@@ -93,7 +93,7 @@ async function check_status(arg0, mode = 0) {
   // varset STATUS
   const status = [0, 0, 0, 0, 0, 0, 0, 0];
 
-  const place = chara(arg0).invasion.状态;
+  const place = EraChara.get(arg0).cflag.state;
   if (place === 2 || place === 3) {
     // 队长
     status[check_status_one(arg0, mode)] += 1;
