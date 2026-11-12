@@ -2368,8 +2368,10 @@ test('换号第二屏：只剩一名候选时也有出口——[3002] 取消回�
     '取消直接回第一屏、不进确认屏（漏掉这条支路时 1999 会落到确认屏的白名单外）',
   );
   assert.equal(thrown, null, '整条路走完不抛错：没有卡死');
+  // 观测「这一步没写」要看写入记账面（store）；era.get/raw() 是引擎读面，
+  // 声明列在引擎里恒有值（PORTCFLAG:排序编号 未设时读到 0，读侧回落角色 ID）
   assert.equal(
-    fixture.era.get('portcflag:17:排序编号'),
+    fixture.store.get('portcflag:17:1'),
     undefined,
     '取消不写排序编号',
   );

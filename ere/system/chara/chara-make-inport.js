@@ -94,7 +94,8 @@ function decode_table(cid, table, segment, is_string) {
  */
 function chara_make_inport(rand = default_rand) {
   // 外来勇者等级上限（FLAG:76，MAOUNET 菜单设定）<= 0 则直接返回 0
-  const level_cap = era_flag.foreign_hero_level_cap;
+  // 走动态读数：混合引擎用例里 era.get 绑的是真引擎、raw() 仍是夹具，具名读会取错层
+  const level_cap = era_flag.get(76);
   if (level_cap <= 0) {
     return 0;
   }

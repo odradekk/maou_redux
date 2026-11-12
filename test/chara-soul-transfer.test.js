@@ -48,9 +48,12 @@ test('swap_chara：数值表与字符串表双向互换，双侧皆未声明时�
   assert.equal(fixture.store.get('cflag:1:9'), 10);
   assert.equal(fixture.store.get('cstr:0:5'), '旧文本B');
   assert.equal(fixture.store.get('cstr:1:5'), '旧文本A');
-  // 两侧皆未声明的下标：不应该被写入（#13 静默写入陷阱）
-  assert.equal(fixture.store.get('cflag:0:777'), undefined);
-  assert.equal(fixture.store.get('cflag:1:777'), undefined);
+  // 两侧皆未声明的下标：不应该被写入（#13 静默写入陷阱）。
+  // 用 65535 而不是 777：777 在 yml/CFlag.yml 里登记过（待处刑标签），
+  // 引擎 addCharacter 会把声明列预置成 0，swap_var 的两侧都读到 0、
+  // 于是照常交换——那测不到「未声明」，只会测到引擎的预置。
+  assert.equal(fixture.store.get('cflag:0:65535'), undefined);
+  assert.equal(fixture.store.get('cflag:1:65535'), undefined);
 });
 
 test('swap_chara：仅一侧声明时，另一侧读作 0/空串，不留旧值', () => {
