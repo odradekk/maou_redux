@@ -19,6 +19,7 @@
  */
 
 const era = require('#/era-electron');
+const EraChara = require('#/era-utils/era-chara');
 
 const {
   da_get,
@@ -42,16 +43,16 @@ const { default_rand } = require('#/utils/numeric');
 function unit_check(x, y) {
   for (const cid of era.getAddedCharacters()) {
     if (
-      (era.get(`cflag:${cid}:1`) || 0) !== 2 &&
-      (era.get(`cflag:${cid}:1`) || 0) !== 3
+      EraChara.get(cid).cflag.state !== 2 &&
+      EraChara.get(cid).cflag.state !== 3
     ) {
       continue; // SIF … CONTINUE
     }
-    const ux = era.get(`cflag:${cid}:510`) || 0; // X = CFLAG:COUNT:510
+    const ux = EraChara.get(cid).cflag.grid_x; // X = CFLAG:COUNT:510
     if (ux < 0) {
       continue;
     }
-    const uy = era.get(`cflag:${cid}:511`) || 0; // Y = CFLAG:COUNT:511
+    const uy = EraChara.get(cid).cflag.grid_y; // Y = CFLAG:COUNT:511
     if (uy < 0) {
       continue;
     }
@@ -163,7 +164,7 @@ function chip_draw(x, y) {
 
   const unit = unit_check(x, y); // CALL unit_check
   if (unit >= 0) {
-    if ((era.get(`cflag:${unit}:1`) || 0) === 2) {
+    if (EraChara.get(unit).cflag.state === 2) {
       return [{ color: '#c83232', content: '@,' }]; // SETCOLOR 200,50,50 → PRINT ＠ / PRINT ,
     }
     return [{ content: '@,' }];

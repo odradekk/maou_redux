@@ -355,6 +355,9 @@ test('陷阱商店换屏：连续两轮购买取消，各轮商品屏与数量�
 
 /** 怪物商店世界（同 test/monster-shop.test.js 的 monster_world） */
 function seed_monster_shop(fixture, seed = {}) {
+  // 魔王 0 真加入（真机上 resetData 建）：怪物生成按它的等级定等级
+  fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
+  fixture.era.addCharacter(0);
   const base = {
     'flag:10000': 0,
     'flag:10003': 0,

@@ -14,6 +14,10 @@ const { preset_chara_0, join_slave_chara } = require('./helpers/chara');
 function seed_world() {
   const fixture = create_era_fixture();
   preset_chara_0(fixture);
+  // 魔王 0 真加入（真机上 resetData 按 GameBase【初始角色编号】建）：离队路径
+  // 经 party_char_del → party_del，读 LEADER（CFLAG:533，未入队即 0）的同伴位，
+  // 开发套件的具名访问器读未加入的角色与引擎一样抛 TypeError。
+  fixture.era.addCharacter(0);
   join_slave_chara(fixture, 31, '琼');
   return fixture;
 }
@@ -25,7 +29,8 @@ test('EVENT_CHARA_LEAVE：序列化后角色从在场列表除名', () => {
   const descriptor = event_chara_leave(85, 31);
 
   assert.equal(typeof descriptor, 'string');
-  assert.deepEqual(fixture.era.getAddedCharacters(), []);
+  // 魔王 0 也在场（真机如此），除名后只剩它
+  assert.deepEqual(fixture.era.getAddedCharacters(), [0]);
 });
 
 test('EVENT_CHARA_LEAVE：清空上次调教对象/助手引用', () => {
@@ -98,7 +103,7 @@ test('EVENT_CHARA_LEAVE → EVENT_CHARA_RETURN：九张表原地往返，下标�
     '备注文本',
     '字符串表不被 Number() 转换',
   );
-  assert.deepEqual(fixture.era.getAddedCharacters(), [31]);
+  assert.deepEqual(fixture.era.getAddedCharacters(), [0, 31]); // 魔王 0 也在场
 });
 
 test('EVENT_CHARA_RETURN：重置侵攻阶层/侵攻度/角色状态', () => {

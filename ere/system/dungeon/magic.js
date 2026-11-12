@@ -17,17 +17,18 @@
 'use strict';
 
 const era = require('#/era-electron');
+const EraChara = require('#/era-utils/era-chara');
+const era_flag = require('#/era-utils/era-flag');
 const { chara_lv_check } = require('#/system/chara/chara-stats');
 const { battle_column } = require('#/system/dungeon/battle-state');
-const { chara } = require('#/facade/chara');
 const { default_rand, idiv_trunc } = require('#/utils/numeric');
 
 function show_log() {
-  return ((era.get('flag:5') || 0) & 32) !== 0;
+  return (era_flag.game_settings & 32) !== 0;
 }
 
 function name_of(cid) {
-  return era.get(`callname:${cid}:-1`) ?? '';
+  return EraChara.get(cid).name ?? '';
 }
 
 function monster_name(column) {
@@ -41,11 +42,11 @@ async function print_wait(text) {
 }
 
 function get_base(cid, index) {
-  return era.get(`base:${cid}:${index}`) || 0;
+  return EraChara.get(cid).base.get(index);
 }
 
 function set_base(cid, index, value) {
-  era.set(`base:${cid}:${index}`, value);
+  EraChara.get(cid).base.set(index, value);
 }
 
 function add_base(cid, index, value) {
@@ -53,15 +54,15 @@ function add_base(cid, index, value) {
 }
 
 function get_cflag(cid, index) {
-  return era.get(`cflag:${cid}:${index}`) || 0;
+  return EraChara.get(cid).cflag.get(index);
 }
 
 function get_exp(cid) {
-  return era.get(`exp:${cid}:80`) || 0;
+  return EraChara.get(cid).exp.battle_exp;
 }
 
 function set_exp(cid, value) {
-  era.set(`exp:${cid}:80`, value);
+  EraChara.get(cid).exp.battle_exp = value;
 }
 
 function add_exp(cid, value) {
@@ -69,7 +70,7 @@ function add_exp(cid, value) {
 }
 
 function talent(cid, index) {
-  return era.get(`talent:${cid}:${index}`) || 0;
+  return EraChara.get(cid).talent.get(index);
 }
 
 /** magic_damage_cap：等级差调整封顶，最低效果为 1。 */
@@ -97,8 +98,11 @@ function magic_bonus_c_to_m(cid, damage, monster_head) {
     damage += idiv_trunc(damage, 5);
   }
 
-  if (chara(cid).dungeon.凌辱畏怖记忆_怪物 === battle_column(monster_head).id) {
-    const fear = chara(cid).dungeon.凌辱畏怖计数;
+  if (
+    EraChara.get(cid).cflag.ravish_fear_monster ===
+    battle_column(monster_head).id
+  ) {
+    const fear = EraChara.get(cid).cflag.ravish_fear_count;
     if (fear > 5) {
       era.print('凌辱的记忆历历在目……无法反抗！');
       damage = idiv_trunc(damage, 10);
@@ -141,14 +145,17 @@ function magic_bonus_m_to_c(cid, damage, monster_head) {
   if (debuff > 50) {
     damage += idiv_trunc(damage, 2);
     debuff -= idiv_trunc(debuff, 10) + 1;
-    era.set(`cflag:${cid}:682`, debuff);
+    EraChara.get(cid).cflag.magic_damage_up_rate = debuff;
   } else if (debuff > 0) {
     damage = idiv_trunc(damage * (100 + debuff), 100);
     debuff -= idiv_trunc(debuff, 10) + 1;
-    era.set(`cflag:${cid}:682`, debuff);
+    EraChara.get(cid).cflag.magic_damage_up_rate = debuff;
   }
-  if (chara(cid).dungeon.凌辱畏怖记忆_怪物 === battle_column(monster_head).id) {
-    const fear = chara(cid).dungeon.凌辱畏怖计数;
+  if (
+    EraChara.get(cid).cflag.ravish_fear_monster ===
+    battle_column(monster_head).id
+  ) {
+    const fear = EraChara.get(cid).cflag.ravish_fear_count;
     if (fear > 5) {
       era.print('凌辱的记忆历历在目……无法反抗！');
       damage *= 2;
@@ -186,11 +193,11 @@ function magic_bonus_c_to_c(cid, damage, defender) {
     if (debuff > 50) {
       damage += idiv_trunc(damage, 2);
       debuff -= idiv_trunc(debuff, 10) + 1;
-      era.set(`cflag:${cid}:682`, debuff);
+      EraChara.get(cid).cflag.magic_damage_up_rate = debuff;
     } else if (debuff > 0) {
       damage = idiv_trunc(damage * (100 + debuff), 100);
       debuff -= idiv_trunc(debuff, 10) + 1;
-      era.set(`cflag:${cid}:682`, debuff);
+      EraChara.get(cid).cflag.magic_damage_up_rate = debuff;
     }
   }
   return damage;
@@ -283,7 +290,7 @@ async function teleport_magic(
   if (target_type === 2) {
     await print_wait(`怪物用传送把${name_of(a)}送走了。`);
     move_ctx.d20 = rand(100);
-    era.set(`cflag:${a}:509`, 1); // CFLAG:509 = 迷惑状态（dungeon 域）
+    EraChara.get(a).cflag.lost_state = 1; // CFLAG:509 = 迷惑状态（dungeon 域）
     return 999;
   }
   if (target_type === 3) {
@@ -292,7 +299,7 @@ async function teleport_magic(
     }
     await print_wait(`${name_of(b)}在危机关头使出传送术脱离了！`);
     add_base(b, 1, -10);
-    chara(b).train.公开自慰经验 = rand(100); // CFLAG:3
+    EraChara.get(b).cflag.public_masturbation_exp = rand(100); // CFLAG:3
     return 999;
   }
   return 0;
@@ -330,8 +337,8 @@ async function sleep_magic(target_type, a, b, rand = default_rand) {
       damage,
       300,
     );
-    const value = chara(a).dungeon.攻击力 - rand(damage);
-    chara(a).dungeon.攻击力 = Math.max(0, value);
+    const value = EraChara.get(a).cflag.attack - rand(damage);
+    EraChara.get(a).cflag.attack = Math.max(0, value);
     await print_wait(value < 0 ? '勇者完全睡着了…' : '勇者还在沉睡…');
     return 0;
   }
@@ -349,8 +356,8 @@ async function sleep_magic(target_type, a, b, rand = default_rand) {
     damage,
     300,
   );
-  const value = chara(defender).dungeon.攻击力 - rand(damage);
-  chara(defender).dungeon.攻击力 = Math.max(0, value);
+  const value = EraChara.get(defender).cflag.attack - rand(damage);
+  EraChara.get(defender).cflag.attack = Math.max(0, value);
   if (value < 0) {
     await print_wait(target_type === 3 ? '奴隶完全睡着了…' : '勇者完全睡着了…');
   } else {
@@ -554,8 +561,10 @@ async function heal_magic(target_type, a, b) {
     for (const cid of candidates) {
       if (
         cid > 0 &&
-        idiv_trunc(get_base(cid, 0) * 100, era.get(`maxbase:${cid}:0`) || 1) <
-          60
+        idiv_trunc(
+          get_base(cid, 0) * 100,
+          EraChara.get(cid).maxbase.stamina || 1,
+        ) < 60
       ) {
         patient = cid;
       }
@@ -587,7 +596,9 @@ async function heal_magic(target_type, a, b) {
     return 0;
   }
   // 条件方向如此：低于六成反而直接返回。
-  if (idiv_trunc(get_base(b, 0) * 100, era.get(`maxbase:${b}:0`) || 1) < 60) {
+  if (
+    idiv_trunc(get_base(b, 0) * 100, EraChara.get(b).maxbase.stamina || 1) < 60
+  ) {
     return 0;
   }
   await print_wait(`${name_of(b)}咏唱了治疗术！`);
@@ -636,8 +647,8 @@ async function curse_magic(target_type, a, b, rand = default_rand) {
       damage,
       200,
     );
-    const value = chara(a).dungeon.防御力 - idiv_trunc(rand(damage), 2);
-    chara(a).dungeon.防御力 = Math.max(0, value);
+    const value = EraChara.get(a).cflag.defense - idiv_trunc(rand(damage), 2);
+    EraChara.get(a).cflag.defense = Math.max(0, value);
     await print_wait(value < 0 ? '勇者完全被诅咒了…' : '勇者仍然被诅咒着…');
     return 0;
   }
@@ -655,8 +666,9 @@ async function curse_magic(target_type, a, b, rand = default_rand) {
     damage,
     200,
   );
-  const value = chara(defender).dungeon.防御力 - idiv_trunc(rand(damage), 2);
-  chara(defender).dungeon.防御力 = Math.max(0, value);
+  const value =
+    EraChara.get(defender).cflag.defense - idiv_trunc(rand(damage), 2);
+  EraChara.get(defender).cflag.defense = Math.max(0, value);
   await print_wait(
     value < 0
       ? `${target_type === 3 ? '奴隶' : '勇者'}完全被诅咒了…`
@@ -797,13 +809,12 @@ async function apply_level_drain(cid, damage) {
     `吸取${name_of(cid)}${damage}点经验值并造成了${damage * 10}点HP的伤害！`,
   );
   if (get_exp(cid) < 0) {
-    const view = chara(cid);
-    view.chara.等级 -= 1;
-    set_exp(cid, view.chara.等级 * 10);
-    view.dungeon.攻击力 -= 1;
-    view.dungeon.防御力 -= 1;
-    view.chara.基础攻击 -= 1;
-    view.chara.基础防御 -= 1;
+    EraChara.get(cid).cflag.level -= 1;
+    set_exp(cid, EraChara.get(cid).cflag.level * 10);
+    EraChara.get(cid).cflag.attack -= 1;
+    EraChara.get(cid).cflag.defense -= 1;
+    EraChara.get(cid).cflag.base_attack -= 1;
+    EraChara.get(cid).cflag.base_defense -= 1;
     await print_wait(`${name_of(cid)}的等级下降了1级。`);
   }
   await chara_lv_check(cid);

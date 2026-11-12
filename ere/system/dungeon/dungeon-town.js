@@ -32,6 +32,7 @@
 'use strict';
 
 const era = require('#/era-electron');
+const EraChara = require('#/era-utils/era-chara');
 const era_flag = require('#/era-utils/era-flag');
 // H10（#179）真身：lvup（CALL lvup, PM:LOCAL）
 const { lvup } = require('#/system/dungeon/dungeon-lvup');
@@ -42,7 +43,6 @@ const quest_mod = require('#/system/dungeon/dungeon-quest');
 const lovers_mod = require('#/system/dungeon/dungeon-lovers');
 // L13（#344）真身：sell_ex_item / add_ex_item。
 const ex_item_mod = require('#/system/dungeon/ex-item');
-const { chara } = require('#/facade/chara');
 const autotrain_mod = require('#/system/train/autotrain');
 // 自动调教前置与结算经模块对象引用——测试可替换导出断言被调。
 const {
@@ -56,15 +56,15 @@ const { default_rand } = require('#/utils/numeric');
 
 /** 名字承载（#5 决议；savestr 通道不存在，dungeon.js 先例） */
 function name_of(cid) {
-  return era.get(`callname:${cid}:-1`) ?? '';
+  return EraChara.get(cid).name ?? '';
 }
 
 /** 队伍编成（PM:0 队长 / PM:1 仲間A CFLAG:531 / PM:2 仲間B CFLAG:532） */
 function party_of(arg) {
   return [
     arg,
-    era.get(`cflag:${arg}:531`) || 0,
-    era.get(`cflag:${arg}:532`) || 0,
+    EraChara.get(arg).cflag.companion_a,
+    EraChara.get(arg).cflag.companion_b,
   ];
 }
 
@@ -91,11 +91,11 @@ async function dungeon_town(arg0, rand = default_rand) {
     if (pm[lcount] <= 0) {
       continue;
     }
-    chara(pm[lcount]).invasion.回城标志 = 0; // CFLAG:507 = 0
+    EraChara.get(pm[lcount]).cflag.returned_to_town = 0; // CFLAG:507 = 0
   }
 
   // 再起ポイントを消費して回復（队长位的 CFLAG:508 > 0 时）
-  if (chara(pm[0]).dungeon.再起点 > 0) {
+  if (EraChara.get(pm[0]).cflag.restart_point > 0) {
     await town_pt_rest(pm[0], pm[1], pm[2], rand_n);
   }
 
@@ -142,19 +142,23 @@ async function dungeon_town(arg0, rand = default_rand) {
 async function town_pt_rest(pm0, pm1, pm2, rand_n) {
   void rand_n;
   const pm = [pm0, pm1, pm2];
-  if ((era.get('flag:5') || 0) & 32) {
+  if (era_flag.game_settings & 32) {
     era.print(
       `${name_of(pm[0])}的队伍在旅馆里进行了修整，恢复着冒险的疲惫……（HP、气力全恢复）`,
     ); // （%SAVESTR:PM% = 队长名）
   }
-  chara(pm[0]).dungeon.再起点 -= 1; // CFLAG:PM:508--（PM 省略下标 = PM:0）
+  EraChara.get(pm[0]).cflag.restart_point -= 1; // CFLAG:PM:508--（PM 省略下标 = PM:0）
   // 全回復。仲間も回復（BASE:0 体力 / BASE:1 气力 → MAXBASE）
   for (let lcount = 0; lcount < 3; lcount += 1) {
     if (pm[lcount] <= 0) {
       continue;
     }
-    era.set(`base:${pm[lcount]}:0`, era.get(`maxbase:${pm[lcount]}:0`) || 0);
-    era.set(`base:${pm[lcount]}:1`, era.get(`maxbase:${pm[lcount]}:1`) || 0);
+    EraChara.get(pm[lcount]).base.stamina = EraChara.get(
+      pm[lcount],
+    ).maxbase.stamina;
+    EraChara.get(pm[lcount]).base.willpower = EraChara.get(
+      pm[lcount],
+    ).maxbase.willpower;
   }
 }
 
@@ -170,7 +174,7 @@ async function town_pt_funding(pm0, pm1, pm2, rand_n) {
   const pm = [pm0, pm1, pm2];
   // 仕送り（援助金合算）
   const local = fi_pt_funding(pm[0], pm[1], pm[2]);
-  if ((era.get('flag:5') || 0) & 32) {
+  if (era_flag.game_settings & 32) {
     // PRINTFORM…PRINTV…PRINTFORML 三段拼一行（文件头：彩色数值段归并）
     era.print(
       `${name_of(pm[0])}的队伍接受了故乡的支持者的援助，每人获得了${local}点资金。`,
@@ -183,13 +187,13 @@ async function town_pt_funding(pm0, pm1, pm2, rand_n) {
       continue;
     }
     const cid = pm[lcount];
-    chara(cid).dungeon.所持金 += local; // CFLAG:580 += LOCAL
+    EraChara.get(cid).cflag.money += local; // CFLAG:580 += LOCAL
     ex_item_mod.sell_ex_item(cid, rand_n); // CALL sell_ex_item
     town_sell(cid); // CALL town_sell
     await town_hoshounin(cid); // CALL town_hoshounin
     await town_hensai(cid); // CALL town_hensai
     // 手持ちが少ないと借金する
-    if (chara(cid).dungeon.所持金 < 10000) {
+    if (EraChara.get(cid).cflag.money < 10000) {
       await town_loan(cid, rand_n);
     }
     // ダンジョン外売春（#184 真身；log_try_bitch 的 'TOWN' 档
@@ -230,7 +234,7 @@ function fi_funding(arg) {
   let local = 0; // VARSET LOCAL
   // 故郷や家族からの補助金（以下全读 TARGET，文件头）
   const t = era_flag.target;
-  const tv = (n) => era.get(`talent:${t}:${n}`) || 0;
+  const tv = (n) => EraChara.get(t).talent.get(n);
 
   // 素質補正——高人气ボーナス（TALENT:高人气 名字寻址 →
   // id 126，yml/Talent.yml；ere 侧数字下标 + 注释，门面生成物同惯例）
@@ -255,12 +259,12 @@ function fi_funding(arg) {
   }
 
   // カルマ補正（善恶值 > 0 时每点 +10）
-  if ((era.get(`cflag:${t}:151`) || 0) > 0) {
-    local += (era.get(`cflag:${t}:151`) || 0) * 10;
+  if (EraChara.get(t).cflag.karma > 0) {
+    local += EraChara.get(t).cflag.karma * 10;
   }
 
   // レベル補正
-  local += (era.get(`cflag:${t}:9`) || 0) * 8;
+  local += EraChara.get(t).cflag.level * 8;
 
   return local;
 }
@@ -275,15 +279,15 @@ function town_sell(arg) {
   if (arg <= 0) {
     return;
   }
-  const loot = era.get(`cflag:${arg}:581`) || 0;
+  const loot = EraChara.get(arg).cflag.loot_value;
   if (!loot) {
     return;
   }
-  if ((era.get('flag:5') || 0) & 32) {
+  if (era_flag.game_settings & 32) {
     era.print(`${name_of(arg)}把战利品换成了钱，获得了${loot}点资金。`);
   }
-  chara(arg).dungeon.所持金 += loot; // CFLAG:580 += CFLAG:581
-  era.set(`cflag:${arg}:581`, 0);
+  EraChara.get(arg).cflag.money += loot; // CFLAG:580 += CFLAG:581
+  EraChara.get(arg).cflag.loot_value = 0;
 }
 
 /**
@@ -296,14 +300,14 @@ function town_sell(arg) {
 async function town_hoshounin(arg) {
   // SIF ARG <= 0 / SIF !TALENT:ARG:担保人 RETURN——TALENT:209
   // 担保人（yml 列名寻址，era 侧数字下标 + 注释）
-  if (arg <= 0 || !(era.get(`talent:${arg}:209`) || 0)) {
+  if (arg <= 0 || !EraChara.get(arg).talent.breeding_bed) {
     return;
   }
-  const local = (era.get('cflag:0:9') || 0) * 8 + 500; // （CFLAG:0:9 = 魔王等级）
-  if ((era.get('flag:5') || 0) & 32) {
+  const local = EraChara.get(0).cflag.level * 8 + 500; // （CFLAG:0:9 = 魔王等级）
+  if (era_flag.game_settings & 32) {
     era.print(`作为担保人的${name_of(arg)}又去借钱了，债务增加了${local}点……`);
   }
-  chara(arg).patch.借款 -= local; // CFLAG:582 -= LOCAL（patch 门面）
+  EraChara.get(arg).cflag.debt -= local; // CFLAG:582 -= LOCAL（patch 门面）
 }
 
 /**
@@ -326,23 +330,23 @@ async function town_hensai(arg) {
   if (arg <= 0) {
     return;
   }
-  const loan = chara(arg).patch.借款; // CFLAG:582（负数为债务）
+  const loan = EraChara.get(arg).cflag.debt; // CFLAG:582（负数为债务）
 
   // 借金加上高利貸利率（利息段打印无 FLAG:5&32 检查——总可见）
   if (loan !== 0) {
     const interest = Math.trunc(loan / 10); // 利率 = CFLAG:582 / 10（截断）
-    chara(arg).patch.借款 += interest;
+    EraChara.get(arg).cflag.debt += interest;
     era.print(
-      `${name_of(arg)}回城后，查看了自己的债务，加了利息之后，债务变成了${chara(arg).patch.借款}点……`,
+      `${name_of(arg)}回城后，查看了自己的债务，加了利息之后，债务变成了${EraChara.get(arg).cflag.debt}点……`,
     );
   }
 
   // 返済額決定
   let local;
-  if (chara(arg).patch.借款 < -500) {
+  if (EraChara.get(arg).cflag.debt < -500) {
     // 返済額をカルマ依存で変動（負債的 1/2～1/9；1/4 相当于
     // カルマ 130～81——**SELECTCASE CFLAG:151 省略角色号 → TARGET**）
-    const karma_v = era.get(`cflag:${era_flag.target}:151`) || 0;
+    const karma_v = EraChara.get(era_flag.target).cflag.karma;
     let div;
     if (karma_v > 180) {
       div = 2;
@@ -361,8 +365,8 @@ async function town_hensai(arg) {
     } else {
       div = 9;
     }
-    local = Math.trunc(Math.abs(chara(arg).patch.借款) / div);
-  } else if (chara(arg).patch.借款 < 0) {
+    local = Math.trunc(Math.abs(EraChara.get(arg).cflag.debt) / div);
+  } else if (EraChara.get(arg).cflag.debt < 0) {
     local = 500; // 小额债务固定还 500
   } else {
     return; // 借金なし
@@ -370,24 +374,24 @@ async function town_hensai(arg) {
 
   // 上限下限処理（上限 = 手持ち的 1/2；返却意志ありなら最低 100
   // 保証；小銭は変なので 100 単位に切り詰め）
-  const cash = chara(arg).dungeon.所持金; // CFLAG:580
+  const cash = EraChara.get(arg).cflag.money; // CFLAG:580
   local = Math.min(Math.max(local, 100), Math.trunc(cash / 2)); // LIMIT
   local = Math.trunc(local / 100) * 100; // /= 100; *= 100
 
   // 借金の金額は越えないように
   local = Math.min(
     local,
-    Math.abs(chara(arg).patch.借款),
+    Math.abs(EraChara.get(arg).cflag.debt),
     Math.trunc(cash / 2),
   );
 
-  if ((era.get('flag:5') || 0) & 32) {
+  if (era_flag.game_settings & 32) {
     era.print(
-      `${name_of(arg)}将总计${chara(arg).patch.借款}的债务归还了${local}点。`,
+      `${name_of(arg)}将总计${EraChara.get(arg).cflag.debt}的债务归还了${local}点。`,
     );
   }
-  chara(arg).patch.借款 += local; // CFLAG:582 += LOCAL（趋近 0）
-  chara(arg).dungeon.所持金 -= local; // CFLAG:580 -= LOCAL
+  EraChara.get(arg).cflag.debt += local; // CFLAG:582 += LOCAL（趋近 0）
+  EraChara.get(arg).cflag.money -= local; // CFLAG:580 -= LOCAL
 }
 
 /**
@@ -401,20 +405,20 @@ async function town_loan(arg, rand_n) {
   if (arg <= 0) {
     return;
   }
-  if (chara(arg).patch.借款 < -50000) {
+  if (EraChara.get(arg).cflag.debt < -50000) {
     // 负债累累（打印有 FLAG:5&32 检查，数值分支无检查）
-    if ((era.get('flag:5') || 0) & 32) {
+    if (era_flag.game_settings & 32) {
       era.print(`${name_of(arg)}负债累累，再也没人愿意借钱给她了……`);
     }
     return;
   }
   // 借款判定（RAND:(260 + CFLAG:151) < 50——此处善恶值显式带 ARG）
-  if (rand_n(260 + (era.get(`cflag:${arg}:151`) || 0)) < 50) {
-    if ((era.get('flag:5') || 0) & 32) {
+  if (rand_n(260 + EraChara.get(arg).cflag.karma) < 50) {
+    if (era_flag.game_settings & 32) {
       era.print(`${name_of(arg)}借了1000点资金。`);
     }
-    chara(arg).patch.借款 -= 1000; // CFLAG:582 -= 1000
-    chara(arg).dungeon.所持金 += 1000; // CFLAG:580 += 1000
+    EraChara.get(arg).cflag.debt -= 1000; // CFLAG:582 -= 1000
+    EraChara.get(arg).cflag.money += 1000; // CFLAG:580 += 1000
   }
 }
 
@@ -426,7 +430,7 @@ async function town_loan(arg, rand_n) {
  */
 async function town_pt_shopping(pm0, pm1, pm2, rand_n = default_rand) {
   const pm = [pm0, pm1, pm2];
-  if ((era.get('flag:5') || 0) & 32) {
+  if (era_flag.game_settings & 32) {
     era.print(`${name_of(pm[0])}的队伍在道具店进行了攻略的准备工作…`);
   }
   for (let lcount = 0; lcount < 3; lcount += 1) {
@@ -450,13 +454,13 @@ async function town_shopping(arg, rand_n = default_rand) {
     return 0;
   }
   // お金に余裕が無いと買えない
-  if (chara(arg).dungeon.所持金 < 3000) {
+  if (EraChara.get(arg).cflag.money < 3000) {
     return 0;
   }
   const bought = await ex_item_mod.add_ex_item(-3, arg, 1, rand_n); // CALL add_ex_item
   // 代金を支払う（RESULT 非 0 才扣款）
   if (bought) {
-    chara(arg).dungeon.所持金 -= 500;
+    EraChara.get(arg).cflag.money -= 500;
   }
   return 0;
 }
@@ -482,23 +486,23 @@ async function town_pt_planning(pm0, pm1, pm2, rand_n) {
   // 新探索模式——TALENT:161 自信家/163 高贵/164 冷静/166 恶女
   // 直奔最深处（CFLAG:520 = 8）。首行的 GETBIT(FLAG:5,33) 检查被注释。
   const hero_or_die =
-    era.get(`talent:${pm[0]}:161`) ||
-    era.get(`talent:${pm[0]}:163`) ||
-    era.get(`talent:${pm[0]}:164`) ||
-    era.get(`talent:${pm[0]}:166`);
+    EraChara.get(pm[0]).talent.confident ||
+    EraChara.get(pm[0]).talent.noble ||
+    EraChara.get(pm[0]).talent.calm ||
+    EraChara.get(pm[0]).talent.evil_woman;
   if (hero_or_die) {
-    if ((era.get('flag:5') || 0) & 32) {
+    if (era_flag.game_settings & 32) {
       era.print(`满腔热血的${name_of(pm[0])}的队伍决定向地下城的最深处进发。`);
     }
     for (const cid of pm) {
       if (cid > 0) {
-        era.set(`cflag:${cid}:520`, 8);
+        EraChara.get(cid).cflag.target_floor = 8;
       }
     }
     return 0; // A = PM:0; RETURN 0
   }
 
-  if ((era.get('flag:5') || 0) & 32) {
+  if (era_flag.game_settings & 32) {
     era.print(`${name_of(pm[0])}的队伍制定了新的冒险计划。`);
   }
 
@@ -518,14 +522,15 @@ async function town_pt_planning(pm0, pm1, pm2, rand_n) {
     }
     const cid = pm[lcount];
     num_pm += 1; // NUM_PM++
-    karma[lcount] = era.get(`cflag:${cid}:151`) || 0; // KARMA:LCOUNT
-    floor_arr[lcount] = era.get(`cflag:${cid}:520`) || 0; // FLOOR:LCOUNT
+    karma[lcount] = EraChara.get(cid).cflag.karma; // KARMA:LCOUNT
+    floor_arr[lcount] = EraChara.get(cid).cflag.target_floor; // FLOOR:LCOUNT
     floor_min = Math.min(floor_min, floor_arr[lcount]);
     floor_max = Math.max(floor_max, floor_arr[lcount]);
-    loan_arr[lcount] = chara(cid).patch.借款; // LOAN:LCOUNT（CFLAG:582）
+    loan_arr[lcount] = EraChara.get(cid).cflag.debt; // LOAN:LCOUNT（CFLAG:582）
     loan_min = Math.min(loan_min, loan_arr[lcount]);
     loan_max = Math.max(loan_max, loan_arr[lcount]);
-    balance[lcount] = chara(cid).dungeon.所持金 + chara(cid).patch.借款; // 個人予算収支
+    balance[lcount] =
+      EraChara.get(cid).cflag.money + EraChara.get(cid).cflag.debt; // 個人予算収支
   }
 
   const sum = (arr) => arr.reduce((a, b) => a + b, 0);
@@ -557,7 +562,7 @@ async function town_pt_planning(pm0, pm1, pm2, rand_n) {
   }
 
   // —— 進行処理（GOTO INTO_DEEPER 经闭包实现）——
-  const show = ((era.get('flag:5') || 0) & 32) !== 0;
+  const show = (era_flag.game_settings & 32) !== 0;
   let goal = 0; // GOAL（#DIM 初值 0）
   let start_floor = 0; // START_FLOOR
   const into_deeper = () => {
@@ -619,7 +624,7 @@ async function town_pt_planning(pm0, pm1, pm2, rand_n) {
   start_floor = Math.min(Math.max(start_floor, 1), 7);
 
   // 階層踏破のための必要資金（ダンジョンレベル = 魔王等级）
-  const cost = goal * Math.min(500 + (era.get('cflag:0:9') || 0) * 4, 900);
+  const cost = goal * Math.min(500 + EraChara.get(0).cflag.level * 4, 900);
 
   // 计划打印
   if (goal && show) {
@@ -634,9 +639,9 @@ async function town_pt_planning(pm0, pm1, pm2, rand_n) {
       continue;
     }
     const cid = pm[lcount];
-    chara(cid).patch.借款 -= cost; // CFLAG:582 -= COST
-    era.set(`cflag:${cid}:520`, goal); // CFLAG:520 = GOAL（目标阶层）
-    chara(cid).dungeon.侵攻阶层 = start_floor; // CFLAG:501 = START_FLOOR
+    EraChara.get(cid).cflag.debt -= cost; // CFLAG:582 -= COST
+    EraChara.get(cid).cflag.target_floor = goal; // CFLAG:520 = GOAL（目标阶层）
+    EraChara.get(cid).cflag.invasion_floor = start_floor; // CFLAG:501 = START_FLOOR
   }
   await era.waitAnyKey(); // WAIT
 
@@ -672,7 +677,7 @@ async function town_pt_party(pm0, pm1, pm2, rand_n) {
     if (pm[lcount] <= 0) {
       continue;
     }
-    const cash = era.get(`cflag:${budget_target}:580`) || 0; // CFLAG:580（TARGET）
+    const cash = EraChara.get(budget_target).cflag.money; // CFLAG:580（TARGET）
     if (cash < 1000) {
       continue; // お金が無いとダメ
     }
@@ -682,14 +687,14 @@ async function town_pt_party(pm0, pm1, pm2, rand_n) {
   // おかねがある / お流れ
   const total = cost[0] + cost[1] + cost[2];
   if (total !== 0) {
-    if ((era.get('flag:5') || 0) & 32) {
+    if (era_flag.game_settings & 32) {
       era.print(`${name_of(pm[0])}的队伍进行了丰盛的晚宴，预祝冒险的成功……`);
     }
     for (let lcount = 0; lcount < 3; lcount += 1) {
       if (pm[lcount] <= 0) {
         continue;
       }
-      chara(pm[lcount]).dungeon.所持金 -= cost[lcount]; // 显式本人
+      EraChara.get(pm[lcount]).cflag.money -= cost[lcount]; // 显式本人
     }
     await era.waitAnyKey(); // WAIT
   } else {
@@ -704,9 +709,9 @@ async function town_pt_party(pm0, pm1, pm2, rand_n) {
     const cid = pm[lcount];
     era_flag.target = cid; // TARGET = PM:LCOUNT
     const t = cid; // 以下省略角色号读写的对象
-    const karma_v = era.get(`cflag:${t}:151`) || 0;
-    const man = (era.get(`talent:${t}:122`) || 0) !== 0; // TALENT:122 男人
-    const futanari = (era.get(`talent:${t}:121`) || 0) !== 0; // TALENT:121 扶她
+    const karma_v = EraChara.get(t).cflag.karma;
+    const man = EraChara.get(t).talent.male !== 0; // TALENT:122 男人
+    const futanari = EraChara.get(t).talent.futanari !== 0; // TALENT:121 扶她
 
     era.print(name_of(t)); // PRINTFORM %SAVESTR:TARGET%（行首，待续）
 
@@ -716,12 +721,12 @@ async function town_pt_party(pm0, pm1, pm2, rand_n) {
       // ELSEIF CFLAG:151 > 80 && TALENT:122——恒不达（> 80 蕴含
       // > 50，上一分支已抓走；下文同为「早早就寝」），不镜像，注释留痕
     } else if (karma_v <= 50 || (karma_v <= 80 && man)) {
-      const abl22 = era.get(`abl:${t}:22`) || 0; // 百合气质
+      const abl22 = EraChara.get(t).abl.lesbian_temper; // 百合气质
       if (abl22 > 1 || futanari || man) {
         // レズっ気・ふたなり・オトコの場合娼婦購入
         // 行首名 + 到花街上花天酒地…同一显示行拼接（PRINT 不换行 ×2）
         let line = '到花街上花天酒地，向';
-        if (era.get(`talent:${t}:142`) || 0) {
+        if (EraChara.get(t).talent.lolicon) {
           line += '向幼齿的'; // ロリコン
         }
         if (rand_n(5) === 0) {
@@ -738,7 +743,7 @@ async function town_pt_party(pm0, pm1, pm2, rand_n) {
           autotrain_mod.com0_auto(); // CALL com0_auto
         }
         await source_check_auto();
-      } else if (era.get(`talent:${t}:143`) || 0) {
+      } else if (EraChara.get(t).talent.shotacon) {
         // ショタコンの場合少年風俗へ
         era.print(name_of(t) + '到以和少年做嘿嘿嘿的事为卖点的店里玩乐去了……');
         await before_autotrain();

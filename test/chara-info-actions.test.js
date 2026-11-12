@@ -73,6 +73,10 @@ test('IS_ABLE_TO_CLOTH：仅状态 0 且有体力', () => {
 test('CHARA_INFO_RESTORE_STATE：迎击中先离队，其余直接清状态为 0', () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 1);
+  // 魔王 0 真加入（真机上 resetData 建）：PARTY_DEL 的仲間 A/B 槽位为 0 时
+  // 落在这上面，开发套件的具名访问器要求角色已在场
+  fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
+  fixture.era.addCharacter(0);
   const { chara_info_restore_state } = fixture.load_module(
     'system/chara/chara-info-actions',
   );

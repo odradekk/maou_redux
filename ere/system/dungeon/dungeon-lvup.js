@@ -26,13 +26,13 @@
 'use strict';
 
 const era = require('#/era-electron');
+const EraChara = require('#/era-utils/era-chara');
 const era_flag = require('#/era-utils/era-flag');
-const { chara } = require('#/facade/chara');
 const { default_rand } = require('#/utils/numeric');
 
 /** 名字承载（#5 决议；savestr 通道不存在，dungeon-trap.js 同款） */
 function name_of(cid) {
-  return era.get(`callname:${cid}:-1`) ?? '';
+  return EraChara.get(cid).name ?? '';
 }
 
 /**
@@ -48,55 +48,55 @@ function name_of(cid) {
  */
 function st_up(cid, rand = default_rand) {
   // 等级与攻防各 +1（CFLAG:9 / :13 / :14，后两者走门面）
-  const lv = (era.get(`cflag:${cid}:9`) || 0) + 1; // CFLAG:9（读点裸寻址）
-  chara(cid).chara.等级 = lv; // CFLAG:9 写点走门面（chara 域属主）
-  chara(cid).chara.基础攻击 += 1; // CFLAG:13
-  chara(cid).chara.基础防御 += 1; // CFLAG:14
+  const lv = EraChara.get(cid).cflag.level + 1; // CFLAG:9（读点裸寻址）
+  EraChara.get(cid).cflag.level = lv; // CFLAG:9 写点走门面（chara 域属主）
+  EraChara.get(cid).cflag.base_attack += 1; // CFLAG:13
+  EraChara.get(cid).cflag.base_defense += 1; // CFLAG:14
 
   // ランダムでさらに強く：RAND:2 → 0 攻 +1 / 1 防 +1
   const r = rand(2);
   if (r === 0) {
-    chara(cid).chara.基础攻击 += 1;
+    EraChara.get(cid).cflag.base_attack += 1;
   } else if (r === 1) {
-    chara(cid).chara.基础防御 += 1;
+    EraChara.get(cid).cflag.base_defense += 1;
   }
 
   // 百日之后补强（各 RAND:3，可叠 0-2 点）
   if (era_flag.day_count >= 100) {
-    chara(cid).chara.基础攻击 += rand(3);
-    chara(cid).chara.基础防御 += rand(3);
+    EraChara.get(cid).cflag.base_attack += rand(3);
+    EraChara.get(cid).cflag.base_defense += rand(3);
   }
   // 战术（TALENT:240）
-  if ((era.get(`talent:${cid}:240`) || 0) === 1) {
-    chara(cid).chara.基础攻击 += rand(3);
-    chara(cid).chara.基础防御 += rand(3);
+  if (EraChara.get(cid).talent.tactics === 1) {
+    EraChara.get(cid).cflag.base_attack += rand(3);
+    EraChara.get(cid).cflag.base_defense += rand(3);
   }
   // 肌肉型（TALENT:248）
-  if ((era.get(`talent:${cid}:248`) || 0) === 1) {
-    chara(cid).chara.基础攻击 += rand(2);
-    chara(cid).chara.基础防御 += rand(2);
+  if (EraChara.get(cid).talent.muscular === 1) {
+    EraChara.get(cid).cflag.base_attack += rand(2);
+    EraChara.get(cid).cflag.base_defense += rand(2);
   }
   // 竜族戦闘補正（TALENT:314 == 5）
-  if ((era.get(`talent:${cid}:314`) || 0) === 5) {
-    chara(cid).chara.基础攻击 += rand(2);
-    chara(cid).chara.基础防御 += rand(2);
+  if (EraChara.get(cid).talent.race === 5) {
+    EraChara.get(cid).cflag.base_attack += rand(2);
+    EraChara.get(cid).cflag.base_defense += rand(2);
   }
   // 矮人族防御補正（TALENT:314 == 11）
-  if ((era.get(`talent:${cid}:314`) || 0) === 11) {
-    chara(cid).chara.基础防御 += rand(2);
+  if (EraChara.get(cid).talent.race === 11) {
+    EraChara.get(cid).cflag.base_defense += rand(2);
   }
   // 史莱姆防御補正（TALENT:261）
-  if ((era.get(`talent:${cid}:261`) || 0) === 1) {
-    chara(cid).chara.基础防御 += rand(2);
+  if (EraChara.get(cid).talent.slime_body === 1) {
+    EraChara.get(cid).cflag.base_defense += rand(2);
   }
   // 触手攻撃補正（TALENT:262）
-  if ((era.get(`talent:${cid}:262`) || 0) === 1) {
-    chara(cid).chara.基础攻击 += rand(2);
+  if (EraChara.get(cid).talent.tentacle_body === 1) {
+    EraChara.get(cid).cflag.base_attack += rand(2);
   }
 
   // 体力/气力上限各 +10
-  era.add(`maxbase:${cid}:0`, 10);
-  era.add(`maxbase:${cid}:1`, 10);
+  EraChara.get(cid).maxbase.stamina += 10;
+  EraChara.get(cid).maxbase.willpower += 10;
   return 0;
 }
 
@@ -117,7 +117,7 @@ function st_up(cid, rand = default_rand) {
  */
 function lvup(cid, rand = default_rand) {
   // LOCAL:0 = CFLAG:9 * 10 + 10（经验曲线基数）
-  let local0 = (era.get(`cflag:${cid}:9`) || 0) * 10 + 10;
+  let local0 = EraChara.get(cid).cflag.level * 10 + 10;
   // LOCAL:2 = 升级计数
   let gained = 0;
 
@@ -128,7 +128,7 @@ function lvup(cid, rand = default_rand) {
     if (cid === 0) {
       // 魔王（注释写 LV * 100 + 10 失真，代码是基数，文件头）
       need = local0;
-    } else if ((era.get(`talent:${cid}:220`) || 0) === 1) {
+    } else if (EraChara.get(cid).talent.elite === 1) {
       // 精英必要经验值 = LV * 20 + 10（勇者的两倍）
       local0 -= 10;
       need = local0 * 2 + 10;
@@ -137,11 +137,11 @@ function lvup(cid, rand = default_rand) {
       need = local0;
     }
 
-    if (chara(cid).dungeon.战斗经验 >= need) {
+    if (EraChara.get(cid).exp.battle_exp >= need) {
       // 扣经验、升级、重算基数、再判
-      chara(cid).dungeon.战斗经验 -= need;
+      EraChara.get(cid).exp.battle_exp -= need;
       st_up(cid, rand);
-      local0 = (era.get(`cflag:${cid}:9`) || 0) * 10 + 10;
+      local0 = EraChara.get(cid).cflag.level * 10 + 10;
       gained += 1;
       continue;
     }
@@ -151,17 +151,17 @@ function lvup(cid, rand = default_rand) {
   // 升级播报（NAME:MASTER 与 SAVESTR:ARG 同为名前，文件头）
   if (gained > 0) {
     const local_s = name_of(cid);
-    era.print(`*${local_s}的等级提升为LV${era.get(`cflag:${cid}:9`) || 0}*`);
+    era.print(`*${local_s}的等级提升为LV${EraChara.get(cid).cflag.level}*`);
   }
   // 初心者（TALENT:291）在战斗中成长到 LV30 → 失去初心者
   if (
-    (era.get(`talent:${cid}:291`) || 0) !== 0 &&
-    (era.get(`cflag:${cid}:9`) || 0) >= 30
+    EraChara.get(cid).talent.beginner !== 0 &&
+    EraChara.get(cid).cflag.level >= 30
   ) {
     const local_s = name_of(cid);
     era.print(`${local_s}在战斗中越发成熟，终于成长成了真正的勇者……`);
     era.print(`${local_s}失去了[初心者]。`);
-    chara(cid).chara.初心者 = 0; // TALENT:291（chara 域门面）
+    EraChara.get(cid).talent.beginner = 0; // TALENT:291（chara 域门面）
   }
 
   return gained;

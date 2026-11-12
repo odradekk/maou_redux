@@ -31,7 +31,8 @@
 'use strict';
 
 const era = require('#/era-electron');
-const { chara } = require('#/facade/chara');
+const EraChara = require('#/era-utils/era-chara');
+const era_flag = require('#/era-utils/era-flag');
 const { weapon_restore } = require('#/system/equip/weapon-restore');
 // 模块对象引用（dungeon-battle.test.js / dungeon-magic.test.js 先例）：
 // duel_attack / speed_plus2 在测试里整体可替换
@@ -51,64 +52,64 @@ const { name_of } = battle2;
  */
 async function death_check4(atker, defer) {
   // 圣灵ナイト死亡判定（PRINTFORML，无等待）
-  if (chara(defer).dungeon.体力 <= 0) {
+  if (EraChara.get(defer).base.stamina <= 0) {
     era.print(`${name_of(defer)}徒劳地奋战着，力竭了。`);
-    chara(defer).invasion.状态 = 0;
+    EraChara.get(defer).cflag.state = 0;
     return 2;
   }
-  if (chara(defer).dungeon.体力 <= 300) {
+  if (EraChara.get(defer).base.stamina <= 300) {
     era.print(`${name_of(defer)}感觉到生命垂危，投降求饶了。`);
-    chara(defer).invasion.状态 = 0;
+    EraChara.get(defer).cflag.state = 0;
     return 2;
   }
-  if (chara(defer).dungeon.气力 <= 0) {
+  if (EraChara.get(defer).base.willpower <= 0) {
     era.print(`${name_of(defer)}失去了战意，丢掉武器投降了。`);
-    chara(defer).invasion.状态 = 0;
+    EraChara.get(defer).cflag.state = 0;
     return 2;
   }
 
   // 魔王側の生き残りを判定（狂王線：退场状态 9）
-  const crazy = (era.get('flag:5') || 0) & 128;
-  if (chara(atker).dungeon.体力 <= 0 && crazy) {
+  const crazy = era_flag.game_settings & 128;
+  if (EraChara.get(atker).base.stamina <= 0 && crazy) {
     era.print(`${name_of(atker)}在圣灵骑士前力竭倒下了。`);
     era.print(`${name_of(defer)}把她抱起来并带回了狂王的城堡。`);
     await era.waitAnyKey();
-    chara(atker).invasion.状态 = 9;
+    EraChara.get(atker).cflag.state = 9;
     return 1;
   }
-  if (chara(atker).dungeon.体力 <= 300 && crazy) {
+  if (EraChara.get(atker).base.stamina <= 300 && crazy) {
     era.print(`${name_of(atker)}感觉到生命垂危，投降求饶了。`);
     era.print(`${name_of(defer)}把她绑起来并带回了狂王的城堡。`);
     await era.waitAnyKey();
-    chara(atker).invasion.状态 = 9;
+    EraChara.get(atker).cflag.state = 9;
     return 1;
   }
-  if (chara(atker).dungeon.气力 <= 0 && crazy) {
+  if (EraChara.get(atker).base.willpower <= 0 && crazy) {
     era.print(`${name_of(atker)}失去了战意，丢掉武器投降了。`);
     era.print(`${name_of(defer)}把她绑起来并带回了狂王的城堡。`);
     await era.waitAnyKey();
-    chara(atker).invasion.状态 = 9;
+    EraChara.get(atker).cflag.state = 9;
     return 1;
   }
 
   // 通常線（退场状态 0；HP≤0 档无第二行）
-  if (chara(atker).dungeon.体力 <= 0) {
+  if (EraChara.get(atker).base.stamina <= 0) {
     era.print(`${name_of(atker)}在圣灵骑士前力竭倒下了。`);
-    chara(atker).invasion.状态 = 0;
+    EraChara.get(atker).cflag.state = 0;
     return 1;
   }
-  if (chara(atker).dungeon.体力 <= 300) {
+  if (EraChara.get(atker).base.stamina <= 300) {
     era.print(`${name_of(atker)}感觉到生命垂危，投降求饶了。`);
     era.print(`${name_of(defer)}怜悯着倒下的她，把她赶到了堡垒外。`);
     await era.waitAnyKey();
-    chara(atker).invasion.状态 = 0;
+    EraChara.get(atker).cflag.state = 0;
     return 1;
   }
-  if (chara(atker).dungeon.气力 <= 0) {
+  if (EraChara.get(atker).base.willpower <= 0) {
     era.print(`${name_of(atker)}失去了战意，丢掉武器投降了。`);
     era.print(`${name_of(defer)}怜悯着倒下的她，把她赶到了堡垒外。`);
     await era.waitAnyKey();
-    chara(atker).invasion.状态 = 0;
+    EraChara.get(atker).cflag.state = 0;
     return 1;
   }
   return 0;
@@ -124,7 +125,7 @@ async function death_check4(atker, defer) {
  *   0 = 未分胜负（元勇者被击退或超时）
  */
 async function arcana_battle(atker, defer, rand, move_ctx = {}) {
-  const settings = era.get('flag:5') || 0;
+  const settings = era_flag.game_settings;
 
   // 開場演出（FLAG:5 位 5 详细战斗显示）
   if ((settings & 32) !== 0) {
@@ -134,16 +135,16 @@ async function arcana_battle(atker, defer, rand, move_ctx = {}) {
   }
 
   // 弾の補充（双方 15 发；dungeon 域字段走门面）
-  chara(atker).dungeon.弹药 = 15;
-  chara(defer).dungeon.弹药 = 15;
+  EraChara.get(atker).cflag.ammunition = 15;
+  EraChara.get(defer).cflag.ammunition = 15;
 
   // 先制（元勇者，TALENT:252）
-  if ((era.get(`talent:${atker}:252`) || 0) === 1) {
+  if (EraChara.get(atker).talent.initiative === 1) {
     await battle2.duel_attack(atker, 2, defer, 3, rand, move_ctx);
   }
 
   // 先制圣灵
-  if ((era.get(`talent:${defer}:252`) || 0) === 1) {
+  if (EraChara.get(defer).talent.initiative === 1) {
     await battle2.duel_attack(defer, 2, atker, 2, rand, move_ctx);
   }
 
@@ -154,7 +155,7 @@ async function arcana_battle(atker, defer, rand, move_ctx = {}) {
       if ((settings & 32) !== 0) {
         era.print(`${name_of(atker)}逃跑了………`);
       }
-      chara(atker).dungeon.气力 -= rand(30);
+      EraChara.get(atker).base.willpower -= rand(30);
       break;
     }
 
@@ -165,7 +166,7 @@ async function arcana_battle(atker, defer, rand, move_ctx = {}) {
       era.print('HP');
       era.print('气力');
       era.print(
-        `攻击${chara(atker).dungeon.攻击力} 防御${chara(atker).dungeon.防御力}`,
+        `攻击${EraChara.get(atker).cflag.attack} 防御${EraChara.get(atker).cflag.defense}`,
       );
       era.print('VS');
       await era.waitAnyKey();
@@ -173,7 +174,7 @@ async function arcana_battle(atker, defer, rand, move_ctx = {}) {
       era.print('HP');
       era.print('气力');
       era.print(
-        `攻击${chara(defer).dungeon.攻击力} 防御${chara(defer).dungeon.防御力}`,
+        `攻击${EraChara.get(defer).cflag.attack} 防御${EraChara.get(defer).cflag.defense}`,
       );
       await era.waitAnyKey();
     }
@@ -233,13 +234,13 @@ async function arcana_battle(atker, defer, rand, move_ctx = {}) {
     }
 
     // 双方回合损耗
-    chara(atker).dungeon.气力 -= rand(20);
-    chara(defer).dungeon.气力 -= rand(20);
+    EraChara.get(atker).base.willpower -= rand(20);
+    EraChara.get(defer).base.willpower -= rand(20);
   }
 
   // 圣灵骑士仍在任（CFLAG:1 == 2）→ 元勇者被击退的叙述
   // （PRINTFORML，无显示开关检查——原样保留）
-  if (chara(defer).invasion.状态 === 2) {
+  if (EraChara.get(defer).cflag.state === 2) {
     era.print(`${name_of(atker)}被圣灵骑士击败了………`);
   }
 
@@ -248,7 +249,7 @@ async function arcana_battle(atker, defer, rand, move_ctx = {}) {
   await weapon_restore(defer);
 
   // 圣灵骑士退场（CFLAG:1 == 0）→ RETURN 2
-  if (chara(defer).invasion.状态 === 0) {
+  if (EraChara.get(defer).cflag.state === 0) {
     return 2;
   }
   return 0;

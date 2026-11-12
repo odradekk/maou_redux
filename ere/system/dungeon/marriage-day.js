@@ -8,14 +8,13 @@
 'use strict';
 
 const era = require('#/era-electron');
+const EraChara = require('#/era-utils/era-chara');
 const { begin, STATE } = require('#/system/flow/game-state');
 const {
   LOVER_NAMES,
   dungeon_town_lover,
   dungeon_town_lover_chara_enter,
 } = require('#/system/dungeon/dungeon-lovers');
-const { chara } = require('#/facade/chara');
-const { game } = require('#/facade/game');
 const { chara_callname } = require('#/utils/callname-utils');
 const { default_rand } = require('#/utils/numeric');
 const era_flag = require('#/era-utils/era-flag');
@@ -30,7 +29,7 @@ const {
 } = require('#/system/dungeon/battle-state');
 
 const name_of = (cid) => chara_callname(cid);
-const marriage_name = (cid) => item_name(chara(cid).chara.结婚对象 || 0);
+const marriage_name = (cid) => item_name(EraChara.get(cid).cflag.spouse || 0);
 const talent_name = (index) => era.get(`talentname:${index}`) ?? '';
 // ITEM[怪物编号] = 当前持有的对应怪物数量（婚后事件的配偶存在判断条件）。
 const monster_stock = (monster_id) => era.get(`item:${monster_id}`) || 0;
@@ -42,34 +41,35 @@ const lover_display_name = (lover_type) => {
 };
 
 // CFLAG[603] = 结婚对象状态（0 普通、1 出轨、2 私通、3 私通妊娠）；
-const marriage_partner_status = (cid) => era.get(`cflag:${cid}:603`) || 0;
+const marriage_partner_status = (cid) => EraChara.get(cid).cflag.spouse_status;
 // CFLAG[609] = 结婚对象采用角色数据的标志；同名“结婚对象名字”槽。
-const marriage_partner_character = (cid) => era.get(`cflag:${cid}:609`) || 0;
+const marriage_partner_character = (cid) => EraChara.get(cid).cflag.spouse_name;
 // JUEL[4]/[5]/[6] = 欲情／恭顺／屈服点数。
-const desire_points = (cid) => era.get(`juel:${cid}:4`) || 0;
-const obedience_points = (cid) => era.get(`juel:${cid}:5`) || 0;
-const submission_points = (cid) => era.get(`juel:${cid}:6`) || 0;
+const desire_points = (cid) => EraChara.get(cid).jewel.obedience;
+const obedience_points = (cid) => EraChara.get(cid).jewel.lust;
+const submission_points = (cid) => EraChara.get(cid).jewel.submission;
 // TALENT[183]/[184] = 有常客／求爱；Talent.yml 的静态表定义。
-const has_regular_customer = (cid) => era.get(`talent:${cid}:183`) || 0;
-const is_courting = (cid) => era.get(`talent:${cid}:184`) || 0;
+const has_regular_customer = (cid) =>
+  EraChara.get(cid).talent.has_regular_guest;
+const is_courting = (cid) => EraChara.get(cid).talent.seeking_love;
 
 // marriage_day
 async function marriage_day(cid, rand = default_rand, restart_turnend = true) {
-  const view = chara(cid);
-  const marriage_type = view.chara.结婚对象; // CFLAG[601] = 结婚对象
-  const unavailable = view.invasion.状态 !== 0 || marriage_type === 0;
+  const marriage_type = EraChara.get(cid).cflag.spouse; // CFLAG[601] = 结婚对象
+  const unavailable =
+    EraChara.get(cid).cflag.state !== 0 || marriage_type === 0;
 
   if (unavailable) {
-    if (view.dungeon.恋人 === 0) {
+    if (EraChara.get(cid).cflag.lover === 0) {
       await dungeon_town_lover_chara_enter(cid, rand);
     }
-    if (view.dungeon.恋人 === 200) {
+    if (EraChara.get(cid).cflag.lover === 200) {
       await dungeon_town_lover(cid, rand);
     }
     return 0;
   }
 
-  view.chara.结婚爱情 += 1; // CFLAG[602]
+  EraChara.get(cid).cflag.spousal_love += 1; // CFLAG[602]
   const monster_id = marriage_type;
   if (marriage_type < 900 && (marriage_partner_character(cid) || 0) === 0) {
     if (monster_stock(monster_id) <= 0) return 0;
@@ -83,7 +83,7 @@ async function marriage_day(cid, rand = default_rand, restart_turnend = true) {
   let monster_kind = 0;
   let spouse_name;
   if (marriage_type === 902) {
-    lover_type = view.dungeon.恋人;
+    lover_type = EraChara.get(cid).cflag.lover;
     spouse_name = lover_display_name(lover_type);
   } else if ((marriage_partner_character(cid) || 0) > 0) {
     marriage_chara = search_family(cid, 'MARRIAGE');
@@ -102,20 +102,20 @@ async function marriage_day(cid, rand = default_rand, restart_turnend = true) {
   }
   await era.printAndWait(`*${name_of(cid)}和${spouse_name}的结婚生活*`);
 
-  if (chara(cid).chara.妊娠) {
+  if (EraChara.get(cid).talent.pregnant) {
     await era.printAndWait('夫妇俩人期待着孩子的出生。');
     return 0;
   }
-  if (chara(cid).chara.育儿中) {
+  if (EraChara.get(cid).talent.nursing_child) {
     await era.printAndWait('夫妇俩人期待着孩子的长大。');
     return 0;
   }
 
   const y = rand(5) + 1;
   let final_y = y;
-  view.chara.结婚对象 = marriage_type;
-  view.dungeon.怪物膣内射精 = 0; // CFLAG[107]
-  era.set(`cflag:${cid}:112`, 0); // CFLAG[112] = 异种妊娠对象
+  EraChara.get(cid).cflag.spouse = marriage_type;
+  EraChara.get(cid).cflag.monster_vaginal_ejaculation = 0; // CFLAG[107]
+  EraChara.get(cid).cflag.fetus_monster_index = 0; // CFLAG[112] = 异种妊娠对象
 
   if (marriage_type === 900) {
     final_y = await marriage_day_dog(cid, y, rand);
@@ -147,24 +147,24 @@ async function marriage_day(cid, rand = default_rand, restart_turnend = true) {
   }
 
   if (
-    (chara(cid).chara.处女 || 0) === 1 &&
-    (chara(cid).dungeon.私处经验 || 0) > 0 &&
-    (chara(cid).chara.私处封印 || 0) === 0 &&
-    (chara(cid).chara.特别服装类型 || 0) !== 79 &&
+    (EraChara.get(cid).talent.virgin || 0) === 1 &&
+    (EraChara.get(cid).exp.vagina_exp || 0) > 0 &&
+    (EraChara.get(cid).talent.vagina_seal || 0) === 0 &&
+    (EraChara.get(cid).cflag.special_costume_type || 0) !== 79 &&
     ![2, 3, 4].includes(monster_kind)
   ) {
     await era.printAndWait('【处女丧失】');
-    view.chara.处女 = 0; // TALENT[0]（跨域写，属主 chara）
+    EraChara.get(cid).talent.virgin = 0; // TALENT[0]（跨域写，属主 chara）
   }
 
   if (
-    view.dungeon.怪物膣内射精 !== 0 &&
+    EraChara.get(cid).cflag.monster_vaginal_ejaculation !== 0 &&
     ![900, 901, 902].includes(marriage_type)
   ) {
-    era.set(`cflag:${cid}:112`, monster_id);
+    EraChara.get(cid).cflag.fetus_monster_index = monster_id;
   }
 
-  if ((chara(cid).chara.母乳体质 || 0) === 1) {
+  if ((EraChara.get(cid).talent.lactation_body || 0) === 1) {
     await era.printAndWait(
       `${name_of(cid)}多余的奶水被卖出了获得${final_y * 100}pts`,
     );
@@ -184,59 +184,60 @@ async function marriage_day_dog(cid, y = 1, rand = default_rand) {
 
   if (
     cid === 0 &&
-    chara(cid).event.牝犬 == 0 &&
-    (chara(cid).train.兽奸中毒 <= 1 || chara(cid).chara.结婚爱情 < 50)
+    EraChara.get(cid).talent.bitch == 0 &&
+    (EraChara.get(cid).abl.bestiality_addiction <= 1 ||
+      EraChara.get(cid).cflag.spousal_love < 50)
   ) {
     if (
-      chara(cid).chara.私处封印 == 1 ||
-      (chara(cid).chara.特别服装类型 == 79 &&
-        chara(cid).train.着衣状态 & 64 &&
-        game.system.着衣系统) ||
-      chara(cid).chara.男人 == 1
+      EraChara.get(cid).talent.vagina_seal == 1 ||
+      (EraChara.get(cid).cflag.special_costume_type == 79 &&
+        EraChara.get(cid).cflag.clothing_state & 64 &&
+        era_flag.clothing_system) ||
+      EraChara.get(cid).talent.male == 1
     ) {
       await era.printAndWait(
         `${name_of(cid)}抱着野狗，肛门完全接收了野狗的阴茎。`,
       );
       era.print(`肛门经验+${y}`);
       // EXP[1] + = y（变量语义：EXP 族，(cid)[1] +）
-      era.add(`exp:${cid}:1`, y);
+      EraChara.get(cid).exp.anal_exp += y;
       await era.printAndWait(`兽奸经验+${y}`);
       // EXP[56] + = y（变量语义：EXP 族，(cid)[56] +）
-      era.add(`exp:${cid}:56`, y);
+      EraChara.get(cid).exp.bestiality_exp += y;
     } else {
       await era.printAndWait(`${name_of(cid)}抱着野狗，完全接收了野狗的阴茎。`);
       era.print(`私处经验+${y}`);
       // EXP[0] + = y（变量语义：EXP 族，(cid)[0] +）
-      era.add(`exp:${cid}:0`, y);
+      EraChara.get(cid).exp.vagina_exp += y;
       await era.printAndWait(`兽奸经验+${y}`);
       // EXP[56] + = y（变量语义：EXP 族，(cid)[56] +）
-      era.add(`exp:${cid}:56`, y);
+      EraChara.get(cid).exp.bestiality_exp += y;
       // CFLAG[106] + = y（变量语义：CFLAG 族，(cid)[106] +）
-      era.add(`cflag:${cid}:106`, y);
+      EraChara.get(cid).cflag.dog_vaginal_ejaculation += y;
     }
-  } else if (chara(cid).event.牝犬 == 1) {
+  } else if (EraChara.get(cid).talent.bitch == 1) {
     let description = name_of(cid);
 
-    if (chara(cid).chara.结婚爱情 > 40) {
+    if (EraChara.get(cid).cflag.spousal_love > 40) {
       description += '满心欢喜地';
     }
 
-    if (chara(cid).chara.种族 == 2) {
+    if (EraChara.get(cid).talent.race == 2) {
       description += '摇着尾巴';
     } else {
       description += '摇着屁股';
     }
 
-    if (chara(cid).system.露出癖 >= 3) {
+    if (EraChara.get(cid).abl.exhibitionism >= 3) {
       description += '在公众场所';
     }
 
     if (
-      chara(cid).chara.私处封印 == 1 ||
-      (chara(cid).chara.特别服装类型 == 79 &&
-        chara(cid).train.着衣状态 & 64 &&
-        game.system.着衣系统) ||
-      chara(cid).chara.男人 == 1
+      EraChara.get(cid).talent.vagina_seal == 1 ||
+      (EraChara.get(cid).cflag.special_costume_type == 79 &&
+        EraChara.get(cid).cflag.clothing_state & 64 &&
+        era_flag.clothing_system) ||
+      EraChara.get(cid).talent.male == 1
     ) {
       description += '用肛门';
     }
@@ -252,160 +253,186 @@ async function marriage_day_dog(cid, y = 1, rand = default_rand) {
     }
 
     if (
-      chara(cid).chara.私处封印 == 1 ||
-      (chara(cid).chara.特别服装类型 == 79 &&
-        chara(cid).train.着衣状态 & 64 &&
-        game.system.着衣系统) ||
-      chara(cid).chara.男人 == 1
+      EraChara.get(cid).talent.vagina_seal == 1 ||
+      (EraChara.get(cid).cflag.special_costume_type == 79 &&
+        EraChara.get(cid).cflag.clothing_state & 64 &&
+        era_flag.clothing_system) ||
+      EraChara.get(cid).talent.male == 1
     ) {
       era.print(`肛门经验+${y}`);
       // EXP[1] + = y（变量语义：EXP 族，(cid)[1] +）
-      era.add(`exp:${cid}:1`, y);
+      EraChara.get(cid).exp.anal_exp += y;
       await era.printAndWait(`兽奸经验+${y}`);
       // EXP[56] + = y（变量语义：EXP 族，(cid)[56] +）
-      era.add(`exp:${cid}:56`, y);
+      EraChara.get(cid).exp.bestiality_exp += y;
 
-      era.print(`肛门点数+${chara(cid).chara.结婚爱情 * 10 * y + 10}`);
+      era.print(
+        `肛门点数+${EraChara.get(cid).cflag.spousal_love * 10 * y + 10}`,
+      );
       // JUEL:cid[2] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[2] +）
-      era.add(`juel:${cid}:2`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+      EraChara.get(cid).jewel.anus +=
+        EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
       await era.printAndWait(`绝顶经验+${y}`);
       // EXP:cid[2] + = y（变量语义：EXP 族，cid[2] +）
-      era.add(`exp:${cid}:2`, y);
+      EraChara.get(cid).exp.orgasm_exp += y;
     } else {
       era.print(`私处经验+${y}`);
       // EXP[0] + = y（变量语义：EXP 族，(cid)[0] +）
-      era.add(`exp:${cid}:0`, y);
+      EraChara.get(cid).exp.vagina_exp += y;
       await era.printAndWait(`兽奸经验+${y}`);
       // EXP[56] + = y（变量语义：EXP 族，(cid)[56] +）
-      era.add(`exp:${cid}:56`, y);
+      EraChara.get(cid).exp.bestiality_exp += y;
 
-      era.print(`私处点数+${chara(cid).chara.结婚爱情 * 10 * y + 10}`);
+      era.print(
+        `私处点数+${EraChara.get(cid).cflag.spousal_love * 10 * y + 10}`,
+      );
       // JUEL:cid[1] + = (CFLAG:cid[602] * 10 * y + 10)（变量语义：JUEL 族，cid[1] +）
-      era.add(`juel:${cid}:1`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+      EraChara.get(cid).jewel.vagina +=
+        EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
       await era.printAndWait(`绝顶经验+${y}`);
       // EXP:cid[2] + = y（变量语义：EXP 族，cid[2] +）
-      era.add(`exp:${cid}:2`, y);
+      EraChara.get(cid).exp.orgasm_exp += y;
 
       // CFLAG[106] + = y（变量语义：CFLAG 族，(cid)[106] +）
-      era.add(`cflag:${cid}:106`, y);
+      EraChara.get(cid).cflag.dog_vaginal_ejaculation += y;
     }
-  } else if (chara(cid).train.兽奸中毒 >= 1 || chara(cid).chara.结婚爱情 > 40) {
+  } else if (
+    EraChara.get(cid).abl.bestiality_addiction >= 1 ||
+    EraChara.get(cid).cflag.spousal_love > 40
+  ) {
     if (
-      chara(cid).chara.私处封印 == 1 ||
-      (chara(cid).chara.特别服装类型 == 79 &&
-        chara(cid).train.着衣状态 & 64 &&
-        game.system.着衣系统) ||
-      chara(cid).chara.男人 == 1
+      EraChara.get(cid).talent.vagina_seal == 1 ||
+      (EraChara.get(cid).cflag.special_costume_type == 79 &&
+        EraChara.get(cid).cflag.clothing_state & 64 &&
+        era_flag.clothing_system) ||
+      EraChara.get(cid).talent.male == 1
     ) {
       await era.printAndWait(
         `${name_of(cid)}在用肛门与狗交配的时候，感觉到了爱意。`,
       );
       era.print(`肛门经验+${y}`);
       // EXP[1] + = y（变量语义：EXP 族，(cid)[1] +）
-      era.add(`exp:${cid}:1`, y);
+      EraChara.get(cid).exp.anal_exp += y;
       await era.printAndWait(`兽奸经验+${y}`);
       // EXP[56] + = y（变量语义：EXP 族，(cid)[56] +）
-      era.add(`exp:${cid}:56`, y);
+      EraChara.get(cid).exp.bestiality_exp += y;
 
-      era.print(`肛门点数+${chara(cid).chara.结婚爱情 * 8 * y + 8}`);
+      era.print(`肛门点数+${EraChara.get(cid).cflag.spousal_love * 8 * y + 8}`);
       // JUEL:cid[2] + = (CFLAG:cid[602] * 8 * y + 8)（变量语义：JUEL 族，cid[2] +）
-      era.add(`juel:${cid}:2`, chara(cid).chara.结婚爱情 * 8 * y + 8);
+      EraChara.get(cid).jewel.anus +=
+        EraChara.get(cid).cflag.spousal_love * 8 * y + 8;
       await era.printAndWait(`绝顶经验+${y}`);
       // EXP:cid[2] + = y（变量语义：EXP 族，cid[2] +）
-      era.add(`exp:${cid}:2`, y);
+      EraChara.get(cid).exp.orgasm_exp += y;
     } else {
       await era.printAndWait(`${name_of(cid)}在与狗交配的时候，感觉到了爱意。`);
       era.print(`私处经验+${y}`);
       // EXP[0] + = y（变量语义：EXP 族，(cid)[0] +）
-      era.add(`exp:${cid}:0`, y);
+      EraChara.get(cid).exp.vagina_exp += y;
       await era.printAndWait(`兽奸经验+${y}`);
       // EXP[56] + = y（变量语义：EXP 族，(cid)[56] +）
-      era.add(`exp:${cid}:56`, y);
+      EraChara.get(cid).exp.bestiality_exp += y;
 
-      era.print(`私处点数+${chara(cid).chara.结婚爱情 * 8 * y + 8}`);
+      era.print(`私处点数+${EraChara.get(cid).cflag.spousal_love * 8 * y + 8}`);
       // JUEL:cid[1] + = (CFLAG:cid[602] * 8 * y + 8)（变量语义：JUEL 族，cid[1] +）
-      era.add(`juel:${cid}:1`, chara(cid).chara.结婚爱情 * 8 * y + 8);
+      EraChara.get(cid).jewel.vagina +=
+        EraChara.get(cid).cflag.spousal_love * 8 * y + 8;
       await era.printAndWait(`绝顶经验+${y}`);
       // EXP:cid[2] + = y（变量语义：EXP 族，cid[2] +）
-      era.add(`exp:${cid}:2`, y);
+      EraChara.get(cid).exp.orgasm_exp += y;
 
       // CFLAG[106] + = y（变量语义：CFLAG 族，(cid)[106] +）
-      era.add(`cflag:${cid}:106`, y);
+      EraChara.get(cid).cflag.dog_vaginal_ejaculation += y;
     }
-  } else if (chara(cid).chara.结婚爱情 > 20) {
-    if (chara(cid).event.反抗心 == 1) {
+  } else if (EraChara.get(cid).cflag.spousal_love > 20) {
+    if (EraChara.get(cid).talent.rebellious == 1) {
       await era.printAndWait(`${name_of(cid)}终于理解自己的状况了……`);
 
-      await era.printAndWait(`屈服点数+${chara(cid).chara.结婚爱情 * y + 10}`);
+      await era.printAndWait(
+        `屈服点数+${EraChara.get(cid).cflag.spousal_love * y + 10}`,
+      );
       // JUEL:cid[6] + = (CFLAG:cid[602] * y + 10)（变量语义：JUEL 族，cid[6] +）
-      era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * y + 10);
-    } else if (chara(cid).chara.刚强 == 1) {
+      EraChara.get(cid).jewel.submission +=
+        EraChara.get(cid).cflag.spousal_love * y + 10;
+    } else if (EraChara.get(cid).talent.firm == 1) {
       await era.printAndWait(`${name_of(cid)}和野狗一起玩耍，关系加深了……`);
 
-      await era.printAndWait(`屈服点数+${chara(cid).chara.结婚爱情 * y + 10}`);
+      await era.printAndWait(
+        `屈服点数+${EraChara.get(cid).cflag.spousal_love * y + 10}`,
+      );
       // JUEL:cid[6] + = (CFLAG:cid[602] * y + 10)（变量语义：JUEL 族，cid[6] +）
-      era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * y + 10);
+      EraChara.get(cid).jewel.submission +=
+        EraChara.get(cid).cflag.spousal_love * y + 10;
     } else if (
-      chara(cid).chara.坦率 == 1 ||
-      chara(cid).chara.喜欢的东西 == 12
+      EraChara.get(cid).talent.frank == 1 ||
+      EraChara.get(cid).talent.favorite_thing == 12
     ) {
       await era.printAndWait(`${name_of(cid)}与野狗接吻的样子被目击了。`);
 
-      era.print(`屈服点数+${chara(cid).chara.结婚爱情 * 10 * y + 10}`);
+      era.print(
+        `屈服点数+${EraChara.get(cid).cflag.spousal_love * 10 * y + 10}`,
+      );
       // JUEL:cid[6] + = (CFLAG:cid[602] * 10 * y + 10)（变量语义：JUEL 族，cid[6] +）
-      era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+      EraChara.get(cid).jewel.submission +=
+        EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
       await era.printAndWait(
-        `欲情点数+${chara(cid).chara.结婚爱情 * 10 * y + 10}`,
+        `欲情点数+${EraChara.get(cid).cflag.spousal_love * 10 * y + 10}`,
       );
       // JUEL:cid[5] + = (CFLAG:cid[602] * 10 * y + 10)（变量语义：JUEL 族，cid[5] +）
-      era.add(`juel:${cid}:5`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+      EraChara.get(cid).jewel.lust +=
+        EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
     } else {
       await era.printAndWait(`${name_of(cid)}用刷子为野狗刷毛……`);
 
       await era.printAndWait(
-        `恭顺点数+${chara(cid).chara.结婚爱情 * 5 * y + 5}`,
+        `恭顺点数+${EraChara.get(cid).cflag.spousal_love * 5 * y + 5}`,
       );
       // JUEL:cid[4] + = (CFLAG:cid[602] * 5 * y + 5)（变量语义：JUEL 族，cid[4] +）
-      era.add(`juel:${cid}:4`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.obedience +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
     }
   } else {
-    if (chara(cid).event.反抗心 == 1) {
+    if (EraChara.get(cid).talent.rebellious == 1) {
       await era.printAndWait(`${name_of(cid)}用手推开靠过来的野狗。`);
 
       await era.printAndWait(
-        `屈服点数+${chara(cid).chara.结婚爱情 * 2 * y + 2}`,
+        `屈服点数+${EraChara.get(cid).cflag.spousal_love * 2 * y + 2}`,
       );
       // JUEL:cid[6] + = (CFLAG:cid[602] * 2 * y + 2)（变量语义：JUEL 族，cid[6] +）
-      era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * 2 * y + 2);
-    } else if (chara(cid).chara.刚强 == 1) {
+      EraChara.get(cid).jewel.submission +=
+        EraChara.get(cid).cflag.spousal_love * 2 * y + 2;
+    } else if (EraChara.get(cid).talent.firm == 1) {
       await era.printAndWait(`${name_of(cid)}有空就去照看野狗。`);
 
       await era.printAndWait(
-        `恭顺点数+${chara(cid).chara.结婚爱情 * 2 * y + 2}`,
+        `恭顺点数+${EraChara.get(cid).cflag.spousal_love * 2 * y + 2}`,
       );
       // JUEL:cid[4] + = (CFLAG:cid[602] * 2 * y + 2)（变量语义：JUEL 族，cid[4] +）
-      era.add(`juel:${cid}:4`, chara(cid).chara.结婚爱情 * 2 * y + 2);
+      EraChara.get(cid).jewel.obedience +=
+        EraChara.get(cid).cflag.spousal_love * 2 * y + 2;
     } else if (
-      chara(cid).chara.坦率 == 1 ||
-      chara(cid).chara.喜欢的东西 == 12
+      EraChara.get(cid).talent.frank == 1 ||
+      EraChara.get(cid).talent.favorite_thing == 12
     ) {
       await era.printAndWait(`${name_of(cid)}有空就去和野狗玩耍。`);
 
       await era.printAndWait(
-        `欲情点数+${chara(cid).chara.结婚爱情 * 2 * y + 2}`,
+        `欲情点数+${EraChara.get(cid).cflag.spousal_love * 2 * y + 2}`,
       );
       // JUEL:cid[5] + = (CFLAG:cid[602] * 2 * y + 2)（变量语义：JUEL 族，cid[5] +）
-      era.add(`juel:${cid}:5`, chara(cid).chara.结婚爱情 * 2 * y + 2);
+      EraChara.get(cid).jewel.lust +=
+        EraChara.get(cid).cflag.spousal_love * 2 * y + 2;
     } else {
       await era.printAndWait(
         `从不正眼看野狗，${name_of(cid)}陷入了深深的绝望中……`,
       );
 
       await era.printAndWait(
-        `恐怖点数+${chara(cid).chara.结婚爱情 * 2 * y + 2}`,
+        `恐怖点数+${EraChara.get(cid).cflag.spousal_love * 2 * y + 2}`,
       );
       // JUEL:cid[10] + = (CFLAG:cid[602] * 2 * y + 2)（变量语义：JUEL 族，cid[10] +）
-      era.add(`juel:${cid}:10`, chara(cid).chara.结婚爱情 * 2 * y + 2);
+      EraChara.get(cid).jewel.fear +=
+        EraChara.get(cid).cflag.spousal_love * 2 * y + 2;
     }
   }
 
@@ -415,13 +442,13 @@ async function marriage_day_dog(cid, y = 1, rand = default_rand) {
 // marriage_day_you,cid
 //
 async function marriage_day_you(cid, y = 1) {
-  if (chara(cid).invasion.状态 != 0 || chara(0).invasion.状态 != 0) {
+  if (EraChara.get(cid).cflag.state != 0 || EraChara.get(0).cflag.state != 0) {
     return y;
   }
 
   era.print(`${name_of(cid)}与${name_of(0)}一起生活着。`);
 
-  if (chara(cid).stronghold.爱慕 == 1) {
+  if (EraChara.get(cid).talent.in_love == 1) {
     await era.printAndWait(
       `${name_of(cid)}常常一言不发，柔情似水地凝望着你。一副自豪的样子在你身旁侍奉着。`,
     );
@@ -430,171 +457,186 @@ async function marriage_day_you(cid, y = 1) {
       `为成为一个好妃子努力修行着。自动接受着各种羞耻的调教。`,
     );
 
-    era.print(`屈服,欲情,恭顺,耻情点数+${chara(cid).system.顺从 * y * 10}`);
+    era.print(
+      `屈服,欲情,恭顺,耻情点数+${EraChara.get(cid).abl.obedience * y * 10}`,
+    );
     // JUEL:cid[6] + = (ABL:cid[10] * y * 10)（变量语义：JUEL 族，cid[6] +）
-    era.add(`juel:${cid}:6`, chara(cid).system.顺从 * y * 10);
+    EraChara.get(cid).jewel.submission +=
+      EraChara.get(cid).abl.obedience * y * 10;
     // JUEL:cid[5] + = (ABL:cid[10] * y * 10)（变量语义：JUEL 族，cid[5] +）
-    era.add(`juel:${cid}:5`, chara(cid).system.顺从 * y * 10);
+    EraChara.get(cid).jewel.lust += EraChara.get(cid).abl.obedience * y * 10;
     // JUEL:cid[4] + = (ABL:cid[10] * y * 10)（变量语义：JUEL 族，cid[4] +）
-    era.add(`juel:${cid}:4`, chara(cid).system.顺从 * y * 10);
+    EraChara.get(cid).jewel.obedience +=
+      EraChara.get(cid).abl.obedience * y * 10;
     // JUEL:cid[8] + = (ABL:cid[10] * y * 10)（变量语义：JUEL 族，cid[8] +）
-    era.add(`juel:${cid}:8`, chara(cid).system.顺从 * y * 10);
-    if (chara(cid).chara.男人) {
+    EraChara.get(cid).jewel.shame += EraChara.get(cid).abl.obedience * y * 10;
+    if (EraChara.get(cid).talent.male) {
       era.print(
-        `${clitoris_word(cid)},乳房,肛门点数+${chara(cid).system.顺从 * y * 10}`,
+        `${clitoris_word(cid)},乳房,肛门点数+${EraChara.get(cid).abl.obedience * y * 10}`,
       );
       // JUEL:cid[0] + = (ABL:cid[10] * y * 10)（变量语义：JUEL 族，cid[0] +）
-      era.add(`juel:${cid}:0`, chara(cid).system.顺从 * y * 10);
+      EraChara.get(cid).jewel.clitoris +=
+        EraChara.get(cid).abl.obedience * y * 10;
       // JUEL:cid[14] + = (ABL:cid[10] * y * 10)（变量语义：JUEL 族，cid[14] +）
-      era.add(`juel:${cid}:14`, chara(cid).system.顺从 * y * 10);
+      EraChara.get(cid).jewel.breast +=
+        EraChara.get(cid).abl.obedience * y * 10;
       // JUEL:cid[2] + = (ABL:cid[10] * y * 10)（变量语义：JUEL 族，cid[2] +）
-      era.add(`juel:${cid}:2`, chara(cid).system.顺从 * y * 10);
+      EraChara.get(cid).jewel.anus += EraChara.get(cid).abl.obedience * y * 10;
     } else {
       era.print(
-        `${clitoris_word(cid)},乳房,肛门,私处点数+${chara(cid).system.顺从 * y * 10}`,
+        `${clitoris_word(cid)},乳房,肛门,私处点数+${EraChara.get(cid).abl.obedience * y * 10}`,
       );
       // JUEL:cid[0] + = (ABL:cid[10] * y * 10)（变量语义：JUEL 族，cid[0] +）
-      era.add(`juel:${cid}:0`, chara(cid).system.顺从 * y * 10);
+      EraChara.get(cid).jewel.clitoris +=
+        EraChara.get(cid).abl.obedience * y * 10;
       // JUEL:cid[14] + = (ABL:cid[10] * y * 10)（变量语义：JUEL 族，cid[14] +）
-      era.add(`juel:${cid}:14`, chara(cid).system.顺从 * y * 10);
+      EraChara.get(cid).jewel.breast +=
+        EraChara.get(cid).abl.obedience * y * 10;
       // JUEL:cid[1] + = (ABL:cid[10] * y * 10)（变量语义：JUEL 族，cid[1] +）
-      era.add(`juel:${cid}:1`, chara(cid).system.顺从 * y * 10);
+      EraChara.get(cid).jewel.vagina +=
+        EraChara.get(cid).abl.obedience * y * 10;
       // JUEL:cid[2] + = (ABL:cid[10] * y * 10)（变量语义：JUEL 族，cid[2] +）
-      era.add(`juel:${cid}:2`, chara(cid).system.顺从 * y * 10);
+      EraChara.get(cid).jewel.anus += EraChara.get(cid).abl.obedience * y * 10;
     }
-    era.print(`话术+${chara(cid).system.顺从 * y * 10}`);
+    era.print(`话术+${EraChara.get(cid).abl.obedience * y * 10}`);
     // JUEL:cid[7] + = (ABL:cid[10] * y * 10)（变量语义：JUEL 族，cid[7] +）
-    era.add(`juel:${cid}:7`, chara(cid).system.顺从 * y * 10);
-    era.print(`苦痛点数+${chara(cid).system.顺从 * y * 5 + 10}`);
+    EraChara.get(cid).jewel.learning +=
+      EraChara.get(cid).abl.obedience * y * 10;
+    era.print(`苦痛点数+${EraChara.get(cid).abl.obedience * y * 5 + 10}`);
     // JUEL:cid[9] + = (ABL:cid[10] * y * 5 + 10 )（变量语义：JUEL 族，cid[9] +）
-    era.add(`juel:${cid}:9`, chara(cid).system.顺从 * y * 5 + 10);
-    if (chara(cid).chara.男人) {
+    EraChara.get(cid).jewel.pain +=
+      EraChara.get(cid).abl.obedience * y * 5 + 10;
+    if (EraChara.get(cid).talent.male) {
       era.print(`肛门,口交经验+${y}`);
       // EXP:cid[1] + = y（变量语义：EXP 族，cid[1] +）
-      era.add(`exp:${cid}:1`, y);
+      EraChara.get(cid).exp.anal_exp += y;
       // EXP:cid[22] + = y（变量语义：EXP 族，cid[22] +）
-      era.add(`exp:${cid}:22`, y);
+      EraChara.get(cid).exp.oral_exp += y;
     } else {
       era.print(`私处,肛门,口交经验+${y}`);
       // EXP:cid[0] + = y（变量语义：EXP 族，cid[0] +）
-      era.add(`exp:${cid}:0`, y);
+      EraChara.get(cid).exp.vagina_exp += y;
       // EXP:cid[1] + = y（变量语义：EXP 族，cid[1] +）
-      era.add(`exp:${cid}:1`, y);
+      EraChara.get(cid).exp.anal_exp += y;
       // EXP:cid[22] + = y（变量语义：EXP 族，cid[22] +）
-      era.add(`exp:${cid}:22`, y);
+      EraChara.get(cid).exp.oral_exp += y;
     }
     era.print(`性交经验,精液经验+${y}`);
     // EXP:cid[5] + = y（变量语义：EXP 族，cid[5] +）
-    era.add(`exp:${cid}:5`, y);
+    EraChara.get(cid).exp.intercourse_exp += y;
     // EXP:cid[20] + = y（变量语义：EXP 族，cid[20] +）
-    era.add(`exp:${cid}:20`, y);
+    EraChara.get(cid).exp.semen_exp += y;
     era.print(`调教会话经验+${y}`);
     // EXP:cid[73] + = y（变量语义：EXP 族，cid[73] +）
-    era.add(`exp:${cid}:73`, y);
+    EraChara.get(cid).exp.training_talk_exp += y;
     era.print(`自慰经验,调教自慰经验+${y}`);
     // EXP:cid[10] + = y（变量语义：EXP 族，cid[10] +）
-    era.add(`exp:${cid}:10`, y);
+    EraChara.get(cid).exp.masturbation_exp += y;
     // EXP:cid[11] + = y（变量语义：EXP 族，cid[11] +）
-    era.add(`exp:${cid}:11`, y);
+    EraChara.get(cid).exp.trained_masturbation_exp += y;
     era.print(`绝顶经验+${Math.trunc(y / 2)}`);
     // EXP:cid[2] + = Math.trunc(y / 2)（变量语义：EXP 族，cid[2] +）
-    era.add(`exp:${cid}:2`, Math.trunc(y / 2));
+    EraChara.get(cid).exp.orgasm_exp += Math.trunc(y / 2);
     await era.printAndWait(`施虐经验,被虐经验+${y}`);
     // EXP:cid[30] + = y（变量语义：EXP 族，cid[30] +）
-    era.add(`exp:${cid}:30`, y);
+    EraChara.get(cid).exp.masochist_pleasure_exp += y;
     // EXP:cid[33] + = y（变量语义：EXP 族，cid[33] +）
-    era.add(`exp:${cid}:33`, y);
-  } else if (chara(cid).stronghold.淫乱 == 1) {
+    EraChara.get(cid).exp.sadist_pleasure_exp += y;
+  } else if (EraChara.get(cid).talent.lewd == 1) {
     const body =
-      chara(cid).chara.扶她 || chara(cid).chara.男人 ? '阴茎' : '身体';
+      EraChara.get(cid).talent.futanari || EraChara.get(cid).talent.male
+        ? '阴茎'
+        : '身体';
     await era.printAndWait(
       `${name_of(cid)}经常在身边露出淫媚的笑容，在你的${body}上不停摩挲着。`,
     );
 
     await era.printAndWait(`心里却盘算着如何偷偷引诱你某几个部下...`);
 
-    era.print(`屈服,欲情,恭顺,耻情点数+${chara(cid).system.顺从 * y * 10}`);
+    era.print(
+      `屈服,欲情,恭顺,耻情点数+${EraChara.get(cid).abl.obedience * y * 10}`,
+    );
     // JUEL:cid[6] + = (ABL:cid[11] * y * 10)（变量语义：JUEL 族，cid[6] +）
-    era.add(`juel:${cid}:6`, chara(cid).system.欲望 * y * 10);
+    EraChara.get(cid).jewel.submission += EraChara.get(cid).abl.lust * y * 10;
     // JUEL:cid[5] + = (ABL:cid[11] * y * 10)（变量语义：JUEL 族，cid[5] +）
-    era.add(`juel:${cid}:5`, chara(cid).system.欲望 * y * 10);
+    EraChara.get(cid).jewel.lust += EraChara.get(cid).abl.lust * y * 10;
     // JUEL:cid[4] + = (ABL:cid[11] * y * 10)（变量语义：JUEL 族，cid[4] +）
-    era.add(`juel:${cid}:4`, chara(cid).system.欲望 * y * 10);
+    EraChara.get(cid).jewel.obedience += EraChara.get(cid).abl.lust * y * 10;
     // JUEL:cid[8] + = (ABL:cid[11] * y * 10)（变量语义：JUEL 族，cid[8] +）
-    era.add(`juel:${cid}:8`, chara(cid).system.欲望 * y * 10);
-    if (chara(cid).chara.男人) {
+    EraChara.get(cid).jewel.shame += EraChara.get(cid).abl.lust * y * 10;
+    if (EraChara.get(cid).talent.male) {
       era.print(
-        `${clitoris_word(cid)},乳房,肛门点数+${chara(cid).system.顺从 * y * 10}`,
+        `${clitoris_word(cid)},乳房,肛门点数+${EraChara.get(cid).abl.obedience * y * 10}`,
       );
       // JUEL:cid[0] + = (ABL:cid[11] * y * 10)（变量语义：JUEL 族，cid[0] +）
-      era.add(`juel:${cid}:0`, chara(cid).system.欲望 * y * 10);
+      EraChara.get(cid).jewel.clitoris += EraChara.get(cid).abl.lust * y * 10;
       // JUEL:cid[14] + = (ABL:cid[11] * y * 10)（变量语义：JUEL 族，cid[14] +）
-      era.add(`juel:${cid}:14`, chara(cid).system.欲望 * y * 10);
+      EraChara.get(cid).jewel.breast += EraChara.get(cid).abl.lust * y * 10;
       // JUEL:cid[2] + = (ABL:cid[11] * y * 10)（变量语义：JUEL 族，cid[2] +）
-      era.add(`juel:${cid}:2`, chara(cid).system.欲望 * y * 10);
+      EraChara.get(cid).jewel.anus += EraChara.get(cid).abl.lust * y * 10;
     } else {
       era.print(
-        `${clitoris_word(cid)},乳房,肛门,私处点数+${chara(cid).system.顺从 * y * 10}`,
+        `${clitoris_word(cid)},乳房,肛门,私处点数+${EraChara.get(cid).abl.obedience * y * 10}`,
       );
       // JUEL:cid[0] + = (ABL:cid[11] * y * 10)（变量语义：JUEL 族，cid[0] +）
-      era.add(`juel:${cid}:0`, chara(cid).system.欲望 * y * 10);
+      EraChara.get(cid).jewel.clitoris += EraChara.get(cid).abl.lust * y * 10;
       // JUEL:cid[14] + = (ABL:cid[11] * y * 10)（变量语义：JUEL 族，cid[14] +）
-      era.add(`juel:${cid}:14`, chara(cid).system.欲望 * y * 10);
+      EraChara.get(cid).jewel.breast += EraChara.get(cid).abl.lust * y * 10;
       // JUEL:cid[1] + = (ABL:cid[11] * y * 10)（变量语义：JUEL 族，cid[1] +）
-      era.add(`juel:${cid}:1`, chara(cid).system.欲望 * y * 10);
+      EraChara.get(cid).jewel.vagina += EraChara.get(cid).abl.lust * y * 10;
       // JUEL:cid[2] + = (ABL:cid[11] * y * 10)（变量语义：JUEL 族，cid[2] +）
-      era.add(`juel:${cid}:2`, chara(cid).system.欲望 * y * 10);
+      EraChara.get(cid).jewel.anus += EraChara.get(cid).abl.lust * y * 10;
     }
-    era.print(`话术+${chara(cid).system.欲望 * y * 10}`);
+    era.print(`话术+${EraChara.get(cid).abl.lust * y * 10}`);
     // JUEL:cid[7] + = (ABL:cid[11] * y * 10)（变量语义：JUEL 族，cid[7] +）
-    era.add(`juel:${cid}:7`, chara(cid).system.欲望 * y * 10);
-    era.print(`苦痛点数+${chara(cid).system.欲望 * y * 5 + 10}`);
+    EraChara.get(cid).jewel.learning += EraChara.get(cid).abl.lust * y * 10;
+    era.print(`苦痛点数+${EraChara.get(cid).abl.lust * y * 5 + 10}`);
     // JUEL:cid[9] + = (ABL:cid[11] * y * 5 + 10)（变量语义：JUEL 族，cid[9] +）
-    era.add(`juel:${cid}:9`, chara(cid).system.欲望 * y * 5 + 10);
-    if (chara(cid).chara.男人) {
+    EraChara.get(cid).jewel.pain += EraChara.get(cid).abl.lust * y * 5 + 10;
+    if (EraChara.get(cid).talent.male) {
       era.print(`肛门,口交经验+${Math.trunc(y / 2)}`);
       // EXP:cid[1] + = Math.trunc(y / 2)（变量语义：EXP 族，cid[1] +）
-      era.add(`exp:${cid}:1`, Math.trunc(y / 2));
+      EraChara.get(cid).exp.anal_exp += Math.trunc(y / 2);
       // EXP:cid[22] + = Math.trunc(y / 2)（变量语义：EXP 族，cid[22] +）
-      era.add(`exp:${cid}:22`, Math.trunc(y / 2));
+      EraChara.get(cid).exp.oral_exp += Math.trunc(y / 2);
     } else {
       era.print(`私处,肛门,口交经验+${Math.trunc(y / 2)}`);
       // EXP:cid[0] + = Math.trunc(y / 2)（变量语义：EXP 族，cid[0] +）
-      era.add(`exp:${cid}:0`, Math.trunc(y / 2));
+      EraChara.get(cid).exp.vagina_exp += Math.trunc(y / 2);
       // EXP:cid[1] + = Math.trunc(y / 2)（变量语义：EXP 族，cid[1] +）
-      era.add(`exp:${cid}:1`, Math.trunc(y / 2));
+      EraChara.get(cid).exp.anal_exp += Math.trunc(y / 2);
       // EXP:cid[22] + = Math.trunc(y / 2)（变量语义：EXP 族，cid[22] +）
-      era.add(`exp:${cid}:22`, Math.trunc(y / 2));
+      EraChara.get(cid).exp.oral_exp += Math.trunc(y / 2);
     }
     era.print(`性交经验,精液经验+${Math.trunc(y / 2)}`);
     // EXP:cid[5] + = Math.trunc(y / 2)（变量语义：EXP 族，cid[5] +）
-    era.add(`exp:${cid}:5`, Math.trunc(y / 2));
+    EraChara.get(cid).exp.intercourse_exp += Math.trunc(y / 2);
     // EXP:cid[20] + = Math.trunc(y / 2)（变量语义：EXP 族，cid[20] +）
-    era.add(`exp:${cid}:20`, Math.trunc(y / 2));
+    EraChara.get(cid).exp.semen_exp += Math.trunc(y / 2);
     era.print(`兽奸经验,异常经验,卖淫经验+${Math.trunc(y / 2)}`);
     // EXP:cid[50] + = Math.trunc(y / 2)（变量语义：EXP 族，cid[50] +）
-    era.add(`exp:${cid}:50`, Math.trunc(y / 2));
+    EraChara.get(cid).exp.abnormal_exp += Math.trunc(y / 2);
     // EXP:cid[56] + = Math.trunc(y / 2)（变量语义：EXP 族，cid[56] +）
-    era.add(`exp:${cid}:56`, Math.trunc(y / 2));
+    EraChara.get(cid).exp.bestiality_exp += Math.trunc(y / 2);
     // EXP:cid[74] + = Math.trunc(y / 2)（变量语义：EXP 族，cid[74] +）
-    era.add(`exp:${cid}:74`, Math.trunc(y / 2));
+    EraChara.get(cid).exp.prostitution_exp += Math.trunc(y / 2);
     era.print(`调教会话经验+${Math.trunc(y / 2)}`);
     // EXP:cid[73] + = Math.trunc(y / 2)（变量语义：EXP 族，cid[73] +）
-    era.add(`exp:${cid}:73`, Math.trunc(y / 2));
+    EraChara.get(cid).exp.training_talk_exp += Math.trunc(y / 2);
     era.print(`自慰经验,调教自慰经验+${Math.trunc(y / 2)}`);
     // EXP:cid[10] + = Math.trunc(y / 2)（变量语义：EXP 族，cid[10] +）
-    era.add(`exp:${cid}:10`, Math.trunc(y / 2));
+    EraChara.get(cid).exp.masturbation_exp += Math.trunc(y / 2);
     // EXP:cid[11] + = Math.trunc(y / 2)（变量语义：EXP 族，cid[11] +）
-    era.add(`exp:${cid}:11`, Math.trunc(y / 2));
+    EraChara.get(cid).exp.trained_masturbation_exp += Math.trunc(y / 2);
     era.print(`绝顶经验+${Math.trunc(y / 2)}`);
     // EXP:cid[2] + = Math.trunc(y / 2)（变量语义：EXP 族，cid[2] +）
-    era.add(`exp:${cid}:2`, Math.trunc(y / 2));
+    EraChara.get(cid).exp.orgasm_exp += Math.trunc(y / 2);
     era.print(`施虐经验,被虐经验+${Math.trunc(y / 2)}`);
     // EXP:cid[30] + = Math.trunc(y / 2)（变量语义：EXP 族，cid[30] +）
-    era.add(`exp:${cid}:30`, Math.trunc(y / 2));
+    EraChara.get(cid).exp.masochist_pleasure_exp += Math.trunc(y / 2);
     // EXP:cid[33] + = Math.trunc(y / 2)（变量语义：EXP 族，cid[33] +）
-    era.add(`exp:${cid}:33`, Math.trunc(y / 2));
-  } else if (chara(cid).system.顺从 >= 3) {
+    EraChara.get(cid).exp.sadist_pleasure_exp += Math.trunc(y / 2);
+  } else if (EraChara.get(cid).abl.obedience >= 3) {
     await era.printAndWait(
       `${name_of(cid)}作为勇者陷落的象征，勉为其难地陪侍着你身边。`,
     );
@@ -602,81 +644,81 @@ async function marriage_day_you(cid, y = 1) {
     await era.printAndWait(`偶尔象征性的表示期望你的调教...`);
 
     era.print(
-      `屈服,欲情,恭顺,耻情点数+${chara(cid).system.欲望 * y * 8 + chara(cid).system.顺从 * y * 8 + 8}`,
+      `屈服,欲情,恭顺,耻情点数+${EraChara.get(cid).abl.lust * y * 8 + EraChara.get(cid).abl.obedience * y * 8 + 8}`,
     );
     // JUEL:cid[6] + = (ABL:cid[11] * y * 8 + ABL:cid[10] * y * 8 + 8)（变量语义：JUEL 族，cid[6] +）
-    era.add(
-      `juel:${cid}:6`,
-      chara(cid).system.欲望 * y * 8 + chara(cid).system.顺从 * y * 8 + 8,
-    );
+    EraChara.get(cid).jewel.submission +=
+      EraChara.get(cid).abl.lust * y * 8 +
+      EraChara.get(cid).abl.obedience * y * 8 +
+      8;
     // JUEL:cid[5] + = (ABL:cid[11] * y * 8 + ABL:cid[10] * y * 8 + 8)（变量语义：JUEL 族，cid[5] +）
-    era.add(
-      `juel:${cid}:5`,
-      chara(cid).system.欲望 * y * 8 + chara(cid).system.顺从 * y * 8 + 8,
-    );
+    EraChara.get(cid).jewel.lust +=
+      EraChara.get(cid).abl.lust * y * 8 +
+      EraChara.get(cid).abl.obedience * y * 8 +
+      8;
     // JUEL:cid[4] + = (ABL:cid[11] * y * 8 + ABL:cid[10] * y * 8 + 8)（变量语义：JUEL 族，cid[4] +）
-    era.add(
-      `juel:${cid}:4`,
-      chara(cid).system.欲望 * y * 8 + chara(cid).system.顺从 * y * 8 + 8,
-    );
+    EraChara.get(cid).jewel.obedience +=
+      EraChara.get(cid).abl.lust * y * 8 +
+      EraChara.get(cid).abl.obedience * y * 8 +
+      8;
     // JUEL:cid[8] + = (ABL:cid[11] * y * 8 + ABL:cid[10] * y * 8 + 8)（变量语义：JUEL 族，cid[8] +）
-    era.add(
-      `juel:${cid}:8`,
-      chara(cid).system.欲望 * y * 8 + chara(cid).system.顺从 * y * 8 + 8,
-    );
-    if (chara(cid).chara.男人) {
+    EraChara.get(cid).jewel.shame +=
+      EraChara.get(cid).abl.lust * y * 8 +
+      EraChara.get(cid).abl.obedience * y * 8 +
+      8;
+    if (EraChara.get(cid).talent.male) {
       era.print(
-        `${clitoris_word(cid)},乳房,肛门点数+${chara(cid).system.欲望 * y * 8 + chara(cid).system.顺从 * y * 8 + 8}`,
+        `${clitoris_word(cid)},乳房,肛门点数+${EraChara.get(cid).abl.lust * y * 8 + EraChara.get(cid).abl.obedience * y * 8 + 8}`,
       );
       // JUEL:cid[0] + = (ABL:cid[11] * y * 8 + ABL:cid[10] * y * 8 + 8)（变量语义：JUEL 族，cid[0] +）
-      era.add(
-        `juel:${cid}:0`,
-        chara(cid).system.欲望 * y * 8 + chara(cid).system.顺从 * y * 8 + 8,
-      );
+      EraChara.get(cid).jewel.clitoris +=
+        EraChara.get(cid).abl.lust * y * 8 +
+        EraChara.get(cid).abl.obedience * y * 8 +
+        8;
       // JUEL:cid[14] + = (ABL:cid[11] * y * 8 + ABL:cid[10] * y * 8 + 8)（变量语义：JUEL 族，cid[14] +）
-      era.add(
-        `juel:${cid}:14`,
-        chara(cid).system.欲望 * y * 8 + chara(cid).system.顺从 * y * 8 + 8,
-      );
+      EraChara.get(cid).jewel.breast +=
+        EraChara.get(cid).abl.lust * y * 8 +
+        EraChara.get(cid).abl.obedience * y * 8 +
+        8;
       // JUEL:cid[2] + = (ABL:cid[11] * y * 8 + ABL:cid[10] * y * 8 + 8)（变量语义：JUEL 族，cid[2] +）
-      era.add(
-        `juel:${cid}:2`,
-        chara(cid).system.欲望 * y * 8 + chara(cid).system.顺从 * y * 8 + 8,
-      );
+      EraChara.get(cid).jewel.anus +=
+        EraChara.get(cid).abl.lust * y * 8 +
+        EraChara.get(cid).abl.obedience * y * 8 +
+        8;
     } else {
       era.print(
-        `${clitoris_word(cid)},乳房,肛门,私处点数+${chara(cid).system.欲望 * y * 8 + chara(cid).system.顺从 * y * 8 + 8}`,
+        `${clitoris_word(cid)},乳房,肛门,私处点数+${EraChara.get(cid).abl.lust * y * 8 + EraChara.get(cid).abl.obedience * y * 8 + 8}`,
       );
       // JUEL:cid[0] + = (ABL:cid[11] * y * 8 + ABL:cid[10] * y * 8 + 8)（变量语义：JUEL 族，cid[0] +）
-      era.add(
-        `juel:${cid}:0`,
-        chara(cid).system.欲望 * y * 8 + chara(cid).system.顺从 * y * 8 + 8,
-      );
+      EraChara.get(cid).jewel.clitoris +=
+        EraChara.get(cid).abl.lust * y * 8 +
+        EraChara.get(cid).abl.obedience * y * 8 +
+        8;
       // JUEL:cid[14] + = (ABL:cid[11] * y * 8 + ABL:cid[10] * y * 8 + 8)（变量语义：JUEL 族，cid[14] +）
-      era.add(
-        `juel:${cid}:14`,
-        chara(cid).system.欲望 * y * 8 + chara(cid).system.顺从 * y * 8 + 8,
-      );
+      EraChara.get(cid).jewel.breast +=
+        EraChara.get(cid).abl.lust * y * 8 +
+        EraChara.get(cid).abl.obedience * y * 8 +
+        8;
       // JUEL:cid[1] + = (ABL:cid[11] * y * 8 + ABL:cid[10] * y * 8 + 8)（变量语义：JUEL 族，cid[1] +）
-      era.add(
-        `juel:${cid}:1`,
-        chara(cid).system.欲望 * y * 8 + chara(cid).system.顺从 * y * 8 + 8,
-      );
+      EraChara.get(cid).jewel.vagina +=
+        EraChara.get(cid).abl.lust * y * 8 +
+        EraChara.get(cid).abl.obedience * y * 8 +
+        8;
       // JUEL:cid[2] + = (ABL:cid[11] * y * 8 + ABL:cid[10] * y * 8 + 8)（变量语义：JUEL 族，cid[2] +）
-      era.add(
-        `juel:${cid}:2`,
-        chara(cid).system.欲望 * y * 8 + chara(cid).system.顺从 * y * 8 + 8,
-      );
+      EraChara.get(cid).jewel.anus +=
+        EraChara.get(cid).abl.lust * y * 8 +
+        EraChara.get(cid).abl.obedience * y * 8 +
+        8;
     }
     await era.printAndWait(
-      `话术+${chara(cid).system.欲望 * y * 8 + chara(cid).system.顺从 * y * 8 + 8}`,
+      `话术+${EraChara.get(cid).abl.lust * y * 8 + EraChara.get(cid).abl.obedience * y * 8 + 8}`,
     );
     // JUEL:cid[7] + = (ABL:cid[11] * y * 8 + ABL:cid[10] * y * 8 + 8)（变量语义：JUEL 族，cid[7] +）
-    era.add(
-      `juel:${cid}:7`,
-      chara(cid).system.欲望 * y * 8 + chara(cid).system.顺从 * y * 8 + 8,
-    );
-  } else if (chara(cid).system.反抗刻印 >= 1) {
+    EraChara.get(cid).jewel.learning +=
+      EraChara.get(cid).abl.lust * y * 8 +
+      EraChara.get(cid).abl.obedience * y * 8 +
+      8;
+  } else if (EraChara.get(cid).mark.resistance_mark >= 1) {
     await era.printAndWait(
       `${name_of(cid)}被链子锁着，用充满杀意的目光望着你。`,
     );
@@ -684,51 +726,51 @@ async function marriage_day_you(cid, y = 1) {
     await era.printAndWait(`但已经被调教过的身体是诚实的...`);
 
     era.print(
-      `屈服,欲情,恭顺,耻情点数+${chara(cid).system.欲望 * y * 5 + chara(cid).system.顺从 * y * 5 + 5}`,
+      `屈服,欲情,恭顺,耻情点数+${EraChara.get(cid).abl.lust * y * 5 + EraChara.get(cid).abl.obedience * y * 5 + 5}`,
     );
     // JUEL:cid[6] + = (ABL:cid[11] * y * 5 + ABL:cid[10] * y * 5 + 5)（变量语义：JUEL 族，cid[6] +）
-    era.add(
-      `juel:${cid}:6`,
-      chara(cid).system.欲望 * y * 5 + chara(cid).system.顺从 * y * 5 + 5,
-    );
+    EraChara.get(cid).jewel.submission +=
+      EraChara.get(cid).abl.lust * y * 5 +
+      EraChara.get(cid).abl.obedience * y * 5 +
+      5;
     // JUEL:cid[5] + = (ABL:cid[11] * y * 5 + ABL:cid[10] * y * 5 + 5)（变量语义：JUEL 族，cid[5] +）
-    era.add(
-      `juel:${cid}:5`,
-      chara(cid).system.欲望 * y * 5 + chara(cid).system.顺从 * y * 5 + 5,
-    );
+    EraChara.get(cid).jewel.lust +=
+      EraChara.get(cid).abl.lust * y * 5 +
+      EraChara.get(cid).abl.obedience * y * 5 +
+      5;
     // JUEL:cid[4] + = (ABL:cid[11] * y * 5 + ABL:cid[10] * y * 5 + 5)（变量语义：JUEL 族，cid[4] +）
-    era.add(
-      `juel:${cid}:4`,
-      chara(cid).system.欲望 * y * 5 + chara(cid).system.顺从 * y * 5 + 5,
-    );
+    EraChara.get(cid).jewel.obedience +=
+      EraChara.get(cid).abl.lust * y * 5 +
+      EraChara.get(cid).abl.obedience * y * 5 +
+      5;
     // JUEL:cid[8] + = (ABL:cid[11] * y * 5 + ABL:cid[10] * y * 5 + 5)（变量语义：JUEL 族，cid[8] +）
-    era.add(
-      `juel:${cid}:8`,
-      chara(cid).system.欲望 * y * 5 + chara(cid).system.顺从 * y * 5 + 5,
-    );
+    EraChara.get(cid).jewel.shame +=
+      EraChara.get(cid).abl.lust * y * 5 +
+      EraChara.get(cid).abl.obedience * y * 5 +
+      5;
   } else {
     await era.printAndWait(`${name_of(cid)}被链子锁着，放弃了似得自暴自弃。`);
 
     await era.printAndWait(`被恐惧、羞耻与绝望侵蚀着...`);
 
     await era.printAndWait(
-      `屈服,恐惧,痛苦点数+${chara(cid).system.欲望 * y * 2 + chara(cid).system.顺从 * y * 2 + 2}`,
+      `屈服,恐惧,痛苦点数+${EraChara.get(cid).abl.lust * y * 2 + EraChara.get(cid).abl.obedience * y * 2 + 2}`,
     );
     // JUEL:cid[6] + = (ABL:cid[11] * y * 2 + ABL:cid[10] * y * 2 + 2)（变量语义：JUEL 族，cid[6] +）
-    era.add(
-      `juel:${cid}:6`,
-      chara(cid).system.欲望 * y * 2 + chara(cid).system.顺从 * y * 2 + 2,
-    );
+    EraChara.get(cid).jewel.submission +=
+      EraChara.get(cid).abl.lust * y * 2 +
+      EraChara.get(cid).abl.obedience * y * 2 +
+      2;
     // JUEL:cid[9] + = (ABL:cid[11] * y * 2 + ABL:cid[10] * y * 2 + 2)（变量语义：JUEL 族，cid[9] +）
-    era.add(
-      `juel:${cid}:9`,
-      chara(cid).system.欲望 * y * 2 + chara(cid).system.顺从 * y * 2 + 2,
-    );
+    EraChara.get(cid).jewel.pain +=
+      EraChara.get(cid).abl.lust * y * 2 +
+      EraChara.get(cid).abl.obedience * y * 2 +
+      2;
     // JUEL:cid[10] + = (ABL:cid[11] * y * 2 + ABL:cid[10] * y * 2 + 2)（变量语义：JUEL 族，cid[10] +）
-    era.add(
-      `juel:${cid}:10`,
-      chara(cid).system.欲望 * y * 2 + chara(cid).system.顺从 * y * 2 + 2,
-    );
+    EraChara.get(cid).jewel.fear +=
+      EraChara.get(cid).abl.lust * y * 2 +
+      EraChara.get(cid).abl.obedience * y * 2 +
+      2;
   }
 
   await era.waitAnyKey();
@@ -761,14 +803,14 @@ async function orc_marriage_day(cid, y = 1, rand = default_rand) {
   );
 
   let jump_to_day40 = false;
-  if (cid == 0 && chara(cid).chara.结婚爱情 < 40) {
+  if (cid == 0 && EraChara.get(cid).cflag.spousal_love < 40) {
     if (rand(2) == 0) {
       if (
-        chara(cid).chara.私处封印 == 1 ||
-        (chara(cid).chara.特别服装类型 == 79 &&
-          chara(cid).train.着衣状态 & 64 &&
-          game.system.着衣系统) ||
-        chara(cid).chara.男人 == 1
+        EraChara.get(cid).talent.vagina_seal == 1 ||
+        (EraChara.get(cid).cflag.special_costume_type == 79 &&
+          EraChara.get(cid).cflag.clothing_state & 64 &&
+          era_flag.clothing_system) ||
+        EraChara.get(cid).talent.male == 1
       ) {
         await era.printAndWait(
           `${name_of(cid)}好像为变成${marriage_name(cid)}的精液便器而喜悦着……`,
@@ -777,11 +819,11 @@ async function orc_marriage_day(cid, y = 1, rand = default_rand) {
         era.print(`口交经验+${y}`);
         era.print(`精液经验+${y}`);
         // EXP[0] + = y（变量语义：EXP 族，(cid)[0] +）
-        era.add(`exp:${cid}:0`, y);
+        EraChara.get(cid).exp.vagina_exp += y;
         // EXP[22] + = y（变量语义：EXP 族，(cid)[22] +）
-        era.add(`exp:${cid}:22`, y);
+        EraChara.get(cid).exp.oral_exp += y;
         // EXP[20] + = y（变量语义：EXP 族，(cid)[20] +）
-        era.add(`exp:${cid}:20`, y);
+        EraChara.get(cid).exp.semen_exp += y;
       } else {
         await era.printAndWait(
           `${name_of(cid)}好像为变成${marriage_name(cid)}的精液便器而喜悦着……`,
@@ -791,19 +833,19 @@ async function orc_marriage_day(cid, y = 1, rand = default_rand) {
         era.print(`口交经验+${y}`);
         era.print(`精液经验+${y}`);
         // EXP[0] + = y（变量语义：EXP 族，(cid)[0] +）
-        era.add(`exp:${cid}:0`, y);
+        EraChara.get(cid).exp.vagina_exp += y;
         // EXP[1] + = y（变量语义：EXP 族，(cid)[1] +）
-        era.add(`exp:${cid}:1`, y);
+        EraChara.get(cid).exp.anal_exp += y;
         // EXP[22] + = y（变量语义：EXP 族，(cid)[22] +）
-        era.add(`exp:${cid}:22`, y);
+        EraChara.get(cid).exp.oral_exp += y;
         // EXP[20] + = y（变量语义：EXP 族，(cid)[20] +）
-        era.add(`exp:${cid}:20`, y);
+        EraChara.get(cid).exp.semen_exp += y;
         // CFLAG[107] + = y（变量语义：CFLAG 族，(cid)[107] +）
-        era.add(`cflag:${cid}:107`, y);
+        EraChara.get(cid).cflag.monster_vaginal_ejaculation += y;
       }
       await era.waitAnyKey();
       return y;
-    } else if (chara(cid).chara.结婚爱情 > 40) {
+    } else if (EraChara.get(cid).cflag.spousal_love > 40) {
       // RAW: GOTO ORC_MARRIAGE_DAY40
       jump_to_day40 = true;
     } else {
@@ -813,28 +855,31 @@ async function orc_marriage_day(cid, y = 1, rand = default_rand) {
       era.print(`口交经验+${y}`);
       era.print(`精液经验+${y}`);
       // EXP[22] + = y（变量语义：EXP 族，(cid)[22] +）
-      era.add(`exp:${cid}:22`, y);
+      EraChara.get(cid).exp.oral_exp += y;
       // EXP[20] + = y（变量语义：EXP 族，(cid)[20] +）
-      era.add(`exp:${cid}:20`, y);
+      EraChara.get(cid).exp.semen_exp += y;
       await era.waitAnyKey();
       return y;
     }
   }
-  if (jump_to_day40 || chara(cid).chara.结婚爱情 > 40) {
+  if (jump_to_day40 || EraChara.get(cid).cflag.spousal_love > 40) {
     // RAW: $ORC_MARRIAGE_DAY40
 
-    y = 10 + chara(cid).system.欲望 + chara(cid).train.侍奉技术;
+    y = 10 + EraChara.get(cid).abl.lust + EraChara.get(cid).abl.service_skill;
     if (rand(2) == 0) {
       let description = name_of(cid);
 
-      if (chara(cid).system.露出癖 >= 3) {
+      if (EraChara.get(cid).abl.exhibitionism >= 3) {
         description += `在众多${marriage_name(cid)}包围之下，`;
       }
 
-      if (chara(cid).chara.结婚爱情 > 60) {
+      if (EraChara.get(cid).cflag.spousal_love > 60) {
         description += '已经非常坦然了。';
       }
-      if (chara(cid).chara.私处封印 == 1 || chara(cid).chara.男人 == 1) {
+      if (
+        EraChara.get(cid).talent.vagina_seal == 1 ||
+        EraChara.get(cid).talent.male == 1
+      ) {
         description += '用手指撑开肛门，';
       } else {
         description += '张开大腿，';
@@ -847,7 +892,7 @@ async function orc_marriage_day(cid, y = 1, rand = default_rand) {
       } else {
         await era.printAndWait('精液的处理，并因为成为便器而感到喜悦……');
       }
-      if (chara(cid).chara.男人) {
+      if (EraChara.get(cid).talent.male) {
         await era.printAndWait(`淫荡地摇着屁股迎合起轮奸的肛交活动`);
       } else {
         await era.printAndWait(`淫荡地摇着腰肢迎合起轮奸的性交活动`);
@@ -855,72 +900,87 @@ async function orc_marriage_day(cid, y = 1, rand = default_rand) {
       await era.printAndWait(
         `上下的穴口都忘记何为廉耻那般地，榨取着${marriage_name(cid)}们的精液……`,
       );
-      if (chara(cid).chara.私处封印 == 1 || chara(cid).chara.男人 == 1) {
+      if (
+        EraChara.get(cid).talent.vagina_seal == 1 ||
+        EraChara.get(cid).talent.male == 1
+      ) {
         era.print(`肛门,性交,口交,精液经验+${y + 5}`);
         // EXP[0] + = y + 5（变量语义：EXP 族，(cid)[0] +）
-        era.add(`exp:${cid}:0`, y + 5);
+        EraChara.get(cid).exp.vagina_exp += y + 5;
         // EXP[5] + = y + 5（变量语义：EXP 族，(cid)[5] +）
-        era.add(`exp:${cid}:5`, y + 5);
+        EraChara.get(cid).exp.intercourse_exp += y + 5;
         // EXP[22] + = y + 5（变量语义：EXP 族，(cid)[22] +）
-        era.add(`exp:${cid}:22`, y + 5);
+        EraChara.get(cid).exp.oral_exp += y + 5;
         // EXP[20] + = y + 5（变量语义：EXP 族，(cid)[20] +）
-        era.add(`exp:${cid}:20`, y + 5);
+        EraChara.get(cid).exp.semen_exp += y + 5;
         era.print(
-          `${clitoris_word(cid)},乳房,肛门点数+${chara(cid).chara.结婚爱情 * y + 5}`,
+          `${clitoris_word(cid)},乳房,肛门点数+${EraChara.get(cid).cflag.spousal_love * y + 5}`,
         );
         // JUEL:cid[0] + = (CFLAG:cid[602] * y + 5)（变量语义：JUEL 族，cid[0] +）
-        era.add(`juel:${cid}:0`, chara(cid).chara.结婚爱情 * y + 5);
+        EraChara.get(cid).jewel.clitoris +=
+          EraChara.get(cid).cflag.spousal_love * y + 5;
         // JUEL:cid[14] + = (CFLAG:cid[602] * y + 5)（变量语义：JUEL 族，cid[14] +）
-        era.add(`juel:${cid}:14`, chara(cid).chara.结婚爱情 * y + 5);
+        EraChara.get(cid).jewel.breast +=
+          EraChara.get(cid).cflag.spousal_love * y + 5;
         // JUEL:cid[2] + = (CFLAG:cid[602] * y + 5)（变量语义：JUEL 族，cid[2] +）
-        era.add(`juel:${cid}:2`, chara(cid).chara.结婚爱情 * y + 5);
+        EraChara.get(cid).jewel.anus +=
+          EraChara.get(cid).cflag.spousal_love * y + 5;
       } else {
         era.print(`私处,肛门,性交,口交,精液经验+${y}`);
         // EXP[0] + = y（变量语义：EXP 族，(cid)[0] +）
-        era.add(`exp:${cid}:0`, y);
+        EraChara.get(cid).exp.vagina_exp += y;
         // EXP[1] + = y（变量语义：EXP 族，(cid)[1] +）
-        era.add(`exp:${cid}:1`, y);
+        EraChara.get(cid).exp.anal_exp += y;
         // EXP[5] + = y（变量语义：EXP 族，(cid)[5] +）
-        era.add(`exp:${cid}:5`, y);
+        EraChara.get(cid).exp.intercourse_exp += y;
         // EXP[22] + = y（变量语义：EXP 族，(cid)[22] +）
-        era.add(`exp:${cid}:22`, y);
+        EraChara.get(cid).exp.oral_exp += y;
         // EXP[20] + = y（变量语义：EXP 族，(cid)[20] +）
-        era.add(`exp:${cid}:20`, y);
+        EraChara.get(cid).exp.semen_exp += y;
         // CFLAG[107] + = y（变量语义：CFLAG 族，(cid)[107] +）
-        era.add(`cflag:${cid}:107`, y);
+        EraChara.get(cid).cflag.monster_vaginal_ejaculation += y;
         era.print(
-          `${clitoris_word(cid)},乳房,私处,肛门点数+${chara(cid).chara.结婚爱情 * y}`,
+          `${clitoris_word(cid)},乳房,私处,肛门点数+${EraChara.get(cid).cflag.spousal_love * y}`,
         );
         // JUEL:cid[0] + = (CFLAG:cid[602] * y)（变量语义：JUEL 族，cid[0] +）
-        era.add(`juel:${cid}:0`, chara(cid).chara.结婚爱情 * y);
+        EraChara.get(cid).jewel.clitoris +=
+          EraChara.get(cid).cflag.spousal_love * y;
         // JUEL:cid[14] + = (CFLAG:cid[602] * y)（变量语义：JUEL 族，cid[14] +）
-        era.add(`juel:${cid}:14`, chara(cid).chara.结婚爱情 * y);
+        EraChara.get(cid).jewel.breast +=
+          EraChara.get(cid).cflag.spousal_love * y;
         // JUEL:cid[2] + = (CFLAG:cid[602] * y)（变量语义：JUEL 族，cid[2] +）
-        era.add(`juel:${cid}:2`, chara(cid).chara.结婚爱情 * y);
+        EraChara.get(cid).jewel.anus +=
+          EraChara.get(cid).cflag.spousal_love * y;
         // JUEL:cid[1] + = (CFLAG:cid[602] * y)（变量语义：JUEL 族，cid[1] +）
-        era.add(`juel:${cid}:1`, chara(cid).chara.结婚爱情 * y);
+        EraChara.get(cid).jewel.vagina +=
+          EraChara.get(cid).cflag.spousal_love * y;
       }
       era.print(
-        `屈服,欲情,恭顺,耻情点数+${chara(cid).chara.结婚爱情 * 15 * y + 5}`,
+        `屈服,欲情,恭顺,耻情点数+${EraChara.get(cid).cflag.spousal_love * 15 * y + 5}`,
       );
       // JUEL:cid[6] + = (CFLAG:cid[602] * 25 * y + 5 )（变量语义：JUEL 族，cid[6] +）
-      era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * 25 * y + 5);
+      EraChara.get(cid).jewel.submission +=
+        EraChara.get(cid).cflag.spousal_love * 25 * y + 5;
       // JUEL:cid[5] + = (CFLAG:cid[602] * 25 * y + 5 )（变量语义：JUEL 族，cid[5] +）
-      era.add(`juel:${cid}:5`, chara(cid).chara.结婚爱情 * 25 * y + 5);
+      EraChara.get(cid).jewel.lust +=
+        EraChara.get(cid).cflag.spousal_love * 25 * y + 5;
       // JUEL:cid[4] + = (CFLAG:cid[602] * 25 * y + 5 )（变量语义：JUEL 族，cid[4] +）
-      era.add(`juel:${cid}:4`, chara(cid).chara.结婚爱情 * 25 * y + 5);
+      EraChara.get(cid).jewel.obedience +=
+        EraChara.get(cid).cflag.spousal_love * 25 * y + 5;
       // JUEL:cid[8] + = (CFLAG:cid[602] * 25 * y + 5 )（变量语义：JUEL 族，cid[8] +）
-      era.add(`juel:${cid}:8`, chara(cid).chara.结婚爱情 * 25 * y + 5);
-      era.print(`苦痛点数+${chara(cid).system.顺从 * y * 50 + 10}`);
+      EraChara.get(cid).jewel.shame +=
+        EraChara.get(cid).cflag.spousal_love * 25 * y + 5;
+      era.print(`苦痛点数+${EraChara.get(cid).abl.obedience * y * 50 + 10}`);
       // JUEL:cid[9] + = (ABL:cid[10] * y * 50 + 10 )（变量语义：JUEL 族，cid[9] +）
-      era.add(`juel:${cid}:9`, chara(cid).system.顺从 * y * 50 + 10);
+      EraChara.get(cid).jewel.pain +=
+        EraChara.get(cid).abl.obedience * y * 50 + 10;
       era.print(`绝顶,异常,被虐经验+${Math.trunc((y * 3) / 2)}`);
       // EXP:cid[2] + = Math.trunc(y * 3 / 2)（变量语义：EXP 族，cid[2] +）
-      era.add(`exp:${cid}:2`, Math.trunc((y * 3) / 2));
+      EraChara.get(cid).exp.orgasm_exp += Math.trunc((y * 3) / 2);
       // EXP:cid[50] + = Math.trunc(y * 3 / 2)（变量语义：EXP 族，cid[50] +）
-      era.add(`exp:${cid}:50`, Math.trunc((y * 3) / 2));
+      EraChara.get(cid).exp.abnormal_exp += Math.trunc((y * 3) / 2);
       // EXP:cid[30] + = Math.trunc(y * 3 / 2)（变量语义：EXP 族，cid[30] +）
-      era.add(`exp:${cid}:30`, Math.trunc((y * 3) / 2));
+      EraChara.get(cid).exp.masochist_pleasure_exp += Math.trunc((y * 3) / 2);
     } else {
       await era.printAndWait(
         `${name_of(cid)}一闻到${marriage_name(cid)}的肉棒味道就发情了`,
@@ -933,38 +993,45 @@ async function orc_marriage_day(cid, y = 1, rand = default_rand) {
       );
       era.print(`口交,精液经验+${y}`);
       // EXP[22] + = y（变量语义：EXP 族，(cid)[22] +）
-      era.add(`exp:${cid}:22`, y);
+      EraChara.get(cid).exp.oral_exp += y;
       // EXP[20] + = y（变量语义：EXP 族，(cid)[20] +）
-      era.add(`exp:${cid}:20`, y);
+      EraChara.get(cid).exp.semen_exp += y;
 
       era.print(
-        `屈服,欲情,恭顺,耻情点数+${chara(cid).chara.结婚爱情 * 5 * y + 5}`,
+        `屈服,欲情,恭顺,耻情点数+${EraChara.get(cid).cflag.spousal_love * 5 * y + 5}`,
       );
       // JUEL:cid[6] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[6] +）
-      era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.submission +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[5] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[5] +）
-      era.add(`juel:${cid}:5`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.lust +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[4] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[4] +）
-      era.add(`juel:${cid}:4`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.obedience +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[8] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[8] +）
-      era.add(`juel:${cid}:8`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.shame +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       era.print(
-        `${clitoris_word(cid)},乳房点数+${chara(cid).chara.结婚爱情 * 5 * y + 5}`,
+        `${clitoris_word(cid)},乳房点数+${EraChara.get(cid).cflag.spousal_love * 5 * y + 5}`,
       );
       // JUEL:cid[0] + = (CFLAG:cid[602] * 5 * y + 5)（变量语义：JUEL 族，cid[0] +）
-      era.add(`juel:${cid}:0`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.clitoris +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[14] + = (CFLAG:cid[602] * 5 * y + 5)（变量语义：JUEL 族，cid[14] +）
-      era.add(`juel:${cid}:14`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.breast +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       era.print(`饮精绝顶, 异常,被虐经验+${Math.trunc(y / 2)}`);
       // EXP:cid[8] + = Math.trunc(y / 2)（变量语义：EXP 族，cid[8] +）
-      era.add(`exp:${cid}:8`, Math.trunc(y / 2));
+      EraChara.get(cid).exp.semen_drink_orgasm_exp += Math.trunc(y / 2);
       // EXP:cid[50] + = Math.trunc(y / 2)（变量语义：EXP 族，cid[50] +）
-      era.add(`exp:${cid}:50`, Math.trunc(y / 2));
+      EraChara.get(cid).exp.abnormal_exp += Math.trunc(y / 2);
       // EXP:cid[30] + = Math.trunc(y / 2)（变量语义：EXP 族，cid[30] +）
-      era.add(`exp:${cid}:30`, Math.trunc(y / 2));
+      EraChara.get(cid).exp.masochist_pleasure_exp += Math.trunc(y / 2);
     }
-  } else if (chara(cid).train.性交中毒 >= 1) {
-    y = chara(cid).system.欲望 + chara(cid).train.性交中毒;
+  } else if (EraChara.get(cid).abl.intercourse_addiction >= 1) {
+    y =
+      EraChara.get(cid).abl.lust + EraChara.get(cid).abl.intercourse_addiction;
     await era.printAndWait(
       `数量众多的${marriage_name(cid)}轮奸着${name_of(cid)}……`,
     );
@@ -987,7 +1054,10 @@ async function orc_marriage_day(cid, y = 1, rand = default_rand) {
         rand,
       ),
     );
-    if (chara(cid).chara.私处封印 == 1 || chara(cid).chara.男人 == 1) {
+    if (
+      EraChara.get(cid).talent.vagina_seal == 1 ||
+      EraChara.get(cid).talent.male == 1
+    ) {
       await era.printAndWait(
         `在轮番交替的性交中，${name_of(cid)}的肛门几乎被操到几乎无法合拢`,
       );
@@ -996,12 +1066,13 @@ async function orc_marriage_day(cid, y = 1, rand = default_rand) {
       );
       era.print(`肛门,口交,性交,精液经验+${y}`);
       // EXP[1] + = y（变量语义：EXP 族，(cid)[1] +）
-      era.add(`exp:${cid}:1`, y);
+      EraChara.get(cid).exp.anal_exp += y;
       era.print(
-        `${clitoris_word(cid)},乳房,肛门点数+${chara(cid).chara.结婚爱情 * y + 10}`,
+        `${clitoris_word(cid)},乳房,肛门点数+${EraChara.get(cid).cflag.spousal_love * y + 10}`,
       );
       // JUEL:cid[2] + = (CFLAG:cid[602] * y + 10)（变量语义：JUEL 族，cid[2] +）
-      era.add(`juel:${cid}:2`, chara(cid).chara.结婚爱情 * y + 10);
+      EraChara.get(cid).jewel.anus +=
+        EraChara.get(cid).cflag.spousal_love * y + 10;
     } else {
       await era.printAndWait(
         `在轮番交替的性交中，${name_of(cid)}的小穴几乎被操到几乎无法合拢`,
@@ -1011,45 +1082,52 @@ async function orc_marriage_day(cid, y = 1, rand = default_rand) {
       );
       era.print(`私处,口交,性交,精液经验+${y}`);
       // EXP[0] + = y（变量语义：EXP 族，(cid)[0] +）
-      era.add(`exp:${cid}:0`, y);
+      EraChara.get(cid).exp.vagina_exp += y;
       // CFLAG[107] + = y（变量语义：CFLAG 族，(cid)[107] +）
-      era.add(`cflag:${cid}:107`, y);
+      EraChara.get(cid).cflag.monster_vaginal_ejaculation += y;
       era.print(
-        `${clitoris_word(cid)},乳房,私处点数+${chara(cid).chara.结婚爱情 * y + 10}`,
+        `${clitoris_word(cid)},乳房,私处点数+${EraChara.get(cid).cflag.spousal_love * y + 10}`,
       );
       // JUEL:cid[1] + = (CFLAG:cid[602] * y + 10)（变量语义：JUEL 族，cid[1] +）
-      era.add(`juel:${cid}:1`, chara(cid).chara.结婚爱情 * y + 10);
+      EraChara.get(cid).jewel.vagina +=
+        EraChara.get(cid).cflag.spousal_love * y + 10;
     }
     // EXP[22] + = y（变量语义：EXP 族，(cid)[22] +）
-    era.add(`exp:${cid}:22`, y);
+    EraChara.get(cid).exp.oral_exp += y;
     // EXP[5] + = y（变量语义：EXP 族，(cid)[5] +）
-    era.add(`exp:${cid}:5`, y);
+    EraChara.get(cid).exp.intercourse_exp += y;
     // EXP[20] + = y（变量语义：EXP 族，(cid)[20] +）
-    era.add(`exp:${cid}:20`, y);
+    EraChara.get(cid).exp.semen_exp += y;
     // JUEL:cid[0] + = (CFLAG:cid[602] * y + 10)（变量语义：JUEL 族，cid[0] +）
-    era.add(`juel:${cid}:0`, chara(cid).chara.结婚爱情 * y + 10);
+    EraChara.get(cid).jewel.clitoris +=
+      EraChara.get(cid).cflag.spousal_love * y + 10;
     // JUEL:cid[14] + = (CFLAG:cid[602] * y + 10)（变量语义：JUEL 族，cid[14] +）
-    era.add(`juel:${cid}:14`, chara(cid).chara.结婚爱情 * y + 10);
+    EraChara.get(cid).jewel.breast +=
+      EraChara.get(cid).cflag.spousal_love * y + 10;
 
     era.print(
-      `屈服,欲情,恭顺,耻情点数+${chara(cid).chara.结婚爱情 * 20 * y + 10}`,
+      `屈服,欲情,恭顺,耻情点数+${EraChara.get(cid).cflag.spousal_love * 20 * y + 10}`,
     );
     // JUEL:cid[6] + = (CFLAG:cid[602] * 20 * y + 10 )（变量语义：JUEL 族，cid[6] +）
-    era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * 20 * y + 10);
+    EraChara.get(cid).jewel.submission +=
+      EraChara.get(cid).cflag.spousal_love * 20 * y + 10;
     // JUEL:cid[5] + = (CFLAG:cid[602] * 20 * y + 10 )（变量语义：JUEL 族，cid[5] +）
-    era.add(`juel:${cid}:5`, chara(cid).chara.结婚爱情 * 20 * y + 10);
+    EraChara.get(cid).jewel.lust +=
+      EraChara.get(cid).cflag.spousal_love * 20 * y + 10;
     // JUEL:cid[4] + = (CFLAG:cid[602] * 20 * y + 10 )（变量语义：JUEL 族，cid[4] +）
-    era.add(`juel:${cid}:4`, chara(cid).chara.结婚爱情 * 20 * y + 10);
+    EraChara.get(cid).jewel.obedience +=
+      EraChara.get(cid).cflag.spousal_love * 20 * y + 10;
     // JUEL:cid[8] + = (CFLAG:cid[602] * 20 * y + 10 )（变量语义：JUEL 族，cid[8] +）
-    era.add(`juel:${cid}:8`, chara(cid).chara.结婚爱情 * 20 * y + 10);
+    EraChara.get(cid).jewel.shame +=
+      EraChara.get(cid).cflag.spousal_love * 20 * y + 10;
     era.print(`绝顶经验+${Math.trunc(y / 2)}`);
     // EXP:cid[2] + = Math.trunc(y / 2)（变量语义：EXP 族，cid[2] +）
-    era.add(`exp:${cid}:2`, Math.trunc(y / 2));
+    EraChara.get(cid).exp.orgasm_exp += Math.trunc(y / 2);
     await era.printAndWait(`异常,被虐经验+${y}`);
     // EXP:cid[50] + = y（变量语义：EXP 族，cid[50] +）
-    era.add(`exp:${cid}:50`, y);
+    EraChara.get(cid).exp.abnormal_exp += y;
     // EXP:cid[30] + = y（变量语义：EXP 族，cid[30] +）
-    era.add(`exp:${cid}:30`, y);
+    EraChara.get(cid).exp.masochist_pleasure_exp += y;
   } else {
     if (rand(2)) {
       await era.printAndWait(
@@ -1057,39 +1135,43 @@ async function orc_marriage_day(cid, y = 1, rand = default_rand) {
       );
       era.print(`口交,精液经验+${y}`);
       // EXP[22] + = y（变量语义：EXP 族，(cid)[22] +）
-      era.add(`exp:${cid}:22`, y);
+      EraChara.get(cid).exp.oral_exp += y;
       // EXP[20] + = y（变量语义：EXP 族，(cid)[20] +）
-      era.add(`exp:${cid}:20`, y);
+      EraChara.get(cid).exp.semen_exp += y;
     } else {
       await era.printAndWait(
         `${name_of(cid)}被${marriage_name(cid)}压在地板上侵犯，强制履行着夫妻的义务。`,
       );
-      if (chara(cid).chara.男人) {
+      if (EraChara.get(cid).talent.male) {
         era.print(`肛门,性交,精液经验+${y}`);
         // EXP[1] + = y（变量语义：EXP 族，(cid)[1] +）
-        era.add(`exp:${cid}:1`, y);
+        EraChara.get(cid).exp.anal_exp += y;
       } else {
         era.print(`私处,性交,精液经验+${y}`);
         // EXP[0] + = y（变量语义：EXP 族，(cid)[0] +）
-        era.add(`exp:${cid}:0`, y);
+        EraChara.get(cid).exp.vagina_exp += y;
       }
       // EXP[5] + = y（变量语义：EXP 族，(cid)[5] +）
-      era.add(`exp:${cid}:5`, y);
+      EraChara.get(cid).exp.intercourse_exp += y;
       // EXP[20] + = y（变量语义：EXP 族，(cid)[20] +）
-      era.add(`exp:${cid}:20`, y);
+      EraChara.get(cid).exp.semen_exp += y;
     }
 
     era.print(
-      `屈服,欲情,恭顺,耻情点数+${chara(cid).chara.结婚爱情 * 10 * y + 10}`,
+      `屈服,欲情,恭顺,耻情点数+${EraChara.get(cid).cflag.spousal_love * 10 * y + 10}`,
     );
     // JUEL:cid[6] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[6] +）
-    era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+    EraChara.get(cid).jewel.submission +=
+      EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
     // JUEL:cid[5] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[5] +）
-    era.add(`juel:${cid}:5`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+    EraChara.get(cid).jewel.lust +=
+      EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
     // JUEL:cid[4] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[4] +）
-    era.add(`juel:${cid}:4`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+    EraChara.get(cid).jewel.obedience +=
+      EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
     // JUEL:cid[8] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[8] +）
-    era.add(`juel:${cid}:8`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+    EraChara.get(cid).jewel.shame +=
+      EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
   }
   await era.waitAnyKey();
   return y;
@@ -1103,45 +1185,52 @@ async function slime_marriage_day(cid, y = 1) {
   await era.printAndWait(
     `${marriage_name(cid)}在${she(cid)}身上所有能进入的洞口里来回蠕动着.....`,
   );
-  if (chara(cid).system.欲望 >= 3) {
+  if (EraChara.get(cid).abl.lust >= 3) {
     await era.printAndWait(`${name_of(cid)}情不自禁的自慰了起来......`);
   }
   era.print(
-    `屈服,欲情,恭顺,耻情点数+${chara(cid).chara.结婚爱情 * 10 * y + 10}`,
+    `屈服,欲情,恭顺,耻情点数+${EraChara.get(cid).cflag.spousal_love * 10 * y + 10}`,
   );
   // JUEL:cid[6] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[6] +）
-  era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+  EraChara.get(cid).jewel.submission +=
+    EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
   // JUEL:cid[5] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[5] +）
-  era.add(`juel:${cid}:5`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+  EraChara.get(cid).jewel.lust +=
+    EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
   // JUEL:cid[4] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[4] +）
-  era.add(`juel:${cid}:4`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+  EraChara.get(cid).jewel.obedience +=
+    EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
   // JUEL:cid[8] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[8] +）
-  era.add(`juel:${cid}:8`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+  EraChara.get(cid).jewel.shame +=
+    EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
   era.print(
-    `${clitoris_word(cid)},乳房,肛门点数+${chara(cid).chara.结婚爱情 * 10 * y + 10}`,
+    `${clitoris_word(cid)},乳房,肛门点数+${EraChara.get(cid).cflag.spousal_love * 10 * y + 10}`,
   );
   // JUEL:cid[0] + = (CFLAG:cid[602] * 10 * y + 10)（变量语义：JUEL 族，cid[0] +）
-  era.add(`juel:${cid}:0`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+  EraChara.get(cid).jewel.clitoris +=
+    EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
   // JUEL:cid[14] + = (CFLAG:cid[602] * 10 * y + 10)（变量语义：JUEL 族，cid[14] +）
-  era.add(`juel:${cid}:14`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+  EraChara.get(cid).jewel.breast +=
+    EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
   // JUEL:cid[2] + = (CFLAG:cid[602] * 10 * y + 10)（变量语义：JUEL 族，cid[2] +）
-  era.add(`juel:${cid}:2`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+  EraChara.get(cid).jewel.anus +=
+    EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
 
   era.print(`绝顶经验+${Math.trunc(y / 2)}`);
   // EXP:cid[2] + = Math.trunc(y / 2)（变量语义：EXP 族，cid[2] +）
-  era.add(`exp:${cid}:2`, Math.trunc(y / 2));
-  if (chara(cid).system.欲望 >= 3) {
+  EraChara.get(cid).exp.orgasm_exp += Math.trunc(y / 2);
+  if (EraChara.get(cid).abl.lust >= 3) {
     era.print(`自慰经验+${y}`);
   }
-  if (chara(cid).system.欲望 >= 3) {
+  if (EraChara.get(cid).abl.lust >= 3) {
     // EXP:cid[10] + = y（变量语义：EXP 族，cid[10] +）
-    era.add(`exp:${cid}:10`, y);
+    EraChara.get(cid).exp.masturbation_exp += y;
   }
   await era.printAndWait(`异常,被虐经验+${y}`);
   // EXP:cid[50] + = y（变量语义：EXP 族，cid[50] +）
-  era.add(`exp:${cid}:50`, y);
+  EraChara.get(cid).exp.abnormal_exp += y;
   // EXP:cid[30] + = y（变量语义：EXP 族，cid[30] +）
-  era.add(`exp:${cid}:30`, y);
+  EraChara.get(cid).exp.masochist_pleasure_exp += y;
 
   return y;
 }
@@ -1151,12 +1240,15 @@ async function slime_marriage_day(cid, y = 1) {
 async function insect_marriage_day(cid, y = 1, rand = default_rand) {
   await era.printAndWait(`${name_of(cid)}和${marriage_name(cid)}一同生活着。`);
 
-  if (chara(cid).chara.处女 == 0 && chara(cid).chara.男人 == 0) {
+  if (
+    EraChara.get(cid).talent.virgin == 0 &&
+    EraChara.get(cid).talent.male == 0
+  ) {
     if (
       rand(10) == 0 &&
-      chara(cid).system.欲望 >= 5 &&
-      chara(cid).chara.妊娠 == 0 &&
-      chara(cid).chara.母乳体质 == 0
+      EraChara.get(cid).abl.lust >= 5 &&
+      EraChara.get(cid).talent.pregnant == 0 &&
+      EraChara.get(cid).talent.lactation_body == 0
     ) {
       era.print(
         `今天的${marriage_name(cid)}似乎不太一样,在${name_of(cid)}的子宫肠道里产下大量的卵`,
@@ -1169,53 +1261,62 @@ async function insect_marriage_day(cid, y = 1, rand = default_rand) {
         `被折磨一天的${name_of(cid)}被${marriage_name(cid)}改造的肉体开始分泌乳汁.....`,
       );
       era.print(
-        `欲情,屈服,耻情,苦痛,恐怖点数+${chara(cid).chara.结婚爱情 * 5 * y + 5}`,
+        `欲情,屈服,耻情,苦痛,恐怖点数+${EraChara.get(cid).cflag.spousal_love * 5 * y + 5}`,
       );
       // JUEL:cid[5] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[5] +）
-      era.add(`juel:${cid}:5`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.lust +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[6] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[6] +）
-      era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.submission +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[8] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[8] +）
-      era.add(`juel:${cid}:8`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.shame +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[9] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[9] +）
-      era.add(`juel:${cid}:9`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.pain +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[10] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[10] +）
-      era.add(`juel:${cid}:10`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.fear +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       era.print(
-        `${clitoris_word(cid)},乳房,私处,肛门点数+${chara(cid).chara.结婚爱情 * 5 * y + 5}`,
+        `${clitoris_word(cid)},乳房,私处,肛门点数+${EraChara.get(cid).cflag.spousal_love * 5 * y + 5}`,
       );
       // JUEL:cid[0] + = (CFLAG:cid[602] * 5 * y + 5)（变量语义：JUEL 族，cid[0] +）
-      era.add(`juel:${cid}:0`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.clitoris +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[14] + = (CFLAG:cid[602] * 5 * y + 5)（变量语义：JUEL 族，cid[14] +）
-      era.add(`juel:${cid}:14`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.breast +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[1] + = (CFLAG:cid[602] * 5 * y + 5)（变量语义：JUEL 族，cid[1] +）
-      era.add(`juel:${cid}:1`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.vagina +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[2] + = (CFLAG:cid[602] * 5 * y + 5)（变量语义：JUEL 族，cid[2] +）
-      era.add(`juel:${cid}:2`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.anus +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       await era.printAndWait(`私处,肛门,异常,被虐经验+${y}`);
       // EXP:cid[1] + = y（变量语义：EXP 族，cid[1] +）
-      era.add(`exp:${cid}:1`, y);
+      EraChara.get(cid).exp.anal_exp += y;
       // EXP:cid[0] + = y（变量语义：EXP 族，cid[0] +）
-      era.add(`exp:${cid}:0`, y);
+      EraChara.get(cid).exp.vagina_exp += y;
       // EXP:cid[50] + = y（变量语义：EXP 族，cid[50] +）
-      era.add(`exp:${cid}:50`, y);
+      EraChara.get(cid).exp.abnormal_exp += y;
       // EXP:cid[30] + = y（变量语义：EXP 族，cid[30] +）
-      era.add(`exp:${cid}:30`, y);
+      EraChara.get(cid).exp.masochist_pleasure_exp += y;
       era.print(`${name_of(cid)} 获得【${talent_name(130)}】`);
       era.print(`${name_of(cid)} 获得【${talent_name(190)}】`);
       await era.printAndWait(`${name_of(cid)} 获得【${talent_name(191)}】`);
       // TALENT:cid[130]  = 1（变量语义：TALENT 族，cid[130]）
-      chara(cid).chara.母乳体质 = 1;
+      EraChara.get(cid).talent.lactation_body = 1;
       // TALENT:cid[190]  = 1（变量语义：TALENT 族，cid[190]）
-      era.set(`talent:${cid}:190`, 1);
+      EraChara.get(cid).talent.vagina_spawn = 1;
       // TALENT:cid[191]  = 1（变量语义：TALENT 族，cid[191]）
-      era.set(`talent:${cid}:191`, 1);
+      EraChara.get(cid).talent.rectal_spawn = 1;
     } else if (
       rand(5) == 0 &&
-      chara(cid).system.欲望 >= 5 &&
-      chara(cid).chara.妊娠 == 0 &&
-      chara(cid).chara.母乳体质 == 1 &&
-      chara(cid).chara.母性 == 0
+      EraChara.get(cid).abl.lust >= 5 &&
+      EraChara.get(cid).talent.pregnant == 0 &&
+      EraChara.get(cid).talent.lactation_body == 1 &&
+      EraChara.get(cid).talent.maternal == 0
     ) {
       era.print(
         `赤裸着身体挺着巨大肚子正在打扫城堡的${name_of(cid)}突然双腿颤抖着扶着扫帚呻吟着.....`,
@@ -1227,48 +1328,57 @@ async function insect_marriage_day(cid, y = 1, rand = default_rand) {
         `良久,已经习惯多次产下${marriage_name(cid)}幼虫的${name_of(cid)}用慈爱的目光看着一地的孩子们,「哎,又要重新打扫了。」`,
       );
       era.print(
-        `欲情,屈服,耻情,苦痛,恐怖点数+${chara(cid).chara.结婚爱情 * 5 * y + 5}`,
+        `欲情,屈服,耻情,苦痛,恐怖点数+${EraChara.get(cid).cflag.spousal_love * 5 * y + 5}`,
       );
       // JUEL:cid[5] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[5] +）
-      era.add(`juel:${cid}:5`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.lust +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[6] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[6] +）
-      era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.submission +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[8] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[8] +）
-      era.add(`juel:${cid}:8`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.shame +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[9] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[9] +）
-      era.add(`juel:${cid}:9`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.pain +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[10] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[10] +）
-      era.add(`juel:${cid}:10`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.fear +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       era.print(
-        `${clitoris_word(cid)},乳房,私处,肛门点数+${chara(cid).chara.结婚爱情 * 5 * y + 5}`,
+        `${clitoris_word(cid)},乳房,私处,肛门点数+${EraChara.get(cid).cflag.spousal_love * 5 * y + 5}`,
       );
       // JUEL:cid[0] + = (CFLAG:cid[602] * 5 * y + 5)（变量语义：JUEL 族，cid[0] +）
-      era.add(`juel:${cid}:0`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.clitoris +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[14] + = (CFLAG:cid[602] * 5 * y + 5)（变量语义：JUEL 族，cid[14] +）
-      era.add(`juel:${cid}:14`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.breast +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[1] + = (CFLAG:cid[602] * 5 * y + 5)（变量语义：JUEL 族，cid[1] +）
-      era.add(`juel:${cid}:1`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.vagina +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[2] + = (CFLAG:cid[602] * 5 * y + 5)（变量语义：JUEL 族，cid[2] +）
-      era.add(`juel:${cid}:2`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.anus +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       await era.printAndWait(`私处,肛门,异常,被虐经验+${y}`);
       // EXP:cid[1] + = y（变量语义：EXP 族，cid[1] +）
-      era.add(`exp:${cid}:1`, y);
+      EraChara.get(cid).exp.anal_exp += y;
       // EXP:cid[0] + = y（变量语义：EXP 族，cid[0] +）
-      era.add(`exp:${cid}:0`, y);
+      EraChara.get(cid).exp.vagina_exp += y;
       // EXP:cid[50] + = y（变量语义：EXP 族，cid[50] +）
-      era.add(`exp:${cid}:50`, y);
+      EraChara.get(cid).exp.abnormal_exp += y;
       // EXP:cid[30] + = y（变量语义：EXP 族，cid[30] +）
-      era.add(`exp:${cid}:30`, y);
+      EraChara.get(cid).exp.masochist_pleasure_exp += y;
       era.print(`${name_of(cid)} 获得【${talent_name(155)}】`);
       // TALENT:cid[155]  = 1（变量语义：TALENT 族，cid[155]）
-      chara(cid).chara.母性 = 1;
+      EraChara.get(cid).talent.maternal = 1;
     } else if (
       rand(5) <= 1 &&
-      chara(cid).system.欲望 >= 5 &&
-      chara(cid).chara.妊娠 == 0 &&
-      chara(cid).chara.母性 == 1 &&
-      chara(cid).chara.母乳体质 == 1 &&
-      chara(cid).system.欲望 <= 9
+      EraChara.get(cid).abl.lust >= 5 &&
+      EraChara.get(cid).talent.pregnant == 0 &&
+      EraChara.get(cid).talent.maternal == 1 &&
+      EraChara.get(cid).talent.lactation_body == 1 &&
+      EraChara.get(cid).abl.lust <= 9
     ) {
       era.print(
         `你无语地看着总是赤裸着身体在你面前表演《${marriage_name(cid)}出产秀》的 ${name_of(cid)}`,
@@ -1282,118 +1392,136 @@ async function insect_marriage_day(cid, y = 1, rand = default_rand) {
         `${name_of(cid)}为了获得更多的体液,出去捕食了......`,
       );
       // CFLAG:cid[2] + = 300（变量语义：CFLAG 族，cid[2] +）
-      chara(cid).chara.好感度 += 300;
+      EraChara.get(cid).cflag.affection += 300;
 
       if (
-        chara(cid).system.欲望 >= 5 &&
-        obedience_points(cid) >= power(2, chara(cid).system.欲望 - 4) * 10000
+        EraChara.get(cid).abl.lust >= 5 &&
+        obedience_points(cid) >=
+          power(2, EraChara.get(cid).abl.lust - 4) * 10000
       ) {
         // JUEL:cid[5] - = (power(2,(ABL:cid[11] - 4)) * 10000)（变量语义：JUEL 族，cid[5] -）
-        era.add(
-          `juel:${cid}:5`,
-          -(power(2, chara(cid).system.欲望 - 4) * 10000),
+        EraChara.get(cid).jewel.lust += -(
+          power(2, EraChara.get(cid).abl.lust - 4) * 10000
         );
         // ABL:cid[11] + = 1（变量语义：ABL 族，cid[11] +）
-        chara(cid).system.欲望 += 1;
+        EraChara.get(cid).abl.lust += 1;
         await era.printAndWait(`${name_of(cid)}欲望等级+1`);
         await era.printAndWait(
-          `欲情点数减少${power(2, chara(cid).system.欲望 - 4) * 10000}`,
+          `欲情点数减少${power(2, EraChara.get(cid).abl.lust - 4) * 10000}`,
         );
       }
-      y += chara(cid).system.欲望;
+      y += EraChara.get(cid).abl.lust;
       era.print(`侍奉快乐经验,卖淫经验+${y * 10}`);
       // EXP:cid[21] + = y * 10（变量语义：EXP 族，cid[21] +）
-      era.add(`exp:${cid}:21`, y * 10);
+      EraChara.get(cid).exp.service_pleasure_exp += y * 10;
       // EXP:cid[74] + = y * 10（变量语义：EXP 族，cid[74] +）
-      era.add(`exp:${cid}:74`, y * 10);
+      EraChara.get(cid).exp.prostitution_exp += y * 10;
       era.print(
-        `欲情,屈服,耻情,苦痛,恐怖点数+${chara(cid).chara.结婚爱情 * 5 * y + 5}`,
+        `欲情,屈服,耻情,苦痛,恐怖点数+${EraChara.get(cid).cflag.spousal_love * 5 * y + 5}`,
       );
       // JUEL:cid[5] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[5] +）
-      era.add(`juel:${cid}:5`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.lust +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[6] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[6] +）
-      era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.submission +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[8] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[8] +）
-      era.add(`juel:${cid}:8`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.shame +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[9] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[9] +）
-      era.add(`juel:${cid}:9`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.pain +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[10] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[10] +）
-      era.add(`juel:${cid}:10`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.fear +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       era.print(
-        `${clitoris_word(cid)},乳房,私处,肛门点数+${chara(cid).chara.结婚爱情 * 5 * y + 5}`,
+        `${clitoris_word(cid)},乳房,私处,肛门点数+${EraChara.get(cid).cflag.spousal_love * 5 * y + 5}`,
       );
       // JUEL:cid[0] + = (CFLAG:cid[602] * 5 * y + 5)（变量语义：JUEL 族，cid[0] +）
-      era.add(`juel:${cid}:0`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.clitoris +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[14] + = (CFLAG:cid[602] * 5 * y + 5)（变量语义：JUEL 族，cid[14] +）
-      era.add(`juel:${cid}:14`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.breast +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[1] + = (CFLAG:cid[602] * 5 * y + 5)（变量语义：JUEL 族，cid[1] +）
-      era.add(`juel:${cid}:1`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.vagina +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[2] + = (CFLAG:cid[602] * 5 * y + 5)（变量语义：JUEL 族，cid[2] +）
-      era.add(`juel:${cid}:2`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.anus +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       await era.printAndWait(`私处,肛门,异常,被虐经验+${y}`);
       // EXP:cid[1] + = y（变量语义：EXP 族，cid[1] +）
-      era.add(`exp:${cid}:1`, y);
+      EraChara.get(cid).exp.anal_exp += y;
       // EXP:cid[0] + = y（变量语义：EXP 族，cid[0] +）
-      era.add(`exp:${cid}:0`, y);
+      EraChara.get(cid).exp.vagina_exp += y;
       // EXP:cid[50] + = y（变量语义：EXP 族，cid[50] +）
-      era.add(`exp:${cid}:50`, y);
+      EraChara.get(cid).exp.abnormal_exp += y;
       // EXP:cid[30] + = y（变量语义：EXP 族，cid[30] +）
-      era.add(`exp:${cid}:30`, y);
-      if (chara(cid).system.欲望 >= 8 && chara(cid).dungeon.妓女 == 0) {
+      EraChara.get(cid).exp.masochist_pleasure_exp += y;
+      if (
+        EraChara.get(cid).abl.lust >= 8 &&
+        EraChara.get(cid).talent.prostitute == 0
+      ) {
         await era.printAndWait(
           `经常勾引男性和女性获得体液的${name_of(cid)}成为一出色的妓女,获得【${talent_name(180)}】`,
         );
       }
-      if (chara(cid).system.欲望 >= 8 && chara(cid).dungeon.妓女 == 0) {
+      if (
+        EraChara.get(cid).abl.lust >= 8 &&
+        EraChara.get(cid).talent.prostitute == 0
+      ) {
         // TALENT:cid[180]  = 1（变量语义：TALENT 族，cid[180]）
-        era.set(`talent:${cid}:180`, 1);
+        EraChara.get(cid).talent.prostitute = 1;
       }
 
-      if (chara(cid).system.欲望 >= 9 && chara(cid).dungeon.倾城 == 0) {
+      if (
+        EraChara.get(cid).abl.lust >= 9 &&
+        EraChara.get(cid).talent.courtesan == 0
+      ) {
         if (
-          chara(cid).dungeon.私处产卵 == 1 ||
-          chara(cid).dungeon.直肠产卵 == 1 ||
-          chara(cid).stronghold.蠕虫 == 1 ||
-          chara(cid).stronghold.蠕虫 == 1
+          EraChara.get(cid).talent.vagina_spawn == 1 ||
+          EraChara.get(cid).talent.rectal_spawn == 1 ||
+          EraChara.get(cid).talent.worm == 1 ||
+          EraChara.get(cid).talent.worm == 1
         ) {
           await era.printAndWait(
             `${name_of(cid)} 发现寄生在两穴的孩子影响到体液获取,只能清除了自己的寄生状态...`,
           );
-          if (chara(cid).dungeon.私处产卵 == 1) {
+          if (EraChara.get(cid).talent.vagina_spawn == 1) {
             await era.printAndWait(
               `${name_of(cid)}失去【${talent_name(190)}】`,
             );
           }
-          if (chara(cid).dungeon.直肠产卵 == 1) {
+          if (EraChara.get(cid).talent.rectal_spawn == 1) {
             await era.printAndWait(
               `${name_of(cid)}失去【${talent_name(191)}】`,
             );
           }
-          if (chara(cid).stronghold.蠕虫 == 1) {
+          if (EraChara.get(cid).talent.worm == 1) {
             await era.printAndWait(
               `${name_of(cid)}失去【${talent_name(192)}】`,
             );
           }
-          if (chara(cid).dungeon.肛门虫 == 1) {
+          if (EraChara.get(cid).talent.anal_worm == 1) {
             await era.printAndWait(
               `${name_of(cid)}失去【${talent_name(193)}】`,
             );
           }
-          if (chara(cid).dungeon.私处产卵 == 1) {
+          if (EraChara.get(cid).talent.vagina_spawn == 1) {
             // TALENT:cid[190]  = 0（变量语义：TALENT 族，cid[190]）
-            era.set(`talent:${cid}:190`, 0);
+            EraChara.get(cid).talent.vagina_spawn = 0;
           }
-          if (chara(cid).dungeon.直肠产卵 == 1) {
+          if (EraChara.get(cid).talent.rectal_spawn == 1) {
             // TALENT:cid[191]  = 0（变量语义：TALENT 族，cid[191]）
-            era.set(`talent:${cid}:191`, 0);
+            EraChara.get(cid).talent.rectal_spawn = 0;
           }
-          if (chara(cid).stronghold.蠕虫 == 1) {
+          if (EraChara.get(cid).talent.worm == 1) {
             // TALENT:cid[192]  = 0（变量语义：TALENT 族，cid[192]）
-            chara(cid).stronghold.蠕虫 = 0;
+            EraChara.get(cid).talent.worm = 0;
           }
-          if (chara(cid).dungeon.肛门虫 == 1) {
+          if (EraChara.get(cid).talent.anal_worm == 1) {
             // TALENT:cid[193]  = 0（变量语义：TALENT 族，cid[193]）
-            era.set(`talent:${cid}:193`, 0);
+            EraChara.get(cid).talent.anal_worm = 0;
           }
         }
 
@@ -1401,36 +1529,44 @@ async function insect_marriage_day(cid, y = 1, rand = default_rand) {
           `为了获得跟多体液,${name_of(cid)}精心打扮自己,完美的展示了自己的淫荡的模样,获得【${talent_name(181)}】`,
         );
         // TALENT:cid[181]  = 1（变量语义：TALENT 族，cid[181]）
-        era.set(`talent:${cid}:181`, 1);
+        EraChara.get(cid).talent.courtesan = 1;
       }
 
-      if (chara(cid).system.欲望 == 10 && chara(cid).dungeon.巧言 == 0) {
+      if (
+        EraChara.get(cid).abl.lust == 10 &&
+        EraChara.get(cid).talent.silver_tongue == 0
+      ) {
         await era.printAndWait(
           `妓女工作让${name_of(cid)}懂得如何说得更多顾客并且如何呻吟来激发对方更深层的欲望,获得【${talent_name(182)}】`,
         );
       }
-      if (chara(cid).system.欲望 == 10 && chara(cid).dungeon.巧言 == 0) {
+      if (
+        EraChara.get(cid).abl.lust == 10 &&
+        EraChara.get(cid).talent.silver_tongue == 0
+      ) {
         // TALENT:cid[182]  = 1（变量语义：TALENT 族，cid[182]）
-        era.set(`talent:${cid}:182`, 1);
+        EraChara.get(cid).talent.silver_tongue = 1;
       }
     } else if (
       rand(5) <= 2 &&
-      chara(cid).system.欲望 == 10 &&
-      chara(cid).chara.妊娠 == 0 &&
-      chara(cid).chara.母性 == 1 &&
-      chara(cid).chara.母乳体质 == 1 &&
-      chara(cid).dungeon.妓女 == 1 &&
-      chara(cid).dungeon.倾城 == 1 &&
-      chara(cid).dungeon.巧言 == 1 &&
-      (chara(cid).dungeon.歌姫 == 0 ||
-        chara(cid).dungeon.舞姫 == 0 ||
-        chara(cid).dungeon.魅力 == 0 ||
-        chara(cid).dungeon.高人气 == 0)
+      EraChara.get(cid).abl.lust == 10 &&
+      EraChara.get(cid).talent.pregnant == 0 &&
+      EraChara.get(cid).talent.maternal == 1 &&
+      EraChara.get(cid).talent.lactation_body == 1 &&
+      EraChara.get(cid).talent.prostitute == 1 &&
+      EraChara.get(cid).talent.courtesan == 1 &&
+      EraChara.get(cid).talent.silver_tongue == 1 &&
+      (EraChara.get(cid).talent.songstress == 0 ||
+        EraChara.get(cid).talent.dancer == 0 ||
+        EraChara.get(cid).talent.charisma == 0 ||
+        EraChara.get(cid).talent.popular == 0)
     ) {
       era.print(
         `为了获得更优质的体液,吸引强大的魔族注意${name_of(cid)}开始学习黑暗艺术.....`,
       );
-      y += chara(cid).train.卖淫中毒 + chara(cid).system.欲望;
+      y +=
+        EraChara.get(cid).abl.prostitution_addiction +
+        EraChara.get(cid).abl.lust;
 
       era.print(
         `《如何利用高潮唱歌技巧大全》《跳跃与体液喷射》《自慰舞蹈精选》`,
@@ -1439,278 +1575,355 @@ async function insect_marriage_day(cid, y = 1, rand = default_rand) {
         `《叫床,潮喷,灌肠,歌舞融合法则》《肉体极限与道具》奇怪的知识习得了....`,
       );
 
-      if (chara(cid).dungeon.魅力 == 0 && chara(cid).train.卖淫中毒 >= 6) {
+      if (
+        EraChara.get(cid).talent.charisma == 0 &&
+        EraChara.get(cid).abl.prostitution_addiction >= 6
+      ) {
         await era.printAndWait(
           `舞蹈与歌唱学习让${name_of(cid)}更有气质了,${name_of(cid)}获得【${talent_name(113)}】`,
         );
       }
-      if (chara(cid).dungeon.魅力 == 0 && chara(cid).train.卖淫中毒 >= 6) {
+      if (
+        EraChara.get(cid).talent.charisma == 0 &&
+        EraChara.get(cid).abl.prostitution_addiction >= 6
+      ) {
         // TALENT:cid[113]  = 0（变量语义：TALENT 族，cid[113]）
-        era.set(`talent:${cid}:113`, 0);
+        EraChara.get(cid).talent.charisma = 0;
       }
-      if (chara(cid).dungeon.高人气 == 0 && chara(cid).train.卖淫中毒 >= 8) {
+      if (
+        EraChara.get(cid).talent.popular == 0 &&
+        EraChara.get(cid).abl.prostitution_addiction >= 8
+      ) {
         await era.printAndWait(
           `淫贱与大胆的歌舞表演,让${name_of(cid)}获得更多人的关注,${name_of(cid)}获得【${talent_name(126)}】`,
         );
       }
-      if (chara(cid).dungeon.高人气 == 0 && chara(cid).train.卖淫中毒 >= 8) {
+      if (
+        EraChara.get(cid).talent.popular == 0 &&
+        EraChara.get(cid).abl.prostitution_addiction >= 8
+      ) {
         // TALENT:cid[126]  = 1（变量语义：TALENT 族，cid[126]）
-        era.set(`talent:${cid}:126`, 1);
+        EraChara.get(cid).talent.popular = 1;
       }
-      if (chara(cid).dungeon.歌姫 == 0 && chara(cid).train.卖淫中毒 == 10) {
+      if (
+        EraChara.get(cid).talent.songstress == 0 &&
+        EraChara.get(cid).abl.prostitution_addiction == 10
+      ) {
         await era.printAndWait(
           `长久的学习与实践后${name_of(cid)}已经可以在灌肠喷射带来的绝顶高潮中完美的表演歌唱了,${name_of(cid)}获得【${talent_name(185)}】`,
         );
       }
-      if (chara(cid).dungeon.歌姫 == 0) {
+      if (EraChara.get(cid).talent.songstress == 0) {
         // TALENT:cid[185]  = 1（变量语义：TALENT 族，cid[185]）
-        era.set(`talent:${cid}:185`, 1);
+        EraChara.get(cid).talent.songstress = 1;
       }
 
-      if (chara(cid).dungeon.舞姫 == 0 && chara(cid).train.卖淫中毒 == 10) {
+      if (
+        EraChara.get(cid).talent.dancer == 0 &&
+        EraChara.get(cid).abl.prostitution_addiction == 10
+      ) {
         era.print(
           `${name_of(cid)}在舞台上表演曼妙优美的舞姿,旋转跳跃中挥洒出乳汁,肠液,尿液与潮喷液构成的美妙4重绝顶,`,
         );
       }
-      if (chara(cid).dungeon.舞姫 == 0 && chara(cid).train.卖淫中毒 == 10) {
+      if (
+        EraChara.get(cid).talent.dancer == 0 &&
+        EraChara.get(cid).abl.prostitution_addiction == 10
+      ) {
         await era.printAndWait(
           `观众们集体鼓掌,并争先恐后给${name_of(cid)}的身体上涂满浓臭的精液或尿液,${name_of(cid)}获得【${talent_name(186)}】`,
         );
       }
-      if (chara(cid).dungeon.舞姫 == 0 && chara(cid).train.卖淫中毒 == 10) {
+      if (
+        EraChara.get(cid).talent.dancer == 0 &&
+        EraChara.get(cid).abl.prostitution_addiction == 10
+      ) {
         // TALENT:cid[186]  = 1（变量语义：TALENT 族，cid[186]）
-        era.set(`talent:${cid}:186`, 1);
+        EraChara.get(cid).talent.dancer = 1;
       }
 
       await era.printAndWait(`卖淫经验+ ${y * 10}`);
       // EXP:cid[74] + = y * 10（变量语义：EXP 族，cid[74] +）
-      era.add(`exp:${cid}:74`, y * 10);
+      EraChara.get(cid).exp.prostitution_exp += y * 10;
       era.print(
-        `欲情,屈服,耻情,苦痛,恐怖点数+${chara(cid).chara.结婚爱情 * 5 * y + 5}`,
+        `欲情,屈服,耻情,苦痛,恐怖点数+${EraChara.get(cid).cflag.spousal_love * 5 * y + 5}`,
       );
       // JUEL:cid[5] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[5] +）
-      era.add(`juel:${cid}:5`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.lust +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[6] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[6] +）
-      era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.submission +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[8] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[8] +）
-      era.add(`juel:${cid}:8`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.shame +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[9] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[9] +）
-      era.add(`juel:${cid}:9`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.pain +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[10] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[10] +）
-      era.add(`juel:${cid}:10`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.fear +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       era.print(
-        `${clitoris_word(cid)},乳房,私处,肛门点数+${chara(cid).chara.结婚爱情 * 5 * y + 5}`,
+        `${clitoris_word(cid)},乳房,私处,肛门点数+${EraChara.get(cid).cflag.spousal_love * 5 * y + 5}`,
       );
       // JUEL:cid[0] + = (CFLAG:cid[602] * 5 * y + 5)（变量语义：JUEL 族，cid[0] +）
-      era.add(`juel:${cid}:0`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.clitoris +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[14] + = (CFLAG:cid[602] * 5 * y + 5)（变量语义：JUEL 族，cid[14] +）
-      era.add(`juel:${cid}:14`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.breast +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[1] + = (CFLAG:cid[602] * 5 * y + 5)（变量语义：JUEL 族，cid[1] +）
-      era.add(`juel:${cid}:1`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.vagina +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[2] + = (CFLAG:cid[602] * 5 * y + 5)（变量语义：JUEL 族，cid[2] +）
-      era.add(`juel:${cid}:2`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.anus +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
 
       if (
-        chara(cid).train.卖淫中毒 <= 9 &&
-        desire_points(cid) >= power(2, chara(cid).train.卖淫中毒) * 1500 &&
-        obedience_points(cid) >= power(2, chara(cid).train.卖淫中毒) * 2000 &&
-        submission_points(cid) >= power(2, chara(cid).train.卖淫中毒) * 1000 &&
-        chara(cid).dungeon.卖淫经验 >= power(2, chara(cid).train.卖淫中毒) * 20
+        EraChara.get(cid).abl.prostitution_addiction <= 9 &&
+        desire_points(cid) >=
+          power(2, EraChara.get(cid).abl.prostitution_addiction) * 1500 &&
+        obedience_points(cid) >=
+          power(2, EraChara.get(cid).abl.prostitution_addiction) * 2000 &&
+        submission_points(cid) >=
+          power(2, EraChara.get(cid).abl.prostitution_addiction) * 1000 &&
+        EraChara.get(cid).exp.prostitution_exp >=
+          power(2, EraChara.get(cid).abl.prostitution_addiction) * 20
       ) {
         // JUEL:cid[4] - = (power(2,(ABL:cid[37])) * 1500)（变量语义：JUEL 族，cid[4] -）
-        era.add(`juel:${cid}:4`, -(power(2, chara(cid).train.卖淫中毒) * 1500));
+        EraChara.get(cid).jewel.obedience += -(
+          power(2, EraChara.get(cid).abl.prostitution_addiction) * 1500
+        );
         // JUEL:cid[5] - = (power(2,(ABL:cid[37])) * 2000)（变量语义：JUEL 族，cid[5] -）
-        era.add(`juel:${cid}:5`, -(power(2, chara(cid).train.卖淫中毒) * 2000));
+        EraChara.get(cid).jewel.lust += -(
+          power(2, EraChara.get(cid).abl.prostitution_addiction) * 2000
+        );
         // JUEL:cid[6] - = (power(2,(ABL:cid[37])) * 1000)（变量语义：JUEL 族，cid[6] -）
-        era.add(`juel:${cid}:6`, -(power(2, chara(cid).train.卖淫中毒) * 1000));
+        EraChara.get(cid).jewel.submission += -(
+          power(2, EraChara.get(cid).abl.prostitution_addiction) * 1000
+        );
         // EXP:cid[74] - = (power(2,(ABL:cid[37])) * 20)（变量语义：EXP 族，cid[74] -）
-        era.add(`exp:${cid}:74`, -(power(2, chara(cid).train.卖淫中毒) * 20));
+        EraChara.get(cid).exp.prostitution_exp += -(
+          power(2, EraChara.get(cid).abl.prostitution_addiction) * 20
+        );
         // ABL:cid[37] + = 1（变量语义：ABL 族，cid[37] +）
-        chara(cid).train.卖淫中毒 += 1;
+        EraChara.get(cid).abl.prostitution_addiction += 1;
         await era.printAndWait(`${name_of(cid)}卖淫等级+1`);
-        era.print(`恭顺点数减少${power(2, chara(cid).train.卖淫中毒) * 1500}`);
-        era.print(`情欲点数减少${power(2, chara(cid).train.卖淫中毒) * 2000}`);
-        era.print(`情欲点数减少${power(2, chara(cid).train.卖淫中毒) * 1000}`);
+        era.print(
+          `恭顺点数减少${power(2, EraChara.get(cid).abl.prostitution_addiction) * 1500}`,
+        );
+        era.print(
+          `情欲点数减少${power(2, EraChara.get(cid).abl.prostitution_addiction) * 2000}`,
+        );
+        era.print(
+          `情欲点数减少${power(2, EraChara.get(cid).abl.prostitution_addiction) * 1000}`,
+        );
         await era.printAndWait(
-          `卖淫经验减少${power(2, chara(cid).train.卖淫中毒) * 20}`,
+          `卖淫经验减少${power(2, EraChara.get(cid).abl.prostitution_addiction) * 20}`,
         );
       }
       await era.printAndWait(`私处,肛门,异常,被虐经验+${y}`);
       // EXP:cid[1] + = y（变量语义：EXP 族，cid[1] +）
-      era.add(`exp:${cid}:1`, y);
+      EraChara.get(cid).exp.anal_exp += y;
       // EXP:cid[0] + = y（变量语义：EXP 族，cid[0] +）
-      era.add(`exp:${cid}:0`, y);
+      EraChara.get(cid).exp.vagina_exp += y;
       // EXP:cid[50] + = y（变量语义：EXP 族，cid[50] +）
-      era.add(`exp:${cid}:50`, y);
+      EraChara.get(cid).exp.abnormal_exp += y;
       // EXP:cid[30] + = y（变量语义：EXP 族，cid[30] +）
-      era.add(`exp:${cid}:30`, y);
+      EraChara.get(cid).exp.masochist_pleasure_exp += y;
     } else if (
-      chara(cid).chara.结婚爱情 >= 10 &&
-      chara(cid).system.欲望 == 10 &&
-      chara(cid).train.卖淫中毒 == 10 &&
-      chara(cid).chara.妊娠 == 0 &&
-      chara(cid).chara.母性 == 1 &&
-      chara(cid).chara.母乳体质 == 1 &&
-      chara(cid).dungeon.妓女 == 1 &&
-      chara(cid).dungeon.巧言 == 1 &&
-      chara(cid).dungeon.歌姫 == 1 &&
-      chara(cid).dungeon.舞姫 == 1 &&
-      chara(cid).dungeon.倾城 == 1 &&
-      chara(cid).dungeon.魅力 == 1 &&
-      chara(cid).dungeon.高人气 == 1 &&
-      chara(cid).dungeon.苗床 == 0
+      EraChara.get(cid).cflag.spousal_love >= 10 &&
+      EraChara.get(cid).abl.lust == 10 &&
+      EraChara.get(cid).abl.prostitution_addiction == 10 &&
+      EraChara.get(cid).talent.pregnant == 0 &&
+      EraChara.get(cid).talent.maternal == 1 &&
+      EraChara.get(cid).talent.lactation_body == 1 &&
+      EraChara.get(cid).talent.prostitute == 1 &&
+      EraChara.get(cid).talent.silver_tongue == 1 &&
+      EraChara.get(cid).talent.songstress == 1 &&
+      EraChara.get(cid).talent.dancer == 1 &&
+      EraChara.get(cid).talent.courtesan == 1 &&
+      EraChara.get(cid).talent.charisma == 1 &&
+      EraChara.get(cid).talent.popular == 1 &&
+      EraChara.get(cid).talent.breeding_bed == 0
     ) {
       y += 20;
       await era.printAndWait(
         `万众瞩目的${name_of(cid)}发现自己偏离的当初抚养孩子的本意,决定放弃了一切.......`,
       );
-      if (chara(cid).dungeon.战士 == 1) {
+      if (EraChara.get(cid).talent.warrior == 1) {
         // TALENT:cid[200]  = 0（变量语义：TALENT 族，cid[200]）
-        era.set(`talent:${cid}:200`, 0);
+        EraChara.get(cid).talent.warrior = 0;
       }
-      if (chara(cid).dungeon.魔法师 == 1) {
+      if (EraChara.get(cid).talent.mage == 1) {
         // TALENT:cid[201]  = 0（变量语义：TALENT 族，cid[201]）
-        era.set(`talent:${cid}:201`, 0);
+        EraChara.get(cid).talent.mage = 0;
       }
-      if (chara(cid).dungeon.神官 == 1) {
+      if (EraChara.get(cid).talent.priest == 1) {
         // TALENT:cid[202]  = 0（变量语义：TALENT 族，cid[202]）
-        era.set(`talent:${cid}:202`, 0);
+        EraChara.get(cid).talent.priest = 0;
       }
-      if (chara(cid).dungeon.盗贼 == 1) {
+      if (EraChara.get(cid).talent.thief == 1) {
         // TALENT:cid[203]  = 0（变量语义：TALENT 族，cid[203]）
-        era.set(`talent:${cid}:203`, 0);
+        EraChara.get(cid).talent.thief = 0;
       }
-      if (chara(cid).dungeon.肉便器 == 1) {
+      if (EraChara.get(cid).talent.cum_dump == 1) {
         // TALENT:cid[204]  = 0（变量语义：TALENT 族，cid[204]）
-        era.set(`talent:${cid}:204`, 0);
+        EraChara.get(cid).talent.cum_dump = 0;
       }
-      if (chara(cid).dungeon.骑士 == 1) {
+      if (EraChara.get(cid).talent.knight == 1) {
         // TALENT:cid[205]  = 0（变量语义：TALENT 族，cid[205]）
-        era.set(`talent:${cid}:205`, 0);
+        EraChara.get(cid).talent.knight = 0;
       }
-      if (chara(cid).dungeon.巫女 == 1) {
+      if (EraChara.get(cid).talent.shrine_maiden == 1) {
         // TALENT:cid[206]  = 0（变量语义：TALENT 族，cid[206]）
-        era.set(`talent:${cid}:206`, 0);
+        EraChara.get(cid).talent.shrine_maiden = 0;
       }
-      if (chara(cid).dungeon.忍者 == 1) {
+      if (EraChara.get(cid).talent.ninja == 1) {
         // TALENT:cid[207]  = 0（变量语义：TALENT 族，cid[207]）
-        era.set(`talent:${cid}:207`, 0);
+        EraChara.get(cid).talent.ninja = 0;
       }
-      if (chara(cid).dungeon.弓手 == 1) {
+      if (EraChara.get(cid).talent.archer == 1) {
         // TALENT:cid[208]  = 0（变量语义：TALENT 族，cid[208]）
-        era.set(`talent:${cid}:208`, 0);
+        EraChara.get(cid).talent.archer = 0;
       }
       await era.printAndWait(
         `${name_of(cid)}准备安心的做个母亲....直到魔王的召唤....`,
       );
-      if (chara(cid).dungeon.苗床 == 0) {
+      if (EraChara.get(cid).talent.breeding_bed == 0) {
         // TALENT:cid[209]  = 1（变量语义：TALENT 族，cid[209]）
-        era.set(`talent:${cid}:209`, 1);
+        EraChara.get(cid).talent.breeding_bed = 1;
       }
       await era.printAndWait(`${name_of(cid)}变成了【${talent_name(209)}】`);
       era.print(
-        `欲情,屈服,耻情,苦痛,恐怖点数+${chara(cid).chara.结婚爱情 * 5 * y + 5}`,
+        `欲情,屈服,耻情,苦痛,恐怖点数+${EraChara.get(cid).cflag.spousal_love * 5 * y + 5}`,
       );
       // JUEL:cid[5] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[5] +）
-      era.add(`juel:${cid}:5`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.lust +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[6] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[6] +）
-      era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.submission +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[8] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[8] +）
-      era.add(`juel:${cid}:8`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.shame +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[9] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[9] +）
-      era.add(`juel:${cid}:9`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.pain +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[10] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[10] +）
-      era.add(`juel:${cid}:10`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.fear +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       era.print(
-        `${clitoris_word(cid)},乳房,私处,肛门点数+${chara(cid).chara.结婚爱情 * 5 * y + 5}`,
+        `${clitoris_word(cid)},乳房,私处,肛门点数+${EraChara.get(cid).cflag.spousal_love * 5 * y + 5}`,
       );
       // JUEL:cid[0] + = (CFLAG:cid[602] * 5 * y + 5)（变量语义：JUEL 族，cid[0] +）
-      era.add(`juel:${cid}:0`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.clitoris +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[14] + = (CFLAG:cid[602] * 5 * y + 5)（变量语义：JUEL 族，cid[14] +）
-      era.add(`juel:${cid}:14`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.breast +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[1] + = (CFLAG:cid[602] * 5 * y + 5)（变量语义：JUEL 族，cid[1] +）
-      era.add(`juel:${cid}:1`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.vagina +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[2] + = (CFLAG:cid[602] * 5 * y + 5)（变量语义：JUEL 族，cid[2] +）
-      era.add(`juel:${cid}:2`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.anus +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       await era.printAndWait(`私处,肛门,异常,被虐经验+${y}`);
       // EXP:cid[1] + = y（变量语义：EXP 族，cid[1] +）
-      era.add(`exp:${cid}:1`, y);
+      EraChara.get(cid).exp.anal_exp += y;
       // EXP:cid[0] + = y（变量语义：EXP 族，cid[0] +）
-      era.add(`exp:${cid}:0`, y);
+      EraChara.get(cid).exp.vagina_exp += y;
       // EXP:cid[50] + = y（变量语义：EXP 族，cid[50] +）
-      era.add(`exp:${cid}:50`, y);
+      EraChara.get(cid).exp.abnormal_exp += y;
       // EXP:cid[30] + = y（变量语义：EXP 族，cid[30] +）
-      era.add(`exp:${cid}:30`, y);
+      EraChara.get(cid).exp.masochist_pleasure_exp += y;
     } else {
       await era.printAndWait(
         `大量的${marriage_name(cid)}附着在${name_of(cid)}的身上`,
       );
       await era.printAndWait(`甚至深入到两穴里蠕动....不停地钻入钻出.....`);
       era.print(
-        `欲情,屈服,耻情,苦痛,恐怖点数+${chara(cid).chara.结婚爱情 * 10 * y + 10}`,
+        `欲情,屈服,耻情,苦痛,恐怖点数+${EraChara.get(cid).cflag.spousal_love * 10 * y + 10}`,
       );
       // JUEL:cid[5] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[5] +）
-      era.add(`juel:${cid}:5`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+      EraChara.get(cid).jewel.lust +=
+        EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
       // JUEL:cid[6] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[6] +）
-      era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+      EraChara.get(cid).jewel.submission +=
+        EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
       // JUEL:cid[8] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[8] +）
-      era.add(`juel:${cid}:8`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+      EraChara.get(cid).jewel.shame +=
+        EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
       // JUEL:cid[9] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[9] +）
-      era.add(`juel:${cid}:9`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+      EraChara.get(cid).jewel.pain +=
+        EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
       // JUEL:cid[10] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[10] +）
-      era.add(`juel:${cid}:10`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+      EraChara.get(cid).jewel.fear +=
+        EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
       era.print(
-        `${clitoris_word(cid)},乳房,私处,肛门点数+${chara(cid).chara.结婚爱情 * 10 * y + 10}`,
+        `${clitoris_word(cid)},乳房,私处,肛门点数+${EraChara.get(cid).cflag.spousal_love * 10 * y + 10}`,
       );
       // JUEL:cid[0] + = (CFLAG:cid[602] * 10 * y + 10)（变量语义：JUEL 族，cid[0] +）
-      era.add(`juel:${cid}:0`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+      EraChara.get(cid).jewel.clitoris +=
+        EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
       // JUEL:cid[14] + = (CFLAG:cid[602] * 10 * y + 10)（变量语义：JUEL 族，cid[14] +）
-      era.add(`juel:${cid}:14`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+      EraChara.get(cid).jewel.breast +=
+        EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
       // JUEL:cid[2] + = (CFLAG:cid[602] * 10 * y + 10)（变量语义：JUEL 族，cid[2] +）
-      era.add(`juel:${cid}:2`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+      EraChara.get(cid).jewel.anus +=
+        EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
       // JUEL:cid[1] + = (CFLAG:cid[602] * 10 * y + 10)（变量语义：JUEL 族，cid[1] +）
-      era.add(`juel:${cid}:1`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+      EraChara.get(cid).jewel.vagina +=
+        EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
       await era.printAndWait(`私处,肛门,异常,被虐经验+${y}`);
       // EXP:cid[1] + = y（变量语义：EXP 族，cid[1] +）
-      era.add(`exp:${cid}:1`, y);
+      EraChara.get(cid).exp.anal_exp += y;
       // EXP:cid[0] + = y（变量语义：EXP 族，cid[0] +）
-      era.add(`exp:${cid}:0`, y);
+      EraChara.get(cid).exp.vagina_exp += y;
       // EXP:cid[50] + = y（变量语义：EXP 族，cid[50] +）
-      era.add(`exp:${cid}:50`, y);
+      EraChara.get(cid).exp.abnormal_exp += y;
       // EXP:cid[30] + = y（变量语义：EXP 族，cid[30] +）
-      era.add(`exp:${cid}:30`, y);
+      EraChara.get(cid).exp.masochist_pleasure_exp += y;
     }
   } else {
     await era.printAndWait(`${marriage_name(cid)}在肛门里蠕动钻入钻出.....`);
     era.print(
-      `欲情,屈服,耻情,苦痛,恐怖点数+${chara(cid).chara.结婚爱情 * 10 * y + 10}`,
+      `欲情,屈服,耻情,苦痛,恐怖点数+${EraChara.get(cid).cflag.spousal_love * 10 * y + 10}`,
     );
     // JUEL:cid[5] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[5] +）
-    era.add(`juel:${cid}:5`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+    EraChara.get(cid).jewel.lust +=
+      EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
     // JUEL:cid[6] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[6] +）
-    era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+    EraChara.get(cid).jewel.submission +=
+      EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
     // JUEL:cid[8] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[8] +）
-    era.add(`juel:${cid}:8`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+    EraChara.get(cid).jewel.shame +=
+      EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
     // JUEL:cid[9] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[9] +）
-    era.add(`juel:${cid}:9`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+    EraChara.get(cid).jewel.pain +=
+      EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
     // JUEL:cid[10] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[10] +）
-    era.add(`juel:${cid}:10`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+    EraChara.get(cid).jewel.fear +=
+      EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
     era.print(
-      `${clitoris_word(cid)},乳房,肛门点数+${chara(cid).chara.结婚爱情 * 10 * y + 10}`,
+      `${clitoris_word(cid)},乳房,肛门点数+${EraChara.get(cid).cflag.spousal_love * 10 * y + 10}`,
     );
     // JUEL:cid[0] + = (CFLAG:cid[602] * 10 * y + 10)（变量语义：JUEL 族，cid[0] +）
-    era.add(`juel:${cid}:0`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+    EraChara.get(cid).jewel.clitoris +=
+      EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
     // JUEL:cid[14] + = (CFLAG:cid[602] * 10 * y + 10)（变量语义：JUEL 族，cid[14] +）
-    era.add(`juel:${cid}:14`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+    EraChara.get(cid).jewel.breast +=
+      EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
     // JUEL:cid[2] + = (CFLAG:cid[602] * 10 * y + 10)（变量语义：JUEL 族，cid[2] +）
-    era.add(`juel:${cid}:2`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+    EraChara.get(cid).jewel.anus +=
+      EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
     await era.printAndWait(`肛门,异常,被虐经验+${y}`);
     // EXP:cid[1] + = y（变量语义：EXP 族，cid[1] +）
-    era.add(`exp:${cid}:1`, y);
+    EraChara.get(cid).exp.anal_exp += y;
     // EXP:cid[50] + = y（变量语义：EXP 族，cid[50] +）
-    era.add(`exp:${cid}:50`, y);
+    EraChara.get(cid).exp.abnormal_exp += y;
     // EXP:cid[30] + = y（变量语义：EXP 族，cid[30] +）
-    era.add(`exp:${cid}:30`, y);
+    EraChara.get(cid).exp.masochist_pleasure_exp += y;
   }
 
   return y;
@@ -1721,7 +1934,7 @@ async function insect_marriage_day(cid, y = 1, rand = default_rand) {
 async function ivy_marriage_day(cid, y = 1) {
   await era.printAndWait(`${name_of(cid)}和${marriage_name(cid)}一同生活着。`);
 
-  if (chara(cid).system.欲望 >= 4) {
+  if (EraChara.get(cid).abl.lust >= 4) {
     era.print(
       `${name_of(cid)} 用爱慕的眼光站在您的身后,一手举着的放满酒水的托盘....`,
     );
@@ -1729,7 +1942,7 @@ async function ivy_marriage_day(cid, y = 1) {
     era.print(
       `踮着脚翘起了屁股,一手依旧举着托盘,一手把魔界植物的粗大的枝干偷偷送入肛门.....`,
     );
-    if (chara(cid).chara.男人) {
+    if (EraChara.get(cid).talent.male) {
       era.print(
         `「这里养分多哦」「在魔王大人面前肛交了！」「好粗,要裂开了...好舒服」.....`,
       );
@@ -1739,29 +1952,30 @@ async function ivy_marriage_day(cid, y = 1) {
       );
     }
     era.print(`低声压抑着淫荡的呻吟不时的从高潮颤抖的身体中透出.....`);
-    if (chara(cid).system.侍奉精神 >= 1) {
+    if (EraChara.get(cid).abl.service_spirit >= 1) {
       y += 2;
       era.print(
         `无法被${marriage_name(cid)}满足的${name_of(cid)}爬倒了你的胯前,伸出舌头舔向你的下体...`,
       );
-      if (chara(cid).train.自慰中毒 >= 1) {
+      if (EraChara.get(cid).abl.masturbation_addiction >= 1) {
         y += 2;
         era.print(`一边给你作着口舌侍奉,一边用手指疯狂自慰着。`);
         era.print(
-          `${clitoris_word(cid)}点数+${chara(cid).chara.结婚爱情 * 10 * y + 10}`,
+          `${clitoris_word(cid)}点数+${EraChara.get(cid).cflag.spousal_love * 10 * y + 10}`,
         );
         // JUEL:cid[0] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[0] +）
-        era.add(`juel:${cid}:0`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+        EraChara.get(cid).jewel.clitoris +=
+          EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
         era.print(`口交经验,自慰经验+${y}`);
         // EXP:cid[22] + = y（变量语义：EXP 族，cid[22] +）
-        era.add(`exp:${cid}:22`, y);
+        EraChara.get(cid).exp.oral_exp += y;
         // EXP:cid[10] + = y（变量语义：EXP 族，cid[10] +）
-        era.add(`exp:${cid}:10`, y);
+        EraChara.get(cid).exp.masturbation_exp += y;
       } else {
         era.print(`认真的给你作着口舌侍奉....`);
         era.print(`口交经验+${y}`);
         // EXP:cid[22] + = y（变量语义：EXP 族，cid[22] +）
-        era.add(`exp:${cid}:22`, y);
+        EraChara.get(cid).exp.oral_exp += y;
       }
       era.print(
         `你被下身的快感弄醒,看见${name_of(cid)}一脸淫荡的样子,忍不住也丢了....`,
@@ -1771,33 +1985,38 @@ async function ivy_marriage_day(cid, y = 1) {
       era.print(`${name_of(cid)} 一边喝着一边高潮绝顶了....`);
       await era.printAndWait(`绝顶经验+${Math.trunc(y / 2)}`);
       // EXP:cid[2] + = Math.trunc(y / 2)（变量语义：EXP 族，cid[2] +）
-      era.add(`exp:${cid}:2`, Math.trunc(y / 2));
+      EraChara.get(cid).exp.orgasm_exp += Math.trunc(y / 2);
     }
     await era.printAndWait(
       `${name_of(cid)} 对你的好感提升+100 侍奉快乐+${y * 10}`,
     );
     // CFLAG:cid[2] + = 100（变量语义：CFLAG 族，cid[2] +）
-    chara(cid).chara.好感度 += 100;
+    EraChara.get(cid).cflag.affection += 100;
     // EXP:cid[21] + = y * 10（变量语义：EXP 族，cid[21] +）
-    era.add(`exp:${cid}:21`, y * 10);
+    EraChara.get(cid).exp.service_pleasure_exp += y * 10;
     era.print(
-      `恭顺,欲情,屈服,话术,耻情点数+${chara(cid).chara.结婚爱情 * 10 * y + 10}`,
+      `恭顺,欲情,屈服,话术,耻情点数+${EraChara.get(cid).cflag.spousal_love * 10 * y + 10}`,
     );
     // JUEL:cid[4] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[4] +）
-    era.add(`juel:${cid}:4`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+    EraChara.get(cid).jewel.obedience +=
+      EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
     // JUEL:cid[5] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[5] +）
-    era.add(`juel:${cid}:5`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+    EraChara.get(cid).jewel.lust +=
+      EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
     // JUEL:cid[6] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[6] +）
-    era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+    EraChara.get(cid).jewel.submission +=
+      EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
     // JUEL:cid[7] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[7] +）
-    era.add(`juel:${cid}:7`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+    EraChara.get(cid).jewel.learning +=
+      EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
     // JUEL:cid[8] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[8] +）
-    era.add(`juel:${cid}:8`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+    EraChara.get(cid).jewel.shame +=
+      EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
     await era.printAndWait(`肛门,被虐经验+${y}`);
     // EXP:cid[30] + = y（变量语义：EXP 族，cid[30] +）
-    era.add(`exp:${cid}:30`, y);
+    EraChara.get(cid).exp.masochist_pleasure_exp += y;
     // EXP:cid[1] + = y（变量语义：EXP 族，cid[1] +）
-    era.add(`exp:${cid}:1`, y);
+    EraChara.get(cid).exp.anal_exp += y;
   } else {
     era.print(
       `你戏谑的看着${name_of(cid)}的四肢被${marriage_name(cid)}的根茎缠住,撅着屁股被固定在地上........`,
@@ -1805,33 +2024,43 @@ async function ivy_marriage_day(cid, y = 1) {
     await era.printAndWait(
       `「好痛啊」「为什么又是后面！」「快放开我」...痛苦的喊叫并没有减缓${marriage_name(cid)}的动作`,
     );
-    era.print(`恭顺,欲情,屈服点数+${chara(cid).chara.结婚爱情 * 10 * y + 10}`);
+    era.print(
+      `恭顺,欲情,屈服点数+${EraChara.get(cid).cflag.spousal_love * 10 * y + 10}`,
+    );
   }
   era.print(
-    `耻情,苦痛,话术,恐怖点数+${chara(cid).chara.结婚爱情 * 10 * y + 10}`,
+    `耻情,苦痛,话术,恐怖点数+${EraChara.get(cid).cflag.spousal_love * 10 * y + 10}`,
   );
   // JUEL:cid[4] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[4] +）
-  era.add(`juel:${cid}:4`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+  EraChara.get(cid).jewel.obedience +=
+    EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
   // JUEL:cid[5] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[5] +）
-  era.add(`juel:${cid}:5`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+  EraChara.get(cid).jewel.lust +=
+    EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
   // JUEL:cid[6] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[6] +）
-  era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+  EraChara.get(cid).jewel.submission +=
+    EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
   // JUEL:cid[7] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[7] +）
-  era.add(`juel:${cid}:7`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+  EraChara.get(cid).jewel.learning +=
+    EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
   // JUEL:cid[8] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[8] +）
-  era.add(`juel:${cid}:8`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+  EraChara.get(cid).jewel.shame +=
+    EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
   // JUEL:cid[9] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[9] +）
-  era.add(`juel:${cid}:9`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+  EraChara.get(cid).jewel.pain +=
+    EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
   // JUEL:cid[10] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[10] +）
-  era.add(`juel:${cid}:10`, chara(cid).chara.结婚爱情 * 10 * y + 10);
-  era.print(`肛门点数+${chara(cid).chara.结婚爱情 * 10 * y + 10}`);
+  EraChara.get(cid).jewel.fear +=
+    EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
+  era.print(`肛门点数+${EraChara.get(cid).cflag.spousal_love * 10 * y + 10}`);
   // JUEL:cid[2] + = (CFLAG:cid[602] * 10 * y + 10)（变量语义：JUEL 族，cid[2] +）
-  era.add(`juel:${cid}:2`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+  EraChara.get(cid).jewel.anus +=
+    EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
   await era.printAndWait(`肛门,被虐经验+${y}`);
   // EXP:cid[1] + = y（变量语义：EXP 族，cid[1] +）
-  era.add(`exp:${cid}:1`, y);
+  EraChara.get(cid).exp.anal_exp += y;
   // EXP:cid[30] + = y（变量语义：EXP 族，cid[30] +）
-  era.add(`exp:${cid}:30`, y);
+  EraChara.get(cid).exp.masochist_pleasure_exp += y;
 
   return y;
 }
@@ -1845,63 +2074,75 @@ async function syokusyu_marriage_day(cid, y = 1) {
   );
 
   if (
-    chara(cid).chara.私处封印 == 1 ||
-    (chara(cid).chara.特别服装类型 == 79 &&
-      chara(cid).train.着衣状态 & 64 &&
-      game.system.着衣系统) ||
-    chara(cid).chara.男人 == 1
+    EraChara.get(cid).talent.vagina_seal == 1 ||
+    (EraChara.get(cid).cflag.special_costume_type == 79 &&
+      EraChara.get(cid).cflag.clothing_state & 64 &&
+      era_flag.clothing_system) ||
+    EraChara.get(cid).talent.male == 1
   ) {
     era.print(
-      `${clitoris_word(cid)},乳房,肛门点数+${chara(cid).chara.结婚爱情 * 10 * y + 10}`,
+      `${clitoris_word(cid)},乳房,肛门点数+${EraChara.get(cid).cflag.spousal_love * 10 * y + 10}`,
     );
     // JUEL:cid[0] + = (CFLAG:cid[602] * 10 * y + 10)（变量语义：JUEL 族，cid[0] +）
-    era.add(`juel:${cid}:0`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+    EraChara.get(cid).jewel.clitoris +=
+      EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
     // JUEL:cid[14] + = (CFLAG:cid[602] * 10 * y + 10)（变量语义：JUEL 族，cid[14] +）
-    era.add(`juel:${cid}:14`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+    EraChara.get(cid).jewel.breast +=
+      EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
     // JUEL:cid[2] + = (CFLAG:cid[602] * 10 * y + 10)（变量语义：JUEL 族，cid[2] +）
-    era.add(`juel:${cid}:2`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+    EraChara.get(cid).jewel.anus +=
+      EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
   } else {
     era.print(
-      `${clitoris_word(cid)},乳房,私处,肛门点数+${chara(cid).chara.结婚爱情 * 10 * y + 10}`,
+      `${clitoris_word(cid)},乳房,私处,肛门点数+${EraChara.get(cid).cflag.spousal_love * 10 * y + 10}`,
     );
     // JUEL:cid[0] + = (CFLAG:cid[602] * 10 * y + 10)（变量语义：JUEL 族，cid[0] +）
-    era.add(`juel:${cid}:0`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+    EraChara.get(cid).jewel.clitoris +=
+      EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
     // JUEL:cid[14] + = (CFLAG:cid[602] * 10 * y + 10)（变量语义：JUEL 族，cid[14] +）
-    era.add(`juel:${cid}:14`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+    EraChara.get(cid).jewel.breast +=
+      EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
     // JUEL:cid[1] + = (CFLAG:cid[602] * 10 * y + 10)（变量语义：JUEL 族，cid[1] +）
-    era.add(`juel:${cid}:1`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+    EraChara.get(cid).jewel.vagina +=
+      EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
     // JUEL:cid[2] + = (CFLAG:cid[602] * 10 * y + 10)（变量语义：JUEL 族，cid[2] +）
-    era.add(`juel:${cid}:2`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+    EraChara.get(cid).jewel.anus +=
+      EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
 
     era.print(`私处经验+${y}`);
     // EXP:cid[0] + = y（变量语义：EXP 族，cid[0] +）
-    era.add(`exp:${cid}:0`, y);
+    EraChara.get(cid).exp.vagina_exp += y;
   }
 
   era.print(
-    `欲情,屈服,耻情,苦痛,恐怖点数+${chara(cid).chara.结婚爱情 * 10 * y + 10}`,
+    `欲情,屈服,耻情,苦痛,恐怖点数+${EraChara.get(cid).cflag.spousal_love * 10 * y + 10}`,
   );
   // JUEL:cid[5] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[5] +）
-  era.add(`juel:${cid}:5`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+  EraChara.get(cid).jewel.lust +=
+    EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
   // JUEL:cid[6] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[6] +）
-  era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+  EraChara.get(cid).jewel.submission +=
+    EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
   // JUEL:cid[8] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[8] +）
-  era.add(`juel:${cid}:8`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+  EraChara.get(cid).jewel.shame +=
+    EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
   // JUEL:cid[9] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[9] +）
-  era.add(`juel:${cid}:9`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+  EraChara.get(cid).jewel.pain +=
+    EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
   // JUEL:cid[10] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[10] +）
-  era.add(`juel:${cid}:10`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+  EraChara.get(cid).jewel.fear +=
+    EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
   era.print(`口交,肛门经验+${y}`);
   // EXP:cid[1] + = y（变量语义：EXP 族，cid[1] +）
-  era.add(`exp:${cid}:1`, y);
+  EraChara.get(cid).exp.anal_exp += y;
   // EXP:cid[22] + = y（变量语义：EXP 族，cid[22] +）
-  era.add(`exp:${cid}:22`, y);
+  EraChara.get(cid).exp.oral_exp += y;
   await era.printAndWait(`触手,被虐经验+${y}`);
 
   // EXP:cid[55] + = y（变量语义：EXP 族，cid[55] +）
-  era.add(`exp:${cid}:55`, y);
+  EraChara.get(cid).exp.tentacle_exp += y;
   // EXP:cid[30] + = y（变量语义：EXP 族，cid[30] +）
-  era.add(`exp:${cid}:30`, y);
+  EraChara.get(cid).exp.masochist_pleasure_exp += y;
 
   return y;
 }
@@ -1913,142 +2154,152 @@ async function faily_marriage_day(cid, y = 1, rand = default_rand) {
 
   await era.printAndWait(`「今天玩点啥呢？塞入哪个玩具好呢？.... 」`);
   y +=
-    chara(cid).system.欲望 + chara(cid).system.顺从 + chara(cid).train.卖淫中毒;
+    EraChara.get(cid).abl.lust +
+    EraChara.get(cid).abl.obedience +
+    EraChara.get(cid).abl.prostitution_addiction;
   era.print(
-    `${clitoris_word(cid)},恭顺,欲情,屈服,苦痛点数+${chara(cid).chara.结婚爱情 * 10 * y + 10}`,
+    `${clitoris_word(cid)},恭顺,欲情,屈服,苦痛点数+${EraChara.get(cid).cflag.spousal_love * 10 * y + 10}`,
   );
   // JUEL:cid[0] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[0] +）
-  era.add(`juel:${cid}:0`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+  EraChara.get(cid).jewel.clitoris +=
+    EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
   // JUEL:cid[4] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[4] +）
-  era.add(`juel:${cid}:4`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+  EraChara.get(cid).jewel.obedience +=
+    EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
   // JUEL:cid[5] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[5] +）
-  era.add(`juel:${cid}:5`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+  EraChara.get(cid).jewel.lust +=
+    EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
   // JUEL:cid[6] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[6] +）
-  era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+  EraChara.get(cid).jewel.submission +=
+    EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
   // JUEL:cid[9] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[9] +）
-  era.add(`juel:${cid}:9`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+  EraChara.get(cid).jewel.pain +=
+    EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
   await era.printAndWait(`肛门,施虐,异常,被虐,绝顶经验+${y}`);
   // EXP:cid[1] + = y（变量语义：EXP 族，cid[1] +）
-  era.add(`exp:${cid}:1`, y);
+  EraChara.get(cid).exp.anal_exp += y;
   // EXP:cid[33] + = y（变量语义：EXP 族，cid[33] +）
-  era.add(`exp:${cid}:33`, y);
+  EraChara.get(cid).exp.sadist_pleasure_exp += y;
   // EXP:cid[50] + = y（变量语义：EXP 族，cid[50] +）
-  era.add(`exp:${cid}:50`, y);
+  EraChara.get(cid).exp.abnormal_exp += y;
   // EXP:cid[30] + = y（变量语义：EXP 族，cid[30] +）
-  era.add(`exp:${cid}:30`, y);
+  EraChara.get(cid).exp.masochist_pleasure_exp += y;
   // EXP:cid[2] + = y（变量语义：EXP 族，cid[2] +）
-  era.add(`exp:${cid}:2`, y);
+  EraChara.get(cid).exp.orgasm_exp += y;
   if (rand(10) == 0) {
     await era.printAndWait(
       `${marriage_name(cid)}对${name_of(cid)}淫荡的身体非常满意,传授给${name_of(cid)}作为调教师的技术....`,
     );
-    if (chara(cid).chara.魅惑 == 0) {
+    if (EraChara.get(cid).talent.charming == 0) {
       // TALENT:cid[91]  = 1（变量语义：TALENT 族，cid[91]）
-      chara(cid).chara.魅惑 = 1;
+      EraChara.get(cid).talent.charming = 1;
       await era.printAndWait(`获得了【${talent_name(91)} 】`);
-    } else if (chara(cid).dungeon.谜之魅力 == 0) {
+    } else if (EraChara.get(cid).talent.mysterious_charm == 0) {
       // TALENT:cid[92]  = 1（变量语义：TALENT 族，cid[92]）
-      era.set(`talent:${cid}:92`, 1);
+      EraChara.get(cid).talent.mysterious_charm = 1;
       await era.printAndWait(`获得了【${talent_name(92)} 】`);
-    } else if (chara(cid).event.威压感 == 0) {
+    } else if (EraChara.get(cid).talent.intimidating == 0) {
       // TALENT:cid[93]  = 1（变量语义：TALENT 族，cid[93]）
-      chara(cid).event.威压感 = 1;
+      EraChara.get(cid).talent.intimidating = 1;
       await era.printAndWait(`获得了【${talent_name(93)} 】`);
     } else {
       await era.printAndWait(
         `但是${name_of(cid)}已经是个出色的调教师了...试试勾引个实验品吧...`,
       );
 
-      if (chara(cid).dungeon.魅力 == 1) {
+      if (EraChara.get(cid).talent.charisma == 1) {
         y += 1;
       }
-      if (chara(cid).dungeon.高人气 == 1) {
+      if (EraChara.get(cid).talent.popular == 1) {
         y += 1;
       }
-      if (chara(cid).dungeon.妓女 == 1) {
+      if (EraChara.get(cid).talent.prostitute == 1) {
         y += 1;
       }
-      if (chara(cid).dungeon.倾城 == 1) {
+      if (EraChara.get(cid).talent.courtesan == 1) {
         y += 1;
       }
-      if (chara(cid).dungeon.巧言 == 1) {
+      if (EraChara.get(cid).talent.silver_tongue == 1) {
         y += 1;
       }
       if (has_regular_customer(cid) == 1) {
         y += 1;
       }
-      if (chara(cid).dungeon.歌姫 == 1) {
+      if (EraChara.get(cid).talent.songstress == 1) {
         y += 1;
       }
-      if (chara(cid).dungeon.舞姫 == 1) {
+      if (EraChara.get(cid).talent.dancer == 1) {
         y += 1;
       }
-      await era.printAndWait(`话术+${chara(cid).chara.结婚爱情 * 10 * y + 10}`);
+      await era.printAndWait(
+        `话术+${EraChara.get(cid).cflag.spousal_love * 10 * y + 10}`,
+      );
       await era.printAndWait(`卖淫经验+${y * 10}`);
       // JUEL:cid[7] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[7] +）
-      era.add(`juel:${cid}:7`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+      EraChara.get(cid).jewel.learning +=
+        EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
       // EXP:cid[74] + = y * 10（变量语义：EXP 族，cid[74] +）
-      era.add(`exp:${cid}:74`, y * 10);
+      EraChara.get(cid).exp.prostitution_exp += y * 10;
 
       if (
-        chara(cid).train.卖淫中毒 >= 4 &&
-        chara(cid).system.欲望 >= 3 &&
-        chara(cid).dungeon.妓女 == 0
+        EraChara.get(cid).abl.prostitution_addiction >= 4 &&
+        EraChara.get(cid).abl.lust >= 3 &&
+        EraChara.get(cid).talent.prostitute == 0
       ) {
         await era.printAndWait(
           `沉迷于在勾引试验品的${name_of(cid)} 更加堕落了,${name_of(cid)}获得【${talent_name(180)}】`,
         );
       }
       if (
-        chara(cid).train.卖淫中毒 >= 4 &&
-        chara(cid).system.欲望 >= 4 &&
-        chara(cid).dungeon.妓女 == 0
+        EraChara.get(cid).abl.prostitution_addiction >= 4 &&
+        EraChara.get(cid).abl.lust >= 4 &&
+        EraChara.get(cid).talent.prostitute == 0
       ) {
         // TALENT:cid[180]  = 1（变量语义：TALENT 族，cid[180]）
-        era.set(`talent:${cid}:180`, 1);
+        EraChara.get(cid).talent.prostitute = 1;
       }
 
       if (
-        chara(cid).train.卖淫中毒 >= 4 &&
-        chara(cid).system.欲望 >= 4 &&
-        chara(cid).dungeon.倾城 == 0
+        EraChara.get(cid).abl.prostitution_addiction >= 4 &&
+        EraChara.get(cid).abl.lust >= 4 &&
+        EraChara.get(cid).talent.courtesan == 0
       ) {
         await era.printAndWait(
           `${name_of(cid)}精心打扮自己,完美的展示了自己的淫荡的模样,${name_of(cid)}获得【${talent_name(181)}】`,
         );
       }
       if (
-        chara(cid).train.卖淫中毒 >= 4 &&
-        chara(cid).system.欲望 >= 4 &&
-        chara(cid).dungeon.倾城 == 0
+        EraChara.get(cid).abl.prostitution_addiction >= 4 &&
+        EraChara.get(cid).abl.lust >= 4 &&
+        EraChara.get(cid).talent.courtesan == 0
       ) {
         // TALENT:cid[181]  = 1（变量语义：TALENT 族，cid[181]）
-        era.set(`talent:${cid}:181`, 1);
+        EraChara.get(cid).talent.courtesan = 1;
       }
 
       if (
-        chara(cid).train.卖淫中毒 >= 5 &&
-        chara(cid).system.欲望 >= 4 &&
-        chara(cid).dungeon.倾城 == 0
+        EraChara.get(cid).abl.prostitution_addiction >= 5 &&
+        EraChara.get(cid).abl.lust >= 4 &&
+        EraChara.get(cid).talent.courtesan == 0
       ) {
         await era.printAndWait(
           `${name_of(cid)}作为妓女的技术又更进一步,${name_of(cid)}获得【${talent_name(181)}】`,
         );
       }
       if (
-        chara(cid).train.卖淫中毒 >= 4 &&
-        chara(cid).system.欲望 >= 4 &&
-        chara(cid).dungeon.倾城 == 0
+        EraChara.get(cid).abl.prostitution_addiction >= 4 &&
+        EraChara.get(cid).abl.lust >= 4 &&
+        EraChara.get(cid).talent.courtesan == 0
       ) {
         // TALENT:cid[181]  = 1（变量语义：TALENT 族，cid[181]）
-        era.set(`talent:${cid}:181`, 1);
+        EraChara.get(cid).talent.courtesan = 1;
       }
 
       if (
-        chara(cid).train.卖淫中毒 >= 5 &&
-        chara(cid).system.欲望 >= 5 &&
-        chara(cid).chara.处女 == 0 &&
-        chara(cid).chara.男人 == 0
+        EraChara.get(cid).abl.prostitution_addiction >= 5 &&
+        EraChara.get(cid).abl.lust >= 5 &&
+        EraChara.get(cid).talent.virgin == 0 &&
+        EraChara.get(cid).talent.male == 0
       ) {
         era.print(`${name_of(cid)} 在${marriage_name(cid)}的特殊藏书馆中学习`);
         era.print(
@@ -2061,96 +2312,124 @@ async function faily_marriage_day(cid, y = 1, rand = default_rand) {
           `${name_of(cid)} 在小妖精开设的黑暗表演舞台上表演....`,
         );
 
-        if (chara(cid).dungeon.魅力 == 0 && chara(cid).train.卖淫中毒 >= 6) {
+        if (
+          EraChara.get(cid).talent.charisma == 0 &&
+          EraChara.get(cid).abl.prostitution_addiction >= 6
+        ) {
           await era.printAndWait(
             `舞蹈与歌唱学习让${name_of(cid)}更有气质了,${name_of(cid)}获得【${talent_name(113)}】`,
           );
         }
-        if (chara(cid).dungeon.魅力 == 0 && chara(cid).train.卖淫中毒 >= 6) {
+        if (
+          EraChara.get(cid).talent.charisma == 0 &&
+          EraChara.get(cid).abl.prostitution_addiction >= 6
+        ) {
           // TALENT:cid[113]  = 0（变量语义：TALENT 族，cid[113]）
-          era.set(`talent:${cid}:113`, 0);
+          EraChara.get(cid).talent.charisma = 0;
         }
-        if (chara(cid).dungeon.高人气 == 0 && chara(cid).train.卖淫中毒 >= 8) {
+        if (
+          EraChara.get(cid).talent.popular == 0 &&
+          EraChara.get(cid).abl.prostitution_addiction >= 8
+        ) {
           await era.printAndWait(
             `淫贱与大胆的歌舞表演,让${name_of(cid)}获得更多人的关注,${name_of(cid)}获得【${talent_name(126)}】`,
           );
         }
-        if (chara(cid).dungeon.高人气 == 0 && chara(cid).train.卖淫中毒 >= 8) {
+        if (
+          EraChara.get(cid).talent.popular == 0 &&
+          EraChara.get(cid).abl.prostitution_addiction >= 8
+        ) {
           // TALENT:cid[126]  = 1（变量语义：TALENT 族，cid[126]）
-          era.set(`talent:${cid}:126`, 1);
+          EraChara.get(cid).talent.popular = 1;
         }
-        if (chara(cid).dungeon.歌姫 == 0 && chara(cid).train.卖淫中毒 == 10) {
+        if (
+          EraChara.get(cid).talent.songstress == 0 &&
+          EraChara.get(cid).abl.prostitution_addiction == 10
+        ) {
           await era.printAndWait(
             `长久的学习与实践后${name_of(cid)}已经可以在灌肠喷射带来的绝顶高潮中完美的表演歌唱了,${name_of(cid)}获得【${talent_name(185)}】`,
           );
         }
-        if (chara(cid).dungeon.歌姫 == 0) {
+        if (EraChara.get(cid).talent.songstress == 0) {
           // TALENT:cid[185]  = 1（变量语义：TALENT 族，cid[185]）
-          era.set(`talent:${cid}:185`, 1);
+          EraChara.get(cid).talent.songstress = 1;
         }
 
-        if (chara(cid).dungeon.舞姫 == 0 && chara(cid).train.卖淫中毒 == 10) {
+        if (
+          EraChara.get(cid).talent.dancer == 0 &&
+          EraChara.get(cid).abl.prostitution_addiction == 10
+        ) {
           era.print(
             `${name_of(cid)}在舞台上表演曼妙优美的舞姿,旋转跳跃中挥洒出乳汁,肠液,尿液与潮喷液构成的美妙4重绝顶,`,
           );
         }
-        if (chara(cid).dungeon.舞姫 == 0 && chara(cid).train.卖淫中毒 == 10) {
+        if (
+          EraChara.get(cid).talent.dancer == 0 &&
+          EraChara.get(cid).abl.prostitution_addiction == 10
+        ) {
           await era.printAndWait(
             `观众们集体鼓掌,并争先恐后给${name_of(cid)}的身体上涂满浓臭的精液或尿液,${name_of(cid)}获得【${talent_name(186)}】`,
           );
         }
-        if (chara(cid).dungeon.舞姫 == 0 && chara(cid).train.卖淫中毒 == 10) {
+        if (
+          EraChara.get(cid).talent.dancer == 0 &&
+          EraChara.get(cid).abl.prostitution_addiction == 10
+        ) {
           // TALENT:cid[186]  = 1（变量语义：TALENT 族，cid[186]）
-          era.set(`talent:${cid}:186`, 1);
+          EraChara.get(cid).talent.dancer = 1;
         }
 
         if (
-          chara(cid).train.卖淫中毒 <= 9 &&
-          desire_points(cid) >= power(2, chara(cid).train.卖淫中毒) * 1500 &&
-          obedience_points(cid) >= power(2, chara(cid).train.卖淫中毒) * 2000 &&
+          EraChara.get(cid).abl.prostitution_addiction <= 9 &&
+          desire_points(cid) >=
+            power(2, EraChara.get(cid).abl.prostitution_addiction) * 1500 &&
+          obedience_points(cid) >=
+            power(2, EraChara.get(cid).abl.prostitution_addiction) * 2000 &&
           submission_points(cid) >=
-            power(2, chara(cid).train.卖淫中毒) * 1000 &&
-          chara(cid).dungeon.卖淫经验 >=
-            power(2, chara(cid).train.卖淫中毒) * 20
+            power(2, EraChara.get(cid).abl.prostitution_addiction) * 1000 &&
+          EraChara.get(cid).exp.prostitution_exp >=
+            power(2, EraChara.get(cid).abl.prostitution_addiction) * 20
         ) {
           // JUEL:cid[4] - = (power(2,(ABL:cid[37])) * 1500)（变量语义：JUEL 族，cid[4] -）
-          era.add(
-            `juel:${cid}:4`,
-            -(power(2, chara(cid).train.卖淫中毒) * 1500),
+          EraChara.get(cid).jewel.obedience += -(
+            power(2, EraChara.get(cid).abl.prostitution_addiction) * 1500
           );
           // JUEL:cid[5] - = (power(2,(ABL:cid[37])) * 2000)（变量语义：JUEL 族，cid[5] -）
-          era.add(
-            `juel:${cid}:5`,
-            -(power(2, chara(cid).train.卖淫中毒) * 2000),
+          EraChara.get(cid).jewel.lust += -(
+            power(2, EraChara.get(cid).abl.prostitution_addiction) * 2000
           );
           // JUEL:cid[6] - = (power(2,(ABL:cid[37])) * 1000)（变量语义：JUEL 族，cid[6] -）
-          era.add(
-            `juel:${cid}:6`,
-            -(power(2, chara(cid).train.卖淫中毒) * 1000),
+          EraChara.get(cid).jewel.submission += -(
+            power(2, EraChara.get(cid).abl.prostitution_addiction) * 1000
           );
           // EXP:cid[74] - = (power(2,(ABL:cid[37])) * 20)（变量语义：EXP 族，cid[74] -）
-          era.add(`exp:${cid}:74`, -(power(2, chara(cid).train.卖淫中毒) * 20));
+          EraChara.get(cid).exp.prostitution_exp += -(
+            power(2, EraChara.get(cid).abl.prostitution_addiction) * 20
+          );
           // ABL:cid[37] + = 1（变量语义：ABL 族，cid[37] +）
-          chara(cid).train.卖淫中毒 += 1;
+          EraChara.get(cid).abl.prostitution_addiction += 1;
 
           await era.printAndWait(`${name_of(cid)}卖淫等级+1`);
           era.print(
-            `恭顺点数减少${power(2, chara(cid).train.卖淫中毒) * 1500}`,
+            `恭顺点数减少${power(2, EraChara.get(cid).abl.prostitution_addiction) * 1500}`,
           );
           era.print(
-            `情欲点数减少${power(2, chara(cid).train.卖淫中毒) * 2000}`,
+            `情欲点数减少${power(2, EraChara.get(cid).abl.prostitution_addiction) * 2000}`,
           );
           era.print(
-            `情欲点数减少${power(2, chara(cid).train.卖淫中毒) * 1000}`,
+            `情欲点数减少${power(2, EraChara.get(cid).abl.prostitution_addiction) * 1000}`,
           );
           await era.printAndWait(
-            `卖淫经验减少${power(2, chara(cid).train.卖淫中毒) * 20}`,
+            `卖淫经验减少${power(2, EraChara.get(cid).abl.prostitution_addiction) * 20}`,
           );
         }
         await era.printAndWait(
-          `${name_of(cid)} 在表演后被某个贵族看中了,陪贵族玩了一天的变态游戏,把获得的${y * chara(cid).system.欲望 * chara(cid).train.卖淫中毒}pts全部献给了国库`,
+          `${name_of(cid)} 在表演后被某个贵族看中了,陪贵族玩了一天的变态游戏,把获得的${y * EraChara.get(cid).abl.lust * EraChara.get(cid).abl.prostitution_addiction}pts全部献给了国库`,
         );
-        const income = y * chara(cid).system.欲望 * chara(cid).train.卖淫中毒;
+        const income =
+          y *
+          EraChara.get(cid).abl.lust *
+          EraChara.get(cid).abl.prostitution_addiction;
         era_flag.money += income;
         // EX_FLAG[4444] + = y * ABL:cid[11] * ABL:cid[37]（变量语义：EX_FLAG 族，4444 +）
         era_exflag.legit_money += income;
@@ -2166,12 +2445,15 @@ async function faily_marriage_day(cid, y = 1, rand = default_rand) {
 async function giant_marriage_day(cid, y = 1, rand = default_rand) {
   await era.printAndWait(`${name_of(cid)}和${marriage_name(cid)}一同生活着。`);
   y +=
-    chara(cid).system.欲望 +
-    chara(cid).system.顺从 +
-    chara(cid).system.抖Ｍ气质 +
-    Math.trunc(chara(cid).chara.结婚爱情 / 5);
-  if (cid === 0 && chara(cid).chara.结婚爱情 < 55) {
-    if (chara(cid).chara.私处封印 || chara(cid).chara.男人 == 1) {
+    EraChara.get(cid).abl.lust +
+    EraChara.get(cid).abl.obedience +
+    EraChara.get(cid).abl.masochist_temper +
+    Math.trunc(EraChara.get(cid).cflag.spousal_love / 5);
+  if (cid === 0 && EraChara.get(cid).cflag.spousal_love < 55) {
+    if (
+      EraChara.get(cid).talent.vagina_seal ||
+      EraChara.get(cid).talent.male == 1
+    ) {
       await era.printAndWait(
         `${name_of(cid)}在与${marriage_name(cid)}的肛交中感到喜悦……`,
       );
@@ -2179,11 +2461,11 @@ async function giant_marriage_day(cid, y = 1, rand = default_rand) {
       era.print(`精液经验+${y}`);
       era.print(`肛门扩张经验+1`);
       // EXP[1] + = y（变量语义：EXP 族，(cid)[1] +）
-      era.add(`exp:${cid}:1`, y);
+      EraChara.get(cid).exp.anal_exp += y;
       // EXP[20] + = y（变量语义：EXP 族，(cid)[20] +）
-      era.add(`exp:${cid}:20`, y);
+      EraChara.get(cid).exp.semen_exp += y;
       // EXP[53] + = 1（变量语义：EXP 族，(cid)[53] +）
-      era.add(`exp:${cid}:53`, 1);
+      EraChara.get(cid).exp.anal_dilation_exp += 1;
     } else {
       await era.printAndWait(
         `${name_of(cid)}在与${marriage_name(cid)}的性交中感到喜悦……`,
@@ -2192,25 +2474,29 @@ async function giant_marriage_day(cid, y = 1, rand = default_rand) {
       era.print(`精液经验+${y}`);
       era.print(`阴道扩张经验+1`);
       // EXP[0] + = y（变量语义：EXP 族，(cid)[0] +）
-      era.add(`exp:${cid}:0`, y);
+      EraChara.get(cid).exp.vagina_exp += y;
       // EXP[20] + = y（变量语义：EXP 族，(cid)[20] +）
-      era.add(`exp:${cid}:20`, y);
+      EraChara.get(cid).exp.semen_exp += y;
       // EXP[52] + = 1（变量语义：EXP 族，(cid)[52] +）
-      era.add(`exp:${cid}:52`, 1);
+      EraChara.get(cid).exp.vagina_dilation_exp += 1;
       // CFLAG[107] + = y（变量语义：CFLAG 族，(cid)[107] +）
-      era.add(`cflag:${cid}:107`, y);
+      EraChara.get(cid).cflag.monster_vaginal_ejaculation += y;
     }
   } else if (
-    chara(cid).stronghold.淫乱 ||
-    chara(cid).chara.结婚爱情 > 50 ||
-    (chara(cid).system.欲望 >= 3 && chara(cid).system.抖Ｍ气质 >= 3)
+    EraChara.get(cid).talent.lewd ||
+    EraChara.get(cid).cflag.spousal_love > 50 ||
+    (EraChara.get(cid).abl.lust >= 3 &&
+      EraChara.get(cid).abl.masochist_temper >= 3)
   ) {
     await era.printAndWait(
       `${name_of(cid)}与${marriage_name(cid)}来到你的面前，一边交合一边展示着他们和谐的日常。`,
     );
     if (rand(2) == 0) {
-      if (chara(cid).chara.私处封印 || chara(cid).chara.男人) {
-        if (chara(cid).stronghold.尻穴狂) {
+      if (
+        EraChara.get(cid).talent.vagina_seal ||
+        EraChara.get(cid).talent.male
+      ) {
+        if (EraChara.get(cid).talent.anal_maniac) {
           era.print(
             `${name_of(cid)}主动拨开臀瓣，饥渴地吞吐着${marriage_name(cid)}的巨茎。`,
           );
@@ -2256,44 +2542,51 @@ async function giant_marriage_day(cid, y = 1, rand = default_rand) {
         era.print(`肛门,性交,精液,口交经验+${y}`);
         era.print(`肛门扩张经验+1`);
         // EXP[1] + = y（变量语义：EXP 族，(cid)[1] +）
-        era.add(`exp:${cid}:1`, y);
+        EraChara.get(cid).exp.anal_exp += y;
         // EXP[5] + = y（变量语义：EXP 族，(cid)[5] +）
-        era.add(`exp:${cid}:5`, y);
+        EraChara.get(cid).exp.intercourse_exp += y;
         // EXP[20] + = y（变量语义：EXP 族，(cid)[20] +）
-        era.add(`exp:${cid}:20`, y);
+        EraChara.get(cid).exp.semen_exp += y;
         // EXP[22] + = y（变量语义：EXP 族，(cid)[22] +）
-        era.add(`exp:${cid}:22`, y);
+        EraChara.get(cid).exp.oral_exp += y;
         // EXP[53] + = 1（变量语义：EXP 族，(cid)[53] +）
-        era.add(`exp:${cid}:53`, 1);
+        EraChara.get(cid).exp.anal_dilation_exp += 1;
 
         era.print(
-          `屈服,欲情,恭顺,耻情点数+${chara(cid).chara.结婚爱情 * 5 * y + 5}`,
+          `屈服,欲情,恭顺,耻情点数+${EraChara.get(cid).cflag.spousal_love * 5 * y + 5}`,
         );
         // JUEL:cid[6] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[6] +）
-        era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+        EraChara.get(cid).jewel.submission +=
+          EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
         // JUEL:cid[5] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[5] +）
-        era.add(`juel:${cid}:5`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+        EraChara.get(cid).jewel.lust +=
+          EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
         // JUEL:cid[4] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[4] +）
-        era.add(`juel:${cid}:4`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+        EraChara.get(cid).jewel.obedience +=
+          EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
         // JUEL:cid[8] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[8] +）
-        era.add(`juel:${cid}:8`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+        EraChara.get(cid).jewel.shame +=
+          EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
         era.print(
-          `${clitoris_word(cid)},肛门点数+${chara(cid).chara.结婚爱情 * 5 * y + 5}`,
+          `${clitoris_word(cid)},肛门点数+${EraChara.get(cid).cflag.spousal_love * 5 * y + 5}`,
         );
         // JUEL:cid[0] + = (CFLAG:cid[602] * 5 * y + 5)（变量语义：JUEL 族，cid[0] +）
-        era.add(`juel:${cid}:0`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+        EraChara.get(cid).jewel.clitoris +=
+          EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
         // JUEL:cid[2] + = (CFLAG:cid[602] * 5 * y + 5)（变量语义：JUEL 族，cid[2] +）
-        era.add(`juel:${cid}:2`, chara(cid).chara.结婚爱情 * 5 * y + 5);
-        era.print(`苦痛点数+${chara(cid).system.顺从 * y * 50 + 10}`);
+        EraChara.get(cid).jewel.anus +=
+          EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
+        era.print(`苦痛点数+${EraChara.get(cid).abl.obedience * y * 50 + 10}`);
         // JUEL:cid[9] + = (ABL:cid[10] * y * 50 + 10 )（变量语义：JUEL 族，cid[9] +）
-        era.add(`juel:${cid}:9`, chara(cid).system.顺从 * y * 50 + 10);
+        EraChara.get(cid).jewel.pain +=
+          EraChara.get(cid).abl.obedience * y * 50 + 10;
         era.print(`绝顶,异常,被虐经验+${Math.trunc(y / 2)}`);
         // EXP:cid[2] + = Math.trunc(y / 2)（变量语义：EXP 族，cid[2] +）
-        era.add(`exp:${cid}:2`, Math.trunc(y / 2));
+        EraChara.get(cid).exp.orgasm_exp += Math.trunc(y / 2);
         // EXP:cid[50] + = Math.trunc(y / 2)（变量语义：EXP 族，cid[50] +）
-        era.add(`exp:${cid}:50`, Math.trunc(y / 2));
+        EraChara.get(cid).exp.abnormal_exp += Math.trunc(y / 2);
         // EXP:cid[30] + = Math.trunc(y / 2)（变量语义：EXP 族，cid[30] +）
-        era.add(`exp:${cid}:30`, Math.trunc(y / 2));
+        EraChara.get(cid).exp.masochist_pleasure_exp += Math.trunc(y / 2);
       } else {
         era.print(
           `${name_of(cid)}主动拨开臀瓣，饥渴地吞吐着${marriage_name(cid)}的巨茎。`,
@@ -2334,46 +2627,53 @@ async function giant_marriage_day(cid, y = 1, rand = default_rand) {
         era.print(`私处,性交,精液,口交经验+${y}`);
         era.print(`阴道扩张经验+1`);
         // EXP[0] + = y（变量语义：EXP 族，(cid)[0] +）
-        era.add(`exp:${cid}:0`, y);
+        EraChara.get(cid).exp.vagina_exp += y;
         // EXP[5] + = y（变量语义：EXP 族，(cid)[5] +）
-        era.add(`exp:${cid}:5`, y);
+        EraChara.get(cid).exp.intercourse_exp += y;
         // EXP[20] + = y（变量语义：EXP 族，(cid)[20] +）
-        era.add(`exp:${cid}:20`, y);
+        EraChara.get(cid).exp.semen_exp += y;
         // EXP[22] + = y（变量语义：EXP 族，(cid)[22] +）
-        era.add(`exp:${cid}:22`, y);
+        EraChara.get(cid).exp.oral_exp += y;
         // EXP[52] + = y（变量语义：EXP 族，(cid)[52] +）
-        era.add(`exp:${cid}:52`, y);
+        EraChara.get(cid).exp.vagina_dilation_exp += y;
         // CFLAG[107] + = 1（变量语义：CFLAG 族，(cid)[107] +）
-        era.add(`cflag:${cid}:107`, 1);
+        EraChara.get(cid).cflag.monster_vaginal_ejaculation += 1;
 
         era.print(
-          `屈服,欲情,恭顺,耻情点数+${chara(cid).chara.结婚爱情 * 5 * y + 5}`,
+          `屈服,欲情,恭顺,耻情点数+${EraChara.get(cid).cflag.spousal_love * 5 * y + 5}`,
         );
         // JUEL:cid[6] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[6] +）
-        era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+        EraChara.get(cid).jewel.submission +=
+          EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
         // JUEL:cid[5] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[5] +）
-        era.add(`juel:${cid}:5`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+        EraChara.get(cid).jewel.lust +=
+          EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
         // JUEL:cid[4] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[4] +）
-        era.add(`juel:${cid}:4`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+        EraChara.get(cid).jewel.obedience +=
+          EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
         // JUEL:cid[8] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[8] +）
-        era.add(`juel:${cid}:8`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+        EraChara.get(cid).jewel.shame +=
+          EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
         era.print(
-          `${clitoris_word(cid)},私处点数+${chara(cid).chara.结婚爱情 * 5 * y + 5}`,
+          `${clitoris_word(cid)},私处点数+${EraChara.get(cid).cflag.spousal_love * 5 * y + 5}`,
         );
         // JUEL:cid[0] + = (CFLAG:cid[602] * 5 * y + 5)（变量语义：JUEL 族，cid[0] +）
-        era.add(`juel:${cid}:0`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+        EraChara.get(cid).jewel.clitoris +=
+          EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
         // JUEL:cid[1] + = (CFLAG:cid[602] * 5 * y + 5)（变量语义：JUEL 族，cid[1] +）
-        era.add(`juel:${cid}:1`, chara(cid).chara.结婚爱情 * 5 * y + 5);
-        era.print(`苦痛点数+${chara(cid).system.顺从 * y * 50 + 10}`);
+        EraChara.get(cid).jewel.vagina +=
+          EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
+        era.print(`苦痛点数+${EraChara.get(cid).abl.obedience * y * 50 + 10}`);
         // JUEL:cid[9] + = (ABL:cid[10] * y * 50 + 10 )（变量语义：JUEL 族，cid[9] +）
-        era.add(`juel:${cid}:9`, chara(cid).system.顺从 * y * 50 + 10);
+        EraChara.get(cid).jewel.pain +=
+          EraChara.get(cid).abl.obedience * y * 50 + 10;
         era.print(`绝顶经验,异常,被虐经验+${Math.trunc(y / 2)}`);
         // EXP:cid[2] + = Math.trunc(y / 2)（变量语义：EXP 族，cid[2] +）
-        era.add(`exp:${cid}:2`, Math.trunc(y / 2));
+        EraChara.get(cid).exp.orgasm_exp += Math.trunc(y / 2);
         // EXP:cid[50] + = Math.trunc(y / 2)（变量语义：EXP 族，cid[50] +）
-        era.add(`exp:${cid}:50`, Math.trunc(y / 2));
+        EraChara.get(cid).exp.abnormal_exp += Math.trunc(y / 2);
         // EXP:cid[30] + = Math.trunc(y / 2)（变量语义：EXP 族，cid[30] +）
-        era.add(`exp:${cid}:30`, Math.trunc(y / 2));
+        EraChara.get(cid).exp.masochist_pleasure_exp += Math.trunc(y / 2);
       }
     } else {
       await era.printAndWait(
@@ -2396,61 +2696,79 @@ async function giant_marriage_day(cid, y = 1, rand = default_rand) {
       );
       era.print(`口交,精液,自慰,被虐经验+${y}`);
       // EXP[22] + = y（变量语义：EXP 族，(cid)[22] +）
-      era.add(`exp:${cid}:22`, y);
+      EraChara.get(cid).exp.oral_exp += y;
       // EXP[20] + = y（变量语义：EXP 族，(cid)[20] +）
-      era.add(`exp:${cid}:20`, y);
+      EraChara.get(cid).exp.semen_exp += y;
       // EXP[10] + = y（变量语义：EXP 族，(cid)[10] +）
-      era.add(`exp:${cid}:10`, y);
+      EraChara.get(cid).exp.masturbation_exp += y;
       // EXP:cid[30] + = y（变量语义：EXP 族，cid[30] +）
-      era.add(`exp:${cid}:30`, y);
-      if (chara(cid).chara.私处封印 || chara(cid).chara.男人) {
+      EraChara.get(cid).exp.masochist_pleasure_exp += y;
+      if (
+        EraChara.get(cid).talent.vagina_seal ||
+        EraChara.get(cid).talent.male
+      ) {
         era.print(`肛门扩张经验+1`);
         // EXP[52] + = 1（变量语义：EXP 族，(cid)[52] +）
-        era.add(`exp:${cid}:52`, 1);
+        EraChara.get(cid).exp.vagina_dilation_exp += 1;
         era.print(
-          `${clitoris_word(cid)},肛门点数+${chara(cid).chara.结婚爱情 * 5 * y + 5}`,
+          `${clitoris_word(cid)},肛门点数+${EraChara.get(cid).cflag.spousal_love * 5 * y + 5}`,
         );
         // JUEL:cid[0] + = (CFLAG:cid[602] * 5 * y + 5)（变量语义：JUEL 族，cid[0] +）
-        era.add(`juel:${cid}:0`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+        EraChara.get(cid).jewel.clitoris +=
+          EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
         // JUEL:cid[2] + = (CFLAG:cid[602] * 5 * y + 5)（变量语义：JUEL 族，cid[2] +）
-        era.add(`juel:${cid}:2`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+        EraChara.get(cid).jewel.anus +=
+          EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       } else {
         era.print(`阴道扩张经验+1`);
         // EXP[52] + = 1（变量语义：EXP 族，(cid)[52] +）
-        era.add(`exp:${cid}:52`, 1);
+        EraChara.get(cid).exp.vagina_dilation_exp += 1;
         era.print(
-          `${clitoris_word(cid)},私处点数+${chara(cid).chara.结婚爱情 * 5 * y + 5}`,
+          `${clitoris_word(cid)},私处点数+${EraChara.get(cid).cflag.spousal_love * 5 * y + 5}`,
         );
         // JUEL:cid[0] + = (CFLAG:cid[602] * 5 * y + 5)（变量语义：JUEL 族，cid[0] +）
-        era.add(`juel:${cid}:0`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+        EraChara.get(cid).jewel.clitoris +=
+          EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
         // JUEL:cid[1] + = (CFLAG:cid[602] * 5 * y + 5)（变量语义：JUEL 族，cid[1] +）
-        era.add(`juel:${cid}:1`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+        EraChara.get(cid).jewel.vagina +=
+          EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       }
       era.print(
-        `屈服,欲情,恭顺,耻情点数+${chara(cid).chara.结婚爱情 * 5 * y + 5}`,
+        `屈服,欲情,恭顺,耻情点数+${EraChara.get(cid).cflag.spousal_love * 5 * y + 5}`,
       );
       // JUEL:cid[6] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[6] +）
-      era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.submission +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[5] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[5] +）
-      era.add(`juel:${cid}:5`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.lust +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[4] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[4] +）
-      era.add(`juel:${cid}:4`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.obedience +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[8] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[8] +）
-      era.add(`juel:${cid}:8`, chara(cid).chara.结婚爱情 * 5 * y + 5);
-      era.print(`苦痛点数+${chara(cid).system.顺从 * y * 50 + 10}`);
+      EraChara.get(cid).jewel.shame +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
+      era.print(`苦痛点数+${EraChara.get(cid).abl.obedience * y * 50 + 10}`);
       // JUEL:cid[9] + = (ABL:cid[10] * y * 50 + 10 )（变量语义：JUEL 族，cid[9] +）
-      era.add(`juel:${cid}:9`, chara(cid).system.顺从 * y * 50 + 10);
+      EraChara.get(cid).jewel.pain +=
+        EraChara.get(cid).abl.obedience * y * 50 + 10;
     }
     await era.printAndWait(
       `${name_of(cid)} 对你的好感提升+100 侍奉快乐+${y * 10}`,
     );
     // CFLAG:cid[2] + = 100（变量语义：CFLAG 族，cid[2] +）
-    chara(cid).chara.好感度 += 100;
+    EraChara.get(cid).cflag.affection += 100;
     // EXP:cid[21] + = y * 10（变量语义：EXP 族，cid[21] +）
-    era.add(`exp:${cid}:21`, y * 10);
-  } else if (chara(cid).system.顺从 >= 2 || chara(cid).chara.结婚爱情 > 30) {
+    EraChara.get(cid).exp.service_pleasure_exp += y * 10;
+  } else if (
+    EraChara.get(cid).abl.obedience >= 2 ||
+    EraChara.get(cid).cflag.spousal_love > 30
+  ) {
     if (rand(2) == 0) {
-      if (chara(cid).chara.私处封印 || chara(cid).chara.男人 == 1) {
+      if (
+        EraChara.get(cid).talent.vagina_seal ||
+        EraChara.get(cid).talent.male == 1
+      ) {
         await era.printAndWait(
           `${name_of(cid)}为了减轻与${marriage_name(cid)}肛交的痛楚，只好先用巨大的假阳具自慰地扩张着菊穴`,
         );
@@ -2461,18 +2779,21 @@ async function giant_marriage_day(cid, y = 1, rand = default_rand) {
         era.print(`肛门,自慰,精液,性交经验+${y}`);
         era.print(`肛门扩张经验+${Math.trunc(y / 2)}`);
         // EXP[1] + = y（变量语义：EXP 族，(cid)[1] +）
-        era.add(`exp:${cid}:1`, y);
+        EraChara.get(cid).exp.anal_exp += y;
         // EXP[10] + = y（变量语义：EXP 族，(cid)[10] +）
-        era.add(`exp:${cid}:10`, y);
+        EraChara.get(cid).exp.masturbation_exp += y;
         // EXP[5] + = y（变量语义：EXP 族，(cid)[5] +）
-        era.add(`exp:${cid}:5`, y);
+        EraChara.get(cid).exp.intercourse_exp += y;
         // EXP[20] + = y（变量语义：EXP 族，(cid)[20] +）
-        era.add(`exp:${cid}:20`, y);
+        EraChara.get(cid).exp.semen_exp += y;
         // EXP[53] + = Math.trunc(y / 2)（变量语义：EXP 族，(cid)[53] +）
-        era.add(`exp:${cid}:53`, Math.trunc(y / 2));
-        era.print(`肛门点数+${chara(cid).chara.结婚爱情 * 5 * y + 5}`);
+        EraChara.get(cid).exp.anal_dilation_exp += Math.trunc(y / 2);
+        era.print(
+          `肛门点数+${EraChara.get(cid).cflag.spousal_love * 5 * y + 5}`,
+        );
         // JUEL:cid[2] + = (CFLAG:cid[602] * 5 * y + 5)（变量语义：JUEL 族，cid[2] +）
-        era.add(`juel:${cid}:2`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+        EraChara.get(cid).jewel.anus +=
+          EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       } else {
         await era.printAndWait(
           `${name_of(cid)}为了减轻与${marriage_name(cid)}性交的痛楚，只好先用巨大的假阳具自慰地扩张着小穴`,
@@ -2484,33 +2805,41 @@ async function giant_marriage_day(cid, y = 1, rand = default_rand) {
         era.print(`私处,自慰,精液,性交经验+${y}`);
         era.print(`阴道扩张经验+${Math.trunc(y / 2)}`);
         // EXP[0] + = y（变量语义：EXP 族，(cid)[0] +）
-        era.add(`exp:${cid}:0`, y);
+        EraChara.get(cid).exp.vagina_exp += y;
         // EXP[10] + = y（变量语义：EXP 族，(cid)[10] +）
-        era.add(`exp:${cid}:10`, y);
+        EraChara.get(cid).exp.masturbation_exp += y;
         // EXP[5] + = y（变量语义：EXP 族，(cid)[5] +）
-        era.add(`exp:${cid}:5`, y);
+        EraChara.get(cid).exp.intercourse_exp += y;
         // EXP[20] + = y（变量语义：EXP 族，(cid)[20] +）
-        era.add(`exp:${cid}:20`, y);
+        EraChara.get(cid).exp.semen_exp += y;
         // EXP[52] + = Math.trunc(y / 2)（变量语义：EXP 族，(cid)[52] +）
-        era.add(`exp:${cid}:52`, Math.trunc(y / 2));
-        era.print(`私处点数+${chara(cid).chara.结婚爱情 * 5 * y + 5}`);
+        EraChara.get(cid).exp.vagina_dilation_exp += Math.trunc(y / 2);
+        era.print(
+          `私处点数+${EraChara.get(cid).cflag.spousal_love * 5 * y + 5}`,
+        );
         // JUEL:cid[1] + = (CFLAG:cid[602] * 5 * y + 5)（变量语义：JUEL 族，cid[1] +）
-        era.add(`juel:${cid}:1`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+        EraChara.get(cid).jewel.vagina +=
+          EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       }
       era.print(
-        `屈服,欲情,恭顺,耻情点数+${chara(cid).chara.结婚爱情 * 20 * y + 10}`,
+        `屈服,欲情,恭顺,耻情点数+${EraChara.get(cid).cflag.spousal_love * 20 * y + 10}`,
       );
       // JUEL:cid[6] + = (CFLAG:cid[602] * 20 * y + 10 )（变量语义：JUEL 族，cid[6] +）
-      era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * 20 * y + 10);
+      EraChara.get(cid).jewel.submission +=
+        EraChara.get(cid).cflag.spousal_love * 20 * y + 10;
       // JUEL:cid[5] + = (CFLAG:cid[602] * 20 * y + 10 )（变量语义：JUEL 族，cid[5] +）
-      era.add(`juel:${cid}:5`, chara(cid).chara.结婚爱情 * 20 * y + 10);
+      EraChara.get(cid).jewel.lust +=
+        EraChara.get(cid).cflag.spousal_love * 20 * y + 10;
       // JUEL:cid[4] + = (CFLAG:cid[602] * 20 * y + 10 )（变量语义：JUEL 族，cid[4] +）
-      era.add(`juel:${cid}:4`, chara(cid).chara.结婚爱情 * 20 * y + 10);
+      EraChara.get(cid).jewel.obedience +=
+        EraChara.get(cid).cflag.spousal_love * 20 * y + 10;
       // JUEL:cid[8] + = (CFLAG:cid[602] * 20 * y + 10 )（变量语义：JUEL 族，cid[8] +）
-      era.add(`juel:${cid}:8`, chara(cid).chara.结婚爱情 * 20 * y + 10);
-      era.print(`苦痛点数+${chara(cid).system.顺从 * y * 20 + 10}`);
+      EraChara.get(cid).jewel.shame +=
+        EraChara.get(cid).cflag.spousal_love * 20 * y + 10;
+      era.print(`苦痛点数+${EraChara.get(cid).abl.obedience * y * 20 + 10}`);
       // JUEL:cid[9] + = (ABL:cid[10] * y * 50 + 10 )（变量语义：JUEL 族，cid[9] +）
-      era.add(`juel:${cid}:9`, chara(cid).system.顺从 * y * 50 + 10);
+      EraChara.get(cid).jewel.pain +=
+        EraChara.get(cid).abl.obedience * y * 50 + 10;
     } else {
       era.print(
         pick(
@@ -2532,23 +2861,29 @@ async function giant_marriage_day(cid, y = 1, rand = default_rand) {
           rand,
         ),
       );
-      if (chara(cid).chara.私处封印 || chara(cid).chara.男人 == 1) {
+      if (
+        EraChara.get(cid).talent.vagina_seal ||
+        EraChara.get(cid).talent.male == 1
+      ) {
         await era.printAndWait(
           `在初期的痛苦过后，${name_of(cid)}渐渐在与${marriage_name(cid)}的肛交中感到了喜悦……`,
         );
         era.print(`肛门,精液,性交经验+${y}`);
         era.print(`肛门扩张经验+${Math.trunc(y / 2)}`);
         // EXP[1] + = y（变量语义：EXP 族，(cid)[1] +）
-        era.add(`exp:${cid}:1`, y);
+        EraChara.get(cid).exp.anal_exp += y;
         // EXP[5] + = y（变量语义：EXP 族，(cid)[5] +）
-        era.add(`exp:${cid}:5`, y);
+        EraChara.get(cid).exp.intercourse_exp += y;
         // EXP[20] + = y（变量语义：EXP 族，(cid)[20] +）
-        era.add(`exp:${cid}:20`, y);
+        EraChara.get(cid).exp.semen_exp += y;
         // EXP[53] + = Math.trunc(y / 2)（变量语义：EXP 族，(cid)[53] +）
-        era.add(`exp:${cid}:53`, Math.trunc(y / 2));
-        era.print(`肛门点数+${chara(cid).chara.结婚爱情 * 5 * y + 5}`);
+        EraChara.get(cid).exp.anal_dilation_exp += Math.trunc(y / 2);
+        era.print(
+          `肛门点数+${EraChara.get(cid).cflag.spousal_love * 5 * y + 5}`,
+        );
         // JUEL:cid[2] + = (CFLAG:cid[602] * 5 * y + 5)（变量语义：JUEL 族，cid[2] +）
-        era.add(`juel:${cid}:2`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+        EraChara.get(cid).jewel.anus +=
+          EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       } else {
         await era.printAndWait(
           `在初期的痛苦过后，${name_of(cid)}渐渐在与${marriage_name(cid)}的性交中感到了喜悦……`,
@@ -2556,40 +2891,48 @@ async function giant_marriage_day(cid, y = 1, rand = default_rand) {
         era.print(`私处,精液,性交经验+${y}`);
         era.print(`阴道扩张经验+${Math.trunc(y / 2)}`);
         // EXP[0] + = y（变量语义：EXP 族，(cid)[0] +）
-        era.add(`exp:${cid}:0`, y);
+        EraChara.get(cid).exp.vagina_exp += y;
         // EXP[5] + = y（变量语义：EXP 族，(cid)[5] +）
-        era.add(`exp:${cid}:5`, y);
+        EraChara.get(cid).exp.intercourse_exp += y;
         // EXP[20] + = y（变量语义：EXP 族，(cid)[20] +）
-        era.add(`exp:${cid}:20`, y);
+        EraChara.get(cid).exp.semen_exp += y;
         // EXP[52] + = Math.trunc(y / 2)（变量语义：EXP 族，(cid)[52] +）
-        era.add(`exp:${cid}:52`, Math.trunc(y / 2));
+        EraChara.get(cid).exp.vagina_dilation_exp += Math.trunc(y / 2);
         // CFLAG[107] + = y（变量语义：CFLAG 族，(cid)[107] +）
-        era.add(`cflag:${cid}:107`, y);
-        era.print(`私处点数+${chara(cid).chara.结婚爱情 * 5 * y + 5}`);
+        EraChara.get(cid).cflag.monster_vaginal_ejaculation += y;
+        era.print(
+          `私处点数+${EraChara.get(cid).cflag.spousal_love * 5 * y + 5}`,
+        );
         // JUEL:cid[1] + = (CFLAG:cid[602] * 5 * y + 5)（变量语义：JUEL 族，cid[1] +）
-        era.add(`juel:${cid}:1`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+        EraChara.get(cid).jewel.vagina +=
+          EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       }
       era.print(
-        `屈服,欲情,恭顺,耻情点数+${chara(cid).chara.结婚爱情 * 20 * y + 10}`,
+        `屈服,欲情,恭顺,耻情点数+${EraChara.get(cid).cflag.spousal_love * 20 * y + 10}`,
       );
       // JUEL:cid[6] + = (CFLAG:cid[602] * 20 * y + 10 )（变量语义：JUEL 族，cid[6] +）
-      era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * 20 * y + 10);
+      EraChara.get(cid).jewel.submission +=
+        EraChara.get(cid).cflag.spousal_love * 20 * y + 10;
       // JUEL:cid[5] + = (CFLAG:cid[602] * 20 * y + 10 )（变量语义：JUEL 族，cid[5] +）
-      era.add(`juel:${cid}:5`, chara(cid).chara.结婚爱情 * 20 * y + 10);
+      EraChara.get(cid).jewel.lust +=
+        EraChara.get(cid).cflag.spousal_love * 20 * y + 10;
       // JUEL:cid[4] + = (CFLAG:cid[602] * 20 * y + 10 )（变量语义：JUEL 族，cid[4] +）
-      era.add(`juel:${cid}:4`, chara(cid).chara.结婚爱情 * 20 * y + 10);
+      EraChara.get(cid).jewel.obedience +=
+        EraChara.get(cid).cflag.spousal_love * 20 * y + 10;
       // JUEL:cid[8] + = (CFLAG:cid[602] * 20 * y + 10 )（变量语义：JUEL 族，cid[8] +）
-      era.add(`juel:${cid}:8`, chara(cid).chara.结婚爱情 * 20 * y + 10);
-      era.print(`苦痛点数+${chara(cid).system.顺从 * y * 20 + 10}`);
+      EraChara.get(cid).jewel.shame +=
+        EraChara.get(cid).cflag.spousal_love * 20 * y + 10;
+      era.print(`苦痛点数+${EraChara.get(cid).abl.obedience * y * 20 + 10}`);
       // JUEL:cid[9] + = (ABL:cid[10] * y * 50 + 10 )（变量语义：JUEL 族，cid[9] +）
-      era.add(`juel:${cid}:9`, chara(cid).system.顺从 * y * 50 + 10);
+      EraChara.get(cid).jewel.pain +=
+        EraChara.get(cid).abl.obedience * y * 50 + 10;
       era.print(`绝顶,异常,被虐经验+${Math.trunc(y / 2)}`);
       // EXP:cid[2] + = Math.trunc(y / 2)（变量语义：EXP 族，cid[2] +）
-      era.add(`exp:${cid}:2`, Math.trunc(y / 2));
+      EraChara.get(cid).exp.orgasm_exp += Math.trunc(y / 2);
       // EXP:cid[50] + = Math.trunc(y / 2)（变量语义：EXP 族，cid[50] +）
-      era.add(`exp:${cid}:50`, Math.trunc(y / 2));
+      EraChara.get(cid).exp.abnormal_exp += Math.trunc(y / 2);
       // EXP:cid[30] + = Math.trunc(y / 2)（变量语义：EXP 族，cid[30] +）
-      era.add(`exp:${cid}:30`, Math.trunc(y / 2));
+      EraChara.get(cid).exp.masochist_pleasure_exp += Math.trunc(y / 2);
     }
   } else {
     if (rand(2)) {
@@ -2601,18 +2944,20 @@ async function giant_marriage_day(cid, y = 1, rand = default_rand) {
       );
       era.print(`自慰,口交,精液经验+${y * 5}`);
       // EXP[10] + = y * 5（变量语义：EXP 族，(cid)[10] +）
-      era.add(`exp:${cid}:10`, y * 5);
+      EraChara.get(cid).exp.masturbation_exp += y * 5;
       // EXP[22] + = y * 5（变量语义：EXP 族，(cid)[22] +）
-      era.add(`exp:${cid}:22`, y * 5);
+      EraChara.get(cid).exp.oral_exp += y * 5;
       // EXP[20] + = y * 5（变量语义：EXP 族，(cid)[20] +）
-      era.add(`exp:${cid}:20`, y * 5);
+      EraChara.get(cid).exp.semen_exp += y * 5;
       era.print(
-        `${clitoris_word(cid)},乳房点数+${chara(cid).chara.结婚爱情 * 10 * y + 10}`,
+        `${clitoris_word(cid)},乳房点数+${EraChara.get(cid).cflag.spousal_love * 10 * y + 10}`,
       );
       // JUEL:cid[0] + = (CFLAG:cid[602] * 10 * y + 10)（变量语义：JUEL 族，cid[0] +）
-      era.add(`juel:${cid}:0`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+      EraChara.get(cid).jewel.clitoris +=
+        EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
       // JUEL:cid[14] + = (CFLAG:cid[602] * 10 * y + 10)（变量语义：JUEL 族，cid[14] +）
-      era.add(`juel:${cid}:14`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+      EraChara.get(cid).jewel.breast +=
+        EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
     } else {
       await era.printAndWait(
         `${name_of(cid)}无法承受${marriage_name(cid)}的巨茎，一边求饶一边接受扩张的调教`,
@@ -2620,48 +2965,63 @@ async function giant_marriage_day(cid, y = 1, rand = default_rand) {
       await era.printAndWait(
         `${name_of(cid)}的肉穴被${marriage_name(cid)}粗长的手指抽插侵犯着……`,
       );
-      if (chara(cid).chara.男人 || chara(cid).chara.私处封印) {
-        era.print(`肛门点数+${chara(cid).chara.结婚爱情 * 5 * y + 5}`);
+      if (
+        EraChara.get(cid).talent.male ||
+        EraChara.get(cid).talent.vagina_seal
+      ) {
+        era.print(
+          `肛门点数+${EraChara.get(cid).cflag.spousal_love * 5 * y + 5}`,
+        );
         // JUEL:cid[2] + = (CFLAG:cid[602] * 5 * y + 5)（变量语义：JUEL 族，cid[2] +）
-        era.add(`juel:${cid}:2`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+        EraChara.get(cid).jewel.anus +=
+          EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
         era.print(`肛门经验+${y * 5}`);
         era.print(`肛门扩张经验+1`);
         // EXP[1] + = y*5（变量语义：EXP 族，(cid)[1] +）
-        era.add(`exp:${cid}:1`, y * 5);
+        EraChara.get(cid).exp.anal_exp += y * 5;
         // EXP[53] + = 1（变量语义：EXP 族，(cid)[53] +）
-        era.add(`exp:${cid}:53`, 1);
+        EraChara.get(cid).exp.anal_dilation_exp += 1;
       } else {
-        era.print(`私处点数+${chara(cid).chara.结婚爱情 * 5 * y + 5}`);
+        era.print(
+          `私处点数+${EraChara.get(cid).cflag.spousal_love * 5 * y + 5}`,
+        );
         // JUEL:cid[1] + = (CFLAG:cid[602] * 5 * y + 5)（变量语义：JUEL 族，cid[1] +）
-        era.add(`juel:${cid}:1`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+        EraChara.get(cid).jewel.vagina +=
+          EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
         era.print(`私处经验+${y * 5}`);
         era.print(`阴道扩张经验+1`);
         // EXP[0] + = y（变量语义：EXP 族，(cid)[0] +）
-        era.add(`exp:${cid}:0`, y);
+        EraChara.get(cid).exp.vagina_exp += y;
         // EXP[52] + = 1（变量语义：EXP 族，(cid)[52] +）
-        era.add(`exp:${cid}:52`, 1);
+        EraChara.get(cid).exp.vagina_dilation_exp += 1;
       }
     }
     era.print(
-      `屈服,欲情,恭顺,耻情点数+${chara(cid).chara.结婚爱情 * 10 * y + 10}`,
+      `屈服,欲情,恭顺,耻情点数+${EraChara.get(cid).cflag.spousal_love * 10 * y + 10}`,
     );
     // JUEL:cid[6] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[6] +）
-    era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+    EraChara.get(cid).jewel.submission +=
+      EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
     // JUEL:cid[5] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[5] +）
-    era.add(`juel:${cid}:5`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+    EraChara.get(cid).jewel.lust +=
+      EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
     // JUEL:cid[4] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[4] +）
-    era.add(`juel:${cid}:4`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+    EraChara.get(cid).jewel.obedience +=
+      EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
     // JUEL:cid[8] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[8] +）
-    era.add(`juel:${cid}:8`, chara(cid).chara.结婚爱情 * 10 * y + 10);
-    era.print(`话术+${chara(cid).chara.结婚爱情 * 10 * y + 10}`);
+    EraChara.get(cid).jewel.shame +=
+      EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
+    era.print(`话术+${EraChara.get(cid).cflag.spousal_love * 10 * y + 10}`);
     // JUEL:cid[7] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[7] +）
-    era.add(`juel:${cid}:7`, chara(cid).chara.结婚爱情 * 10 * y + 10);
-    era.print(`苦痛点数+${chara(cid).system.顺从 * y * 10 + 10}`);
+    EraChara.get(cid).jewel.learning +=
+      EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
+    era.print(`苦痛点数+${EraChara.get(cid).abl.obedience * y * 10 + 10}`);
     // JUEL:cid[9] + = (ABL:cid[10] * y * 10 + 10 )（变量语义：JUEL 族，cid[9] +）
-    era.add(`juel:${cid}:9`, chara(cid).system.顺从 * y * 10 + 10);
+    EraChara.get(cid).jewel.pain +=
+      EraChara.get(cid).abl.obedience * y * 10 + 10;
     era.print(`绝顶经验+${Math.trunc(y / 2)}`);
     // EXP:cid[2] + = Math.trunc(y / 2)（变量语义：EXP 族，cid[2] +）
-    era.add(`exp:${cid}:2`, Math.trunc(y / 2));
+    EraChara.get(cid).exp.orgasm_exp += Math.trunc(y / 2);
   }
   // 换屏规则（ADR-0009）：结算数字的裸 print 是本段最后一批输出，回主
   // 菜单换屏前要经按键确认（waitAnyKey 只在有未读输出时才等）
@@ -2673,22 +3033,22 @@ async function giant_marriage_day(cid, y = 1, rand = default_rand) {
 // man_marriage_day,cid
 //
 async function man_marriage_day(cid, y = 1, rand = default_rand) {
-  const partner_age = chara(cid).chara.恋父情结
+  const partner_age = EraChara.get(cid).talent.father_complex
     ? '中年'
-    : chara(cid).chara.正太控
+    : EraChara.get(cid).talent.shotacon
       ? '少年'
       : '';
   await era.printAndWait(
     `${name_of(cid)}和${partner_age}${marriage_name(cid)}一同生活着。`,
   );
 
-  if (cid === 0 && chara(cid).chara.结婚爱情 < 55) {
+  if (cid === 0 && EraChara.get(cid).cflag.spousal_love < 55) {
     if (
-      chara(cid).chara.私处封印 == 1 ||
-      (chara(cid).chara.特别服装类型 == 79 &&
-        chara(cid).train.着衣状态 & 64 &&
-        game.system.着衣系统) ||
-      chara(cid).chara.男人 == 1
+      EraChara.get(cid).talent.vagina_seal == 1 ||
+      (EraChara.get(cid).cflag.special_costume_type == 79 &&
+        EraChara.get(cid).cflag.clothing_state & 64 &&
+        era_flag.clothing_system) ||
+      EraChara.get(cid).talent.male == 1
     ) {
       await era.printAndWait(
         `${name_of(cid)}的肛门接受了${partner_age}${marriage_name(cid)}的阴茎。`,
@@ -2698,13 +3058,13 @@ async function man_marriage_day(cid, y = 1, rand = default_rand) {
       era.print(`肛门经验+${y}`);
       era.print(`精液经验+${y}`);
       // JUEL[2] + = y（变量语义：JUEL 族，(cid)[2] +）
-      era.add(`juel:${cid}:2`, y);
+      EraChara.get(cid).jewel.anus += y;
       // JUEL[4] + = y（变量语义：JUEL 族，(cid)[4] +）
-      era.add(`juel:${cid}:4`, y);
+      EraChara.get(cid).jewel.obedience += y;
       // EXP[1] + = y（变量语义：EXP 族，(cid)[1] +）
-      era.add(`exp:${cid}:1`, y);
+      EraChara.get(cid).exp.anal_exp += y;
       // EXP[20] + = y（变量语义：EXP 族，(cid)[20] +）
-      era.add(`exp:${cid}:20`, y);
+      EraChara.get(cid).exp.semen_exp += y;
     } else {
       await era.printAndWait(
         `${name_of(cid)}的阴道接受了${partner_age}${marriage_name(cid)}的阴茎。`,
@@ -2714,126 +3074,142 @@ async function man_marriage_day(cid, y = 1, rand = default_rand) {
       era.print(`私处经验+${y}`);
       era.print(`精液经验+${y}`);
       // JUEL[1] + = y（变量语义：JUEL 族，(cid)[1] +）
-      era.add(`juel:${cid}:1`, y);
+      EraChara.get(cid).jewel.vagina += y;
       // JUEL[4] + = y（变量语义：JUEL 族，(cid)[4] +）
-      era.add(`juel:${cid}:4`, y);
+      EraChara.get(cid).jewel.obedience += y;
       // EXP[0] + = y（变量语义：EXP 族，(cid)[0] +）
-      era.add(`exp:${cid}:0`, y);
+      EraChara.get(cid).exp.vagina_exp += y;
       // EXP[20] + = y（变量语义：EXP 族，(cid)[20] +）
-      era.add(`exp:${cid}:20`, y);
+      EraChara.get(cid).exp.semen_exp += y;
       // CFLAG[107] + = y（变量语义：CFLAG 族，(cid)[107] +）
-      era.add(`cflag:${cid}:107`, y);
+      EraChara.get(cid).cflag.monster_vaginal_ejaculation += y;
     }
   } else if (
-    chara(cid).stronghold.淫乱 == 1 ||
-    chara(cid).chara.结婚爱情 > 50
+    EraChara.get(cid).talent.lewd == 1 ||
+    EraChara.get(cid).cflag.spousal_love > 50
   ) {
     let description = '';
-    if (chara(cid).system.抖Ｍ气质 >= 3) {
+    if (EraChara.get(cid).abl.masochist_temper >= 3) {
       description += '全身都被绳子束缚着，';
       // 赋值 BONUS[1] + = y
     }
 
     description += name_of(cid);
 
-    if (chara(cid).system.露出癖 >= 3) {
+    if (EraChara.get(cid).abl.exhibitionism >= 3) {
       description += '在丈夫朋友的围观下，';
       // 赋值 BONUS[0] + = y
     }
 
-    if (chara(cid).train.抖Ｓ气质 >= 3) {
+    if (EraChara.get(cid).abl.sadist_temper >= 3) {
       description += '戴着道具';
     }
 
     description += `和${partner_age}`;
 
-    if (chara(cid).chara.结婚爱情 > 80) {
+    if (EraChara.get(cid).cflag.spousal_love > 80) {
       description += '不停地变换着各种体位，';
-    } else if (chara(cid).chara.结婚爱情 > 65) {
+    } else if (EraChara.get(cid).cflag.spousal_love > 65) {
       description += '热情地相拥着，';
     } else {
       description += '和睦地相拥着，';
     }
 
     if (
-      chara(cid).chara.私处封印 == 1 ||
-      (chara(cid).chara.特别服装类型 == 79 &&
-        chara(cid).train.着衣状态 & 64 &&
-        game.system.着衣系统) ||
-      chara(cid).chara.男人 == 1
+      EraChara.get(cid).talent.vagina_seal == 1 ||
+      (EraChara.get(cid).cflag.special_costume_type == 79 &&
+        EraChara.get(cid).cflag.clothing_state & 64 &&
+        era_flag.clothing_system) ||
+      EraChara.get(cid).talent.male == 1
     ) {
       await era.printAndWait(`${description}沉醉在肛交的快感之中了……`);
       era.print(`肛门点数+${y}`);
       era.print(`肛门经验+${y}`);
       era.print(`精液经验+${y}`);
       // JUEL[2] + = y（变量语义：JUEL 族，(cid)[2] +）
-      era.add(`juel:${cid}:2`, y);
+      EraChara.get(cid).jewel.anus += y;
       // EXP[1] + = y（变量语义：EXP 族，(cid)[1] +）
-      era.add(`exp:${cid}:1`, y);
+      EraChara.get(cid).exp.anal_exp += y;
       // EXP[20] + = y（变量语义：EXP 族，(cid)[20] +）
-      era.add(`exp:${cid}:20`, y);
+      EraChara.get(cid).exp.semen_exp += y;
 
       era.print(
-        `屈服,欲情,恭顺,耻情,苦痛点数+${chara(cid).chara.结婚爱情 * 5 * y + 5}`,
+        `屈服,欲情,恭顺,耻情,苦痛点数+${EraChara.get(cid).cflag.spousal_love * 5 * y + 5}`,
       );
       // JUEL:cid[6] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[6] +）
-      era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.submission +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[5] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[5] +）
-      era.add(`juel:${cid}:5`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.lust +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[4] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[4] +）
-      era.add(`juel:${cid}:4`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.obedience +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[8] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[8] +）
-      era.add(`juel:${cid}:8`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.shame +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[9] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[9] +）
-      era.add(`juel:${cid}:9`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.pain +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
 
-      era.print(`话术+${chara(cid).chara.结婚爱情 * 5 * y + 5}`);
+      era.print(`话术+${EraChara.get(cid).cflag.spousal_love * 5 * y + 5}`);
       // JUEL:cid[7] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[7] +）
-      era.add(`juel:${cid}:7`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.learning +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
 
       await era.printAndWait(`绝顶经验+${Math.trunc(y / 2)}`);
       // EXP:cid[2] + = Math.trunc(y / 2)（变量语义：EXP 族，cid[2] +）
-      era.add(`exp:${cid}:2`, Math.trunc(y / 2));
+      EraChara.get(cid).exp.orgasm_exp += Math.trunc(y / 2);
     } else {
       await era.printAndWait(`${description}专心地享受造人的过程……`);
-      era.print(`私处点数+${chara(cid).chara.结婚爱情 * 5 * y + 5}`);
+      era.print(`私处点数+${EraChara.get(cid).cflag.spousal_love * 5 * y + 5}`);
       era.print(`恭顺点数+${y}`);
       era.print(`私处经验+${y}`);
       era.print(`精液经验+${y}`);
       // JUEL[1] + = (CFLAG:cid[602] * 5 * y + 5)（变量语义：JUEL 族，(cid)[1] +）
-      era.add(`juel:${cid}:1`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.vagina +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // EXP[0] + = y（变量语义：EXP 族，(cid)[0] +）
-      era.add(`exp:${cid}:0`, y);
+      EraChara.get(cid).exp.vagina_exp += y;
       // EXP[20] + = y（变量语义：EXP 族，(cid)[20] +）
-      era.add(`exp:${cid}:20`, y);
+      EraChara.get(cid).exp.semen_exp += y;
       // CFLAG[107] + = y（变量语义：CFLAG 族，(cid)[107] +）
-      era.add(`cflag:${cid}:107`, y);
+      EraChara.get(cid).cflag.monster_vaginal_ejaculation += y;
 
       era.print(
-        `屈服,欲情,恭顺,耻情,苦痛点数+${chara(cid).chara.结婚爱情 * 5 * y + 5}`,
+        `屈服,欲情,恭顺,耻情,苦痛点数+${EraChara.get(cid).cflag.spousal_love * 5 * y + 5}`,
       );
       // JUEL:cid[6] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[6] +）
-      era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.submission +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[5] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[5] +）
-      era.add(`juel:${cid}:5`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.lust +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[4] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[4] +）
-      era.add(`juel:${cid}:4`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.obedience +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[8] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[8] +）
-      era.add(`juel:${cid}:8`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.shame +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[9] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[9] +）
-      era.add(`juel:${cid}:9`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.pain +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
 
-      era.print(`话术+${chara(cid).chara.结婚爱情 * 5 * y + 5}`);
+      era.print(`话术+${EraChara.get(cid).cflag.spousal_love * 5 * y + 5}`);
       // JUEL:cid[7] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[7] +）
-      era.add(`juel:${cid}:7`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.learning +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
 
       await era.printAndWait(`绝顶经验+${Math.trunc(y / 2)}`);
       // EXP:cid[2] + = Math.trunc(y / 2)（变量语义：EXP 族，cid[2] +）
-      era.add(`exp:${cid}:2`, Math.trunc(y / 2));
+      EraChara.get(cid).exp.orgasm_exp += Math.trunc(y / 2);
     }
 
-    if (chara(cid).chara.正太控 == 1 && chara(cid).system.欲望 >= 4) {
-      if (rand(5) == 0 && chara(cid).chara.看轻贞操 == 1) {
+    if (
+      EraChara.get(cid).talent.shotacon == 1 &&
+      EraChara.get(cid).abl.lust >= 4
+    ) {
+      if (rand(5) == 0 && EraChara.get(cid).talent.scorns_chastity == 1) {
         await era.printAndWait(
           `${partner_age}${marriage_name(cid)}那幼小的阴茎无法满足${name_of(cid)}`,
         );
@@ -2841,17 +3217,20 @@ async function man_marriage_day(cid, y = 1, rand = default_rand) {
           `${name_of(cid)}终于忍耐不住体内的欲望..偷偷的卖春了....`,
         );
         era.print(
-          `屈服,欲情,恭顺点数+${chara(cid).chara.结婚爱情 * 5 * y + 5}`,
+          `屈服,欲情,恭顺点数+${EraChara.get(cid).cflag.spousal_love * 5 * y + 5}`,
         );
         await era.printAndWait(`卖淫经验+${y * 5}`);
         // JUEL:cid[6] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[6] +）
-        era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+        EraChara.get(cid).jewel.submission +=
+          EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
         // JUEL:cid[5] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[5] +）
-        era.add(`juel:${cid}:5`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+        EraChara.get(cid).jewel.lust +=
+          EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
         // JUEL:cid[4] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[4] +）
-        era.add(`juel:${cid}:4`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+        EraChara.get(cid).jewel.obedience +=
+          EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
         // EXP:cid[74] + = y * 5（变量语义：EXP 族，cid[74] +）
-        era.add(`exp:${cid}:74`, y * 5);
+        EraChara.get(cid).exp.prostitution_exp += y * 5;
       }
       if (rand(5) <= 1) {
         await era.printAndWait(
@@ -2860,17 +3239,23 @@ async function man_marriage_day(cid, y = 1, rand = default_rand) {
         await era.printAndWait(
           `眼中闪着施虐的欲望的${name_of(cid)}绑住了${partner_age}${marriage_name(cid)}...`,
         );
-        era.print(`欲情点数+${chara(cid).chara.结婚爱情 * 5 * y + 5}`);
+        era.print(
+          `欲情点数+${EraChara.get(cid).cflag.spousal_love * 5 * y + 5}`,
+        );
         // JUEL:cid[5] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[5] +）
-        era.add(`juel:${cid}:5`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+        EraChara.get(cid).jewel.lust +=
+          EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
         await era.printAndWait(`施虐,异常经验+${y * 3}`);
         // EXP:cid[33] + = y * 3（变量语义：EXP 族，cid[33] +）
-        era.add(`exp:${cid}:33`, y * 3);
+        EraChara.get(cid).exp.sadist_pleasure_exp += y * 3;
         // EXP:cid[50] + = y * 3（变量语义：EXP 族，cid[50] +）
-        era.add(`exp:${cid}:50`, y * 3);
+        EraChara.get(cid).exp.abnormal_exp += y * 3;
       }
-    } else if (chara(cid).chara.恋父情结 == 1 && chara(cid).system.欲望 >= 4) {
-      if (rand(5) == 0 && chara(cid).chara.看轻贞操 == 1) {
+    } else if (
+      EraChara.get(cid).talent.father_complex == 1 &&
+      EraChara.get(cid).abl.lust >= 4
+    ) {
+      if (rand(5) == 0 && EraChara.get(cid).talent.scorns_chastity == 1) {
         await era.printAndWait(
           `年轻时纵欲过渡的${partner_age}${marriage_name(cid)}已经无法满足${name_of(cid)}`,
         );
@@ -2878,197 +3263,243 @@ async function man_marriage_day(cid, y = 1, rand = default_rand) {
           `${name_of(cid)}终于忍耐不住体内的欲望..偷偷的卖春了....`,
         );
         era.print(
-          `屈服,欲情,恭顺点数+${chara(cid).chara.结婚爱情 * 5 * y + 5}`,
+          `屈服,欲情,恭顺点数+${EraChara.get(cid).cflag.spousal_love * 5 * y + 5}`,
         );
         await era.printAndWait(`卖淫经验+${y * 5}`);
         // JUEL:cid[6] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[6] +）
-        era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+        EraChara.get(cid).jewel.submission +=
+          EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
         // JUEL:cid[5] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[5] +）
-        era.add(`juel:${cid}:5`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+        EraChara.get(cid).jewel.lust +=
+          EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
         // JUEL:cid[4] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[4] +）
-        era.add(`juel:${cid}:4`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+        EraChara.get(cid).jewel.obedience +=
+          EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
         // EXP:cid[74] + = y * 5（变量语义：EXP 族，cid[74] +）
-        era.add(`exp:${cid}:74`, y * 5);
+        EraChara.get(cid).exp.prostitution_exp += y * 5;
       }
-      if (rand(5) <= 1 || chara(cid).event.受虐狂 == 1) {
+      if (rand(5) <= 1 || EraChara.get(cid).talent.masochist == 1) {
         await era.printAndWait(
           `${name_of(cid)}越来越渴望${partner_age}${marriage_name(cid)}的欺负...`,
         );
         await era.printAndWait(
           `故意做了错事,期待着${partner_age}${marriage_name(cid)}的惩罚.....`,
         );
-        era.print(`苦痛,屈服点数+${chara(cid).chara.结婚爱情 * 5 * y + 5}`);
+        era.print(
+          `苦痛,屈服点数+${EraChara.get(cid).cflag.spousal_love * 5 * y + 5}`,
+        );
         // JUEL:cid[9] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[9] +）
-        era.add(`juel:${cid}:9`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+        EraChara.get(cid).jewel.pain +=
+          EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
         // JUEL:cid[6] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[6] +）
-        era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+        EraChara.get(cid).jewel.submission +=
+          EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
         await era.printAndWait(`被虐,异常,绝顶经验+${y * 3}`);
         // EXP:cid[2] + = y * 3（变量语义：EXP 族，cid[2] +）
-        era.add(`exp:${cid}:2`, y * 3);
+        EraChara.get(cid).exp.orgasm_exp += y * 3;
         // EXP:cid[30] + = y * 3（变量语义：EXP 族，cid[30] +）
-        era.add(`exp:${cid}:30`, y * 3);
+        EraChara.get(cid).exp.masochist_pleasure_exp += y * 3;
         // EXP:cid[50] + = y * 3（变量语义：EXP 族，cid[50] +）
-        era.add(`exp:${cid}:50`, y * 3);
+        EraChara.get(cid).exp.abnormal_exp += y * 3;
       }
     }
-  } else if (chara(cid).system.顺从 >= 2 || chara(cid).chara.结婚爱情 > 30) {
+  } else if (
+    EraChara.get(cid).abl.obedience >= 2 ||
+    EraChara.get(cid).cflag.spousal_love > 30
+  ) {
     if (
-      chara(cid).chara.私处封印 == 1 ||
-      (chara(cid).chara.特别服装类型 == 79 &&
-        chara(cid).train.着衣状态 & 64 &&
-        game.system.着衣系统) ||
-      chara(cid).chara.男人 == 1
+      EraChara.get(cid).talent.vagina_seal == 1 ||
+      (EraChara.get(cid).cflag.special_costume_type == 79 &&
+        EraChara.get(cid).cflag.clothing_state & 64 &&
+        era_flag.clothing_system) ||
+      EraChara.get(cid).talent.male == 1
     ) {
       await era.printAndWait(
         `${name_of(cid)}习惯了用菊穴和${partner_age}${marriage_name(cid)}过夫妻生活了。`,
       );
-      era.print(`肛门点数+${chara(cid).chara.结婚爱情 * 20 * y + 10}`);
+      era.print(
+        `肛门点数+${EraChara.get(cid).cflag.spousal_love * 20 * y + 10}`,
+      );
       era.print(`肛门经验+${y}`);
       era.print(`精液经验+${y}`);
       // JUEL[2] + = (CFLAG:cid[602] * 20 * y + 10 )（变量语义：JUEL 族，(cid)[2] +）
-      era.add(`juel:${cid}:2`, chara(cid).chara.结婚爱情 * 20 * y + 10);
+      EraChara.get(cid).jewel.anus +=
+        EraChara.get(cid).cflag.spousal_love * 20 * y + 10;
       // EXP[1] + = y（变量语义：EXP 族，(cid)[1] +）
-      era.add(`exp:${cid}:1`, y);
+      EraChara.get(cid).exp.anal_exp += y;
       // EXP[20] + = y（变量语义：EXP 族，(cid)[20] +）
-      era.add(`exp:${cid}:20`, y);
+      EraChara.get(cid).exp.semen_exp += y;
 
       era.print(
-        `屈服,欲情,恭顺,耻情,苦痛点数+${chara(cid).chara.结婚爱情 * 20 * y + 10}`,
+        `屈服,欲情,恭顺,耻情,苦痛点数+${EraChara.get(cid).cflag.spousal_love * 20 * y + 10}`,
       );
       // JUEL:cid[6] + = (CFLAG:cid[602] * 20 * y + 10 )（变量语义：JUEL 族，cid[6] +）
-      era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * 20 * y + 10);
+      EraChara.get(cid).jewel.submission +=
+        EraChara.get(cid).cflag.spousal_love * 20 * y + 10;
       // JUEL:cid[5] + = (CFLAG:cid[602] * 20 * y + 10 )（变量语义：JUEL 族，cid[5] +）
-      era.add(`juel:${cid}:5`, chara(cid).chara.结婚爱情 * 20 * y + 10);
+      EraChara.get(cid).jewel.lust +=
+        EraChara.get(cid).cflag.spousal_love * 20 * y + 10;
       // JUEL:cid[4] + = (CFLAG:cid[602] * 20 * y + 10 )（变量语义：JUEL 族，cid[4] +）
-      era.add(`juel:${cid}:4`, chara(cid).chara.结婚爱情 * 20 * y + 10);
+      EraChara.get(cid).jewel.obedience +=
+        EraChara.get(cid).cflag.spousal_love * 20 * y + 10;
       // JUEL:cid[8] + = (CFLAG:cid[602] * 20 * y + 10 )（变量语义：JUEL 族，cid[8] +）
-      era.add(`juel:${cid}:8`, chara(cid).chara.结婚爱情 * 20 * y + 10);
+      EraChara.get(cid).jewel.shame +=
+        EraChara.get(cid).cflag.spousal_love * 20 * y + 10;
       // JUEL:cid[9] + = (CFLAG:cid[602] * 20 * y + 10 )（变量语义：JUEL 族，cid[9] +）
-      era.add(`juel:${cid}:9`, chara(cid).chara.结婚爱情 * 20 * y + 10);
+      EraChara.get(cid).jewel.pain +=
+        EraChara.get(cid).cflag.spousal_love * 20 * y + 10;
 
-      era.print(`话术+${chara(cid).chara.结婚爱情 * 20 * y + 10}`);
+      era.print(`话术+${EraChara.get(cid).cflag.spousal_love * 20 * y + 10}`);
       // JUEL:cid[7] + = (CFLAG:cid[602] * 20 * y + 10 )（变量语义：JUEL 族，cid[7] +）
-      era.add(`juel:${cid}:7`, chara(cid).chara.结婚爱情 * 20 * y + 10);
+      EraChara.get(cid).jewel.learning +=
+        EraChara.get(cid).cflag.spousal_love * 20 * y + 10;
 
       await era.printAndWait(`绝顶经验+${Math.trunc(y / 2)}`);
       // EXP:cid[2] + = Math.trunc(y / 2)（变量语义：EXP 族，cid[2] +）
-      era.add(`exp:${cid}:2`, Math.trunc(y / 2));
+      EraChara.get(cid).exp.orgasm_exp += Math.trunc(y / 2);
     } else {
       await era.printAndWait(
         `${name_of(cid)}习惯了和${partner_age}${marriage_name(cid)}过夫妻生活了。`,
       );
-      era.print(`私处点数+${chara(cid).chara.结婚爱情 * 20 * y + 10}`);
+      era.print(
+        `私处点数+${EraChara.get(cid).cflag.spousal_love * 20 * y + 10}`,
+      );
       era.print(`私处经验+${y}`);
       era.print(`精液经验+${y}`);
       // JUEL[1] + = (CFLAG:cid[602] * 20 * y + 10)（变量语义：JUEL 族，(cid)[1] +）
-      era.add(`juel:${cid}:1`, chara(cid).chara.结婚爱情 * 20 * y + 10);
+      EraChara.get(cid).jewel.vagina +=
+        EraChara.get(cid).cflag.spousal_love * 20 * y + 10;
       // EXP[0] + = y（变量语义：EXP 族，(cid)[0] +）
-      era.add(`exp:${cid}:0`, y);
+      EraChara.get(cid).exp.vagina_exp += y;
       // EXP[20] + = y（变量语义：EXP 族，(cid)[20] +）
-      era.add(`exp:${cid}:20`, y);
+      EraChara.get(cid).exp.semen_exp += y;
       // CFLAG[107] + = y（变量语义：CFLAG 族，(cid)[107] +）
-      era.add(`cflag:${cid}:107`, y);
+      EraChara.get(cid).cflag.monster_vaginal_ejaculation += y;
 
       era.print(
-        `屈服,欲情,恭顺,耻情,苦痛点数+${chara(cid).chara.结婚爱情 * 20 * y + 10}`,
+        `屈服,欲情,恭顺,耻情,苦痛点数+${EraChara.get(cid).cflag.spousal_love * 20 * y + 10}`,
       );
       // JUEL:cid[6] + = (CFLAG:cid[602] * 20 * y + 10 )（变量语义：JUEL 族，cid[6] +）
-      era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * 20 * y + 10);
+      EraChara.get(cid).jewel.submission +=
+        EraChara.get(cid).cflag.spousal_love * 20 * y + 10;
       // JUEL:cid[5] + = (CFLAG:cid[602] * 20 * y + 10 )（变量语义：JUEL 族，cid[5] +）
-      era.add(`juel:${cid}:5`, chara(cid).chara.结婚爱情 * 20 * y + 10);
+      EraChara.get(cid).jewel.lust +=
+        EraChara.get(cid).cflag.spousal_love * 20 * y + 10;
       // JUEL:cid[4] + = (CFLAG:cid[602] * 20 * y + 10 )（变量语义：JUEL 族，cid[4] +）
-      era.add(`juel:${cid}:4`, chara(cid).chara.结婚爱情 * 20 * y + 10);
+      EraChara.get(cid).jewel.obedience +=
+        EraChara.get(cid).cflag.spousal_love * 20 * y + 10;
       // JUEL:cid[8] + = (CFLAG:cid[602] * 20 * y + 10 )（变量语义：JUEL 族，cid[8] +）
-      era.add(`juel:${cid}:8`, chara(cid).chara.结婚爱情 * 20 * y + 10);
+      EraChara.get(cid).jewel.shame +=
+        EraChara.get(cid).cflag.spousal_love * 20 * y + 10;
       // JUEL:cid[9] + = (CFLAG:cid[602] * 20 * y + 10 )（变量语义：JUEL 族，cid[9] +）
-      era.add(`juel:${cid}:9`, chara(cid).chara.结婚爱情 * 20 * y + 10);
+      EraChara.get(cid).jewel.pain +=
+        EraChara.get(cid).cflag.spousal_love * 20 * y + 10;
 
-      era.print(`话术+${chara(cid).chara.结婚爱情 * 20 * y + 10}`);
+      era.print(`话术+${EraChara.get(cid).cflag.spousal_love * 20 * y + 10}`);
       // JUEL:cid[7] + = (CFLAG:cid[602] * 20 * y + 10 )（变量语义：JUEL 族，cid[7] +）
-      era.add(`juel:${cid}:7`, chara(cid).chara.结婚爱情 * 20 * y + 10);
+      EraChara.get(cid).jewel.learning +=
+        EraChara.get(cid).cflag.spousal_love * 20 * y + 10;
 
       await era.printAndWait(`绝顶经验+${Math.trunc(y / 2)}`);
       // EXP:cid[2] + = Math.trunc(y / 2)（变量语义：EXP 族，cid[2] +）
-      era.add(`exp:${cid}:2`, Math.trunc(y / 2));
+      EraChara.get(cid).exp.orgasm_exp += Math.trunc(y / 2);
     }
   } else {
     if (
-      chara(cid).chara.私处封印 == 1 ||
-      (chara(cid).chara.特别服装类型 == 79 &&
-        chara(cid).train.着衣状态 & 64 &&
-        game.system.着衣系统) ||
-      chara(cid).chara.男人 == 1
+      EraChara.get(cid).talent.vagina_seal == 1 ||
+      (EraChara.get(cid).cflag.special_costume_type == 79 &&
+        EraChara.get(cid).cflag.clothing_state & 64 &&
+        era_flag.clothing_system) ||
+      EraChara.get(cid).talent.male == 1
     ) {
       await era.printAndWait(`${name_of(cid)}的肛门被强行侵犯。`);
-      era.print(`肛门点数+${chara(cid).chara.结婚爱情 * 10 * y + 10}`);
+      era.print(
+        `肛门点数+${EraChara.get(cid).cflag.spousal_love * 10 * y + 10}`,
+      );
       era.print(`肛门经验+${y}`);
       era.print(`精液经验+${y}`);
       // JUEL:cid[2] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[2] +）
-      era.add(`juel:${cid}:2`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+      EraChara.get(cid).jewel.anus +=
+        EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
       // EXP:cid[1] + = y（变量语义：EXP 族，cid[1] +）
-      era.add(`exp:${cid}:1`, y);
+      EraChara.get(cid).exp.anal_exp += y;
       // EXP:cid[20] + = y（变量语义：EXP 族，cid[20] +）
-      era.add(`exp:${cid}:20`, y);
+      EraChara.get(cid).exp.semen_exp += y;
 
       era.print(
-        `屈服,欲情,恭顺,耻情,苦痛点数+${chara(cid).chara.结婚爱情 * 10 * y + 10}`,
+        `屈服,欲情,恭顺,耻情,苦痛点数+${EraChara.get(cid).cflag.spousal_love * 10 * y + 10}`,
       );
       // JUEL:cid[6] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[6] +）
-      era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+      EraChara.get(cid).jewel.submission +=
+        EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
       // JUEL:cid[5] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[5] +）
-      era.add(`juel:${cid}:5`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+      EraChara.get(cid).jewel.lust +=
+        EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
       // JUEL:cid[4] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[4] +）
-      era.add(`juel:${cid}:4`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+      EraChara.get(cid).jewel.obedience +=
+        EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
       // JUEL:cid[8] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[8] +）
-      era.add(`juel:${cid}:8`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+      EraChara.get(cid).jewel.shame +=
+        EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
       // JUEL:cid[9] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[9] +）
-      era.add(`juel:${cid}:9`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+      EraChara.get(cid).jewel.pain +=
+        EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
 
-      era.print(`话术+${chara(cid).chara.结婚爱情 * 10 * y + 10}`);
+      era.print(`话术+${EraChara.get(cid).cflag.spousal_love * 10 * y + 10}`);
       // JUEL:cid[7] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[7] +）
-      era.add(`juel:${cid}:7`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+      EraChara.get(cid).jewel.learning +=
+        EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
 
       await era.printAndWait(`绝顶经验+${Math.trunc(y / 2)}`);
       // EXP:cid[2] + = Math.trunc(y / 2)（变量语义：EXP 族，cid[2] +）
-      era.add(`exp:${cid}:2`, Math.trunc(y / 2));
+      EraChara.get(cid).exp.orgasm_exp += Math.trunc(y / 2);
     } else {
       await era.printAndWait(
         `${name_of(cid)}被${marriage_name(cid)}强行播种。`,
       );
-      era.print(`私处点数+${chara(cid).chara.结婚爱情 * 10 * y + 10}`);
+      era.print(
+        `私处点数+${EraChara.get(cid).cflag.spousal_love * 10 * y + 10}`,
+      );
       era.print(`私处经验+${y}`);
       era.print(`精液经验+${y}`);
       // JUEL:cid[1] + = (CFLAG:cid[602] * 10 * y + 10)（变量语义：JUEL 族，cid[1] +）
-      era.add(`juel:${cid}:1`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+      EraChara.get(cid).jewel.vagina +=
+        EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
 
       // EXP:cid[0] + = y（变量语义：EXP 族，cid[0] +）
-      era.add(`exp:${cid}:0`, y);
+      EraChara.get(cid).exp.vagina_exp += y;
       // EXP:cid[20] + = y（变量语义：EXP 族，cid[20] +）
-      era.add(`exp:${cid}:20`, y);
+      EraChara.get(cid).exp.semen_exp += y;
       // CFLAG:cid[107] + = y（变量语义：CFLAG 族，cid[107] +）
-      era.add(`cflag:${cid}:107`, y);
+      EraChara.get(cid).cflag.monster_vaginal_ejaculation += y;
 
       era.print(
-        `屈服,欲情,恭顺,耻情,苦痛点数+${chara(cid).chara.结婚爱情 * 10 * y + 10}`,
+        `屈服,欲情,恭顺,耻情,苦痛点数+${EraChara.get(cid).cflag.spousal_love * 10 * y + 10}`,
       );
       // JUEL:cid[6] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[6] +）
-      era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+      EraChara.get(cid).jewel.submission +=
+        EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
       // JUEL:cid[5] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[5] +）
-      era.add(`juel:${cid}:5`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+      EraChara.get(cid).jewel.lust +=
+        EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
       // JUEL:cid[4] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[4] +）
-      era.add(`juel:${cid}:4`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+      EraChara.get(cid).jewel.obedience +=
+        EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
       // JUEL:cid[8] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[8] +）
-      era.add(`juel:${cid}:8`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+      EraChara.get(cid).jewel.shame +=
+        EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
       // JUEL:cid[9] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[9] +）
-      era.add(`juel:${cid}:9`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+      EraChara.get(cid).jewel.pain +=
+        EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
 
-      era.print(`话术+${chara(cid).chara.结婚爱情 * 10 * y + 10}`);
+      era.print(`话术+${EraChara.get(cid).cflag.spousal_love * 10 * y + 10}`);
       // JUEL:cid[7] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[7] +）
-      era.add(`juel:${cid}:7`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+      EraChara.get(cid).jewel.learning +=
+        EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
 
       await era.printAndWait(`绝顶经验+${Math.trunc(y / 2)}`);
       // EXP:cid[2] + = Math.trunc(y / 2)（变量语义：EXP 族，cid[2] +）
-      era.add(`exp:${cid}:2`, Math.trunc(y / 2));
+      EraChara.get(cid).exp.orgasm_exp += Math.trunc(y / 2);
     }
   }
 
@@ -3078,9 +3509,9 @@ async function man_marriage_day(cid, y = 1, rand = default_rand) {
 // girl_marriage_day,cid
 //
 async function girl_marriage_day(cid, y = 1, rand = default_rand) {
-  const partner_age = chara(cid).chara.恋母情结
+  const partner_age = EraChara.get(cid).talent.mother_complex
     ? '熟女'
-    : chara(cid).chara.正太控
+    : EraChara.get(cid).talent.shotacon
       ? '幼女'
       : '';
 
@@ -3088,27 +3519,27 @@ async function girl_marriage_day(cid, y = 1, rand = default_rand) {
     `${name_of(cid)}和${partner_age}${marriage_name(cid)}一同生活着。`,
   );
 
-  if (chara(cid).chara.男人 || chara(cid).chara.扶她) {
-    if (chara(cid).chara.阴茎的状态 == 2) {
+  if (EraChara.get(cid).talent.male || EraChara.get(cid).talent.futanari) {
+    if (EraChara.get(cid).talent.penis_state == 2) {
       if (
         marriage_partner_status(cid) == 0 &&
         rand(10) == 0 &&
-        game.dungeon.游戏设定 & 128
+        era_flag.game_settings & 128
       ) {
         // CFLAG[603]  = 1（变量语义：CFLAG 族，(cid)[603]）
-        era.set(`cflag:${cid}:603`, 1);
+        EraChara.get(cid).cflag.spouse_status = 1;
       } else if (marriage_partner_status(cid) == 1 && rand(10) == 0) {
         // CFLAG[603]  = 2（变量语义：CFLAG 族，(cid)[603]）
-        era.set(`cflag:${cid}:603`, 2);
+        EraChara.get(cid).cflag.spouse_status = 2;
       } else if (marriage_partner_status(cid) == 1 && rand(9) == 0) {
         // CFLAG[603]  = 0（变量语义：CFLAG 族，(cid)[603]）
-        era.set(`cflag:${cid}:603`, 0);
+        EraChara.get(cid).cflag.spouse_status = 0;
       } else if (marriage_partner_status(cid) == 2 && rand(10) == 0) {
         // CFLAG[603]  = 3（变量语义：CFLAG 族，(cid)[603]）
-        era.set(`cflag:${cid}:603`, 3);
+        EraChara.get(cid).cflag.spouse_status = 3;
       } else if (marriage_partner_status(cid) == 2 && rand(9) == 0) {
         // CFLAG[603]  = 0（变量语义：CFLAG 族，(cid)[603]）
-        era.set(`cflag:${cid}:603`, 0);
+        EraChara.get(cid).cflag.spouse_status = 0;
       }
 
       if (
@@ -3127,7 +3558,7 @@ async function girl_marriage_day(cid, y = 1, rand = default_rand) {
           `短小包茎的${name_of(cid)}被${partner_age}${marriage_name(cid)}用手轻易地搞定。`,
         );
       }
-    } else if (chara(cid).chara.阴茎的状态 == 1) {
+    } else if (EraChara.get(cid).talent.penis_state == 1) {
       if (rand(2) == 0) {
         await era.printAndWait(
           `巨根的${name_of(cid)}被${partner_age}${marriage_name(cid)}缠着做了通宵。`,
@@ -3137,7 +3568,7 @@ async function girl_marriage_day(cid, y = 1, rand = default_rand) {
           `巨根的${name_of(cid)}被${partner_age}${marriage_name(cid)}榨取了好几次。`,
         );
       }
-    } else if (chara(cid).chara.阴茎的状态 == 4) {
+    } else if (EraChara.get(cid).talent.penis_state == 4) {
       await era.printAndWait(
         `持有马阴茎的${name_of(cid)}像要把${partner_age}${marriage_name(cid)}操坏似得持续做爱着。`,
       );
@@ -3150,7 +3581,7 @@ async function girl_marriage_day(cid, y = 1, rand = default_rand) {
         );
       }
     }
-  } else if (chara(cid).train.百合中毒 >= 1 || cid === 0) {
+  } else if (EraChara.get(cid).abl.lesbian_addiction >= 1 || cid === 0) {
     if (rand(2) == 0) {
       await era.printAndWait(
         `${name_of(cid)}在与${partner_age}${marriage_name(cid)}的生活中感到喜悦……`,
@@ -3160,7 +3591,7 @@ async function girl_marriage_day(cid, y = 1, rand = default_rand) {
         `${name_of(cid)}在与${partner_age}${marriage_name(cid)}的情爱中感到喜悦……`,
       );
     }
-  } else if (chara(cid).chara.百合气质 >= 1) {
+  } else if (EraChara.get(cid).abl.lesbian_temper >= 1) {
     await era.printAndWait(
       `${name_of(cid)}被${partner_age}${marriage_name(cid)}抱着，也不是不能接受。`,
     );
@@ -3170,18 +3601,22 @@ async function girl_marriage_day(cid, y = 1, rand = default_rand) {
     await era.printAndWait(
       `愤怒的${partner_age}${marriage_name(cid)}拿起了鞭子狠狠的教育了${name_of(cid)}`,
     );
-    era.print(`苦痛,屈服点数+${chara(cid).chara.结婚爱情 * 2 * y + 2}`);
+    era.print(
+      `苦痛,屈服点数+${EraChara.get(cid).cflag.spousal_love * 2 * y + 2}`,
+    );
     // JUEL:cid[9] + = (CFLAG:cid[602] * 2 * y + 2 )（变量语义：JUEL 族，cid[9] +）
-    era.add(`juel:${cid}:9`, chara(cid).chara.结婚爱情 * 2 * y + 2);
+    EraChara.get(cid).jewel.pain +=
+      EraChara.get(cid).cflag.spousal_love * 2 * y + 2;
     // JUEL:cid[6] + = (CFLAG:cid[602] * 2 * y + 2 )（变量语义：JUEL 族，cid[6] +）
-    era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * 2 * y + 2);
+    EraChara.get(cid).jewel.submission +=
+      EraChara.get(cid).cflag.spousal_love * 2 * y + 2;
     await era.printAndWait(`被虐,异常,绝顶经验+${y}`);
     // EXP:cid[2] + = y（变量语义：EXP 族，cid[2] +）
-    era.add(`exp:${cid}:2`, y);
+    EraChara.get(cid).exp.orgasm_exp += y;
     // EXP:cid[30] + = y（变量语义：EXP 族，cid[30] +）
-    era.add(`exp:${cid}:30`, y);
+    EraChara.get(cid).exp.masochist_pleasure_exp += y;
     // EXP:cid[50] + = y（变量语义：EXP 族，cid[50] +）
-    era.add(`exp:${cid}:50`, y);
+    EraChara.get(cid).exp.abnormal_exp += y;
   }
 
   if (marriage_partner_status(cid) == 1) {
@@ -3202,182 +3637,220 @@ async function girl_marriage_day(cid, y = 1, rand = default_rand) {
 
   if (marriage_partner_status(cid) == 2 || marriage_partner_status(cid) == 3) {
     await era.printAndWait(`${name_of(cid)}考虑着如何报复出轨的妻子`);
-    if (rand(2) == 0 && chara(cid).event.施虐狂 == 0) {
+    if (rand(2) == 0 && EraChara.get(cid).talent.sadist == 0) {
       await era.printAndWait(`于是,欲望驱使下,${name_of(cid)}卖春了...`);
-      era.print(`屈服,欲情,恭顺点数+${chara(cid).chara.结婚爱情 * 5 * y + 5}`);
+      era.print(
+        `屈服,欲情,恭顺点数+${EraChara.get(cid).cflag.spousal_love * 5 * y + 5}`,
+      );
       await era.printAndWait(`卖淫经验+${y * 2}`);
       // JUEL:cid[6] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[6] +）
-      era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.submission +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[5] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[5] +）
-      era.add(`juel:${cid}:5`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.lust +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[4] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[4] +）
-      era.add(`juel:${cid}:4`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.obedience +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // EXP:cid[74] + = y * 2（变量语义：EXP 族，cid[74] +）
-      era.add(`exp:${cid}:74`, y * 2);
+      EraChara.get(cid).exp.prostitution_exp += y * 2;
     } else {
       await era.printAndWait(
         `于是,${name_of(cid)}抽出鞭子准备狠狠的教训${partner_age}${marriage_name(cid)}`,
       );
-      era.print(`欲情点数+${chara(cid).chara.结婚爱情 * 5 * y + 5}`);
+      era.print(`欲情点数+${EraChara.get(cid).cflag.spousal_love * 5 * y + 5}`);
       // JUEL:cid[5] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[5] +）
-      era.add(`juel:${cid}:5`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.lust +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       await era.printAndWait(`施虐,异常经验+${y * 2}`);
       // EXP:cid[33] + = y * 2（变量语义：EXP 族，cid[33] +）
-      era.add(`exp:${cid}:33`, y * 2);
+      EraChara.get(cid).exp.sadist_pleasure_exp += y * 2;
       // EXP:cid[50] + = y * 2（变量语义：EXP 族，cid[50] +）
-      era.add(`exp:${cid}:50`, y * 2);
+      EraChara.get(cid).exp.abnormal_exp += y * 2;
     }
-  } else if (chara(cid).chara.男人) {
+  } else if (EraChara.get(cid).talent.male) {
     era.print(`阴茎点数+${y * 10}`);
     era.print(`欲情点数+${y * 10}`);
     era.print(`射精经验+1`);
     // JUEL[0] + = y * 10（变量语义：JUEL 族，(cid)[0] +）
-    era.add(`juel:${cid}:0`, y * 10);
+    EraChara.get(cid).jewel.clitoris += y * 10;
     // JUEL[5] + = y * 10（变量语义：JUEL 族，(cid)[5] +）
-    era.add(`juel:${cid}:5`, y * 10);
+    EraChara.get(cid).jewel.lust += y * 10;
     // EXP[3] + = 1（变量语义：EXP 族，(cid)[3] +）
-    chara(cid).train.射精经验 += 1;
-  } else if (chara(cid).chara.扶她) {
+    EraChara.get(cid).exp.ejaculation_exp += 1;
+  } else if (EraChara.get(cid).talent.futanari) {
     if (
-      (chara(cid).chara.看轻贞操 == 1 ||
-        chara(cid).chara.双性恋 == 1 ||
-        chara(cid).event.露出狂 == 1 ||
-        chara(cid).system.欲望 >= 3) &&
+      (EraChara.get(cid).talent.scorns_chastity == 1 ||
+        EraChara.get(cid).talent.bisexual == 1 ||
+        EraChara.get(cid).talent.exhibitionist == 1 ||
+        EraChara.get(cid).abl.lust >= 3) &&
       rand(2) == 0
     ) {
       await era.printAndWait(`欲望驱使下,${name_of(cid)}卖春了...`);
-      era.print(`屈服,欲情,恭顺点数+${chara(cid).chara.结婚爱情 * 5 * y + 5}`);
+      era.print(
+        `屈服,欲情,恭顺点数+${EraChara.get(cid).cflag.spousal_love * 5 * y + 5}`,
+      );
       await era.printAndWait(`卖淫经验+${y * 2}`);
       // JUEL:cid[6] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[6] +）
-      era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.submission +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[5] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[5] +）
-      era.add(`juel:${cid}:5`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.lust +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[4] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[4] +）
-      era.add(`juel:${cid}:4`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.obedience +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // EXP:cid[74] + = y * 2（变量语义：EXP 族，cid[74] +）
-      era.add(`exp:${cid}:74`, y * 2);
+      EraChara.get(cid).exp.prostitution_exp += y * 2;
     } else if (
-      chara(cid).stronghold.淫乱 == 1 ||
-      chara(cid).dungeon.妓女 == 1 ||
-      chara(cid).dungeon.倾城 == 1 ||
+      EraChara.get(cid).talent.lewd == 1 ||
+      EraChara.get(cid).talent.prostitute == 1 ||
+      EraChara.get(cid).talent.courtesan == 1 ||
       has_regular_customer(cid) == 1 ||
       is_courting(cid) == 1
     ) {
       await era.printAndWait(`欲望驱使下,${name_of(cid)}卖春了...`);
-      era.print(`屈服,欲情,恭顺点数+${chara(cid).chara.结婚爱情 * 5 * y + 5}`);
+      era.print(
+        `屈服,欲情,恭顺点数+${EraChara.get(cid).cflag.spousal_love * 5 * y + 5}`,
+      );
       await era.printAndWait(`卖淫经验+${y * 2}`);
       // JUEL:cid[6] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[6] +）
-      era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.submission +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[5] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[5] +）
-      era.add(`juel:${cid}:5`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.lust +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[4] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[4] +）
-      era.add(`juel:${cid}:4`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.obedience +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // EXP:cid[74] + = y * 2（变量语义：EXP 族，cid[74] +）
-      era.add(`exp:${cid}:74`, y * 2);
+      EraChara.get(cid).exp.prostitution_exp += y * 2;
     }
 
     if (
-      (chara(cid).event.施虐狂 == 1 || chara(cid).chara.小恶魔 == 1) &&
+      (EraChara.get(cid).talent.sadist == 1 ||
+        EraChara.get(cid).talent.little_devil == 1) &&
       rand(10) <= 6
     ) {
       await era.printAndWait(
         `意犹未尽的${name_of(cid)}抽出鞭子狠狠的教训了${partner_age}${marriage_name(cid)}`,
       );
-      era.print(`欲情点数+${chara(cid).chara.结婚爱情 * 5 * y + 5}`);
+      era.print(`欲情点数+${EraChara.get(cid).cflag.spousal_love * 5 * y + 5}`);
       // JUEL:cid[5] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[5] +）
-      era.add(`juel:${cid}:5`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.lust +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       await era.printAndWait(`施虐,异常经验+${y * 3}`);
       // EXP:cid[33] + = y * 2（变量语义：EXP 族，cid[33] +）
-      era.add(`exp:${cid}:33`, y * 2);
+      EraChara.get(cid).exp.sadist_pleasure_exp += y * 2;
       // EXP:cid[50] + = y * 2（变量语义：EXP 族，cid[50] +）
-      era.add(`exp:${cid}:50`, y * 2);
-    } else if (chara(cid).event.受虐狂 == 1) {
+      EraChara.get(cid).exp.abnormal_exp += y * 2;
+    } else if (EraChara.get(cid).talent.masochist == 1) {
       await era.printAndWait(
         `${name_of(cid)}叼着鞭子,像狗一样爬到${partner_age}${marriage_name(cid)}跟前.....`,
       );
-      era.print(`苦痛,屈服点数+${chara(cid).chara.结婚爱情 * 5 * y + 5}`);
+      era.print(
+        `苦痛,屈服点数+${EraChara.get(cid).cflag.spousal_love * 5 * y + 5}`,
+      );
       // JUEL:cid[9] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[9] +）
-      era.add(`juel:${cid}:9`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.pain +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[6] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[6] +）
-      era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.submission +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       await era.printAndWait(`被虐,异常,绝顶经验+${y * 3}`);
       // EXP:cid[2] + = y * 3（变量语义：EXP 族，cid[2] +）
-      era.add(`exp:${cid}:2`, y * 3);
+      EraChara.get(cid).exp.orgasm_exp += y * 3;
       // EXP:cid[30] + = y * 3（变量语义：EXP 族，cid[30] +）
-      era.add(`exp:${cid}:30`, y * 3);
+      EraChara.get(cid).exp.masochist_pleasure_exp += y * 3;
       // EXP:cid[50] + = y * 3（变量语义：EXP 族，cid[50] +）
-      era.add(`exp:${cid}:50`, y * 3);
+      EraChara.get(cid).exp.abnormal_exp += y * 3;
     }
   } else {
     if (
-      (chara(cid).chara.看轻贞操 == 1 ||
-        chara(cid).chara.双性恋 == 1 ||
-        chara(cid).event.露出狂 == 1 ||
-        chara(cid).system.欲望 >= 3) &&
+      (EraChara.get(cid).talent.scorns_chastity == 1 ||
+        EraChara.get(cid).talent.bisexual == 1 ||
+        EraChara.get(cid).talent.exhibitionist == 1 ||
+        EraChara.get(cid).abl.lust >= 3) &&
       rand(2) == 0
     ) {
       await era.printAndWait(`欲望驱使下,${name_of(cid)}卖春了...`);
-      era.print(`屈服,欲情,恭顺点数+${chara(cid).chara.结婚爱情 * 5 * y + 5}`);
+      era.print(
+        `屈服,欲情,恭顺点数+${EraChara.get(cid).cflag.spousal_love * 5 * y + 5}`,
+      );
       await era.printAndWait(`卖淫经验+${y * 2}`);
       // JUEL:cid[6] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[6] +）
-      era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.submission +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[5] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[5] +）
-      era.add(`juel:${cid}:5`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.lust +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[4] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[4] +）
-      era.add(`juel:${cid}:4`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.obedience +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // EXP:cid[74] + = y * 2（变量语义：EXP 族，cid[74] +）
-      era.add(`exp:${cid}:74`, y * 2);
+      EraChara.get(cid).exp.prostitution_exp += y * 2;
     } else if (
-      chara(cid).stronghold.淫乱 == 1 ||
-      chara(cid).dungeon.妓女 == 1 ||
-      chara(cid).dungeon.倾城 == 1 ||
+      EraChara.get(cid).talent.lewd == 1 ||
+      EraChara.get(cid).talent.prostitute == 1 ||
+      EraChara.get(cid).talent.courtesan == 1 ||
       has_regular_customer(cid) == 1 ||
       is_courting(cid) == 1
     ) {
       await era.printAndWait(`欲望驱使下,${name_of(cid)}卖春了...`);
-      era.print(`屈服,欲情,恭顺点数+${chara(cid).chara.结婚爱情 * 5 * y + 5}`);
+      era.print(
+        `屈服,欲情,恭顺点数+${EraChara.get(cid).cflag.spousal_love * 5 * y + 5}`,
+      );
       await era.printAndWait(`卖淫经验+${y * 2}`);
       // JUEL:cid[6] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[6] +）
-      era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.submission +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[5] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[5] +）
-      era.add(`juel:${cid}:5`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.lust +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[4] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[4] +）
-      era.add(`juel:${cid}:4`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.obedience +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // EXP:cid[74] + = y * 2（变量语义：EXP 族，cid[74] +）
-      era.add(`exp:${cid}:74`, y * 2);
+      EraChara.get(cid).exp.prostitution_exp += y * 2;
     }
 
     if (
-      (chara(cid).event.施虐狂 == 1 || chara(cid).chara.小恶魔 == 1) &&
+      (EraChara.get(cid).talent.sadist == 1 ||
+        EraChara.get(cid).talent.little_devil == 1) &&
       rand(10) <= 6
     ) {
       await era.printAndWait(
         `意犹未尽的${name_of(cid)}抽出鞭子狠狠的教训了${partner_age}${marriage_name(cid)}`,
       );
-      era.print(`欲情点数+${chara(cid).chara.结婚爱情 * 5 * y + 5}`);
+      era.print(`欲情点数+${EraChara.get(cid).cflag.spousal_love * 5 * y + 5}`);
       // JUEL:cid[5] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[5] +）
-      era.add(`juel:${cid}:5`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.lust +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       await era.printAndWait(`施虐,异常经验+${y * 3}`);
       // EXP:cid[33] + = y * 2（变量语义：EXP 族，cid[33] +）
-      era.add(`exp:${cid}:33`, y * 2);
+      EraChara.get(cid).exp.sadist_pleasure_exp += y * 2;
       // EXP:cid[50] + = y * 2（变量语义：EXP 族，cid[50] +）
-      era.add(`exp:${cid}:50`, y * 2);
-    } else if (chara(cid).event.受虐狂 == 1) {
+      EraChara.get(cid).exp.abnormal_exp += y * 2;
+    } else if (EraChara.get(cid).talent.masochist == 1) {
       await era.printAndWait(
         `${name_of(cid)}叼着鞭子,像狗一样爬到${partner_age}${marriage_name(cid)}跟前.....`,
       );
-      era.print(`苦痛,屈服点数+${chara(cid).chara.结婚爱情 * 5 * y + 5}`);
+      era.print(
+        `苦痛,屈服点数+${EraChara.get(cid).cflag.spousal_love * 5 * y + 5}`,
+      );
       // JUEL:cid[9] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[9] +）
-      era.add(`juel:${cid}:9`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.pain +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[6] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[6] +）
-      era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.submission +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       await era.printAndWait(`被虐,异常,绝顶经验+${y * 3}`);
       // EXP:cid[2] + = y * 3（变量语义：EXP 族，cid[2] +）
-      era.add(`exp:${cid}:2`, y * 3);
+      EraChara.get(cid).exp.orgasm_exp += y * 3;
       // EXP:cid[30] + = y * 3（变量语义：EXP 族，cid[30] +）
-      era.add(`exp:${cid}:30`, y * 3);
+      EraChara.get(cid).exp.masochist_pleasure_exp += y * 3;
       // EXP:cid[50] + = y * 3（变量语义：EXP 族，cid[50] +）
-      era.add(`exp:${cid}:50`, y * 3);
+      EraChara.get(cid).exp.abnormal_exp += y * 3;
     }
   }
 
@@ -3387,7 +3860,7 @@ async function girl_marriage_day(cid, y = 1, rand = default_rand) {
     );
 
     // CFLAG[603]  = 2（变量语义：CFLAG 族，(cid)[603]）
-    era.set(`cflag:${cid}:603`, 2);
+    EraChara.get(cid).cflag.spouse_status = 2;
   }
 
   return y;
@@ -3398,167 +3871,203 @@ async function girl_marriage_day(cid, y = 1, rand = default_rand) {
 async function beast_marriage_day(cid, y = 1) {
   await era.printAndWait(`${name_of(cid)}和${marriage_name(cid)}一同生活着。`);
 
-  if (chara(cid).event.牝犬 == 1 || cid === 0) {
+  if (EraChara.get(cid).talent.bitch == 1 || cid === 0) {
     if (
-      chara(cid).chara.私处封印 == 1 ||
-      (chara(cid).chara.特别服装类型 == 79 &&
-        chara(cid).train.着衣状态 & 64 &&
-        game.system.着衣系统) ||
-      chara(cid).chara.男人 == 1
+      EraChara.get(cid).talent.vagina_seal == 1 ||
+      (EraChara.get(cid).cflag.special_costume_type == 79 &&
+        EraChara.get(cid).cflag.clothing_state & 64 &&
+        era_flag.clothing_system) ||
+      EraChara.get(cid).talent.male == 1
     ) {
       await era.printAndWait(
         `${name_of(cid)}如牝犬一般吐着舌头兴奋地扭动腰肢迎接着${marriage_name(cid)}。`,
       );
       era.print(
-        `屈服,欲情,恭顺,耻情点数+${chara(cid).chara.结婚爱情 * 5 * y + 5}`,
+        `屈服,欲情,恭顺,耻情点数+${EraChara.get(cid).cflag.spousal_love * 5 * y + 5}`,
       );
       // JUEL:cid[6] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[6] +）
-      era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.submission +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[5] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[5] +）
-      era.add(`juel:${cid}:5`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.lust +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[4] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[4] +）
-      era.add(`juel:${cid}:4`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.obedience +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[8] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[8] +）
-      era.add(`juel:${cid}:8`, chara(cid).chara.结婚爱情 * 5 * y + 5);
-      era.print(`肛门点数+${chara(cid).chara.结婚爱情 * 5 * y + 5}`);
+      EraChara.get(cid).jewel.shame +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
+      era.print(`肛门点数+${EraChara.get(cid).cflag.spousal_love * 5 * y + 5}`);
       // JUEL:cid[2] + = (CFLAG:cid[602] * 5 * y + 5)（变量语义：JUEL 族，cid[2] +）
-      era.add(`juel:${cid}:2`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.anus +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       era.print(`绝顶经验+${Math.trunc(y / 2)}`);
       // EXP:cid[2] + = Math.trunc(y / 2)（变量语义：EXP 族，cid[2] +）
-      era.add(`exp:${cid}:2`, Math.trunc(y / 2));
+      EraChara.get(cid).exp.orgasm_exp += Math.trunc(y / 2);
       await era.printAndWait(`兽奸,异常,被虐经验+${y}`);
       // EXP:cid[56] + = y（变量语义：EXP 族，cid[56] +）
-      era.add(`exp:${cid}:56`, y);
+      EraChara.get(cid).exp.bestiality_exp += y;
       // EXP:cid[50] + = y（变量语义：EXP 族，cid[50] +）
-      era.add(`exp:${cid}:50`, y);
+      EraChara.get(cid).exp.abnormal_exp += y;
       // EXP:cid[30] + = y（变量语义：EXP 族，cid[30] +）
-      era.add(`exp:${cid}:30`, y);
+      EraChara.get(cid).exp.masochist_pleasure_exp += y;
     } else {
       await era.printAndWait(
         `${name_of(cid)}如牝犬一般吐着舌头兴奋地扭动腰肢迎接着${marriage_name(cid)}。`,
       );
       era.print(
-        `屈服,欲情,恭顺,耻情点数+${chara(cid).chara.结婚爱情 * 5 * y + 5}`,
+        `屈服,欲情,恭顺,耻情点数+${EraChara.get(cid).cflag.spousal_love * 5 * y + 5}`,
       );
       // JUEL:cid[6] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[6] +）
-      era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.submission +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[5] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[5] +）
-      era.add(`juel:${cid}:5`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.lust +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[4] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[4] +）
-      era.add(`juel:${cid}:4`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.obedience +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[8] + = (CFLAG:cid[602] * 5 * y + 5 )（变量语义：JUEL 族，cid[8] +）
-      era.add(`juel:${cid}:8`, chara(cid).chara.结婚爱情 * 5 * y + 5);
-      era.print(`私处,肛门点数+${chara(cid).chara.结婚爱情 * 5 * y + 5}`);
+      EraChara.get(cid).jewel.shame +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
+      era.print(
+        `私处,肛门点数+${EraChara.get(cid).cflag.spousal_love * 5 * y + 5}`,
+      );
 
       // JUEL:cid[2] + = (CFLAG:cid[602] * 5 * y + 5)（变量语义：JUEL 族，cid[2] +）
-      era.add(`juel:${cid}:2`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.anus +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
       // JUEL:cid[1] + = (CFLAG:cid[602] * 5 * y + 5)（变量语义：JUEL 族，cid[1] +）
-      era.add(`juel:${cid}:1`, chara(cid).chara.结婚爱情 * 5 * y + 5);
+      EraChara.get(cid).jewel.vagina +=
+        EraChara.get(cid).cflag.spousal_love * 5 * y + 5;
 
-      era.print(`苦痛点数+${chara(cid).system.顺从 * y * 50 + 10}`);
+      era.print(`苦痛点数+${EraChara.get(cid).abl.obedience * y * 50 + 10}`);
       // JUEL:cid[9] + = (ABL:cid[10] * y * 50 + 10 )（变量语义：JUEL 族，cid[9] +）
-      era.add(`juel:${cid}:9`, chara(cid).system.顺从 * y * 50 + 10);
+      EraChara.get(cid).jewel.pain +=
+        EraChara.get(cid).abl.obedience * y * 50 + 10;
 
       era.print(`绝顶经验+${Math.trunc(y / 2)}`);
       // EXP:cid[2] + = Math.trunc(y / 2)（变量语义：EXP 族，cid[2] +）
-      era.add(`exp:${cid}:2`, Math.trunc(y / 2));
+      EraChara.get(cid).exp.orgasm_exp += Math.trunc(y / 2);
       await era.printAndWait(`兽奸,异常,被虐经验+${y}`);
       // EXP:cid[56] + = y（变量语义：EXP 族，cid[56] +）
-      era.add(`exp:${cid}:56`, y);
+      EraChara.get(cid).exp.bestiality_exp += y;
       // EXP:cid[50] + = y（变量语义：EXP 族，cid[50] +）
-      era.add(`exp:${cid}:50`, y);
+      EraChara.get(cid).exp.abnormal_exp += y;
       // EXP:cid[30] + = y（变量语义：EXP 族，cid[30] +）
-      era.add(`exp:${cid}:30`, y);
+      EraChara.get(cid).exp.masochist_pleasure_exp += y;
 
       // CFLAG:cid[107] + = y（变量语义：CFLAG 族，cid[107] +）
-      era.add(`cflag:${cid}:107`, y);
+      EraChara.get(cid).cflag.monster_vaginal_ejaculation += y;
     }
-  } else if (chara(cid).train.兽奸中毒 >= 1 || chara(cid).chara.结婚爱情 > 40) {
+  } else if (
+    EraChara.get(cid).abl.bestiality_addiction >= 1 ||
+    EraChara.get(cid).cflag.spousal_love > 40
+  ) {
     if (
-      chara(cid).chara.私处封印 == 1 ||
-      (chara(cid).chara.特别服装类型 == 79 &&
-        chara(cid).train.着衣状态 & 64 &&
-        game.system.着衣系统) ||
-      chara(cid).chara.男人 == 1
+      EraChara.get(cid).talent.vagina_seal == 1 ||
+      (EraChara.get(cid).cflag.special_costume_type == 79 &&
+        EraChara.get(cid).cflag.clothing_state & 64 &&
+        era_flag.clothing_system) ||
+      EraChara.get(cid).talent.male == 1
     ) {
       await era.printAndWait(
         `${name_of(cid)}如牝犬一般吐着舌头兴奋地扭动腰肢迎接着${marriage_name(cid)}。`,
       );
       era.print(
-        `屈服,欲情,恭顺,耻情点数+${chara(cid).chara.结婚爱情 * 10 * y + 10}`,
+        `屈服,欲情,恭顺,耻情点数+${EraChara.get(cid).cflag.spousal_love * 10 * y + 10}`,
       );
       // JUEL:cid[6] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[6] +）
-      era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+      EraChara.get(cid).jewel.submission +=
+        EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
       // JUEL:cid[5] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[5] +）
-      era.add(`juel:${cid}:5`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+      EraChara.get(cid).jewel.lust +=
+        EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
       // JUEL:cid[4] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[4] +）
-      era.add(`juel:${cid}:4`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+      EraChara.get(cid).jewel.obedience +=
+        EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
       // JUEL:cid[8] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[8] +）
-      era.add(`juel:${cid}:8`, chara(cid).chara.结婚爱情 * 10 * y + 10);
-      era.print(`肛门点数+${chara(cid).chara.结婚爱情 * 10 * y + 10}`);
+      EraChara.get(cid).jewel.shame +=
+        EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
+      era.print(
+        `肛门点数+${EraChara.get(cid).cflag.spousal_love * 10 * y + 10}`,
+      );
       // JUEL:cid[2] + = (CFLAG:cid[602] * 10 * y + 10)（变量语义：JUEL 族，cid[2] +）
-      era.add(`juel:${cid}:2`, chara(cid).chara.结婚爱情 * 10 * y + 10);
-      era.print(`苦痛点数+${chara(cid).system.顺从 * y * 100 + 10}`);
+      EraChara.get(cid).jewel.anus +=
+        EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
+      era.print(`苦痛点数+${EraChara.get(cid).abl.obedience * y * 100 + 10}`);
       // JUEL:cid[9] + = (ABL:cid[10] * y * 100 + 10 )（变量语义：JUEL 族，cid[9] +）
-      era.add(`juel:${cid}:9`, chara(cid).system.顺从 * y * 100 + 10);
+      EraChara.get(cid).jewel.pain +=
+        EraChara.get(cid).abl.obedience * y * 100 + 10;
       era.print(`绝顶经验+${y}`);
       // EXP:cid[2] + = y（变量语义：EXP 族，cid[2] +）
-      era.add(`exp:${cid}:2`, y);
+      EraChara.get(cid).exp.orgasm_exp += y;
       await era.printAndWait(`兽奸,异常,被虐经验+${y}`);
       // EXP:cid[56] + = y * 2（变量语义：EXP 族，cid[56] +）
-      era.add(`exp:${cid}:56`, y * 2);
+      EraChara.get(cid).exp.bestiality_exp += y * 2;
       // EXP:cid[50] + = y * 2（变量语义：EXP 族，cid[50] +）
-      era.add(`exp:${cid}:50`, y * 2);
+      EraChara.get(cid).exp.abnormal_exp += y * 2;
       // EXP:cid[30] + = y * 2（变量语义：EXP 族，cid[30] +）
-      era.add(`exp:${cid}:30`, y * 2);
+      EraChara.get(cid).exp.masochist_pleasure_exp += y * 2;
     } else {
       await era.printAndWait(
         `${name_of(cid)}如牝犬一般吐着舌头兴奋地扭动腰肢迎接着${marriage_name(cid)}。`,
       );
       era.print(
-        `屈服,欲情,恭顺,耻情点数+${chara(cid).chara.结婚爱情 * 10 * y + 10}`,
+        `屈服,欲情,恭顺,耻情点数+${EraChara.get(cid).cflag.spousal_love * 10 * y + 10}`,
       );
       // JUEL:cid[6] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[6] +）
-      era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+      EraChara.get(cid).jewel.submission +=
+        EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
       // JUEL:cid[5] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[5] +）
-      era.add(`juel:${cid}:5`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+      EraChara.get(cid).jewel.lust +=
+        EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
       // JUEL:cid[4] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[4] +）
-      era.add(`juel:${cid}:4`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+      EraChara.get(cid).jewel.obedience +=
+        EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
       // JUEL:cid[8] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[8] +）
-      era.add(`juel:${cid}:8`, chara(cid).chara.结婚爱情 * 10 * y + 10);
-      era.print(`私处,肛门点数+${chara(cid).chara.结婚爱情 * 10 * y + 10}`);
+      EraChara.get(cid).jewel.shame +=
+        EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
+      era.print(
+        `私处,肛门点数+${EraChara.get(cid).cflag.spousal_love * 10 * y + 10}`,
+      );
 
       // JUEL:cid[2] + = (CFLAG:cid[602] * 10 * y + 10)（变量语义：JUEL 族，cid[2] +）
-      era.add(`juel:${cid}:2`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+      EraChara.get(cid).jewel.anus +=
+        EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
       // JUEL:cid[1] + = (CFLAG:cid[602] * 10 * y + 10)（变量语义：JUEL 族，cid[1] +）
-      era.add(`juel:${cid}:1`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+      EraChara.get(cid).jewel.vagina +=
+        EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
 
-      era.print(`苦痛点数+${chara(cid).system.顺从 * y * 100 + 10}`);
+      era.print(`苦痛点数+${EraChara.get(cid).abl.obedience * y * 100 + 10}`);
       // JUEL:cid[9] + = (ABL:cid[10] * y * 100 + 10 )（变量语义：JUEL 族，cid[9] +）
-      era.add(`juel:${cid}:9`, chara(cid).system.顺从 * y * 100 + 10);
+      EraChara.get(cid).jewel.pain +=
+        EraChara.get(cid).abl.obedience * y * 100 + 10;
 
       era.print(`绝顶经验+${y}`);
       // EXP:cid[2] + = y（变量语义：EXP 族，cid[2] +）
-      era.add(`exp:${cid}:2`, y);
+      EraChara.get(cid).exp.orgasm_exp += y;
       await era.printAndWait(`兽奸,异常,被虐经验+${y}`);
       // EXP:cid[56] + = y * 2（变量语义：EXP 族，cid[56] +）
-      era.add(`exp:${cid}:56`, y * 2);
+      EraChara.get(cid).exp.bestiality_exp += y * 2;
       // EXP:cid[50] + = y * 2（变量语义：EXP 族，cid[50] +）
-      era.add(`exp:${cid}:50`, y * 2);
+      EraChara.get(cid).exp.abnormal_exp += y * 2;
       // EXP:cid[30] + = y * 2（变量语义：EXP 族，cid[30] +）
-      era.add(`exp:${cid}:30`, y * 2);
+      EraChara.get(cid).exp.masochist_pleasure_exp += y * 2;
     }
   } else {
     await era.printAndWait(
       `从不正眼看${marriage_name(cid)}，${name_of(cid)}陷入了深深的绝望中……`,
     );
     await era.printAndWait(
-      `屈服,恐怖点数+${chara(cid).chara.结婚爱情 * 10 * y + 10}`,
+      `屈服,恐怖点数+${EraChara.get(cid).cflag.spousal_love * 10 * y + 10}`,
     );
     // JUEL:cid[6] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[6] +）
-    era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+    EraChara.get(cid).jewel.submission +=
+      EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
     // JUEL:cid[10] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[10] +）
-    era.add(`juel:${cid}:10`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+    EraChara.get(cid).jewel.fear +=
+      EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
   }
 
   return y;
@@ -3568,43 +4077,48 @@ async function beast_marriage_day(cid, y = 1) {
 //
 async function brain_marriage_day(cid, y = 1, rand = default_rand) {
   let fantasy;
-  if (chara(cid).stronghold.淫乱 || chara(cid).stronghold.爱慕) {
+  if (EraChara.get(cid).talent.lewd || EraChara.get(cid).talent.in_love) {
     fantasy = name_of(0);
-  } else if (chara(cid).dungeon.恋人) {
-    fantasy = LOVER_NAMES.get(chara(cid).dungeon.恋人) || '恋人';
-  } else if (chara(cid).chara.成为勇者前的生活 == 21 || chara(cid).chara.人妻) {
+  } else if (EraChara.get(cid).cflag.lover) {
+    fantasy = LOVER_NAMES.get(EraChara.get(cid).cflag.lover) || '恋人';
+  } else if (
+    EraChara.get(cid).talent.pre_hero_life == 21 ||
+    EraChara.get(cid).talent.married_woman
+  ) {
     fantasy = '在故乡等待的伴侣';
-  } else if (chara(cid).train.兽奸中毒 >= 1) {
+  } else if (EraChara.get(cid).abl.bestiality_addiction >= 1) {
     fantasy = '魔兽';
   } else {
     fantasy = '性幻想对象';
   }
   y =
-    (chara(cid).system.欲望 || 0) +
-    (chara(cid).system.露出癖 || 0) +
-    (chara(cid).train.自慰中毒 || 0);
+    (EraChara.get(cid).abl.lust || 0) +
+    (EraChara.get(cid).abl.exhibitionism || 0) +
+    (EraChara.get(cid).abl.masturbation_addiction || 0);
   await era.printAndWait(`${name_of(cid)}和${marriage_name(cid)}一同生活着。`);
-  if (chara(cid).event.漏尿癖 == 1 || rand(20) == 0) {
+  if (EraChara.get(cid).talent.incontinence_fetish == 1 || rand(20) == 0) {
     await era.printAndWait(
       `偶然看到${marriage_name(cid)}的样子,${name_of(cid)}就忍不住失禁了。`,
     );
-    if (chara(cid).event.漏尿癖 == 0) {
+    if (EraChara.get(cid).talent.incontinence_fetish == 0) {
       await era.printAndWait(`${name_of(cid)}获得【${talent_name(57)}】`);
       // TALENT:cid[57]  = 1（变量语义：TALENT 族，cid[57]）
-      chara(cid).event.漏尿癖 = 1;
+      EraChara.get(cid).talent.incontinence_fetish = 1;
     }
     await era.printAndWait(`放尿,异常经验+${y}`);
     // EXP:cid[31] + = y（变量语义：EXP 族，cid[31] +）
-    chara(cid).system.放尿经验 += y;
+    EraChara.get(cid).exp.urination_exp += y;
     // EXP:cid[50] + = y（变量语义：EXP 族，cid[50] +）
-    era.add(`exp:${cid}:50`, y);
+    EraChara.get(cid).exp.abnormal_exp += y;
     await era.printAndWait(
-      `屈服,恐怖点数+${chara(cid).chara.结婚爱情 * 10 * y + 10}`,
+      `屈服,恐怖点数+${EraChara.get(cid).cflag.spousal_love * 10 * y + 10}`,
     );
     // JUEL:cid[6] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[6] +）
-    era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+    EraChara.get(cid).jewel.submission +=
+      EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
     // JUEL:cid[10] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[10] +）
-    era.add(`juel:${cid}:10`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+    EraChara.get(cid).jewel.fear +=
+      EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
   } else {
     await era.printAndWait(
       `被${marriage_name(cid)}从耳朵侵犯脑部的${name_of(cid)}，翻着白眼流着口水失神了`,
@@ -3624,22 +4138,29 @@ async function brain_marriage_day(cid, y = 1, rand = default_rand) {
       ),
     );
     await era.printAndWait(`调教失神经验+1`);
-    await era.printAndWait(`调教自慰经验+${chara(cid).chara.结婚爱情 * y}`);
-    // EXP:cid[65] + = 1（变量语义：EXP 族，cid[65] +）
-    chara(cid).train.调教失神经验 += 1;
-    // EXP:cid[11] + = y * CFLAG:cid[602]（变量语义：EXP 族，cid[11] +）
-    era.add(`exp:${cid}:11`, y * chara(cid).chara.结婚爱情);
     await era.printAndWait(
-      `${clitoris_word(cid)},欲情,恭顺,耻情点数+${chara(cid).chara.结婚爱情 * 10 * y + 10}`,
+      `调教自慰经验+${EraChara.get(cid).cflag.spousal_love * y}`,
+    );
+    // EXP:cid[65] + = 1（变量语义：EXP 族，cid[65] +）
+    EraChara.get(cid).exp.training_faint_exp += 1;
+    // EXP:cid[11] + = y * CFLAG:cid[602]（变量语义：EXP 族，cid[11] +）
+    EraChara.get(cid).exp.trained_masturbation_exp +=
+      y * EraChara.get(cid).cflag.spousal_love;
+    await era.printAndWait(
+      `${clitoris_word(cid)},欲情,恭顺,耻情点数+${EraChara.get(cid).cflag.spousal_love * 10 * y + 10}`,
     );
     // JUEL:cid[0] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[0] +）
-    era.add(`juel:${cid}:0`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+    EraChara.get(cid).jewel.clitoris +=
+      EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
     // JUEL:cid[5] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[5] +）
-    era.add(`juel:${cid}:5`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+    EraChara.get(cid).jewel.lust +=
+      EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
     // JUEL:cid[4] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[4] +）
-    era.add(`juel:${cid}:4`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+    EraChara.get(cid).jewel.obedience +=
+      EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
     // JUEL:cid[8] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[8] +）
-    era.add(`juel:${cid}:8`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+    EraChara.get(cid).jewel.shame +=
+      EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
   }
 
   return y;
@@ -3652,93 +4173,109 @@ async function horse_marriage_day(cid, y = 1, rand = default_rand) {
     `${name_of(cid)}和${marriage_name(cid)}一起在马厩里生活着。`,
   );
 
-  if (chara(cid).event.牝犬 == 1 || cid === 0) {
+  if (EraChara.get(cid).talent.bitch == 1 || cid === 0) {
     if (rand(2) == 0) {
       if (
-        chara(cid).chara.私处封印 == 1 ||
-        (chara(cid).chara.特别服装类型 == 79 &&
-          chara(cid).train.着衣状态 & 64 &&
-          game.system.着衣系统) ||
-        chara(cid).chara.男人 == 1
+        EraChara.get(cid).talent.vagina_seal == 1 ||
+        (EraChara.get(cid).cflag.special_costume_type == 79 &&
+          EraChara.get(cid).cflag.clothing_state & 64 &&
+          era_flag.clothing_system) ||
+        EraChara.get(cid).talent.male == 1
       ) {
         await era.printAndWait(
           `${name_of(cid)}嬉笑着跨上了木马，沉浸在与${marriage_name(cid)}的肛交之中……`,
         );
 
         era.print(
-          `屈服,欲情,恭顺,耻情点数+${chara(cid).chara.结婚爱情 * 15 * y + 10}`,
+          `屈服,欲情,恭顺,耻情点数+${EraChara.get(cid).cflag.spousal_love * 15 * y + 10}`,
         );
         // JUEL:cid[6] + = (CFLAG:cid[602] * 15 * y + 10 )（变量语义：JUEL 族，cid[6] +）
-        era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * 15 * y + 10);
+        EraChara.get(cid).jewel.submission +=
+          EraChara.get(cid).cflag.spousal_love * 15 * y + 10;
         // JUEL:cid[5] + = (CFLAG:cid[602] * 15 * y + 10 )（变量语义：JUEL 族，cid[5] +）
-        era.add(`juel:${cid}:5`, chara(cid).chara.结婚爱情 * 15 * y + 10);
+        EraChara.get(cid).jewel.lust +=
+          EraChara.get(cid).cflag.spousal_love * 15 * y + 10;
         // JUEL:cid[4] + = (CFLAG:cid[602] * 15 * y + 10 )（变量语义：JUEL 族，cid[4] +）
-        era.add(`juel:${cid}:4`, chara(cid).chara.结婚爱情 * 15 * y + 10);
+        EraChara.get(cid).jewel.obedience +=
+          EraChara.get(cid).cflag.spousal_love * 15 * y + 10;
         // JUEL:cid[8] + = (CFLAG:cid[602] * 15 * y + 10 )（变量语义：JUEL 族，cid[8] +）
-        era.add(`juel:${cid}:8`, chara(cid).chara.结婚爱情 * 15 * y + 10);
-        era.print(`肛门点数+${chara(cid).chara.结婚爱情 * 15 * y + 10}`);
+        EraChara.get(cid).jewel.shame +=
+          EraChara.get(cid).cflag.spousal_love * 15 * y + 10;
+        era.print(
+          `肛门点数+${EraChara.get(cid).cflag.spousal_love * 15 * y + 10}`,
+        );
         // JUEL:cid[2] + = (CFLAG:cid[602] * 15 * y + 10)（变量语义：JUEL 族，cid[2] +）
-        era.add(`juel:${cid}:2`, chara(cid).chara.结婚爱情 * 15 * y + 10);
-        era.print(`苦痛点数+${chara(cid).system.顺从 * y * 200 + 10}`);
+        EraChara.get(cid).jewel.anus +=
+          EraChara.get(cid).cflag.spousal_love * 15 * y + 10;
+        era.print(`苦痛点数+${EraChara.get(cid).abl.obedience * y * 200 + 10}`);
         // JUEL:cid[9] + = (ABL:cid[10] * y * 200 + 10 )（变量语义：JUEL 族，cid[9] +）
-        era.add(`juel:${cid}:9`, chara(cid).system.顺从 * y * 200 + 10);
+        EraChara.get(cid).jewel.pain +=
+          EraChara.get(cid).abl.obedience * y * 200 + 10;
         era.print(`绝顶经验+${y * 10}`);
         // EXP:cid[2] + = y * 10（变量语义：EXP 族，cid[2] +）
-        era.add(`exp:${cid}:2`, y * 10);
+        EraChara.get(cid).exp.orgasm_exp += y * 10;
         era.print(`兽奸,异常,被虐经验+${y * 10}`);
         // EXP:cid[56] + = y * 10（变量语义：EXP 族，cid[56] +）
-        era.add(`exp:${cid}:56`, y * 10);
+        EraChara.get(cid).exp.bestiality_exp += y * 10;
         // EXP:cid[50] + = y * 10（变量语义：EXP 族，cid[50] +）
-        era.add(`exp:${cid}:50`, y * 10);
+        EraChara.get(cid).exp.abnormal_exp += y * 10;
         // EXP:cid[30] + = y * 10（变量语义：EXP 族，cid[30] +）
-        era.add(`exp:${cid}:30`, y * 10);
+        EraChara.get(cid).exp.masochist_pleasure_exp += y * 10;
 
         era.print(`肛门经验+${y * 10}`);
         await era.printAndWait(`肛门扩张经验+${y * 10}`);
         // EXP:cid[1] + = y * 10（变量语义：EXP 族，cid[1] +）
-        era.add(`exp:${cid}:1`, y * 10);
+        EraChara.get(cid).exp.anal_exp += y * 10;
         // EXP:cid[53] + = y * 10（变量语义：EXP 族，cid[53] +）
-        era.add(`exp:${cid}:53`, y * 10);
+        EraChara.get(cid).exp.anal_dilation_exp += y * 10;
       } else {
         era.print(
-          `屈服,欲情,恭顺,耻情点数+${chara(cid).chara.结婚爱情 * 15 * y + 10}`,
+          `屈服,欲情,恭顺,耻情点数+${EraChara.get(cid).cflag.spousal_love * 15 * y + 10}`,
         );
         // JUEL:cid[6] + = (CFLAG:cid[602] * 15 * y + 10 )（变量语义：JUEL 族，cid[6] +）
-        era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * 15 * y + 10);
+        EraChara.get(cid).jewel.submission +=
+          EraChara.get(cid).cflag.spousal_love * 15 * y + 10;
         // JUEL:cid[5] + = (CFLAG:cid[602] * 15 * y + 10 )（变量语义：JUEL 族，cid[5] +）
-        era.add(`juel:${cid}:5`, chara(cid).chara.结婚爱情 * 15 * y + 10);
+        EraChara.get(cid).jewel.lust +=
+          EraChara.get(cid).cflag.spousal_love * 15 * y + 10;
         // JUEL:cid[4] + = (CFLAG:cid[602] * 15 * y + 10 )（变量语义：JUEL 族，cid[4] +）
-        era.add(`juel:${cid}:4`, chara(cid).chara.结婚爱情 * 15 * y + 10);
+        EraChara.get(cid).jewel.obedience +=
+          EraChara.get(cid).cflag.spousal_love * 15 * y + 10;
         // JUEL:cid[8] + = (CFLAG:cid[602] * 15 * y + 10 )（变量语义：JUEL 族，cid[8] +）
-        era.add(`juel:${cid}:8`, chara(cid).chara.结婚爱情 * 15 * y + 10);
-        era.print(`私处点数+${chara(cid).chara.结婚爱情 * 15 * y + 10}`);
+        EraChara.get(cid).jewel.shame +=
+          EraChara.get(cid).cflag.spousal_love * 15 * y + 10;
+        era.print(
+          `私处点数+${EraChara.get(cid).cflag.spousal_love * 15 * y + 10}`,
+        );
 
         // JUEL:cid[1] + = (CFLAG:cid[602] * 15 * y + 10)（变量语义：JUEL 族，cid[1] +）
-        era.add(`juel:${cid}:1`, chara(cid).chara.结婚爱情 * 15 * y + 10);
+        EraChara.get(cid).jewel.vagina +=
+          EraChara.get(cid).cflag.spousal_love * 15 * y + 10;
 
-        era.print(`苦痛点数+${chara(cid).system.顺从 * y * 200 + 10}`);
+        era.print(`苦痛点数+${EraChara.get(cid).abl.obedience * y * 200 + 10}`);
         // JUEL:cid[9] + = (ABL:cid[10] * y * 20 + 10 )（变量语义：JUEL 族，cid[9] +）
-        era.add(`juel:${cid}:9`, chara(cid).system.顺从 * y * 20 + 10);
+        EraChara.get(cid).jewel.pain +=
+          EraChara.get(cid).abl.obedience * y * 20 + 10;
 
         era.print(`绝顶经验+${y * 10}`);
         // EXP:cid[2] + = y * 10（变量语义：EXP 族，cid[2] +）
-        era.add(`exp:${cid}:2`, y * 10);
+        EraChara.get(cid).exp.orgasm_exp += y * 10;
         era.print(`兽奸,异常,被虐经验+${y * 10}`);
         // EXP:cid[56] + = y * 10（变量语义：EXP 族，cid[56] +）
-        era.add(`exp:${cid}:56`, y * 10);
+        EraChara.get(cid).exp.bestiality_exp += y * 10;
         // EXP:cid[50] + = y * 10（变量语义：EXP 族，cid[50] +）
-        era.add(`exp:${cid}:50`, y * 10);
+        EraChara.get(cid).exp.abnormal_exp += y * 10;
         // EXP:cid[30] + = y * 10（变量语义：EXP 族，cid[30] +）
-        era.add(`exp:${cid}:30`, y * 10);
+        EraChara.get(cid).exp.masochist_pleasure_exp += y * 10;
         era.print(`私处经验+${y * 10}`);
         await era.printAndWait(`阴道扩张经验+${y * 10}`);
         // EXP:cid[0] + = y * 10（变量语义：EXP 族，cid[0] +）
-        era.add(`exp:${cid}:0`, y * 10);
+        EraChara.get(cid).exp.vagina_exp += y * 10;
         // EXP:cid[52] + = y * 10（变量语义：EXP 族，cid[52] +）
-        era.add(`exp:${cid}:52`, y * 10);
+        EraChara.get(cid).exp.vagina_dilation_exp += y * 10;
 
         // CFLAG:cid[107] + = y（变量语义：CFLAG 族，cid[107] +）
-        era.add(`cflag:${cid}:107`, y);
+        EraChara.get(cid).cflag.monster_vaginal_ejaculation += y;
       }
     } else {
       await era.printAndWait(
@@ -3746,60 +4283,73 @@ async function horse_marriage_day(cid, y = 1, rand = default_rand) {
       );
 
       era.print(
-        `屈服,欲情,恭顺,耻情点数+${chara(cid).chara.结婚爱情 * 10 * y + 10}`,
+        `屈服,欲情,恭顺,耻情点数+${EraChara.get(cid).cflag.spousal_love * 10 * y + 10}`,
       );
       // JUEL:cid[6] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[6] +）
-      era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+      EraChara.get(cid).jewel.submission +=
+        EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
       // JUEL:cid[5] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[5] +）
-      era.add(`juel:${cid}:5`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+      EraChara.get(cid).jewel.lust +=
+        EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
       // JUEL:cid[4] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[4] +）
-      era.add(`juel:${cid}:4`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+      EraChara.get(cid).jewel.obedience +=
+        EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
       // JUEL:cid[8] + = (CFLAG:cid[602] * 10 * y + 10 )（变量语义：JUEL 族，cid[8] +）
-      era.add(`juel:${cid}:8`, chara(cid).chara.结婚爱情 * 10 * y + 10);
+      EraChara.get(cid).jewel.shame +=
+        EraChara.get(cid).cflag.spousal_love * 10 * y + 10;
       era.print(`口交经验+${y * 5}`);
       era.print(`精液经验+${y * 5}`);
       // EXP:cid[22] + = y * 5（变量语义：EXP 族，cid[22] +）
-      era.add(`exp:${cid}:22`, y * 5);
+      EraChara.get(cid).exp.oral_exp += y * 5;
       // EXP:cid[20] + = y * 5（变量语义：EXP 族，cid[20] +）
-      era.add(`exp:${cid}:20`, y * 5);
+      EraChara.get(cid).exp.semen_exp += y * 5;
       await era.printAndWait(`兽奸经验+${y * 5}`);
       // EXP:cid[56] + = y * 5（变量语义：EXP 族，cid[56] +）
-      era.add(`exp:${cid}:56`, y * 5);
+      EraChara.get(cid).exp.bestiality_exp += y * 5;
     }
-  } else if (chara(cid).train.兽奸中毒 >= 1 || chara(cid).chara.结婚爱情 > 40) {
+  } else if (
+    EraChara.get(cid).abl.bestiality_addiction >= 1 ||
+    EraChara.get(cid).cflag.spousal_love > 40
+  ) {
     await era.printAndWait(
       `${name_of(cid)}细心地舔舐着${marriage_name(cid)}的阴茎。`,
     );
 
     era.print(
-      `屈服,欲情,恭顺,耻情点数+${chara(cid).chara.结婚爱情 * 8 * y + 8}`,
+      `屈服,欲情,恭顺,耻情点数+${EraChara.get(cid).cflag.spousal_love * 8 * y + 8}`,
     );
     // JUEL:cid[6] + = (CFLAG:cid[602] * 8 * y + 8 )（变量语义：JUEL 族，cid[6] +）
-    era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * 8 * y + 8);
+    EraChara.get(cid).jewel.submission +=
+      EraChara.get(cid).cflag.spousal_love * 8 * y + 8;
     // JUEL:cid[5] + = (CFLAG:cid[602] * 8 * y + 8 )（变量语义：JUEL 族，cid[5] +）
-    era.add(`juel:${cid}:5`, chara(cid).chara.结婚爱情 * 8 * y + 8);
+    EraChara.get(cid).jewel.lust +=
+      EraChara.get(cid).cflag.spousal_love * 8 * y + 8;
     // JUEL:cid[4] + = (CFLAG:cid[602] * 8 * y + 8 )（变量语义：JUEL 族，cid[4] +）
-    era.add(`juel:${cid}:4`, chara(cid).chara.结婚爱情 * 8 * y + 8);
+    EraChara.get(cid).jewel.obedience +=
+      EraChara.get(cid).cflag.spousal_love * 8 * y + 8;
     // JUEL:cid[8] + = (CFLAG:cid[602] * 8 * y + 8 )（变量语义：JUEL 族，cid[8] +）
-    era.add(`juel:${cid}:8`, chara(cid).chara.结婚爱情 * 8 * y + 8);
+    EraChara.get(cid).jewel.shame +=
+      EraChara.get(cid).cflag.spousal_love * 8 * y + 8;
     era.print(`口交经验+${y * 5}`);
     era.print(`精液经验+${y * 5}`);
     // EXP:cid[22] + = y * 5（变量语义：EXP 族，cid[22] +）
-    era.add(`exp:${cid}:22`, y * 5);
+    EraChara.get(cid).exp.oral_exp += y * 5;
     // EXP:cid[20] + = y * 5（变量语义：EXP 族，cid[20] +）
-    era.add(`exp:${cid}:20`, y * 5);
+    EraChara.get(cid).exp.semen_exp += y * 5;
     await era.printAndWait(`兽奸经验+${y * 5}`);
     // EXP:cid[56] + = y * 5（变量语义：EXP 族，cid[56] +）
-    era.add(`exp:${cid}:56`, y * 5);
+    EraChara.get(cid).exp.bestiality_exp += y * 5;
   } else {
     await era.printAndWait(`${name_of(cid)}蹲在马厩的角落里，深深地绝望了。`);
     await era.printAndWait(
-      `屈服,恐怖点数+${chara(cid).chara.结婚爱情 * 8 * y + 8}`,
+      `屈服,恐怖点数+${EraChara.get(cid).cflag.spousal_love * 8 * y + 8}`,
     );
     // JUEL:cid[6] + = (CFLAG:cid[602] * 8 * y + 8 )（变量语义：JUEL 族，cid[6] +）
-    era.add(`juel:${cid}:6`, chara(cid).chara.结婚爱情 * 8 * y + 8);
+    EraChara.get(cid).jewel.submission +=
+      EraChara.get(cid).cflag.spousal_love * 8 * y + 8;
     // JUEL:cid[10] + = (CFLAG:cid[602] * 8 * y + 8 )（变量语义：JUEL 族，cid[10] +）
-    era.add(`juel:${cid}:10`, chara(cid).chara.结婚爱情 * 8 * y + 8);
+    EraChara.get(cid).jewel.fear +=
+      EraChara.get(cid).cflag.spousal_love * 8 * y + 8;
   }
 
   return y;

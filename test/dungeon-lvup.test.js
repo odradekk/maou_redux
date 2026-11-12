@@ -39,6 +39,10 @@ function setup_world(cid = 1) {
   fixture.seed_chara(cid, { id: cid, name: '阿尔', callname: '阿尔' });
   fixture.era.addCharacter(0);
   fixture.era.addCharacter(cid);
+  // 体力/气力上限从 0 起算：真机上它们由角色预设的「基礎」行给初值，
+  // yml/ 没有 MaxBase 声明表，夹具不预置这一格，用例自己播种起点
+  fixture.store.set(`maxbase:${cid}:0`, 0);
+  fixture.store.set(`maxbase:${cid}:1`, 0);
   return fixture;
 }
 

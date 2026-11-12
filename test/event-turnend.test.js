@@ -1596,9 +1596,10 @@ test(
     const { fixture, debug_check } = setup_debug();
     fixture.store.set('cflag:31:9', 5000); // 2803 = 31
     fixture.store.set('exflag:2803', 31);
-    // 受害者 31 不在在场名单里也可达：把 31 移出名单后再跑第二段
-    fixture.era.removeCharacter(31);
-    fixture.era.removeCharacter(32);
+    // 31 / 32 留在名单里：引擎的 removeCharacter 会整行删掉逐角色数据，
+    // 除名后再走 ERASE_CHARA 是**真机不可达**的状态（读它的具名属性会抛
+    // TypeError）。这里靠 rand ≡ 0（RAND:CHARANUM 恒取到 0 号魔王）制造
+    // 「抽不到可炸角色」，与在不在名单无关。
     // 抽取自守（缘由同第一段：同步死循环不会被 timeout 打断）
     let draws = 0;
     const rand = () => {
@@ -1655,10 +1656,9 @@ test(
     // 第一段算。两支拆成独立计数器时本题会掷 10000 次，这里只允许 5001：
     // 第二段是 DO 循环，先抽一次再看预算，故多一掷
     const { fixture, debug_check } = setup_debug();
-    fixture.era.removeCharacter(31);
-    fixture.era.removeCharacter(32);
     fixture.store.set('flag:10004', 5000); // 改钱 → 第一段点火
-    fixture.store.set('exflag:2803', 31); // 第二段也点火（该角色已不在场）
+    // 第二段也点火：rand ≡ 0 让两段都抽不到可炸角色（理由同上一用例）
+    fixture.store.set('exflag:2803', 31);
     let draws = 0;
     assert.equal(
       await debug_check(() => {

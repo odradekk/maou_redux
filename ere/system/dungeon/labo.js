@@ -42,6 +42,9 @@
  */
 
 const era = require('#/era-electron');
+const era_da = require('#/era-utils/era-da');
+const era_db = require('#/era-utils/era-db');
+const era_dc = require('#/era-utils/era-dc');
 
 /** 实验室调试屏的返回键（1-8 是各调试项） */
 const LABO_DEBUG_BACK_KEY = 100;
@@ -53,32 +56,32 @@ const { default_rand, idiv_trunc } = require('#/utils/numeric');
 
 /** DA:Y:X 读（一维折叠，yml/DA.yml 建桶）——地质高度图（/32 后为颜色档） */
 function da_get(y, x) {
-  return era.get(`da:${y * 100 + x}`) || 0;
+  return era_da.get(y * 100 + x);
 }
 
 /** DA:Y:X 写（一维折叠，yml/DA.yml 建桶） */
 function da_set(y, x, v) {
-  era.set(`da:${y * 100 + x}`, v);
+  era_da.set(y * 100 + x, v);
 }
 
 /** DB:Y:X 读（一维折叠，yml/DB.yml 建桶，#180 先例）——怪物配置图 */
 function db_get(y, x) {
-  return era.get(`db:${y * 100 + x}`) || 0;
+  return era_db.get(y * 100 + x);
 }
 
 /** DB:Y:X 写（一维折叠，yml/DB.yml 建桶，#180 先例） */
 function db_set(y, x, v) {
-  era.set(`db:${y * 100 + x}`, v);
+  era_db.set(y * 100 + x, v);
 }
 
 /** DC:Y:X 读（一维折叠，yml/DC.yml 建桶）——村庄图（发展等级） */
 function dc_get(y, x) {
-  return era.get(`dc:${y * 100 + x}`) || 0;
+  return era_dc.get(y * 100 + x);
 }
 
 /** DC:Y:X 写（一维折叠，yml/DC.yml 建桶） */
 function dc_set(y, x, v) {
-  era.set(`dc:${y * 100 + x}`, v);
+  era_dc.set(y * 100 + x, v);
 }
 
 /**

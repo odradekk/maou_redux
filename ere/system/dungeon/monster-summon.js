@@ -12,6 +12,8 @@
 'use strict';
 
 const era = require('#/era-electron');
+const EraChara = require('#/era-utils/era-chara');
+const era_item = require('#/era-utils/era-item');
 const { item_name } = require('#/system/dungeon/monster-data');
 const { default_rand } = require('#/utils/numeric');
 
@@ -50,7 +52,7 @@ function summon_monster_master(arg = 0, rand = default_rand) {
   era.drawLine();
   const count = rand(3) + 1;
   const id = 191 + rand(3);
-  const name = era.get(`callname:${arg}:-1`) ?? '';
+  const name = EraChara.get(arg).name ?? '';
   era.print(`${name}生下了${count}只${item_name(id)}。`);
   add_monsters(id, count);
   return 0;
@@ -64,11 +66,11 @@ function summon_monster_master(arg = 0, rand = default_rand) {
 async function summon_monster(arg = 0, rand = default_rand) {
   era.drawLine();
   let summon_num = 5;
-  const master_level = era.get('cflag:0:9') || 0; // CFLAG:MASTER:9 等级
+  const master_level = EraChara.get(0).cflag.level; // CFLAG:MASTER:9 等级
   for (const threshold of [10, 30, 50, 70, 100]) {
     if (master_level >= threshold) summon_num += 1;
   }
-  if ((era.get('talent:0:325') || 0) === 1) summon_num += 1; // 魔界知识
+  if (EraChara.get(0).talent.demon_knowledge === 1) summon_num += 1; // 魔界知识
   if (arg === -1) summon_num = Math.trunc(summon_num / 2);
 
   for (let i = 0; i < summon_num; i += 1) {
@@ -81,17 +83,17 @@ async function summon_monster(arg = 0, rand = default_rand) {
       for (const threshold of [20, 40, 60, 80, 100]) {
         if (master_level >= threshold) count += 1;
       }
-      if ((era.get('talent:0:327') || 0) === 1) count += 1; // 淫魔知识
+      if (EraChara.get(0).talent.succubus_knowledge === 1) count += 1; // 淫魔知识
 
       const added = era.getAddedCharacters();
       // GETCHARA(35) <= 0 的条件会把不在场与 0 号都跳过。
       // TALENT:35:1254 = 魔界公主（菲娅线结局写入），在场时召唤数 +50%。
-      if (added.includes(35) && (era.get('talent:35:1254') || 0) === 1) {
+      if (added.includes(35) && EraChara.get(35).talent.demon_princess === 1) {
         count = Math.trunc((count * 150) / 100);
       }
       if (
         added.includes(21) &&
-        (era.get('talent:21:474') || 0) === 1 &&
+        EraChara.get(21).talent.armor_break === 1 &&
         (item === 160 || item === 170)
       ) {
         count = Math.trunc((count * 150) / 100);
@@ -103,8 +105,8 @@ async function summon_monster(arg = 0, rand = default_rand) {
 
     count = rand(3) + 1;
     if (rand(2) === 0) item = 191 + rand(3);
-    const father = era.get(`cflag:${arg}:111`) || 0; // CFLAG:111 孩子父亲
-    const race = era.get(`talent:${arg}:314`) || 0; // TALENT:314 种族
+    const father = EraChara.get(arg).cflag.child_father; // CFLAG:111 孩子父亲
+    const race = EraChara.get(arg).talent.race; // TALENT:314 种族
     if (father === 0) {
       item = 191 + rand(3);
     } else if (father === -2 && race === 5) {
@@ -119,9 +121,9 @@ async function summon_monster(arg = 0, rand = default_rand) {
       count += rand(3);
     }
 
-    const name = era.get(`callname:${arg}:-1`) ?? '';
-    const source = era.get(`cflag:${arg}:102`) || 0; // CFLAG:102 妊娠相手
-    const state = era.get(`cflag:${arg}:1`) || 0; // CFLAG:1 角色状态
+    const name = EraChara.get(arg).name ?? '';
+    const source = EraChara.get(arg).cflag.pregnancy_partner; // CFLAG:102 妊娠相手
+    const state = EraChara.get(arg).cflag.state; // CFLAG:1 角色状态
     if (state === 9) {
       if ([2, 3, 4, 7].includes(source)) {
         era.print(`${name}生下的孩子被拿到不知何处了。`);
@@ -141,10 +143,15 @@ async function summon_monster(arg = 0, rand = default_rand) {
       ) {
         if (race === 3) {
           era.print('哦呀？！生了双胞胎呢！生了一只吸血鬼');
-          if ((era.get('item:172') || 0) < 999) era.add('item:172', 1);
+          // 未持有的道具在读面上是 undefined（引擎只建 item.hold 桶，不按
+          // 序号预置），`undefined < 999` 恒假、`undefined + 1` 是 NaN——
+          // 先按 0 兜底再写回，与 add_monsters 的 `|| 0` 同一个口径
+          const owned = era_item.vampire.count || 0;
+          if (owned < 999) era_item.vampire.count = owned + 1;
         } else {
           era.print('哦呀？！生了双胞胎呢！生了一只无头骑士');
-          if ((era.get('item:171') || 0) < 999) era.add('item:171', 1);
+          const owned = era_item.dullahan.count || 0;
+          if (owned < 999) era_item.dullahan.count = owned + 1;
         }
       }
     }

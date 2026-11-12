@@ -151,6 +151,11 @@ function monster_world(seed = {}) {
   // chara_presets 检查）：召唤链要能把 202 真的加进来，预设必须经
   // seed_chara 提供（夹具不读 yml/）
   fixture.seed_chara(202, { id: 202, name: '精英狗头人' });
+  // 魔王 0 真加入：真机上它由 resetData 建（GameBase【初始角色编号】），
+  // monster_data 按它的等级定怪物等级（CFLAG:0:9），开发套件的具名访问器
+  // 要求角色已在场——未加入的角色读具名属性与引擎一样抛 TypeError。
+  fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
+  fixture.era.addCharacter(0);
   return fixture;
 }
 

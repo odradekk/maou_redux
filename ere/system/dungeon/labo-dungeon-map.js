@@ -9,7 +9,7 @@
  *
  * 说明（有意偏离，均注明依据）：
  *   - 全局 A（推进中的单位）经显式传参（#5 决议第六条）；D:20（侵攻度）
- *     是 event 属主（cflag-ownership.yml「502」），经 chara().event.侵攻度
+ *     是 event 属主（cflag-ownership.yml「502」），经 EraChara.get().cflag.invasion_progress
  *     门面读写，unit_move 内部的修改经「传入 walk20 + 返回更新值」显式
  *     换手（dungeon.js 的 D:20 同款承载）；CFLAG:506/507（invasion.新人/
  *     回城标志）与 CFLAG:510/511（event.X坐标/Y坐标，这张工单补的门面字段）
@@ -30,13 +30,12 @@
  */
 
 const era = require('#/era-electron');
+const EraChara = require('#/era-utils/era-chara');
 
 /** 地城 2D 设定屏的返回键（0/1 是普通/2D 两个取值） */
 const MAP_BACK_KEY = 100;
 const { is_state } = require('#/system/flow/game-state');
 const era_flag = require('#/era-utils/era-flag');
-const { chara } = require('#/facade/chara');
-const { game } = require('#/facade/game');
 const { equip_check } = require('#/system/equip/equip-check');
 const { equip_select } = require('#/system/equip/equip-select');
 const { use_ex_item } = require('#/system/dungeon/dungeon');
@@ -48,7 +47,7 @@ const { default_rand } = require('#/utils/numeric');
 
 /** 名字承载（#5 决议；savestr 通道不存在，dungeon.js 同款） */
 function name_of(cid) {
-  return era.get(`callname:${cid}:-1`) ?? '';
+  return EraChara.get(cid).name ?? '';
 }
 
 /**
@@ -71,7 +70,7 @@ async function unit_move(a, walk20, rand) {
 
   // 移动量——撤退中（CFLAG:507 != 0）反向
   let x;
-  if (chara(a).invasion.回城标志 === 0) {
+  if (EraChara.get(a).cflag.returned_to_town === 0) {
     x = rand_n(90);
   } else {
     x = -90;
@@ -87,17 +86,17 @@ async function unit_move(a, walk20, rand) {
   }
 
   // 迷惑状態（CFLAG:509 == 1）：RAND:3 == 0 时解除，否则移动量 0
-  if ((era.get(`cflag:${a}:509`) || 0) === 1) {
+  if (EraChara.get(a).cflag.lost_state === 1) {
     if (rand_n(3) === 0) {
       // たまに回復（ハメを防ぐため先に判定する）
-      era.set(`cflag:${a}:509`, 0);
+      EraChara.get(a).cflag.lost_state = 0;
     } else {
       x = 0;
     }
   }
 
   // 侵攻中（2）累加、其余（迎击 3）倒退两倍速
-  if (chara(a).invasion.状态 === 2) {
+  if (EraChara.get(a).cflag.state === 2) {
     walk20 += x;
   } else {
     x *= 2;
@@ -109,8 +108,8 @@ async function unit_move(a, walk20, rand) {
   let my;
   let from_level;
   for (;;) {
-    mx = chara(a).event.X坐标; // LOCAL:0 = CFLAG:A:510
-    my = chara(a).event.Y坐标; // LOCAL:1 = CFLAG:A:511
+    mx = EraChara.get(a).cflag.grid_x; // LOCAL:0 = CFLAG:A:510
+    my = EraChara.get(a).cflag.grid_y; // LOCAL:1 = CFLAG:A:511
     from_level = Math.trunc(da_get(my, mx) / 32); // LOCAL:2 = DA:(y):(x)/32（折叠约定见 labo.js 文件头）
 
     if (walk20 < 0) {
@@ -163,7 +162,7 @@ async function unit_move(a, walk20, rand) {
 
   // 移動先が中心——魔王城攻略へ（JUMP ENDING_2）
   if (mx === 16 && my === 16) {
-    chara(a).dungeon.侵攻阶层 = 2; // CFLAG:A:501 = 2
+    EraChara.get(a).cflag.invasion_floor = 2; // CFLAG:A:501 = 2
     era.print('这里就是魔王城了吗………'); // PRINTL（简体归一：這裡→这里、嗎→吗，#60）
     // JUMP ENDING_2（#173 真身）：结局以回标题的转场目标离开（#852），
     // 本回合的移动结算与坐标落笔不再执行
@@ -173,9 +172,9 @@ async function unit_move(a, walk20, rand) {
   // 撞上其他单位
   const other = unit_check(mx, my);
   if (other >= 0) {
-    if ((era.get(`cflag:${other}:1`) || 0) === chara(a).invasion.状态) {
+    if (EraChara.get(other).cflag.state === EraChara.get(a).cflag.state) {
       return 0; // 仲間の場合移動停止
-    } else if ((era.get(`cflag:${other}:1`) || 0) === 2) {
+    } else if (EraChara.get(other).cflag.state === 2) {
       // 違う場合対戦：野外战斗函数缺失（文件头），
       // 调用点随 #638 删除——撞上敌方单位该回合移动即止，不发生战斗
       //（#574：labo 迷宫不再触发战斗）；RESULT 的两个消费分支（陷落/击退）
@@ -187,7 +186,7 @@ async function unit_move(a, walk20, rand) {
   // 撞上怪物
   const mon_lv = mon_check(mx, my);
   if (mon_lv > 0) {
-    if (chara(a).invasion.状态 === 3) {
+    if (EraChara.get(a).cflag.state === 3) {
       return 0; // 魔王軍は仲間
     }
     // 野外战斗调用（函数缺失，文件头）随 #638 删除：撞上怪物该
@@ -198,8 +197,8 @@ async function unit_move(a, walk20, rand) {
   }
 
   // 移動を反映（坐标落笔；event 属主门面）
-  chara(a).event.X坐标 = mx;
-  chara(a).event.Y坐标 = my;
+  EraChara.get(a).cflag.grid_x = mx;
+  EraChara.get(a).cflag.grid_y = my;
 
   // 侵攻度钳制（撤退到头回满 / 推进到头清零）
   if (walk20 < 0) {
@@ -225,24 +224,29 @@ async function dungeon_map(a, rand) {
   const rand_n = rand ?? default_rand;
 
   // 迎撃時体力が回復していると迎撃再開（HP/MP 均 > 80%）
-  if (chara(a).invasion.状态 === 3) {
+  if (EraChara.get(a).cflag.state === 3) {
     if (
       Math.floor(
-        (chara(a).dungeon.体力 * 100) / (era.get(`maxbase:${a}:0`) || 0),
+        (EraChara.get(a).base.stamina * 100) / EraChara.get(a).maxbase.stamina,
       ) > 80 &&
       Math.floor(
-        (chara(a).dungeon.气力 * 100) / (era.get(`maxbase:${a}:1`) || 0),
+        (EraChara.get(a).base.willpower * 100) /
+          EraChara.get(a).maxbase.willpower,
       ) > 80
     ) {
-      chara(a).invasion.回城标志 = 0; // CFLAG:A:507 = 0
+      EraChara.get(a).cflag.returned_to_town = 0; // CFLAG:A:507 = 0
     }
   }
 
   // フラグオフ（休憩标志复位）
-  chara(a).dungeon.休憩 = 0;
+  EraChara.get(a).cflag.rest_flag = 0;
 
   // CALL unit_move（D:20 经返回值换手，文件头）
-  const walk20 = await unit_move(a, chara(a).event.侵攻度, rand_n);
+  const walk20 = await unit_move(
+    a,
+    EraChara.get(a).cflag.invasion_progress,
+    rand_n,
+  );
   // 走到中心 = ENDING_2：回标题的转场目标（#852）原样上抛，本回合的
   // 结算与写回不再执行
   if (is_state(walk20)) {
@@ -250,23 +254,24 @@ async function dungeon_map(a, rand) {
   }
 
   // BASE:A:1 -= RAND:6（冒険の疲れ）
-  chara(a).dungeon.气力 -= rand_n(6);
+  EraChara.get(a).base.willpower -= rand_n(6);
 
   // 帰還するかどうか（HP/MP 任一 < 45% 立撤退旗）
   if (
     Math.floor(
-      (chara(a).dungeon.体力 * 100) / (era.get(`maxbase:${a}:0`) || 0),
+      (EraChara.get(a).base.stamina * 100) / EraChara.get(a).maxbase.stamina,
     ) < 45
   ) {
     era.print(`${name_of(a)}决定返回了`); // PRINTFORML %SAVESTR:A%
-    chara(a).invasion.回城标志 = 1; // CFLAG:A:507 = 1
+    EraChara.get(a).cflag.returned_to_town = 1; // CFLAG:A:507 = 1
   } else if (
     Math.floor(
-      (chara(a).dungeon.气力 * 100) / (era.get(`maxbase:${a}:1`) || 0),
+      (EraChara.get(a).base.willpower * 100) /
+        EraChara.get(a).maxbase.willpower,
     ) < 45
   ) {
     era.print(`${name_of(a)}决定返回了`);
-    chara(a).invasion.回城标志 = 1;
+    EraChara.get(a).cflag.returned_to_town = 1;
   }
   // 偶发卖春（真身 #184；rand_n 透传，与 3D 路径同款
   // 模块对象调用）
@@ -275,7 +280,7 @@ async function dungeon_map(a, rand) {
   }
 
   // 宝箱を見つける（侵攻中 2 且 1/4 概率；#174 真身）
-  if (chara(a).invasion.状态 === 2 && rand_n(4) === 0) {
+  if (EraChara.get(a).cflag.state === 2 && rand_n(4) === 0) {
     await equip_select(a, rand_n);
   }
 
@@ -283,33 +288,36 @@ async function dungeon_map(a, rand) {
   await use_ex_item('战斗后', a);
 
   // 移動を反映（D:20 写回 CFLAG:502，event 属主门面）
-  chara(a).event.侵攻度 = walk20;
+  EraChara.get(a).cflag.invasion_progress = walk20;
 
   // —— 休憩フェイズ ——
   // 装備効果(キャンプ)（W:8 = 18）：休憩位 0 且 RESULT > 0 → +1
-  if (!(chara(a).dungeon.休憩 & 1) && equip_check(a, 18) > 0) {
-    chara(a).dungeon.休憩 += 1;
+  if (!(EraChara.get(a).cflag.rest_flag & 1) && equip_check(a, 18) > 0) {
+    EraChara.get(a).cflag.rest_flag += 1;
   }
 
   // 装備効果(キャンプ禁止)（W:8 = 19）：休憩位 1 且 RESULT > 0 → -1
-  if (chara(a).dungeon.休憩 & 1 && equip_check(a, 19) > 0) {
-    chara(a).dungeon.休憩 -= 1;
+  if (EraChara.get(a).cflag.rest_flag & 1 && equip_check(a, 19) > 0) {
+    EraChara.get(a).cflag.rest_flag -= 1;
   }
 
   // 休憩演出（FLAG:5 & 32 渲染开关内）。原脚本的第二分支条件与第一分支
   // 字面相同（复制粘贴产物），判不到，删除（#954，见文件头）
-  if (chara(a).invasion.状态 === 2 && chara(a).dungeon.休憩 & 1) {
-    if ((era.get('flag:5') || 0) & 32) {
+  if (
+    EraChara.get(a).cflag.state === 2 &&
+    EraChara.get(a).cflag.rest_flag & 1
+  ) {
+    if (era_flag.game_settings & 32) {
       era.println(); // PRINTL（空行）
       era.drawLine();
       await era.printAndWait(`${name_of(a)}藏起来休息了`); // PRINTFORMW（简体归一：來→来）
       era.drawLine();
       era.println(); // 真空行：PRINTFORMW 已收尾
     }
-  } else if (chara(a).invasion.状态 === 3) {
+  } else if (EraChara.get(a).cflag.state === 3) {
     // 空体（无演出）
   }
-  if ((era.get('flag:5') || 0) & 32) {
+  if (era_flag.game_settings & 32) {
     era.println(); // SIF FLAG:5 & 32 PRINTL（空行）
   }
   era_flag.target = -1; // TARGET = -1
@@ -323,7 +331,7 @@ async function dungeon_map(a, rand) {
  * @returns {void}
  */
 function config_labo_map_status() {
-  if (game.dungeon.迷宫模式 === 1) {
+  if (era_flag.map_2d_mode === 1) {
     era.print('２Ｄ');
   } else {
     era.print('普通'); // （FLAG:502 == 0）
@@ -353,8 +361,8 @@ async function config_labo_map_setting(rand) {
     const result = await era.input();
     if (result === 0 || result === 1) {
       // CASE 0 TO 1
-      game.dungeon.迷宫模式 = result; // FLAG:502 = RESULT（dungeon 属主门面）
-      if (game.dungeon.迷宫模式 === 1) {
+      era_flag.map_2d_mode = result; // FLAG:502 = RESULT（dungeon 属主门面）
+      if (era_flag.map_2d_mode === 1) {
         await labo_map_set(rand_n); // SIF FLAG:502 == 1 → CALL labo_map_set
       }
       return 0;

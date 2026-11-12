@@ -346,6 +346,10 @@ test('威压感已持有时不重复播报（TALENT:MASTER:93 条件）', async 
 
 test('接入：eventend 死亡删除分支真调 party_char_del（队伍复位后再除名）', async () => {
   const fixture = create_era_fixture();
+  // 魔王 0 真加入（真机上 resetData 建）：死亡冲账经 party_char_del →
+  // party_del 读 LEADER（未入队即 0 = 魔王）的同伴位
+  fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
+  fixture.era.addCharacter(0);
   join_slave_chara(fixture, 31, '温妮');
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.target = 31;

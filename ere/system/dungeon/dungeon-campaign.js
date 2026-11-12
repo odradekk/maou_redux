@@ -13,8 +13,8 @@
  */
 
 const era = require('#/era-electron');
+const EraChara = require('#/era-utils/era-chara');
 const era_flag = require('#/era-utils/era-flag');
-const { chara } = require('#/facade/chara');
 const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
 const { party_del } = require('#/system/dungeon/dungeon-party');
 
@@ -68,7 +68,9 @@ async function campaign_quest(cid) {
     return 0;
   }
   // 楼层（CFLAG:cid:501）超过剧情进度（FLAG:401）时推进一段剧情
-  if (chara(cid).dungeon.侵攻阶层 > era_flag.campaign_story_progress) {
+  if (
+    EraChara.get(cid).cflag.invasion_floor > era_flag.campaign_story_progress
+  ) {
     era.print('―STORY―');
     await era.waitAnyKey(true); // FORCEWAIT
     await campaign_story_family.call(active, { whenMissing: 0, args: [] });
@@ -91,10 +93,10 @@ async function campaign_quest(cid) {
 async function campaign_ending() {
   // 全员取消战役派遣（与 CAMPAIGN_GAMEOVER 同构，各自独立保留）
   for (const cid of era.getAddedCharacters()) {
-    if (chara(cid).invasion.状态 === 12) {
+    if (EraChara.get(cid).cflag.state === 12) {
       party_del(cid);
-      chara(cid).invasion.状态 = 0;
-      chara(cid).invasion.回城标志 = 0;
+      EraChara.get(cid).cflag.state = 0;
+      EraChara.get(cid).cflag.returned_to_town = 0;
     }
   }
   const active = era_flag.hero_campaign_active;

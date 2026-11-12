@@ -650,6 +650,13 @@ test('cm_st：flag:60 = 0 不升 st_up；体力气力回满', async () => {
 
 test('cm_st：flag:60 = 2 且非派遣 → 逐级调 st_up 两次（#565 接真身）', async () => {
   const fixture = create_era_fixture();
+  // 角色 3 真加入：st_up 按角色读 CFLAG:9 / TALENT 具名属性，未加入的角色
+  // 读具名属性与引擎一样抛 TypeError（夹具 raw() 段）。上限从 0 起算——
+  // 真机上「基礎」行给初值，yml/ 没有 MaxBase 声明表，夹具不预置这一格。
+  fixture.seed_chara(3, { id: 3, name: '角色', callname: '角色' });
+  fixture.era.addCharacter(3);
+  fixture.store.set('maxbase:3:0', 0);
+  fixture.store.set('maxbase:3:1', 0);
   fixture.store.set('flag:60', 2);
   fixture.store.set('flag:402', 0); // 非派遣
   const { cm_st } = load(fixture);
@@ -689,6 +696,9 @@ test('cm_st：派遣中（flag:402 != 0）不逐级', async () => {
 
 test('cm_st_ace：魔王等级 <= 2 不掷；> 2 按六成（±两成）逐级（#565 接真身）', async () => {
   const fixture = create_era_fixture();
+  // 魔王 0 真加入（真机上 resetData 建）：cm_st_ace 按它读等级（CFLAG:0:9）
+  fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
+  fixture.era.addCharacter(0);
   fixture.store.set('flag:60', 1);
   fixture.store.set('cflag:0:9', 2); // 魔王等级 2（不 > 2）
   const { cm_st_ace } = load(fixture);
@@ -700,6 +710,12 @@ test('cm_st_ace：魔王等级 <= 2 不掷；> 2 按六成（±两成）逐级�
   );
 
   const fixture2 = create_era_fixture();
+  fixture2.seed_chara(0, { id: 0, name: '你', callname: '你' });
+  fixture2.seed_chara(4, { id: 4, name: '角色', callname: '角色' });
+  fixture2.era.addCharacter(0);
+  fixture2.era.addCharacter(4);
+  fixture2.store.set('maxbase:4:0', 0); // 上限从 0 起算（理由同 cm_st）
+  fixture2.store.set('maxbase:4:1', 0);
   fixture2.store.set('flag:60', 1);
   fixture2.store.set('cflag:0:9', 10);
   const { cm_st_ace: ace2 } = load(fixture2);

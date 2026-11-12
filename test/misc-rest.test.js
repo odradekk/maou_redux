@@ -61,6 +61,10 @@ function setup_communication(ids) {
 
 function setup_spy_tattoo(tattoos) {
   const fixture = create_era_fixture();
+  // 魔王 0 也加入（真机上 resetData 建）：PARTY_DEL 的仲間 B 槽位是 0 时
+  // 落在这上面，开发套件的具名访问器要求角色已在场
+  fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
+  fixture.era.addCharacter(0);
   for (const cid of [1, 2]) {
     fixture.seed_chara(cid, {
       id: cid,

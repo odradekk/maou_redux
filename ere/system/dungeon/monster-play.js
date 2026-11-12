@@ -6,6 +6,7 @@
 'use strict';
 
 const era = require('#/era-electron');
+const EraChara = require('#/era-utils/era-chara');
 
 /** 怪物玩弄入口屏的野狗键 [900] 与返回键 [999] */
 const MONSTER_PLAY_DOG_KEY = 900;
@@ -16,7 +17,6 @@ const {
   BATTLE_COLUMN,
   battle_column,
 } = require('#/system/dungeon/battle-state');
-const { chara } = require('#/facade/chara');
 const { print_button_grid } = require('#/utils/button-grid');
 const { default_rand } = require('#/utils/numeric');
 
@@ -32,7 +32,7 @@ function item_name(id) {
 
 /** SAVESTR:A 在 ere 的名字承载。 */
 function name_of(cid) {
-  return era.get(`callname:${cid}:-1`) ?? '';
+  return EraChara.get(cid).name ?? '';
 }
 
 /** PRINTW / PRINTFORMW：输出一行并等键。 */
@@ -60,7 +60,7 @@ function monsterplay_list() {
 
 /** monster_play_dog：野狗。 */
 async function monster_play_dog(cid, y) {
-  if ((era.get('talent:0:122') || 0) === 1) {
+  if (EraChara.get(0).talent.male === 1) {
     await print_wait('你为狗做了点心。');
     return 0;
   }
@@ -69,16 +69,16 @@ async function monster_play_dog(cid, y) {
     `${name_of(cid)}用甜美的声音把狗引到怀里，${name_of(cid)}四肢分开，把野狗膨胀的阴茎引入了私处。`,
   );
   era.print(`私处经验+${y}`);
-  era.add(`exp:${cid}:0`, y); // EXP:A:0 = 私处经验
+  EraChara.get(cid).exp.vagina_exp += y; // EXP:A:0 = 私处经验
   await print_wait(`兽奸经验+${y}`);
-  era.add(`exp:${cid}:56`, y); // EXP:A:56 = 兽奸经验
-  era.add(`cflag:${cid}:106`, y); // CFLAG:A:106 = 野狗受精计数
+  EraChara.get(cid).exp.bestiality_exp += y; // EXP:A:56 = 兽奸经验
+  EraChara.get(cid).cflag.dog_vaginal_ejaculation += y; // CFLAG:A:106 = 野狗受精计数
   return 0;
 }
 
 /** orc_monster_play：亚人。 */
 async function orc_monster_play(cid, y, rand = default_rand) {
-  if ((era.get('talent:0:122') || 0) === 1) {
+  if (EraChara.get(0).talent.male === 1) {
     await print_wait('『魔王大人，请饶了我吧…』');
     return 0;
   }
@@ -97,8 +97,8 @@ async function orc_monster_play(cid, y, rand = default_rand) {
     );
     era.print(`口交经验+${y}`);
     era.print(`精液经验+${y}`);
-    era.add(`exp:${cid}:22`, y); // EXP:A:22 = 口交经验
-    era.add(`exp:${cid}:20`, y); // EXP:A:20 = 精液经验
+    EraChara.get(cid).exp.oral_exp += y; // EXP:A:22 = 口交经验
+    EraChara.get(cid).exp.semen_exp += y; // EXP:A:20 = 精液经验
   } else {
     await print_wait('『大家，一起向魔王大人齐射…！』');
     await print_wait(
@@ -112,11 +112,11 @@ async function orc_monster_play(cid, y, rand = default_rand) {
     era.print(`肛门经验+${y}`);
     era.print(`口交经验+${y}`);
     era.print(`精液经验+${y}`);
-    era.add(`exp:${cid}:0`, y); // EXP:A:0 = 私处经验
-    era.add(`exp:${cid}:1`, y); // EXP:A:1 = 肛门经验
-    era.add(`exp:${cid}:22`, y); // EXP:A:22 = 口交经验
-    era.add(`exp:${cid}:20`, y); // EXP:A:20 = 精液经验
-    era.add(`cflag:${cid}:107`, y); // CFLAG:A:107 = 阴道内射精计数
+    EraChara.get(cid).exp.vagina_exp += y; // EXP:A:0 = 私处经验
+    EraChara.get(cid).exp.anal_exp += y; // EXP:A:1 = 肛门经验
+    EraChara.get(cid).exp.oral_exp += y; // EXP:A:22 = 口交经验
+    EraChara.get(cid).exp.semen_exp += y; // EXP:A:20 = 精液经验
+    EraChara.get(cid).cflag.monster_vaginal_ejaculation += y; // CFLAG:A:107 = 阴道内射精计数
   }
   await era.waitAnyKey(); // WAIT
   return 0;
@@ -124,7 +124,7 @@ async function orc_monster_play(cid, y, rand = default_rand) {
 
 /** slime_monster_play：史莱姆。 */
 async function slime_monster_play(cid, y, rand = default_rand) {
-  if ((era.get('talent:0:122') || 0) === 1) {
+  if (EraChara.get(0).talent.male === 1) {
     await print_wait('你把双脚放入黏液里，充分地感受那冷冷的触感。');
     return 0;
   }
@@ -134,8 +134,8 @@ async function slime_monster_play(cid, y, rand = default_rand) {
     await print_wait('…黏黏糊糊的！');
     era.print(`耻情点数+${y * 10}`);
     era.print(`欲情点数+${y * 10}`);
-    era.add(`juel:${cid}:5`, y * 10); // JUEL:A:5（文案称耻情，有意保留）
-    era.add(`juel:${cid}:8`, y * 10); // JUEL:A:8（文案称欲情，有意保留）
+    EraChara.get(cid).jewel.lust += y * 10; // JUEL:A:5（文案称耻情，有意保留）
+    EraChara.get(cid).jewel.shame += y * 10; // JUEL:A:8（文案称欲情，有意保留）
   } else {
     await print_wait(`${name_of(cid)}享受着黏液浴。`);
     await print_wait(
@@ -144,9 +144,9 @@ async function slime_monster_play(cid, y, rand = default_rand) {
     era.print(`肛门经验+${y}`);
     era.print(`耻情点数+${y * 10}`);
     era.print(`欲情点数+${y * 10}`);
-    era.add(`juel:${cid}:5`, y * 10); // JUEL:A:5 = 耻情点数写入槽
-    era.add(`juel:${cid}:8`, y * 10); // JUEL:A:8 = 欲情点数写入槽
-    era.add(`exp:${cid}:1`, y); // EXP:A:1 = 肛门经验
+    EraChara.get(cid).jewel.lust += y * 10; // JUEL:A:5 = 耻情点数写入槽
+    EraChara.get(cid).jewel.shame += y * 10; // JUEL:A:8 = 欲情点数写入槽
+    EraChara.get(cid).exp.anal_exp += y; // EXP:A:1 = 肛门经验
   }
   await era.waitAnyKey();
   return 0;
@@ -154,7 +154,7 @@ async function slime_monster_play(cid, y, rand = default_rand) {
 
 /** insect_monster_play：昆虫。 */
 async function insect_monster_play(cid, y, rand = default_rand) {
-  if ((era.get('talent:0:122') || 0) === 1) {
+  if (EraChara.get(0).talent.male === 1) {
     await print_wait('你充满兴趣地观察了昆虫。');
     return 0;
   }
@@ -163,14 +163,14 @@ async function insect_monster_play(cid, y, rand = default_rand) {
     await print_wait('『嗯…嗯…嗯嗯……』');
     await print_wait(`${name_of(cid)}用嘴吸啜了输卵管。`);
     era.print(`欲情点数+${y * 10}`);
-    era.add(`juel:${cid}:5`, y * 10); // JUEL:A:5 = 欲情点数写入槽
+    EraChara.get(cid).jewel.lust += y * 10; // JUEL:A:5 = 欲情点数写入槽
   } else {
     await print_wait('『咦～～呀～～』');
     await print_wait(`${name_of(cid)}的肛门被输卵管贯通，在里面产卵了。`);
     await print_wait(`${name_of(cid)}四肢大张，准备着产卵。`);
     await print_wait(`${y}只轮流从体内滚落到身下，从臀部到背部全被卵覆盖了。`);
     era.print(`肛门经验+${y}`);
-    era.add(`exp:${cid}:1`, y); // EXP:A:1 = 肛门经验
+    EraChara.get(cid).exp.anal_exp += y; // EXP:A:1 = 肛门经验
   }
   await era.waitAnyKey();
   return 0;
@@ -178,7 +178,7 @@ async function insect_monster_play(cid, y, rand = default_rand) {
 
 /** ivy_monster_play：藤蔓。 */
 async function ivy_monster_play(cid, y, rand = default_rand) {
-  if ((era.get('talent:0:122') || 0) === 1) {
+  if (EraChara.get(0).talent.male === 1) {
     await print_wait('你充满兴趣地观察了植物。');
     return 0;
   }
@@ -193,19 +193,19 @@ async function ivy_monster_play(cid, y, rand = default_rand) {
     await print_wait(`${name_of(cid)}的肛门被蹂躏着，发出了声嘶力竭的尖叫。`);
     await print_wait('藤蔓吸收到了养分，一口气从直肠中拔出来了。');
     era.print(`肛门经验+${y}`);
-    era.add(`exp:${cid}:1`, y); // EXP:A:1 = 肛门经验
+    EraChara.get(cid).exp.anal_exp += y; // EXP:A:1 = 肛门经验
   }
   era.print(`苦痛点数+${y * 10}`);
   era.print(`恐怖点数+${y * 10}`);
-  era.add(`juel:${cid}:9`, y * 10); // JUEL:A:9 = 苦痛点数
-  era.add(`juel:${cid}:10`, y * 10); // JUEL:A:10 = 恐怖点数
+  EraChara.get(cid).jewel.pain += y * 10; // JUEL:A:9 = 苦痛点数
+  EraChara.get(cid).jewel.fear += y * 10; // JUEL:A:10 = 恐怖点数
   await era.waitAnyKey();
   return 0;
 }
 
 /** syokusyu_monster_play：触手。 */
 async function syokusyu_monster_play(cid, y, rand = default_rand) {
-  if ((era.get('talent:0:122') || 0) === 1) {
+  if (EraChara.get(0).talent.male === 1) {
     await print_wait('触手蜿蜒地动着…');
     return 0;
   }
@@ -215,23 +215,23 @@ async function syokusyu_monster_play(cid, y, rand = default_rand) {
     await print_wait(`${name_of(cid)}用嘴吸啜着触手前端流出的粘液，`);
     await print_wait('大量的体液迸发，被呛到了，不久之后意识渐渐地模糊………');
     era.print(`欲情点数+${y * 10}`);
-    era.add(`juel:${cid}:5`, y * 10); // JUEL:A:5 = 欲情点数
+    EraChara.get(cid).jewel.lust += y * 10; // JUEL:A:5 = 欲情点数
   } else if (x === 1) {
     await print_wait(`触手在${name_of(cid)}的肛门里不断深入着，`);
     await print_wait('肛门不断吸收着触手洒在直肠内的体液，');
     await print_wait('最后，菊门放松，淫秽的肛门里开始流出大量的浑浊体液。');
     era.print(`肛门经验+${y}`);
     era.print(`欲情点数+${y * 10}`);
-    era.add(`juel:${cid}:5`, y * 10); // JUEL:A:5 = 欲情点数
-    era.add(`exp:${cid}:1`, y); // EXP:A:1 = 肛门经验
+    EraChara.get(cid).jewel.lust += y * 10; // JUEL:A:5 = 欲情点数
+    EraChara.get(cid).exp.anal_exp += y; // EXP:A:1 = 肛门经验
   } else if (x === 2) {
     await print_wait(`${name_of(cid)}的性器接受了触手的侵犯，`);
     await print_wait('粗大的触手，分泌着媚药的成分，在私处里不断抽插着。');
     era.print(`私处经验+${y}`);
     era.print(`欲情点数+${y * 10}`);
-    era.add(`juel:${cid}:5`, y * 10); // JUEL:A:5 = 欲情点数
-    era.add(`exp:${cid}:0`, y); // EXP:A:0 = 私处经验
-    era.add(`cflag:${cid}:107`, y); // CFLAG:A:107 = 阴道内射精计数
+    EraChara.get(cid).jewel.lust += y * 10; // JUEL:A:5 = 欲情点数
+    EraChara.get(cid).exp.vagina_exp += y; // EXP:A:0 = 私处经验
+    EraChara.get(cid).cflag.monster_vaginal_ejaculation += y; // CFLAG:A:107 = 阴道内射精计数
   } else {
     await print_wait(
       `${name_of(cid)}嘴也好，肛门也好，私处也好，所有被触手入侵的地方，都流出了大量的体液，`,
@@ -240,20 +240,20 @@ async function syokusyu_monster_play(cid, y, rand = default_rand) {
     era.print(`肛门经验+${y}`);
     era.print(`私处经验+${y}`);
     era.print(`欲情点数+${y * 10}`);
-    era.add(`juel:${cid}:5`, y * 10); // JUEL:A:5 = 欲情点数
-    era.add(`exp:${cid}:0`, y); // EXP:A:0 = 私处经验
-    era.add(`exp:${cid}:1`, y); // EXP:A:1 = 肛门经验
-    era.add(`cflag:${cid}:107`, y); // CFLAG:A:107 = 阴道内射精计数
+    EraChara.get(cid).jewel.lust += y * 10; // JUEL:A:5 = 欲情点数
+    EraChara.get(cid).exp.vagina_exp += y; // EXP:A:0 = 私处经验
+    EraChara.get(cid).exp.anal_exp += y; // EXP:A:1 = 肛门经验
+    EraChara.get(cid).cflag.monster_vaginal_ejaculation += y; // CFLAG:A:107 = 阴道内射精计数
   }
   await print_wait(`触手经验+${y}`);
-  era.add(`exp:${cid}:55`, y); // EXP:A:55 = 触手经验
+  EraChara.get(cid).exp.tentacle_exp += y; // EXP:A:55 = 触手经验
   return 0;
 }
 
 /** fairy_monster_play：妖精（原拼写 FAILY）。 */
 async function fairy_monster_play(cid, y) {
-  const male = (era.get(`talent:${cid}:122`) || 0) === 1;
-  const futanari = (era.get(`talent:${cid}:121`) || 0) === 1;
+  const male = EraChara.get(cid).talent.male === 1;
+  const futanari = EraChara.get(cid).talent.futanari === 1;
   await print_wait(
     male ? '『要奴家这么小的？真的没关系么？』' : '『魔王大人！大变态！』',
   );
@@ -268,15 +268,15 @@ async function fairy_monster_play(cid, y) {
     era.print(`阴核点数+${y * 10}`);
   }
   era.print(`欲情点数+${y * 10}`);
-  era.add(`juel:${cid}:0`, y * 10); // JUEL:A:0 = 阴茎/阴核点数
-  era.add(`juel:${cid}:5`, y * 10); // JUEL:A:5 = 欲情点数
+  EraChara.get(cid).jewel.clitoris += y * 10; // JUEL:A:0 = 阴茎/阴核点数
+  EraChara.get(cid).jewel.lust += y * 10; // JUEL:A:5 = 欲情点数
   await era.waitAnyKey();
   return 0;
 }
 
 /** giant_monster_play：巨人；X 恒为 0。 */
 async function giant_monster_play(cid, y) {
-  if ((era.get('talent:0:122') || 0) === 1) {
+  if (EraChara.get(0).talent.male === 1) {
     await print_wait('『魔王大人，请饶了我吧…』');
     return 0;
   }
@@ -289,17 +289,17 @@ async function giant_monster_play(cid, y) {
   era.print(`私处经验+${y}`);
   era.print(`精液经验+${y}`);
   era.print(`阴道扩张经验+${y}`);
-  era.add(`exp:${cid}:0`, y); // EXP:A:0 = 私处经验
-  era.add(`exp:${cid}:20`, y); // EXP:A:20 = 精液经验
-  era.add(`exp:${cid}:53`, y); // EXP:A:53 = 阴道扩张经验
-  era.add(`cflag:${cid}:107`, y); // CFLAG:A:107 = 阴道内射精计数
+  EraChara.get(cid).exp.vagina_exp += y; // EXP:A:0 = 私处经验
+  EraChara.get(cid).exp.semen_exp += y; // EXP:A:20 = 精液经验
+  EraChara.get(cid).exp.anal_dilation_exp += y; // EXP:A:53 = 阴道扩张经验
+  EraChara.get(cid).cflag.monster_vaginal_ejaculation += y; // CFLAG:A:107 = 阴道内射精计数
   await era.waitAnyKey();
   return 0;
 }
 
 /** man_monster_play：男魔族。 */
 async function man_monster_play(cid, y, rand = default_rand) {
-  if ((era.get('talent:0:122') || 0) === 1) {
+  if (EraChara.get(0).talent.male === 1) {
     await print_wait('『魔王大人真会开玩笑……』');
     return 0;
   }
@@ -311,8 +311,8 @@ async function man_monster_play(cid, y, rand = default_rand) {
     );
     era.print(`口交经验+${y}`);
     era.print(`精液经验+${y}`);
-    era.add(`exp:${cid}:22`, y); // EXP:A:22 = 口交经验
-    era.add(`exp:${cid}:20`, y); // EXP:A:20 = 精液经验
+    EraChara.get(cid).exp.oral_exp += y; // EXP:A:22 = 口交经验
+    EraChara.get(cid).exp.semen_exp += y; // EXP:A:20 = 精液经验
   } else {
     await print_wait('『魔王大人…这么漂亮的屁股…！』');
     await print_wait(`${name_of(cid)}手扶墙壁，向男魔族们抬起屁股诱惑着，`);
@@ -321,10 +321,10 @@ async function man_monster_play(cid, y, rand = default_rand) {
     era.print(`私处经验+${y}`);
     era.print(`肛门经验+${y}`);
     era.print(`精液经验+${y}`);
-    era.add(`exp:${cid}:0`, y); // EXP:A:0 = 私处经验
-    era.add(`exp:${cid}:1`, y); // EXP:A:1 = 肛门经验
-    era.add(`exp:${cid}:20`, y); // EXP:A:20 = 精液经验
-    era.add(`cflag:${cid}:107`, y); // CFLAG:A:107 = 阴道内射精计数
+    EraChara.get(cid).exp.vagina_exp += y; // EXP:A:0 = 私处经验
+    EraChara.get(cid).exp.anal_exp += y; // EXP:A:1 = 肛门经验
+    EraChara.get(cid).exp.semen_exp += y; // EXP:A:20 = 精液经验
+    EraChara.get(cid).cflag.monster_vaginal_ejaculation += y; // CFLAG:A:107 = 阴道内射精计数
   }
   await era.waitAnyKey();
   return 0;
@@ -332,7 +332,7 @@ async function man_monster_play(cid, y, rand = default_rand) {
 
 /** girl_monster_play：女魔族。 */
 async function girl_monster_play(cid, y) {
-  const male = (era.get(`talent:${cid}:122`) || 0) === 1;
+  const male = EraChara.get(cid).talent.male === 1;
   await print_wait(
     male
       ? '『啊啦啦？魔王大人想和我们玩吗？♡♡♡嘻嘻～让我们来侍奉魔王大人吧，绝对比那些臭勇者好多了我们！！』'
@@ -345,21 +345,21 @@ async function girl_monster_play(cid, y) {
     await print_wait(`${name_of(cid)}的阴茎旁，围着一群恳求着的魔族女孩。`);
     era.print(`阴茎点数+${y * 10}`);
     era.print(`欲情点数+${y * 10}`);
-    era.add(`juel:${cid}:0`, y * 10); // JUEL:A:0 = 阴茎点数
-    era.add(`juel:${cid}:5`, y * 10); // JUEL:A:5 = 欲情点数
+    EraChara.get(cid).jewel.clitoris += y * 10; // JUEL:A:0 = 阴茎点数
+    EraChara.get(cid).jewel.lust += y * 10; // JUEL:A:5 = 欲情点数
   } else {
     await print_wait('『啊～魔王大人！我是你的奴隶♪』');
     await print_wait(
-      `${name_of(cid)}的${(era.get(`talent:${cid}:121`) || 0) === 1 ? '阴茎' : '假阳具'}侵犯着魔族女孩，`,
+      `${name_of(cid)}的${EraChara.get(cid).talent.futanari === 1 ? '阴茎' : '假阳具'}侵犯着魔族女孩，`,
     );
     await print_wait('同为女人，感受到了与众不同的快感。');
     era.print(`阴核点数+${y * 10}`);
     era.print(`欲情点数+${y * 10}`);
     era.print(`百合经验+${y}`);
-    era.add(`juel:${cid}:0`, y * 10); // JUEL:A:0 = 阴核点数
-    era.add(`juel:${cid}:5`, y * 10); // JUEL:A:5 = 欲情点数
+    EraChara.get(cid).jewel.clitoris += y * 10; // JUEL:A:0 = 阴核点数
+    EraChara.get(cid).jewel.lust += y * 10; // JUEL:A:5 = 欲情点数
     // EXP:A:40 = 百合经验，归 train 域；跨域写经属主门面。
-    chara(cid).train.百合经验 += y;
+    EraChara.get(cid).exp.lesbian_exp += y;
   }
   await era.waitAnyKey();
   return 0;
@@ -428,16 +428,19 @@ async function monster_play(rand = default_rand) {
   }
 
   // 场景后的处女丧失判定。TALENT:0 属 chara 域，跨域写经门面。
-  if (chara(cid).chara.处女 === 1 && (era.get(`exp:${cid}:0`) || 0) > 0) {
+  if (
+    EraChara.get(cid).talent.virgin === 1 &&
+    EraChara.get(cid).exp.vagina_exp > 0
+  ) {
     await print_wait('【处女丧失】');
-    chara(cid).chara.处女 = 0;
+    EraChara.get(cid).talent.virgin = 0;
   }
   return begin(STATE.TURNEND); // 其后的 RETURN 1 因本次返回而不可达
 }
 
 /** beast_monster_play：魔兽。 */
 async function beast_monster_play(cid, y) {
-  if ((era.get('talent:0:122') || 0) === 1) {
+  if (EraChara.get(0).talent.male === 1) {
     await print_wait('你把魔兽拉进怀里，尽情地抚摸着它的毛发。');
     return 0;
   }
@@ -446,16 +449,16 @@ async function beast_monster_play(cid, y) {
     `${name_of(cid)}用甜美的声音把魔兽引到怀里，${name_of(cid)}四肢分开，把魔兽膨胀的阴茎引入了私处。`,
   );
   era.print(`私处经验+${y}`);
-  era.add(`exp:${cid}:0`, y); // EXP:A:0 = 私处经验
+  EraChara.get(cid).exp.vagina_exp += y; // EXP:A:0 = 私处经验
   await print_wait(`兽奸经验+${y}`);
-  era.add(`exp:${cid}:56`, y); // EXP:A:56 = 兽奸经验
-  era.add(`cflag:${cid}:107`, y); // CFLAG:A:107 = 阴道内射精计数
+  EraChara.get(cid).exp.bestiality_exp += y; // EXP:A:56 = 兽奸经验
+  EraChara.get(cid).cflag.monster_vaginal_ejaculation += y; // CFLAG:A:107 = 阴道内射精计数
   return 0;
 }
 
 /** horse_monster_play：马。 */
 async function horse_monster_play(cid, y) {
-  if ((era.get('talent:0:122') || 0) === 1) {
+  if (EraChara.get(0).talent.male === 1) {
     await print_wait('你充分享受了骑马的乐趣。');
     return 0;
   }
@@ -465,12 +468,12 @@ async function horse_monster_play(cid, y) {
   era.print(`苦痛点数+${y * 10}`);
   era.print(`恐怖点数+${y * 10}`);
   era.print(`私处经验+${y}`);
-  era.add(`exp:${cid}:0`, y); // EXP:A:0 = 私处经验
-  era.add(`juel:${cid}:9`, y * 10); // JUEL:A:9 = 苦痛点数
-  era.add(`juel:${cid}:10`, y * 10); // JUEL:A:10 = 恐怖点数
-  era.add(`cflag:${cid}:107`, y); // CFLAG:A:107 = 阴道内射精计数
+  EraChara.get(cid).exp.vagina_exp += y; // EXP:A:0 = 私处经验
+  EraChara.get(cid).jewel.pain += y * 10; // JUEL:A:9 = 苦痛点数
+  EraChara.get(cid).jewel.fear += y * 10; // JUEL:A:10 = 恐怖点数
+  EraChara.get(cid).cflag.monster_vaginal_ejaculation += y; // CFLAG:A:107 = 阴道内射精计数
   await print_wait(`兽奸经验+${y}`);
-  era.add(`exp:${cid}:56`, y); // EXP:A:56 = 兽奸经验
+  EraChara.get(cid).exp.bestiality_exp += y; // EXP:A:56 = 兽奸经验
   return 0;
 }
 

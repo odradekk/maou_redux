@@ -32,6 +32,7 @@
 'use strict';
 
 const era = require('#/era-electron');
+const EraChara = require('#/era-utils/era-chara');
 
 /** 怪物设定屏的返回键 [999] */
 const MONSTER_SETUP_BACK_KEY = 999;
@@ -43,7 +44,7 @@ const { default_rand } = require('#/utils/numeric');
 const { MONSTER_DATABASE } = require('#/data/monster-database');
 
 function campaign_dungeon_lv() {
-  const campaign = era.get('flag:400') || 0; // FLAG:400 当前战役编号
+  const campaign = era_flag.hero_campaign_active; // FLAG:400 当前战役编号
   return campaign === 1 ? 45 : 0;
 }
 
@@ -74,7 +75,7 @@ function skeleton(column, arg1, rand) {
   if (arg1 < 0) {
     lv = rand(9) + 1;
   } else {
-    lv = era.get(`cflag:${arg1}:501`) || 0;
+    lv = EraChara.get(arg1).cflag.invasion_floor;
   }
   const row = battle_column(column);
   row.id = 190; // 怪物番号
@@ -95,7 +96,7 @@ function skeleton(column, arg1, rand) {
  * @returns {number} 改造位（EXTRA）
  */
 function monster_extra(id) {
-  return era.get(`flag:${id + 700}`) || 0;
+  return era_flag.get(id + 700);
 }
 
 /**
@@ -113,9 +114,7 @@ function monstername(id) {
   } else if (mod === 2) {
     // 地形适应定语按该层的房间类型（FLAG:(层 + 349)）
     const room =
-      id < 190
-        ? era.get(`flag:${Math.floor((id - 100) / 10) + 1 + 349}`) || 0
-        : 0;
+      id < 190 ? era_flag.get(Math.floor((id - 100) / 10) + 1 + 349) : 0;
     if (room === 500) {
       out += '遗迹街的';
     } else if (room === 501) {
@@ -230,7 +229,7 @@ async function monster_setup(id, rand = default_rand) {
   if (id === 999 || id < 100 || id > 199) return 999;
 
   const floor = id < 190 ? Math.trunc((id - 100) / 10) + 1 : 0;
-  const room = floor > 0 ? era.get(`flag:${floor + 349}`) || 0 : 0;
+  const room = floor > 0 ? era_flag.get(floor + 349) : 0;
 
   for (;;) {
     const extra = monster_extra(id); // FLAG:(ARG + 700) = 改造位
@@ -299,7 +298,7 @@ async function monster_setup(id, rand = default_rand) {
         (selection - 50) * 100 +
         (extra % 100);
     }
-    era.set(`flag:${id + 700}`, next_extra);
+    era_flag.set(id + 700, next_extra);
     era_flag.money -= 1000;
     era_exflag.legit_money -= 1000;
   }
@@ -335,7 +334,7 @@ function monster_data(inum, line, arg2 = -1, arg3 = -1, group = -1, rand) {
       lv += 1;
     }
   } else {
-    const master_lv = era.get('cflag:0:9') || 0; // CFLAG:0:9 魔王等级
+    const master_lv = EraChara.get(0).cflag.level; // CFLAG:0:9 魔王等级
     lv = Math.floor(master_lv / 12) + 2;
     if (rand_n(10) < master_lv % 10) {
       lv += 1;
@@ -359,14 +358,14 @@ function monster_data(inum, line, arg2 = -1, arg3 = -1, group = -1, rand) {
         first_count = held;
       }
     } else if (line === 3) {
-      inum = era.get(`cflag:${arg2}:570`) || 0; // CFLAG:570 配下怪物
+      inum = EraChara.get(arg2).cflag.subjugated_monster; // CFLAG:570 配下怪物
       if (inum < 100) {
         row.id = 0;
         return 0;
       }
       first_count = 1;
     } else if (line === 4) {
-      inum = era.get(`cflag:${arg3}:570`) || 0;
+      inum = EraChara.get(arg3).cflag.subjugated_monster;
       if (inum < 100) {
         row.id = 0;
         return 0;
@@ -467,8 +466,8 @@ function monster_data(inum, line, arg2 = -1, arg3 = -1, group = -1, rand) {
     arg2 = 0;
   }
   const is_elite_follower =
-    (era.get(`talent:${arg2}:220`) || 0) === 1 && // TALENT:220 精英
-    ((era.get(`cflag:${arg2}:0`) || 0) >= 1 || arg2 === 0);
+    EraChara.get(arg2).talent.elite === 1 && // TALENT:220 精英
+    (EraChara.get(arg2).cflag.sale_and_assistant >= 1 || arg2 === 0);
   if (is_elite_follower) {
     // 精英のお供はボス化しない
     row.boss = 0;
@@ -516,7 +515,7 @@ function monster_data(inum, line, arg2 = -1, arg3 = -1, group = -1, rand) {
     // 催眠師（スリープ）
     row.magic = 2;
     row.defense += rand_n(lv) + 1;
-  } else if (troop === 4 && (era.get('flag:83') || 0) > 0) {
+  } else if (troop === 4 && era_flag.meat_toilet_count > 0) {
     // 肉鎧兵（肉鎧；FLAG:83 是肉铠库存）
     row.special = 18;
     row.defense += rand_n(lv) + 1;
@@ -528,11 +527,11 @@ function monster_data(inum, line, arg2 = -1, arg3 = -1, group = -1, rand) {
   local *= 2; // テコ入れ
 
   // 知識による特定の怪物の強化
-  if ((era.get('talent:0:327') || 0) === 1 && row.rape_type === 9) {
+  if (EraChara.get(0).talent.succubus_knowledge === 1 && row.rape_type === 9) {
     // 淫魔知识：女魔族 1.5 倍
     local += Math.floor(local / 2);
   }
-  if ((era.get('talent:0:328') || 0) === 1 && row.rape_type === 3) {
+  if (EraChara.get(0).talent.bug_knowledge === 1 && row.rape_type === 3) {
     // 魔虫知识：昆虫 1.5 倍
     local += Math.floor(local / 2);
   }
@@ -547,12 +546,12 @@ function monster_data(inum, line, arg2 = -1, arg3 = -1, group = -1, rand) {
   row.defense = row.defense * 2 + lvup;
 
   // —— 精英のお供を強化 ——
-  const follower_lv = era.get(`cflag:${arg2}:9`) || 0;
+  const follower_lv = EraChara.get(arg2).cflag.level;
   if (is_elite_follower) {
     row.attack += follower_lv;
     row.defense += follower_lv;
     // 精英と怪物が同じ种族なら更に強化（TALENT:319 种族2）
-    if ((era.get(`talent:${arg2}:319`) || 0) === row.rape_type) {
+    if (EraChara.get(arg2).talent.secondary_race === row.rape_type) {
       row.attack += follower_lv;
       row.defense += follower_lv;
     }

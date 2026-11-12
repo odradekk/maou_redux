@@ -29,8 +29,9 @@
 'use strict';
 
 const era = require('#/era-electron');
+const EraChara = require('#/era-utils/era-chara');
+const era_item = require('#/era-utils/era-item');
 const era_flag = require('#/era-utils/era-flag');
-const { chara } = require('#/facade/chara');
 const { karma } = require('#/system/chara/chara-stats');
 const {
   BATTLE_COLUMN,
@@ -45,7 +46,7 @@ const { default_rand } = require('#/utils/numeric');
 
 /** 名字承载（#5 决议；savestr 通道不存在，dungeon.js 先例） */
 function name_of(cid) {
-  return era.get(`callname:${cid}:-1`) ?? '';
+  return EraChara.get(cid).name ?? '';
 }
 
 /** GETBIT(X, n) */
@@ -75,15 +76,15 @@ async function set_quest(arg, rand = default_rand) {
   const rand_n = rand;
   // クエスト禁止（FLAG:8 位 3 = 游戏设置 2 的任务开关，enter-enemy.js
   // 同款裸读；角色信息页的受注显示同判此位）
-  if (getbit(era.get('flag:8') || 0, 3) !== 0) {
+  if (getbit(era_flag.adventurer_flags, 3) !== 0) {
     return 0;
   }
 
   // PM:0 队长 / PM:1 仲間A / PM:2 仲間B
   const pm = [
     arg,
-    era.get(`cflag:${arg}:531`) || 0,
-    era.get(`cflag:${arg}:532`) || 0,
+    EraChara.get(arg).cflag.companion_a,
+    EraChara.get(arg).cflag.companion_b,
   ];
 
   // 全員に順番に設定する
@@ -92,21 +93,21 @@ async function set_quest(arg, rand = default_rand) {
       continue;
     }
     const cid = pm[lcount];
-    const q534 = chara(cid).dungeon.已接任务;
+    const q534 = EraChara.get(cid).cflag.accepted_quest;
 
     // 終了したクエストの清算
     if (getbit(q534, 2) !== 0) {
       // 失败完结：无报酬，仅复位
-      chara(cid).dungeon.已接任务 = 0;
+      EraChara.get(cid).cflag.accepted_quest = 0;
     } else if (getbit(q534, 1) !== 0) {
       // 成功報酬
-      const reward = era.get(`cflag:${cid}:535`) || 0;
+      const reward = EraChara.get(cid).cflag.quest_reward_type;
       if (reward === 1) {
         // お金
-        const local = (era.get(`cflag:${cid}:9`) || 0) * 10 + 100;
+        const local = EraChara.get(cid).cflag.level * 10 + 100;
         era.print(`${name_of(cid)}完成了任务、获得了资金${local}！`);
         await era.waitAnyKey(); // PRINTFORMW
-        chara(cid).dungeon.所持金 += local; // CFLAG:580 += LOCAL
+        EraChara.get(cid).cflag.money += local; // CFLAG:580 += LOCAL
       } else if (reward === 2) {
         // 道德
         const local = 10;
@@ -119,16 +120,16 @@ async function set_quest(arg, rand = default_rand) {
         await era.waitAnyKey(); // PRINTFORMW
         await ex_item_mod.add_ex_item(-3, cid, 1); // CALL ADD_EX_ITEM, -3, (PM:LCOUNT), 1
       }
-      chara(cid).dungeon.已接任务 = 0;
+      EraChara.get(cid).cflag.accepted_quest = 0;
     }
 
     // 受注状態が初期化されていないとダメ
-    if (chara(cid).dungeon.已接任务 !== 0) {
+    if (EraChara.get(cid).cflag.accepted_quest !== 0) {
       continue;
     }
 
     // クエスト報酬（RAND:3 + 1 → 1=お金/2=道德/3=道具）
-    era.set(`cflag:${cid}:535`, rand_n(3) + 1);
+    EraChara.get(cid).cflag.quest_reward_type = rand_n(3) + 1;
 
     // クエストの障害（六个独立 1/3 掷点；bit5 假任务非显示）
     let q536 = 0; // CFLAG:536 = 0（初始化）
@@ -150,35 +151,36 @@ async function set_quest(arg, rand = default_rand) {
     if (rand_n(3) === 0) {
       q536 = setbit(q536, 5); // それは偽の依頼である（非表示）
     }
-    era.set(`cflag:${cid}:536`, q536);
+    EraChara.get(cid).cflag.quest_obstacle_bits = q536;
 
     // クエストの目的（タイプ 1-3 与人称 540 在此掷定）
     await quest_select(cid, '设定', 0, rand_n);
 
     // 討伐対象（モンスターID）
-    if (chara(cid).invasion.状态 === 12) {
+    if (EraChara.get(cid).cflag.state === 12) {
       // 戦役（CFLAG:1 == 12）：怪物表由战役侧给出（#469 起真身）
       const monid = await campaign_monster_list(
-        era.get(`cflag:${cid}:501`) || 0,
+        EraChara.get(cid).cflag.invasion_floor,
         rand_n,
       );
-      era.set(`cflag:${cid}:538`, monid);
+      EraChara.get(cid).cflag.quest_target_monster = monid;
     } else {
       // 常规：目标阶层 × 10 + 种类 0-4 + 100（RAND:0 恒 0，阶层 0 时
       // 讨伐对象落在 100-104 的第一层段）
-      const local = rand_n(era.get(`cflag:${cid}:520`) || 0);
-      era.set(`cflag:${cid}:538`, local * 10 + rand_n(5) + 100);
+      const local = rand_n(EraChara.get(cid).cflag.target_floor);
+      EraChara.get(cid).cflag.quest_target_monster =
+        local * 10 + rand_n(5) + 100;
     }
 
     // 受注カウンタ：时限（bit2）任务给 1-10 回合的短计数，普通依頼 99 回合
-    if (getbit(era.get(`cflag:${cid}:536`) || 0, 2) !== 0) {
-      era.set(`cflag:${cid}:539`, rand_n(10) + 1);
+    if (getbit(EraChara.get(cid).cflag.quest_obstacle_bits, 2) !== 0) {
+      EraChara.get(cid).cflag.quest_accept_count = rand_n(10) + 1;
     } else {
-      era.set(`cflag:${cid}:539`, 99);
+      EraChara.get(cid).cflag.quest_accept_count = 99;
     }
 
     // クエスト：受注状態 → 名前打印
-    chara(cid).dungeon.已接任务 = 1;
+    EraChara.get(cid).cflag.accepted_quest = 1;
     era.print(`${name_of(cid)}接受了任务！`);
     await quest_select(cid, '名前', 0, rand_n);
   }
@@ -204,15 +206,15 @@ async function set_quest(arg, rand = default_rand) {
 async function result_quest(arg, args, rand = default_rand) {
   const rand_n = rand;
   // クエスト禁止
-  if (getbit(era.get('flag:8') || 0, 3) !== 0) {
+  if (getbit(era_flag.adventurer_flags, 3) !== 0) {
     return 0;
   }
 
   // PM:0 队长 / PM:1 仲間A / PM:2 仲間B
   const pm = [
     arg,
-    era.get(`cflag:${arg}:531`) || 0,
-    era.get(`cflag:${arg}:532`) || 0,
+    EraChara.get(arg).cflag.companion_a,
+    EraChara.get(arg).cflag.companion_b,
   ];
 
   // 全員に順番に結果を見る
@@ -222,12 +224,12 @@ async function result_quest(arg, args, rand = default_rand) {
     }
     const cid = pm[lcount];
     // クエスト受注で成功でも失敗でもない場合じゃないとダメ
-    if (chara(cid).dungeon.已接任务 !== 1) {
+    if (EraChara.get(cid).cflag.accepted_quest !== 1) {
       continue;
     }
 
     // 該当モンスターがいないとダメ（三列直接比讨伐对象）
-    const monid = era.get(`cflag:${cid}:538`) || 0;
+    const monid = EraChara.get(cid).cflag.quest_target_monster;
     let found = 0; // LOCAL
     for (let column = 0; column < 3; column += 1) {
       if (battle_column(column).id === monid) {
@@ -244,14 +246,14 @@ async function result_quest(arg, args, rand = default_rand) {
 
     // 偽の依頼（ARGS 覆写为 失敗；引用传参改局部变量）
     let args_local = args;
-    if (getbit(era.get(`cflag:${cid}:536`) || 0, 5) !== 0) {
+    if (getbit(EraChara.get(cid).cflag.quest_obstacle_bits, 5) !== 0) {
       era.print('看来是接了个假任务……');
       await era.waitAnyKey(); // PRINTW
       args_local = '失败';
     }
 
     // 受注カウンタ消滅（超时同覆写）
-    if ((era.get(`cflag:${cid}:539`) || 0) < 1) {
+    if (EraChara.get(cid).cflag.quest_accept_count < 1) {
       era.print('看来是没有赶上……');
       await era.waitAnyKey(); // PRINTW
       args_local = '失败';
@@ -263,10 +265,16 @@ async function result_quest(arg, args, rand = default_rand) {
     // 完结位（bit1 成功 / bit2 失败）
     if (args_local === '失败') {
       era.print('-任务失败-'); // PRINTFORML
-      chara(cid).dungeon.已接任务 = setbit(chara(cid).dungeon.已接任务, 2);
+      EraChara.get(cid).cflag.accepted_quest = setbit(
+        EraChara.get(cid).cflag.accepted_quest,
+        2,
+      );
     } else {
       era.print('*任务成功*'); // PRINTFORML
-      chara(cid).dungeon.已接任务 = setbit(chara(cid).dungeon.已接任务, 1);
+      EraChara.get(cid).cflag.accepted_quest = setbit(
+        EraChara.get(cid).cflag.accepted_quest,
+        1,
+      );
     }
   }
 
@@ -311,7 +319,7 @@ function quest_fail_tail(rand_n) {
     return '怀上了怪物的孩子……';
   } else if (rand_n(3) === 0) {
     return '全身被纹上了低贱的刺青、成了渴求着精液的肉便器……';
-  } else if (rand_n(2) === 0 && (era.get('item:22') || 0) === 1) {
+  } else if (rand_n(2) === 0 && era_item.stray_dog.count === 1) {
     // 野良犬で獣姦フラグON（RAND 先掷、道具后判，顺序有意保留）
     return '与猪交换了灵魂成了家畜、沉迷在了与猪的交尾当中……';
   }
@@ -360,7 +368,7 @@ function quest_fail_tail3(rand_n) {
     return '最终成了淫靡的肉块、进行猎奇的表演过活……';
   } else if (rand_n(3) === 0) {
     return '似乎觉醒了变态性癖全身纹上低贱的刺青、成为了肉便器……';
-  } else if (rand_n(2) === 0 && (era.get('item:22') || 0) === 1) {
+  } else if (rand_n(2) === 0 && era_item.stray_dog.count === 1) {
     // 野良犬で獣姦フラグON（RAND 先掷、道具后判）
     return '把自己当成了母狗、在草丛里和野狗交尾时被发现了……';
   }
@@ -393,14 +401,14 @@ async function quest_select(arg, args, quest_line = 0, rand = default_rand) {
   let type;
   if (args === '设定') {
     type = rand_n(3) + 1;
-    era.set(`cflag:${arg}:537`, type);
+    EraChara.get(arg).cflag.quest_type = type;
   } else {
-    type = era.get(`cflag:${arg}:537`) || 0;
+    type = EraChara.get(arg).cflag.quest_type;
   }
 
   // MON_ID = CFLAG:ARG:538（セット态时是上一任务残留，但 LINE3 段
   // 受名前态判定、セット 不消费它——残留值无读者）
-  const mon_id = era.get(`cflag:${arg}:538`) || 0;
+  const mon_id = EraChara.get(arg).cflag.quest_target_monster;
   const mon_name = era.get(`itemname:${mon_id}`) ?? ''; // %ITEMNAME:MON_ID%
 
   // QUEST_LINE 2/3 直跳 LINE2/LINE3（跳过 TYPE 段）
@@ -408,14 +416,14 @@ async function quest_select(arg, args, quest_line = 0, rand = default_rand) {
     if (type === 1) {
       // さらわれた娘
       if (args === '设定') {
-        era.set(`cflag:${arg}:540`, rand_n(5));
+        EraChara.get(arg).cflag.quest_victim_variant = rand_n(5);
       } else if (args === '成功') {
         era.print(
-          `${name_of(arg)}将被${mon_name}掳走的${quest_victim(1, era.get(`cflag:${arg}:540`) || 0)}安全救出了！`,
+          `${name_of(arg)}将被${mon_name}掳走的${quest_victim(1, EraChara.get(arg).cflag.quest_victim_variant)}安全救出了！`,
         );
       } else if (args === '失败') {
         era.print(
-          `被${mon_name}掳走的${quest_victim(1, era.get(`cflag:${arg}:540`) || 0)}`,
+          `被${mon_name}掳走的${quest_victim(1, EraChara.get(arg).cflag.quest_victim_variant)}`,
         );
         era.print(quest_fail_tail(rand_n)); // ;PRINT は（注释态的接续词不落）
       } else if (args === '名前') {
@@ -423,45 +431,45 @@ async function quest_select(arg, args, quest_line = 0, rand = default_rand) {
         // 一次 print——dungeon.js 文件头先例；quest_line 1 供
         // 角色信息页行内拼接，不落换行符）
         era.print(
-          `任务[被掳走的${quest_victim(1, era.get(`cflag:${arg}:540`) || 0)}]`,
+          `任务[被掳走的${quest_victim(1, EraChara.get(arg).cflag.quest_victim_variant)}]`,
         );
       }
     } else if (type === 2) {
       // 淫魔の虜
       if (args === '设定') {
-        era.set(`cflag:${arg}:540`, rand_n(5));
+        EraChara.get(arg).cflag.quest_victim_variant = rand_n(5);
       } else if (args === '成功') {
         era.print(
-          `${name_of(arg)}将被${mon_name}诱惑了的${quest_victim(2, era.get(`cflag:${arg}:540`) || 0)}安全救出了！`,
+          `${name_of(arg)}将被${mon_name}诱惑了的${quest_victim(2, EraChara.get(arg).cflag.quest_victim_variant)}安全救出了！`,
         );
       } else if (args === '失败') {
         era.print(
-          `被${mon_name}诱惑了的${quest_victim(2, era.get(`cflag:${arg}:540`) || 0)}`,
+          `被${mon_name}诱惑了的${quest_victim(2, EraChara.get(arg).cflag.quest_victim_variant)}`,
         );
         era.print(quest_fail_tail2(rand_n));
       } else if (args === '名前') {
         // 名段 + ] 归并（type1 同款）
         era.print(
-          `任务[受魔诱惑的${quest_victim(2, era.get(`cflag:${arg}:540`) || 0)}]`,
+          `任务[受魔诱惑的${quest_victim(2, EraChara.get(arg).cflag.quest_victim_variant)}]`,
         );
       }
     } else if (type === 3) {
       // 変異する身体
       if (args === '设定') {
-        era.set(`cflag:${arg}:540`, rand_n(5));
+        EraChara.get(arg).cflag.quest_victim_variant = rand_n(5);
       } else if (args === '成功') {
         era.print(
-          `${name_of(arg)}将${mon_name}的肝打了包用回城魔法传送了、成功治好了${quest_victim(3, era.get(`cflag:${arg}:540`) || 0)}的异状！`,
+          `${name_of(arg)}将${mon_name}的肝打了包用回城魔法传送了、成功治好了${quest_victim(3, EraChara.get(arg).cflag.quest_victim_variant)}的异状！`,
         );
       } else if (args === '失败') {
         era.print(
-          `因变异魔法而暴走的${quest_victim(3, era.get(`cflag:${arg}:540`) || 0)}`,
+          `因变异魔法而暴走的${quest_victim(3, EraChara.get(arg).cflag.quest_victim_variant)}`,
         );
         era.print(quest_fail_tail3(rand_n));
       } else if (args === '名前') {
         // 名段 + ] 归并（type1 同款）
         era.print(
-          `任务[因变异魔法而暴走的${quest_victim(3, era.get(`cflag:${arg}:540`) || 0)}]`,
+          `任务[因变异魔法而暴走的${quest_victim(3, EraChara.get(arg).cflag.quest_victim_variant)}]`,
         );
       }
     } else {
@@ -485,7 +493,7 @@ async function quest_select(arg, args, quest_line = 0, rand = default_rand) {
 
   // —— $LINE2：障碍明细——名前 态专属 ——
   if (args === '名前') {
-    const q536 = era.get(`cflag:${arg}:536`) || 0;
+    const q536 = EraChara.get(arg).cflag.quest_obstacle_bits;
     if (quest_line === 0) {
       // 五行逐位明细（受注面板全份形式）
       if (getbit(q536, 0) !== 0) {
@@ -557,8 +565,8 @@ async function quest_battle_set(arg0, rand = default_rand) {
   // PM:0 队长 / PM:1 仲間A / PM:2 仲間B
   const pm = [
     arg0,
-    era.get(`cflag:${arg0}:531`) || 0,
-    era.get(`cflag:${arg0}:532`) || 0,
+    EraChara.get(arg0).cflag.companion_a,
+    EraChara.get(arg0).cflag.companion_b,
   ];
   let quest_on = 0; // クエスト発生フラグ
 
@@ -569,8 +577,9 @@ async function quest_battle_set(arg0, rand = default_rand) {
     const cid = pm[lcount];
 
     // 時間経過（受注计数在掷点之前递减——每场战斗都tick）
-    if ((era.get(`cflag:${cid}:539`) || 0) > 0) {
-      era.set(`cflag:${cid}:539`, (era.get(`cflag:${cid}:539`) || 0) - 1);
+    if (EraChara.get(cid).cflag.quest_accept_count > 0) {
+      EraChara.get(cid).cflag.quest_accept_count =
+        EraChara.get(cid).cflag.quest_accept_count - 1;
     }
 
     // 発生しないときもある（2/3 概率跳过该成员）
@@ -579,12 +588,12 @@ async function quest_battle_set(arg0, rand = default_rand) {
     }
 
     // 受注中（成功/失败完结都不可）
-    if (chara(cid).dungeon.已接任务 !== 1) {
+    if (EraChara.get(cid).cflag.accepted_quest !== 1) {
       continue;
     }
 
     // 該当モンスターがいないとダメ
-    const monid = era.get(`cflag:${cid}:538`) || 0;
+    const monid = EraChara.get(cid).cflag.quest_target_monster;
     let found = 0; // LOCAL
     for (let column = 0; column < 3; column += 1) {
       if (battle_column(column).id === monid) {
@@ -600,7 +609,7 @@ async function quest_battle_set(arg0, rand = default_rand) {
     await era.waitAnyKey();
     quest_on = 2;
 
-    const q536 = era.get(`cflag:${cid}:536`) || 0;
+    const q536 = EraChara.get(cid).cflag.quest_obstacle_bits;
 
     // それはボスとの戦闘（第三列 boss 化）
     if (getbit(q536, 0) !== 0) {
@@ -631,7 +640,7 @@ async function quest_battle_set(arg0, rand = default_rand) {
       era.print('看来敌人提出了性方面的需求进行着交涉……'); // PRINTL
       let local = 100;
       // 娼婦 / 奴隷（出身位 TALENT:315 的值 5 / 20）
-      const origin = era.get(`talent:${cid}:315`) || 0;
+      const origin = EraChara.get(cid).talent.pre_hero_life;
       if (origin === 5) {
         local += 30;
       }
@@ -639,9 +648,9 @@ async function quest_battle_set(arg0, rand = default_rand) {
         local += 30;
       }
       // 売春経験（EXP:74）
-      local += era.get(`exp:${cid}:74`) || 0;
+      local += EraChara.get(cid).exp.prostitution_exp;
       // カルマ低い/すごく低い（两档可叠 +30）
-      const karma_v = era.get(`cflag:${cid}:151`) || 0;
+      const karma_v = EraChara.get(cid).cflag.karma;
       if (karma_v < -30) {
         local += 10;
       }
@@ -652,7 +661,10 @@ async function quest_battle_set(arg0, rand = default_rand) {
         // 交涉成立——性奉侍完结任务，跳过普通战斗
         await quest_bitch(cid, rand_n);
         era.print('*任务成功*'); // PRINTFORML
-        chara(cid).dungeon.已接任务 = setbit(chara(cid).dungeon.已接任务, 1);
+        EraChara.get(cid).cflag.accepted_quest = setbit(
+          EraChara.get(cid).cflag.accepted_quest,
+          1,
+        );
         return 1;
       }
       era.print(`${name_of(cid)}用愤怒的话语回绝了`); // PRINTFORML
@@ -710,12 +722,12 @@ async function quest_bitch(arg, rand = default_rand) {
   // CFLAG:15/16 属主 train、TALENT:0 属主 chara——跨域写一律走门面）
   const t = era_flag.target;
   if (
-    (era.get(`exp:${t}:0`) || 0) > 0 &&
-    (era.get(`talent:${t}:0`) || 0) === 1
+    EraChara.get(t).exp.vagina_exp > 0 &&
+    EraChara.get(t).talent.virgin === 1
   ) {
-    chara(t).chara.处女 = 0; // TALENT:0 = 0（处女素质消去）
+    EraChara.get(t).talent.virgin = 0; // TALENT:0 = 0（处女素质消去）
     era.print('【处女丧失】'); // PRINTL
-    chara(t).train.初体验对象 = 104; // CFLAG:15 = 104
+    EraChara.get(t).cflag.first_sex_partner = 104; // CFLAG:15 = 104
   }
 
   return 1;
@@ -727,8 +739,8 @@ async function quest_bitch(arg, rand = default_rand) {
  */
 function first_kiss_check() {
   const t = era_flag.target;
-  if (era.get(`cflag:${t}:16`) === -1) {
-    chara(t).train.初吻对象 = 995; // CFLAG:16 = 995
+  if (EraChara.get(t).cflag.first_kiss_partner === -1) {
+    EraChara.get(t).cflag.first_kiss_partner = 995; // CFLAG:16 = 995
   }
 }
 
@@ -746,8 +758,8 @@ async function orc_quest_bitch(arg, column, rand_n) {
   );
   era.print(`口交经验+${monnum}`);
   era.print(`精液经验+${monnum}`);
-  era.add(`exp:${arg}:22`, monnum); // EXP:ARG:22（口交）
-  era.add(`exp:${arg}:20`, monnum); // EXP:ARG:20（精液）
+  EraChara.get(arg).exp.oral_exp += monnum; // EXP:ARG:22（口交）
+  EraChara.get(arg).exp.semen_exp += monnum; // EXP:ARG:20（精液）
   first_kiss_check(); // ファーストキス
   await era.waitAnyKey(); // WAIT
   return 1;
@@ -763,14 +775,14 @@ async function slime_quest_bitch(arg, column, rand_n) {
   const monnum = battle_column(column).count;
   const mon_name = era.get(`itemname:${monid}`) ?? '';
   era.print(`${name_of(arg)}服从了命令、${mon_name}慢慢地`);
-  if (era.get(`talent:${arg}:121`)) {
+  if (EraChara.get(arg).talent.futanari) {
     era.print('将阴茎插了进去……'); // PRINTL
     era.print(`阴茎点数+${monnum}`);
-    era.add(`juel:${arg}:0`, monnum); // JUEL:ARG:0
+    EraChara.get(arg).jewel.clitoris += monnum; // JUEL:ARG:0
   } else {
     era.print('将腰沉了下去……'); // PRINTL
     era.print(`阴核点数+${monnum}`);
-    era.add(`juel:${arg}:0`, monnum); // JUEL:ARG:0（两分支同槽）
+    EraChara.get(arg).jewel.clitoris += monnum; // JUEL:ARG:0（两分支同槽）
   }
   await era.waitAnyKey();
   return 1;
@@ -784,12 +796,12 @@ async function insect_quest_bitch(arg, column, rand_n) {
   era.print(
     `${name_of(arg)}服从了命令、与${era.get(`itemname:${monid}`) ?? ''}交尾了……`,
   );
-  if (era.get(`talent:${arg}:121`)) {
+  if (EraChara.get(arg).talent.futanari) {
     era.print(`阴茎点数+${monnum}`);
-    era.add(`juel:${arg}:0`, monnum);
+    EraChara.get(arg).jewel.clitoris += monnum;
   } else {
     era.print('私处经验+1'); // PRINTL
-    era.add(`exp:${arg}:0`, 1); // EXP:ARG:0 += 1
+    EraChara.get(arg).exp.vagina_exp += 1; // EXP:ARG:0 += 1
   }
   await era.waitAnyKey();
   return 1;
@@ -805,8 +817,8 @@ async function ivy_quest_bitch(arg, column, rand_n) {
   era.print(`${mon_name}勒住了${name_of(arg)}的头！`);
   era.print(`苦痛点数+${monnum}`);
   era.print(`恐怖点数+${monnum}`);
-  era.add(`juel:${arg}:9`, monnum); // JUEL:ARG:9（苦痛）
-  era.add(`juel:${arg}:10`, monnum); // JUEL:ARG:10（恐怖）
+  EraChara.get(arg).jewel.pain += monnum; // JUEL:ARG:9（苦痛）
+  EraChara.get(arg).jewel.fear += monnum; // JUEL:ARG:10（恐怖）
   await era.waitAnyKey();
   return 1;
 }
@@ -819,14 +831,14 @@ async function syokusyu_quest_bitch(arg, column, rand_n) {
   era.print(
     `${name_of(arg)}服从了命令、任凭${era.get(`itemname:${monid}`) ?? ''}的触手触碰……`,
   );
-  if (era.get(`talent:${arg}:121`)) {
+  if (EraChara.get(arg).talent.futanari) {
     era.print(`阴茎点数+${monnum}`);
-    era.add(`juel:${arg}:0`, monnum);
+    EraChara.get(arg).jewel.clitoris += monnum;
   } else {
     era.print('私处经验+1'); // PRINTL
     era.print(`阴核点数+${monnum}`);
-    era.add(`exp:${arg}:0`, 1);
-    era.add(`juel:${arg}:0`, monnum);
+    EraChara.get(arg).exp.vagina_exp += 1;
+    EraChara.get(arg).jewel.clitoris += monnum;
   }
   await era.waitAnyKey();
   return 1;
@@ -839,14 +851,14 @@ async function faily_quest_bitch(arg, column, rand_n) {
   const monnum = battle_column(column).count;
   const mon_name = era.get(`itemname:${monid}`) ?? '';
   era.print(`${name_of(arg)}服从了命令、对${mon_name}`);
-  if (era.get(`talent:${arg}:121`)) {
+  if (EraChara.get(arg).talent.futanari) {
     era.print('用阴茎摩擦了起来……'); // PRINTL
     era.print(`阴茎点数+${monnum}`);
-    era.add(`juel:${arg}:0`, monnum);
+    EraChara.get(arg).jewel.clitoris += monnum;
   } else {
     era.print('用阴蒂摩擦了起来……'); // PRINTL
     era.print(`阴核点数+${monnum}`);
-    era.add(`juel:${arg}:0`, monnum);
+    EraChara.get(arg).jewel.clitoris += monnum;
   }
   await era.waitAnyKey();
   return 1;
@@ -862,8 +874,8 @@ async function giant_quest_bitch(arg, column, rand_n) {
   );
   era.print(`口交经验+${monnum}`);
   era.print(`精液经验+${monnum}`);
-  era.add(`exp:${arg}:22`, monnum);
-  era.add(`exp:${arg}:20`, monnum);
+  EraChara.get(arg).exp.oral_exp += monnum;
+  EraChara.get(arg).exp.semen_exp += monnum;
   first_kiss_check(); // ファーストキス
   await era.waitAnyKey();
   return 1;
@@ -879,8 +891,8 @@ async function man_quest_bitch(arg, column, rand_n) {
   );
   era.print(`口交经验+${monnum}`);
   era.print(`精液经验+${monnum}`);
-  era.add(`exp:${arg}:22`, monnum);
-  era.add(`exp:${arg}:20`, monnum);
+  EraChara.get(arg).exp.oral_exp += monnum;
+  EraChara.get(arg).exp.semen_exp += monnum;
   first_kiss_check(); // ファーストキス
   await era.waitAnyKey();
   return 1;
@@ -893,14 +905,14 @@ async function girl_quest_bitch(arg, column, rand_n) {
   const monnum = battle_column(column).count;
   const mon_name = era.get(`itemname:${monid}`) ?? '';
   era.print(`${name_of(arg)}服从了命令、与${mon_name}`);
-  if (era.get(`talent:${arg}:121`)) {
+  if (EraChara.get(arg).talent.futanari) {
     era.print('交尾了……'); // PRINTL
     era.print(`阴茎点数+${monnum}`);
-    era.add(`juel:${arg}:0`, monnum);
+    EraChara.get(arg).jewel.clitoris += monnum;
   } else {
     era.print('交合在了一起……'); // PRINTL
     era.print(`阴核点数+${monnum}`);
-    era.add(`juel:${arg}:0`, monnum);
+    EraChara.get(arg).jewel.clitoris += monnum;
   }
   await era.waitAnyKey();
   return 1;
@@ -921,9 +933,9 @@ async function beast_quest_bitch(arg, column, rand_n) {
   era.print(`精液经验+${monnum}`);
   era.print(`兽奸经验+${monnum}`);
   await era.waitAnyKey(); // PRINTFORMW 獣姦経験
-  era.add(`exp:${arg}:22`, monnum);
-  era.add(`exp:${arg}:20`, monnum);
-  era.add(`exp:${arg}:56`, monnum); // EXP:ARG:56（兽奸）
+  EraChara.get(arg).exp.oral_exp += monnum;
+  EraChara.get(arg).exp.semen_exp += monnum;
+  EraChara.get(arg).exp.bestiality_exp += monnum; // EXP:ARG:56（兽奸）
   first_kiss_check(); // ファーストキス
   await era.waitAnyKey(); // WAIT
   return 1;
@@ -938,7 +950,7 @@ async function brain_quest_bitch(arg, column, rand_n) {
     `${name_of(arg)}服从了命令、任${era.get(`itemname:${monid}`) ?? ''}侵犯着大脑开始自慰了起来……`,
   );
   era.print(`阴茎点数+${monnum}`);
-  era.add(`juel:${arg}:0`, monnum);
+  EraChara.get(arg).jewel.clitoris += monnum;
   await era.waitAnyKey();
   return 1;
 }
@@ -955,9 +967,9 @@ async function horse_quest_bitch(arg, column, rand_n) {
   era.print(`精液经验+${monnum}`);
   era.print(`兽奸经验+${monnum}`);
   await era.waitAnyKey(); // PRINTFORMW 獣姦経験
-  era.add(`exp:${arg}:22`, monnum);
-  era.add(`exp:${arg}:20`, monnum);
-  era.add(`exp:${arg}:56`, monnum); // EXP:ARG:56（兽奸）
+  EraChara.get(arg).exp.oral_exp += monnum;
+  EraChara.get(arg).exp.semen_exp += monnum;
+  EraChara.get(arg).exp.bestiality_exp += monnum; // EXP:ARG:56（兽奸）
   first_kiss_check(); // ファーストキス
   await era.waitAnyKey(); // WAIT
   return 1;
