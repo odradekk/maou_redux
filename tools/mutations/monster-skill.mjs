@@ -47,8 +47,9 @@ export default [
   {
     desc: 'M7145 粘液捕获误用强化伤害',
     file: 'ere/system/dungeon/monster-skill.js',
-    find: '    chara(target).dungeon.气力 -= level;',
-    replace: '    chara(target).dungeon.气力 -= dmg; // 变异：误用强化伤害',
+    find: '    EraChara.get(target).base.willpower -= level;',
+    replace:
+      '    EraChara.get(target).base.willpower -= dmg; // 变异：误用强化伤害',
     tests: ['monster-skill'],
     must_mention: '按未强化等级扣气力',
   },
@@ -170,8 +171,8 @@ export default [
   {
     desc: 'M7160 人间牧场库存检查改坏',
     file: 'ere/system/dungeon/monster-skill.js',
-    find: '  } else if (room === 502 && game.invasion.肉便器数 > 0) {',
-    replace: '  } else if (room === 502 && game.invasion.肉便器数 > 1) {',
+    find: '  } else if (room === 502 && era_flag.meat_toilet_count > 0) {',
+    replace: '  } else if (room === 502 && era_flag.meat_toilet_count > 1) {',
     tests: ['monster-skill'],
     must_mention: '牧场与博物馆没有库存时不发动',
   },
@@ -204,9 +205,9 @@ export default [
   {
     desc: 'M7164 博物馆地形伤害倍率改坏',
     file: 'ere/system/dungeon/monster-skill.js',
-    find: '  } else if (room === 506 && game.event.装饰品数 > 0) {\n    const damage = Math.trunc((level * 3) / 2);',
+    find: '  } else if (room === 506 && era_flag.exhibit_count > 0) {\n    const damage = Math.trunc((level * 3) / 2);',
     replace:
-      '  } else if (room === 506 && game.event.装饰品数 > 0) {\n    const damage = level; // 变异：倍率删除',
+      '  } else if (room === 506 && era_flag.exhibit_count > 0) {\n    const damage = level; // 变异：倍率删除',
     tests: ['monster-skill'],
     must_mention: '七种房间逐项',
   },
@@ -246,7 +247,7 @@ export default [
   {
     desc: 'M7169 use_monster_skill 不再覆盖传入等级',
     file: 'ere/system/dungeon/monster-skill.js',
-    find: '  dmg = self.level + chara(0).chara.等级;',
+    find: '  dmg = self.level + EraChara.get(0).cflag.level;',
     replace: '  dmg += 0; // 变异：保留传入等级',
     tests: ['monster-skill'],
     must_mention: '传入的精英等级会被自身等级重算覆盖',
@@ -316,7 +317,7 @@ export default [
   {
     desc: 'M7179 战斗日志检查被恒关闭',
     file: 'ere/system/dungeon/monster-skill.js',
-    find: '  if ((game.dungeon.游戏设定 & 32) !== 0) {',
+    find: '  if ((era_flag.game_settings & 32) !== 0) {',
     replace: '  if (false) { // 变异：日志恒关闭',
     tests: ['monster-skill'],
     must_mention: '战斗日志开启时等待输出',

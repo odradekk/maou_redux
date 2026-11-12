@@ -70,7 +70,7 @@ export default [
   {
     desc: 'M380 行动完了提前返回删坏（530 == 1 照常推进）',
     file: 'ere/system/dungeon/dungeon.js',
-    find: '  if ((era.get(`cflag:${arg0}:530`) || 0) === 1) {',
+    find: '  if (EraChara.get(arg0).cflag.action_done === 1) {',
     replace: '  if (false) {',
     tests: ['dungeon-main'],
     must_mention: 'CFLAG:530 == 1 直接返回',
@@ -98,11 +98,9 @@ export default [
   {
     desc: 'M383 get_down_enemy 充公删坏（MONEY 不加算）',
     file: 'ere/system/dungeon/dungeon.js',
-    find: `  const gain = Math.floor(chara(arg0).dungeon.所持金 / 100);
-  era_flag.money += gain;
-  era_exflag.legit_money += gain;`,
-    replace: `  const gain = Math.floor(chara(arg0).dungeon.所持金 / 100);
-  // 变异：MONEY 与 EX_FLAG:4444 的加算删除`,
+    find: '  const gain = Math.floor(EraChara.get(arg0).cflag.money / 100);\n  era_flag.money += gain;\n  era_exflag.legit_money += gain;',
+    replace:
+      '  const gain = Math.floor(EraChara.get(arg0).cflag.money / 100);\n  // 变异：MONEY 与 EX_FLAG:4444 的加算删除',
     tests: ['dungeon-main'],
     must_mention: 'MONEY += 580/100',
   },
@@ -164,7 +162,7 @@ export default [
   {
     desc: 'M388 get_junk_item 阶层乘算删坏（LOCAL *= CFLAG:501 删）',
     file: 'ere/system/dungeon/ex-item.js',
-    find: '  // LOCAL *= CFLAG:ARG:501（阶层）\n  local *= chara(cid).dungeon.侵攻阶层;',
+    find: '  // LOCAL *= CFLAG:ARG:501（阶层）\n  local *= EraChara.get(cid).cflag.invasion_floor;',
     replace: '  // LOCAL *= CFLAG:ARG:501（阶层）——变异：乘算删除',
     tests: ['dungeon-main'],
     must_mention: '四项素质补正',
@@ -218,12 +216,9 @@ export default [
   {
     desc: 'M483 dungeon_spy 迎击入口删除（CFLAG:1 == 3 的提前返回内不再调 dungeon_spy）',
     file: 'ere/system/dungeon/dungeon.js',
-    find: `    if (chara(arg0).invasion.状态 === 3) {
-      await battle2_mod.dungeon_spy(arg0, rand_n);
-    }`,
-    replace: `    if (chara(arg0).invasion.状态 === 3) {
-      // 变异：迎击潜入调用删
-    }`,
+    find: '    if (EraChara.get(arg0).cflag.state === 3) {\n      await battle2_mod.dungeon_spy(arg0, rand_n);\n    }',
+    replace:
+      '    if (EraChara.get(arg0).cflag.state === 3) {\n      // 变异：迎击潜入调用删\n    }',
     tests: ['dungeon-main'],
     must_mention: '工作活动扣了勇者的 HP/气力',
   },
@@ -242,24 +237,18 @@ export default [
   {
     desc: 'M485 dungeon_battle2_party 的败者号传参坏（loser 恒 0）',
     file: 'ere/system/dungeon/dungeon-battle2.js',
-    find: `  if (chara(enemy).invasion.状态 === 0) {
-    return { result: 2, loser: enemy };
-  }`,
-    replace: `  if (chara(enemy).invasion.状态 === 0) {
-    return { result: 2, loser: 0 }; // 变异：败者号不传
-  }`,
+    find: '  if (EraChara.get(enemy).cflag.state === 0) {\n    return { result: 2, loser: enemy };\n  }',
+    replace:
+      '  if (EraChara.get(enemy).cflag.state === 0) {\n    return { result: 2, loser: 0 }; // 变异：败者号不传\n  }',
     tests: ['dungeon-battle'],
     must_mention: '败者号 = 勇者 2',
   },
   {
     desc: 'M487 dungeon_battle2_party 勇者退场的 result 分流坏（return 2 → 0）',
     file: 'ere/system/dungeon/dungeon-battle2.js',
-    find: `  if (chara(enemy).invasion.状态 === 0) {
-    return { result: 2, loser: enemy };
-  }`,
-    replace: `  if (chara(enemy).invasion.状态 === 0) {
-    return { result: 0, loser: enemy }; // 变异：勇者退场的 result 分流坏
-  }`,
+    find: '  if (EraChara.get(enemy).cflag.state === 0) {\n    return { result: 2, loser: enemy };\n  }',
+    replace:
+      '  if (EraChara.get(enemy).cflag.state === 0) {\n    return { result: 0, loser: enemy }; // 变异：勇者退场的 result 分流坏\n  }',
     tests: ['dungeon-battle'],
     must_mention: '勇者被打退',
   },
@@ -268,9 +257,9 @@ export default [
   {
     desc: 'M540 陷阱 A 槽基址错位（+299 → +300：槽寻位读空列）',
     file: 'ere/system/dungeon/dungeon-trap.js',
-    find: '    let trap_num = chara(a).dungeon.侵攻阶层 + 299;',
+    find: '    let trap_num = EraChara.get(a).cflag.invasion_floor + 299;',
     replace:
-      '    let trap_num = chara(a).dungeon.侵攻阶层 + 300; // 变异：A 槽基址错位',
+      '    let trap_num = EraChara.get(a).cflag.invasion_floor + 300; // 变异：A 槽基址错位',
     tests: ['dungeon-trap'],
     must_mention: '落穴伤害经分发落变量',
   },
@@ -318,7 +307,7 @@ export default [
   {
     desc: 'M546 shoot_trap 的下坠一层删（侵攻阶层 += 1）',
     file: 'ere/system/dungeon/dungeon-trap.js',
-    find: '    chara(a).dungeon.侵攻阶层 += 1;\n    if (show) {\n      era.print(`掉到了下一层，${name}迷路了…`);',
+    find: '    EraChara.get(a).cflag.invasion_floor += 1;\n    if (show) {\n      era.print(`掉到了下一层，${name}迷路了…`);',
     replace:
       '    // 变异：侵攻阶层 += 1 删\n    if (show) {\n      era.print(`掉到了下一层，${name}迷路了…`);',
     tests: ['dungeon-trap'],
@@ -327,9 +316,9 @@ export default [
   {
     desc: 'M547 succubus_trap 的百合经验档删（EXP:40 += 6）',
     file: 'ere/system/dungeon/dungeon-trap.js',
-    find: '    if (yuri) {\n      chara(a).train.百合经验 += 6; // EXP:A:40（train 域门面）\n    }',
+    find: '    if (yuri) {\n      EraChara.get(a).exp.lesbian_exp += 6; // EXP:A:40（train 域门面）\n    }',
     replace:
-      '    if (false && yuri) { // 变异：百合经验档删\n      chara(a).train.百合经验 += 6; // EXP:A:40（train 域门面）\n    }',
+      '    if (false && yuri) { // 变异：百合经验档删\n      EraChara.get(a).exp.lesbian_exp += 6; // EXP:A:40（train 域门面）\n    }',
     tests: ['dungeon-trap'],
     must_mention: '百合经验 +6',
   },
@@ -345,8 +334,8 @@ export default [
   {
     desc: 'M549 诈骗剧情3 的双倍欠条改坏（582 -= COST×2 → -= COST）',
     file: 'ere/system/dungeon/dungeon-trap.js',
-    find: '  chara(a).patch.借款 -= cost * 2; // CFLAG:582（patch 域门面「借款」）',
-    replace: '  chara(a).patch.借款 -= cost; // 变异：双倍欠条改单倍',
+    find: '  EraChara.get(a).cflag.debt -= cost * 2; // CFLAG:582（patch 域门面「借款」）',
+    replace: '  EraChara.get(a).cflag.debt -= cost; // 变异：双倍欠条改单倍',
     tests: ['dungeon-trap'],
     must_mention: '债务 COST×2',
   },
@@ -418,8 +407,9 @@ export default [
   {
     desc: 'M585 dungeon_map 的侵攻度写回改坏（D:20 丢失——2D 单位的推进状态不再持久）',
     file: 'ere/system/dungeon/labo-dungeon-map.js',
-    find: '  chara(a).event.侵攻度 = walk20;',
-    replace: '  chara(a).event.侵攻度 = 0; // 变异：写回值丢成 0',
+    find: '  EraChara.get(a).cflag.invasion_progress = walk20;',
+    replace:
+      '  EraChara.get(a).cflag.invasion_progress = 0; // 变异：写回值丢成 0',
     tests: ['dungeon-labo'],
     must_mention: 'CFLAG:502 = D:20',
   },
@@ -443,7 +433,7 @@ export default [
     // #181 返工：DA/DB/DC 落引擎表（一维折叠）——两条钉住承载不倒退
     desc: 'M588 da_set 蒸发（era.set 删掉——引擎表承载退化为只读零值，存档快照失去 da: 键）',
     file: 'ere/system/dungeon/labo.js',
-    find: 'function da_set(y, x, v) {\n  era.set(`da:${y * 100 + x}`, v);\n}',
+    find: 'function da_set(y, x, v) {\n  era_da.set(y * 100 + x, v);\n}',
     replace:
       'function da_set(y, x, v) {\n  // 变异：era.set 蒸发（写入不落引擎表）\n}',
     tests: ['dungeon-labo'],
@@ -452,9 +442,9 @@ export default [
   {
     desc: 'M589 da_get 的折叠算式改坏（y*100+x → y+x：格子地址错位串行）',
     file: 'ere/system/dungeon/labo.js',
-    find: 'function da_get(y, x) {\n  return era.get(`da:${y * 100 + x}`) || 0;\n}',
+    find: 'function da_get(y, x) {\n  return era_da.get(y * 100 + x);\n}',
     replace:
-      'function da_get(y, x) {\n  return era.get(`da:${y + x}`) || 0; // 变异：折叠算式 y+x\n}',
+      'function da_get(y, x) {\n  return era_da.get(y + x); // 变异：折叠算式 y+x\n}',
     tests: ['dungeon-labo'],
     must_mention: '正向差：0 + trunc',
   },
@@ -487,25 +477,25 @@ export default [
   {
     desc: 'M622 st_up 基础攻防增量删（各 +1）',
     file: 'ere/system/dungeon/dungeon-lvup.js',
-    find: '  chara(cid).chara.基础攻击 += 1; // CFLAG:13\n  chara(cid).chara.基础防御 += 1; // CFLAG:14',
+    find: '  EraChara.get(cid).cflag.base_attack += 1; // CFLAG:13\n  EraChara.get(cid).cflag.base_defense += 1; // CFLAG:14',
     replace:
-      '  // 变异：基础攻防增量删\n  // chara(cid).chara.基础攻击 += 1;\n  // chara(cid).chara.基础防御 += 1;',
+      '  // 变异：基础攻防增量删\n  // EraChara.get(cid).cflag.base_attack += 1;\n  // EraChara.get(cid).cflag.base_defense += 1;',
     tests: ['dungeon-lvup'],
     must_mention: '基础攻击 1 + RAND:2=0 的 1',
   },
   {
     desc: 'M623 st_up 的体力/气力上限 +10 删',
     file: 'ere/system/dungeon/dungeon-lvup.js',
-    find: '  era.add(`maxbase:${cid}:0`, 10);\n  era.add(`maxbase:${cid}:1`, 10);',
+    find: '  EraChara.get(cid).maxbase.stamina += 10;\n  EraChara.get(cid).maxbase.willpower += 10;',
     replace:
-      '  // 变异：上限增量删\n  // era.add(`maxbase:${cid}:0`, 10);\n  // era.add(`maxbase:${cid}:1`, 10);',
+      '  // 变异：上限增量删\n  // EraChara.get(cid).maxbase.stamina += 10;\n  // EraChara.get(cid).maxbase.willpower += 10;',
     tests: ['dungeon-lvup'],
     must_mention: '体力上限 +10',
   },
   {
     desc: 'M624 lvup 初心者剥离删（TALENT:291 清 0 改坏）',
     file: 'ere/system/dungeon/dungeon-lvup.js',
-    find: '    chara(cid).chara.初心者 = 0; // TALENT:291（chara 域门面）',
+    find: '    EraChara.get(cid).talent.beginner = 0; // TALENT:291（chara 域门面）',
     replace: '    // 变异：初心者剥离删',
     tests: ['dungeon-lvup'],
     must_mention: '失去初心者',
@@ -513,16 +503,17 @@ export default [
   {
     desc: 'M625 dungeon_after 奖赏分支分派改坏（状态 5 改 7）',
     file: 'ere/system/dungeon/dungeon-after.js',
-    find: '  if (chara(cid).invasion.状态 === 5) {',
-    replace: '  if (chara(cid).invasion.状态 === 7) { // 变异：分派改坏',
+    find: '  if (EraChara.get(cid).cflag.state === 5) {',
+    replace: '  if (EraChara.get(cid).cflag.state === 7) { // 变异：分派改坏',
     tests: ['dungeon-after', 'event-turnend'],
     must_mention: 'CFLAG:1 == 5 → 奖赏分支',
   },
   {
     desc: 'M626 dungeon_after 惩罚分支分派改坏（状态 6 改 7）',
     file: 'ere/system/dungeon/dungeon-after.js',
-    find: '  } else if (chara(cid).invasion.状态 === 6) {',
-    replace: '  } else if (chara(cid).invasion.状态 === 7) { // 变异：分派改坏',
+    find: '  } else if (EraChara.get(cid).cflag.state === 6) {',
+    replace:
+      '  } else if (EraChara.get(cid).cflag.state === 7) { // 变异：分派改坏',
     tests: ['dungeon-after', 'event-turnend'],
     must_mention: 'CFLAG:1 == 6 → 惩罚分支',
   },
@@ -538,7 +529,7 @@ export default [
   {
     desc: 'M628 osioski 电椅刑恍惚分支的屈服点数删（JUEL:6 加算）',
     file: 'ere/system/dungeon/dungeon-after.js',
-    find: '      era.print(`屈服点数+${local11}`);\n      await era.waitAnyKey();\n      era.add(`juel:${cid}:6`, local11); // JUEL:6 屈服\n    } else {\n      era.print(`${name}哭叫着，在电击的痛苦中漏出了小便。`);',
+    find: '      era.print(`屈服点数+${local11}`);\n      await era.waitAnyKey();\n      EraChara.get(cid).jewel.submission += local11; // JUEL:6 屈服\n    } else {\n      era.print(`${name}哭叫着，在电击的痛苦中漏出了小便。`);',
     replace:
       '      era.print(`屈服点数+${local11}`);\n      await era.waitAnyKey();\n      // 变异：屈服加算删\n    } else {\n      era.print(`${name}哭叫着，在电击的痛苦中漏出了小便。`);',
     tests: ['dungeon-after'],
@@ -600,26 +591,26 @@ export default [
   {
     desc: 'M602 dungeon_swamp 的伤害基数 +10 删（DMG 少 10 点）',
     file: 'ere/system/dungeon/dungeon-room.js',
-    find: "  let dmg = (era.get('cflag:0:9') || 0) + 10;",
-    replace: "  let dmg = era.get('cflag:0:9') || 0; // 变异：+10 删",
+    find: '  let dmg = EraChara.get(0).cflag.level + 10;',
+    replace: '  let dmg = EraChara.get(0).cflag.level; // 变异：+10 删',
     tests: ['dungeon-room', 'dungeon-main'],
     must_mention: 'DMG = 0（魔王等级）+ 10',
   },
   {
     desc: 'M603 dungeon_ice 的攻击衰减改坏（×9/10 → ×10/10 不衰减）',
     file: 'ere/system/dungeon/dungeon-room.js',
-    find: '  const atk = era.get(`cflag:${a}:11`) || 0;\n  era.set(`cflag:${a}:11`, Math.floor((atk * 9) / 10));',
+    find: '  const atk = EraChara.get(a).cflag.attack;\n  EraChara.get(a).cflag.attack = Math.floor((atk * 9) / 10);',
     replace:
-      '  const atk = era.get(`cflag:${a}:11`) || 0;\n  era.set(`cflag:${a}:11`, Math.floor((atk * 10) / 10)); // 变异：不衰减',
+      '  const atk = EraChara.get(a).cflag.attack;\n  EraChara.get(a).cflag.attack = Math.floor((atk * 10) / 10); // 变异：不衰减',
     tests: ['dungeon-room'],
     must_mention: 'CFLAG:11 = floor(945/10)',
   },
   {
     desc: 'M604 dungeon_heat 的防御衰减改坏（×9/10 → ×10/10 不衰减）',
     file: 'ere/system/dungeon/dungeon-room.js',
-    find: '  const def = era.get(`cflag:${a}:12`) || 0;\n  era.set(`cflag:${a}:12`, Math.floor((def * 9) / 10));',
+    find: '  const def = EraChara.get(a).cflag.defense;\n  EraChara.get(a).cflag.defense = Math.floor((def * 9) / 10);',
     replace:
-      '  const def = era.get(`cflag:${a}:12`) || 0;\n  era.set(`cflag:${a}:12`, Math.floor((def * 10) / 10)); // 变异：不衰减',
+      '  const def = EraChara.get(a).cflag.defense;\n  EraChara.get(a).cflag.defense = Math.floor((def * 10) / 10); // 变异：不衰减',
     tests: ['dungeon-room'],
     must_mention: 'CFLAG:12 = floor(945/10)',
   },
@@ -635,34 +626,33 @@ export default [
   {
     desc: 'M606 dungeon_mase 的迷惑状態立位删（CFLAG:509 不写）',
     file: 'ere/system/dungeon/dungeon-room.js',
-    find: '  era.set(`cflag:${a}:509`, 1);',
-    replace: '  // era.set(`cflag:${a}:509`, 1); // 变异：立位删',
+    find: '  EraChara.get(a).cflag.lost_state = 1;',
+    replace: '  // EraChara.get(a).cflag.lost_state = 1; // 变异：立位删',
     tests: ['dungeon-room'],
     must_mention: '迷惑状態',
   },
   {
     desc: 'M607 dungeon_museum 的陈列架位 5 立起删（CFLAG:503 不 +32）',
     file: 'ere/system/dungeon/dungeon-room.js',
-    find: '      era.set(`cflag:${a}:503`, (era.get(`cflag:${a}:503`) || 0) + 32);',
-    replace:
-      '      // era.set(`cflag:${a}:503`, (era.get(`cflag:${a}:503`) || 0) + 32); // 变异：立位删',
+    find: '      EraChara.get(a).cflag.rest_flag += 32;',
+    replace: '      // EraChara.get(a).cflag.rest_flag += 32; // 变异：立位删',
     tests: ['dungeon-room'],
     must_mention: '位 5（32）立起',
   },
   {
     desc: 'M608 dungeon_hotel 的入账删（MONEY += COST 不写）',
     file: 'ere/system/dungeon/dungeon-room.js',
-    find: '  era_flag.money += cost;\n  era_exflag.legit_money += cost;\n  chara(a).dungeon.所持金 -= cost;\n\n  // CALL karma, A, -1',
+    find: '  era_flag.money += cost;\n  era_exflag.legit_money += cost;\n  EraChara.get(a).cflag.money -= cost;\n\n  // CALL karma, A, -1',
     replace:
-      '  // era_flag.money += cost; // 变异：入账删\n  // era_exflag.legit_money += cost;\n  chara(a).dungeon.所持金 -= cost;\n\n  // CALL karma, A, -1（域内延迟 require，文件头）',
+      '  // era_flag.money += cost; // 变异：入账删\n  // era_exflag.legit_money += cost;\n  EraChara.get(a).cflag.money -= cost;\n\n  // CALL karma, A, -1（域内延迟 require，文件头）',
     tests: ['dungeon-room'],
     must_mention: 'MONEY += COST',
   },
   {
     desc: 'M609 SHOP 逛街档的体力 +20 删',
     file: 'ere/system/dungeon/dungeon-room.js',
-    find: '  chara(a).dungeon.体力 += 20; // BASE:A:0 += 20',
-    replace: '  // chara(a).dungeon.体力 += 20; // 变异：+20 删',
+    find: '  EraChara.get(a).base.stamina += 20; // BASE:A:0 += 20',
+    replace: '  // EraChara.get(a).base.stamina += 20; // 变异：+20 删',
     tests: ['dungeon-room'],
     must_mention: '体力 +20',
   },
@@ -695,36 +685,35 @@ export default [
   {
     desc: 'M615 dungeon_room_build 的拡張位写入删（FLAG:ROOMID 不 +1）',
     file: 'ere/system/dungeon/dungeon-room.js',
-    find: '    era.set(`flag:${room_id + 10}`, extra + 1); // FLAG:ROOMID += 1',
-    replace:
-      '    // era.set(`flag:${room_id + 10}`, extra + 1); // 变异：写入删',
+    find: '    era_flag.set(room_id + 10, extra + 1); // FLAG:ROOMID += 1',
+    replace: '    // era_flag.set(room_id + 10, extra + 1); // 变异：写入删',
     tests: ['dungeon-room'],
     must_mention: 'FLAG:360 += 1',
   },
   {
     desc: 'M616 dungeon_shop_itemsell 的否定の珠换钱删（JUEL/580 不动）',
     file: 'ere/system/dungeon/dungeon-room.js',
-    find: '    era.set(`juel:${a}:100`, (era.get(`juel:${a}:100`) || 0) - 500);\n    chara(a).dungeon.所持金 += 500;',
+    find: '    EraChara.get(a).jewel.negation = EraChara.get(a).jewel.negation - 500;\n    EraChara.get(a).cflag.money += 500;',
     replace:
-      '    // era.set(`juel:${a}:100`, (era.get(`juel:${a}:100`) || 0) - 500); // 变异：换钱删\n    // chara(a).dungeon.所持金 += 500;',
+      '    // EraChara.get(a).jewel.negation = EraChara.get(a).jewel.negation - 500; // 变异：换钱删\n    // EraChara.get(a).cflag.money += 500;',
     tests: ['dungeon-room'],
     must_mention: 'JUEL:100 -= 500',
   },
   {
     desc: 'M617 dungeon_heat 绿洲分支的 TARGET 写删（JUEL:6 / 好感度不动）',
     file: 'ere/system/dungeon/dungeon-room.js',
-    find: "    const target = era_flag.target;\n    era.set(\n      `juel:${target}:6`,\n      (era.get(`juel:${target}:6`) || 0) + (era.get('cflag:0:9') || 0) * 4,\n    );\n    chara(target).chara.好感度 += 20; // CFLAG:TARGET:2 += 20",
+    find: '    const target = era_flag.target;\n    EraChara.get(target).jewel.submission += EraChara.get(0).cflag.level * 4;\n    EraChara.get(target).cflag.affection += 20; // CFLAG:TARGET:2 += 20',
     replace:
-      "    const target = era_flag.target;\n    // 变异：TARGET 写删\n    // era.set(\n    //   `juel:${target}:6`,\n    //   (era.get(`juel:${target}:6`) || 0) + (era.get('cflag:0:9') || 0) * 4,\n    // );\n    // chara(target).chara.好感度 += 20;",
+      '    const target = era_flag.target;\n    // 变异：TARGET 写删\n    // era.set(\n    //   `juel:${target}:6`,\n    //   EraChara.get(target).jewel.submission + EraChara.get(0).cflag.level * 4,\n    // );\n    // EraChara.get(target).cflag.affection += 20;',
     tests: ['dungeon-room'],
     must_mention: 'JUEL:TARGET:6 += 16',
   },
   {
     desc: 'M618 dungeon_museum 的气力伤害删（BASE:A:1 不减 MDMG）',
     file: 'ere/system/dungeon/dungeon-room.js',
-    find: '  chara(a).dungeon.气力 -= mdmg;\n  if (dmg > 0) {',
+    find: '  EraChara.get(a).base.willpower -= mdmg;\n  if (dmg > 0) {',
     replace:
-      '  // chara(a).dungeon.气力 -= mdmg; // 变异：伤害删\n  if (dmg > 0) {',
+      '  // EraChara.get(a).base.willpower -= mdmg; // 变异：伤害删\n  if (dmg > 0) {',
     tests: ['dungeon-room'],
     must_mention: 'BASE:A:1 -= 50',
   },
@@ -771,7 +760,7 @@ export default [
   {
     desc: 'M641 还款额的债务上限钳删（还超债务清成正值）',
     file: 'ere/system/dungeon/dungeon-town.js',
-    find: '  local = Math.min(\n    local,\n    Math.abs(chara(arg).patch.借款),\n    Math.trunc(cash / 2),\n  );',
+    find: '  local = Math.min(\n    local,\n    Math.abs(EraChara.get(arg).cflag.debt),\n    Math.trunc(cash / 2),\n  );',
     replace:
       '  local = Math.min(local, Math.trunc(cash / 2)); // 变异：债务钳删',
     tests: ['dungeon-town'],
@@ -780,17 +769,17 @@ export default [
   {
     desc: 'M642 担保人背债方向反（债务递减而非递增）',
     file: 'ere/system/dungeon/dungeon-town.js',
-    find: '  chara(arg).patch.借款 -= local; // CFLAG:582 -= LOCAL（patch 门面）',
-    replace: '  chara(arg).patch.借款 += local; // 变异：背债方向反',
+    find: '  EraChara.get(arg).cflag.debt -= local; // CFLAG:582 -= LOCAL（patch 门面）',
+    replace: '  EraChara.get(arg).cflag.debt += local; // 变异：背债方向反',
     tests: ['dungeon-town'],
     must_mention: '担保人按魔王等级背债',
   },
   {
     desc: 'M643 借款判定反（< 50 改 >= 50：低善恶反而借不到）',
     file: 'ere/system/dungeon/dungeon-town.js',
-    find: '  if (rand_n(260 + (era.get(`cflag:${arg}:151`) || 0)) < 50) {',
+    find: '  if (rand_n(260 + EraChara.get(arg).cflag.karma) < 50) {',
     replace:
-      '  if (rand_n(260 + (era.get(`cflag:${arg}:151`) || 0)) >= 50) { // 变异',
+      '  if (rand_n(260 + EraChara.get(arg).cflag.karma) >= 50) { // 变异',
     tests: ['dungeon-town'],
     must_mention: '（260 + 善恶）面骰 < 50 借入 1000',
   },
@@ -806,9 +795,9 @@ export default [
   {
     desc: 'M645 宴会预算收集改读本人（收集/支付不对称的有意行为改坏）',
     file: 'ere/system/dungeon/dungeon-town.js',
-    find: '    const cash = era.get(`cflag:${budget_target}:580`) || 0; // CFLAG:580（TARGET）',
+    find: '    const cash = EraChara.get(budget_target).cflag.money; // CFLAG:580（TARGET）',
     replace:
-      '    const cash = era.get(`cflag:${pm[lcount]}:580`) || 0; // 变异：逐人读',
+      '    const cash = EraChara.get(pm[lcount]).cflag.money; // 变异：逐人读',
     tests: ['dungeon-town'],
     must_mention: '贝丝被记了同一份飲み代（不对称）',
   },
@@ -823,7 +812,7 @@ export default [
   {
     desc: 'M649 受注计数递减删（任务永不超时）',
     file: 'ere/system/dungeon/dungeon-quest.js',
-    find: '    if ((era.get(`cflag:${cid}:539`) || 0) > 0) {',
+    find: '    if (EraChara.get(cid).cflag.quest_accept_count > 0) {',
     replace: '    if (false) { // 变异：539 递减删',
     tests: ['dungeon-quest'],
     must_mention: '计数在掷点前递减',
@@ -831,9 +820,9 @@ export default [
   {
     desc: 'M650 任务报酬资金公式改坏（等级×10+100 改 ×10）',
     file: 'ere/system/dungeon/dungeon-quest.js',
-    find: '        const local = (era.get(`cflag:${cid}:9`) || 0) * 10 + 100;',
+    find: '        const local = EraChara.get(cid).cflag.level * 10 + 100;',
     replace:
-      '        const local = (era.get(`cflag:${cid}:9`) || 0) * 10; // 变异',
+      '        const local = EraChara.get(cid).cflag.level * 10; // 变异',
     tests: ['dungeon-quest'],
     must_mention: 'LV5 × 10 + 100',
   },
@@ -849,7 +838,7 @@ export default [
   {
     desc: 'M652 性奉侍完结的 534 置位删（交涉成立也不完结任务）',
     file: 'ere/system/dungeon/dungeon-quest.js',
-    find: "        era.print('*任务成功*'); // PRINTFORML\n        chara(cid).dungeon.已接任务 = setbit(chara(cid).dungeon.已接任务, 1);\n        return 1;",
+    find: "        era.print('*任务成功*'); // PRINTFORML\n        EraChara.get(cid).cflag.accepted_quest = setbit(\n          EraChara.get(cid).cflag.accepted_quest,",
     replace:
       "        era.print('*任务成功*'); // PRINTFORML\n        // 变异：SETBIT 534,1 删\n        return 1;",
     tests: ['dungeon-quest'],
@@ -858,9 +847,9 @@ export default [
   {
     desc: 'M653 quest_bitch 失贞判定改读 ARG（TARGET 语义改坏）',
     file: 'ere/system/dungeon/dungeon-quest.js',
-    find: '  const t = era_flag.target;\n  if (\n    (era.get(`exp:${t}:0`) || 0) > 0 &&',
+    find: '  const t = era_flag.target;\n  if (\n    EraChara.get(t).exp.vagina_exp > 0 &&',
     replace:
-      '  const t = arg; // 变异：TARGET 读改 ARG 读\n  if (\n    (era.get(`exp:${t}:0`) || 0) > 0 &&',
+      '  const t = arg; // 变异：TARGET 读改 ARG 读\n  if (\n    EraChara.get(t).exp.vagina_exp > 0 &&',
     tests: ['dungeon-quest'],
     must_mention: '失贞：处女素质消去',
   },
@@ -949,7 +938,7 @@ export default [
   {
     desc: 'M6732 勇者对奴隶传送的 CFLAG:3 写入删坏',
     file: 'ere/system/dungeon/magic.js',
-    find: '    chara(b).train.公开自慰经验 = rand(100); // CFLAG:3',
+    find: '    EraChara.get(b).cflag.public_masturbation_exp = rand(100); // CFLAG:3',
     replace: '    // 变异：CFLAG:3 写入删除',
     tests: ['dungeon-magic'],
     must_mention: 'CFLAG:3',
@@ -957,9 +946,9 @@ export default [
   {
     desc: 'M6733 睡眠咒语的攻击力削减方向改坏',
     file: 'ere/system/dungeon/magic.js',
-    find: '  const value = chara(defender).dungeon.攻击力 - rand(damage);',
+    find: '  const value = EraChara.get(defender).cflag.attack - rand(damage);',
     replace:
-      '  const value = chara(defender).dungeon.攻击力 + rand(damage); // 变异',
+      '  const value = EraChara.get(defender).cflag.attack + rand(damage); // 变异',
     tests: ['dungeon-magic'],
     must_mention: '削攻击与防御',
   },
@@ -1125,7 +1114,7 @@ export default [
   {
     desc: 'M6753 怪物传送不再给勇者写迷惑状态',
     file: 'ere/system/dungeon/magic.js',
-    find: '    era.set(`cflag:${a}:509`, 1); // CFLAG:509 = 迷惑状态（dungeon 域）',
+    find: '    EraChara.get(a).cflag.lost_state = 1; // CFLAG:509 = 迷惑状态（dungeon 域）',
     replace: '    // 变异：迷惑状态写入删除',
     tests: ['dungeon-magic'],
     must_mention: '怪物传送写迷惑',
@@ -1133,9 +1122,9 @@ export default [
   {
     desc: 'M6754 怪物睡眠术打到怪物列号而非勇者',
     file: 'ere/system/dungeon/magic.js',
-    find: '    const value = chara(a).dungeon.攻击力 - rand(damage);',
+    find: '    const value = EraChara.get(a).cflag.attack - rand(damage);',
     replace:
-      '    const value = chara(b).dungeon.攻击力 - rand(damage); // 变异',
+      '    const value = EraChara.get(b).cflag.attack - rand(damage); // 变异',
     tests: ['dungeon-magic'],
     must_mention: '睡眠按目标类型命中',
   },
@@ -1267,17 +1256,17 @@ export default [
   {
     desc: 'M6691 恋人爱情每次错误增加两点',
     file: 'ere/system/dungeon/dungeon-lovers.js',
-    find: '  chara(cid).dungeon.恋人爱情 += 1; // CFLAG:607',
-    replace: '  chara(cid).dungeon.恋人爱情 += 2; // 变异',
+    find: '  EraChara.get(cid).cflag.lover_love += 1; // CFLAG:607',
+    replace: '  EraChara.get(cid).cflag.lover_love += 2; // 变异',
     tests: ['dungeon-lovers'],
     must_mention: '未知正数沿用 ERROR 并继续结算',
   },
   {
     desc: 'M6692 角色恋爱系统开关从 FLAG:8 bit2 改成 bit3',
     file: 'ere/system/dungeon/dungeon-lovers.js',
-    find: "  if (((era.get('flag:8') || 0) & 4) === 0) return 0; // FLAG:8 bit2 = 角色间恋爱",
+    find: '  if ((era_flag.adventurer_flags & 4) === 0) return 0; // FLAG:8 bit2 = 角色间恋爱',
     replace:
-      "  if (((era.get('flag:8') || 0) & 8) === 0) return 0; // 变异：读错 bit",
+      '  if ((era_flag.adventurer_flags & 8) === 0) return 0; // 变异：读错 bit',
     tests: ['dungeon-lovers'],
     must_mention: '条件满足时双向记录恋人',
   },
@@ -1518,8 +1507,8 @@ export default [
   {
     desc: 'M6843 monster_setup 楼层设施槽偏移一位',
     file: 'ere/system/dungeon/monster-data.js',
-    find: 'era.get(`flag:${floor + 349}`)',
-    replace: 'era.get(`flag:${floor + 350}`)',
+    find: 'era_flag.get(floor + 349)',
+    replace: 'era_flag.get(floor + 350)',
     tests: ['monster-play'],
     must_mention: 'MONSTER_SETUP 购买改造时',
   },
@@ -1655,44 +1644,45 @@ export default [
   {
     desc: 'M6860 野狗私处经验写到肛门经验',
     file: 'ere/system/dungeon/monster-play.js',
-    find: '  era.add(`exp:${cid}:0`, y); // EXP:A:0 = 私处经验\n  await print_wait(`兽奸经验+${y}`);\n  era.add(`exp:${cid}:56`, y); // EXP:A:56 = 兽奸经验\n  era.add(`cflag:${cid}:106`, y);',
+    find: '  EraChara.get(cid).exp.vagina_exp += y; // EXP:A:0 = 私处经验\n  await print_wait(`兽奸经验+${y}`);\n  EraChara.get(cid).exp.bestiality_exp += y; // EXP:A:56 = 兽奸经验\n  EraChara.get(cid).cflag.dog_vaginal_ejaculation += y;',
     replace:
-      '  era.add(`exp:${cid}:1`, y); // 变异：写错经验\n  await print_wait(`兽奸经验+${y}`);\n  era.add(`exp:${cid}:56`, y); // EXP:A:56 = 兽奸经验\n  era.add(`cflag:${cid}:106`, y);',
+      '  EraChara.get(cid).exp.anal_exp += y; // 变异：写错经验\n  await print_wait(`兽奸经验+${y}`);\n  EraChara.get(cid).exp.bestiality_exp += y; // EXP:A:56 = 兽奸经验\n  EraChara.get(cid).cflag.dog_vaginal_ejaculation += y;',
     tests: ['monster-play'],
     must_mention: '野狗、魔兽与马分支',
   },
   {
     desc: 'M6861 野狗兽奸经验写到触手经验',
     file: 'ere/system/dungeon/monster-play.js',
-    find: '  era.add(`exp:${cid}:56`, y); // EXP:A:56 = 兽奸经验\n  era.add(`cflag:${cid}:106`, y);',
+    find: '  EraChara.get(cid).exp.bestiality_exp += y; // EXP:A:56 = 兽奸经验\n  EraChara.get(cid).cflag.dog_vaginal_ejaculation += y;',
     replace:
-      '  era.add(`exp:${cid}:55`, y); // 变异：写错经验\n  era.add(`cflag:${cid}:106`, y);',
+      '  EraChara.get(cid).exp.tentacle_exp += y; // 变异：写错经验\n  EraChara.get(cid).cflag.dog_vaginal_ejaculation += y;',
     tests: ['monster-play'],
     must_mention: '野狗、魔兽与马分支',
   },
   {
     desc: 'M6862 野狗受精计数错写怪物计数',
     file: 'ere/system/dungeon/monster-play.js',
-    find: '  era.add(`cflag:${cid}:106`, y); // CFLAG:A:106 = 野狗受精计数',
-    replace: '  era.add(`cflag:${cid}:107`, y); // 变异：写错计数',
+    find: '  EraChara.get(cid).cflag.dog_vaginal_ejaculation += y; // CFLAG:A:106 = 野狗受精计数',
+    replace:
+      '  EraChara.get(cid).cflag.monster_vaginal_ejaculation += y; // 变异：写错计数',
     tests: ['monster-play'],
     must_mention: '野狗、魔兽与马分支',
   },
   {
     desc: 'M6863 魔兽受精计数错写野狗计数',
     file: 'ere/system/dungeon/monster-play.js',
-    find: '  era.add(`cflag:${cid}:107`, y); // CFLAG:A:107 = 阴道内射精计数\n  return 0;\n}\n\n/** horse_monster_play',
+    find: '  EraChara.get(cid).cflag.monster_vaginal_ejaculation += y; // CFLAG:A:107 = 阴道内射精计数\n  return 0;\n}\n\n/** horse_monster_play',
     replace:
-      '  era.add(`cflag:${cid}:106`, y); // 变异：写错计数\n  return 0;\n}\n\n/** horse_monster_play',
+      '  EraChara.get(cid).cflag.dog_vaginal_ejaculation += y; // 变异：写错计数\n  return 0;\n}\n\n/** horse_monster_play',
     tests: ['monster-play'],
     must_mention: '野狗、魔兽与马分支',
   },
   {
     desc: 'M6864 马的恐怖点数写错槽',
     file: 'ere/system/dungeon/monster-play.js',
-    find: '  era.add(`juel:${cid}:10`, y * 10); // JUEL:A:10 = 恐怖点数\n  era.add(`cflag:${cid}:107`, y);',
+    find: '  EraChara.get(cid).jewel.fear += y * 10; // JUEL:A:10 = 恐怖点数\n  EraChara.get(cid).cflag.monster_vaginal_ejaculation += y;',
     replace:
-      '  era.add(`juel:${cid}:8`, y * 10); // 变异：写错点数\n  era.add(`cflag:${cid}:107`, y);',
+      '  EraChara.get(cid).jewel.shame += y * 10; // 变异：写错点数\n  EraChara.get(cid).cflag.monster_vaginal_ejaculation += y;',
     tests: ['monster-play'],
     must_mention: '野狗、魔兽与马分支',
   },
@@ -1707,52 +1697,53 @@ export default [
   {
     desc: 'M6866 兽人口交经验写错槽',
     file: 'ere/system/dungeon/monster-play.js',
-    find: "    era.add(`exp:${cid}:22`, y); // EXP:A:22 = 口交经验\n    era.add(`exp:${cid}:20`, y); // EXP:A:20 = 精液经验\n  } else {\n    await print_wait('『大家，一起向魔王大人齐射…！』');",
+    find: "    EraChara.get(cid).exp.oral_exp += y; // EXP:A:22 = 口交经验\n    EraChara.get(cid).exp.semen_exp += y; // EXP:A:20 = 精液经验\n  } else {\n    await print_wait('『大家，一起向魔王大人齐射…！』');",
     replace:
-      "    era.add(`exp:${cid}:21`, y); // 变异：写错经验\n    era.add(`exp:${cid}:20`, y); // EXP:A:20 = 精液经验\n  } else {\n    await print_wait('『大家，一起向魔王大人齐射…！』');",
+      "    EraChara.get(cid).exp.service_pleasure_exp += y; // 变异：写错经验\n    EraChara.get(cid).exp.semen_exp += y; // EXP:A:20 = 精液经验\n  } else {\n    await print_wait('『大家，一起向魔王大人齐射…！』');",
     tests: ['monster-play'],
     must_mention: '兽人分支按第二骰',
   },
   {
     desc: 'M6867 史莱姆肛门经验写到私处',
     file: 'ere/system/dungeon/monster-play.js',
-    find: '    era.add(`exp:${cid}:1`, y); // EXP:A:1 = 肛门经验\n  }\n  await era.waitAnyKey();\n  return 0;\n}\n\n/** insect_monster_play',
+    find: '    EraChara.get(cid).exp.anal_exp += y; // EXP:A:1 = 肛门经验\n  }\n  await era.waitAnyKey();\n  return 0;\n}\n\n/** insect_monster_play',
     replace:
-      '    era.add(`exp:${cid}:0`, y); // 变异：写错经验\n  }\n  await era.waitAnyKey();\n  return 0;\n}\n\n/** insect_monster_play',
+      '    EraChara.get(cid).exp.vagina_exp += y; // 变异：写错经验\n  }\n  await era.waitAnyKey();\n  return 0;\n}\n\n/** insect_monster_play',
     tests: ['monster-play'],
     must_mention: '史莱姆、昆虫、藤蔓与触手',
   },
   {
     desc: 'M6868 昆虫产卵经验写到私处',
     file: 'ere/system/dungeon/monster-play.js',
-    find: '    era.add(`exp:${cid}:1`, y); // EXP:A:1 = 肛门经验\n  }\n  await era.waitAnyKey();\n  return 0;\n}\n\n/** ivy_monster_play',
+    find: '    EraChara.get(cid).exp.anal_exp += y; // EXP:A:1 = 肛门经验\n  }\n  await era.waitAnyKey();\n  return 0;\n}\n\n/** ivy_monster_play',
     replace:
-      '    era.add(`exp:${cid}:0`, y); // 变异：写错经验\n  }\n  await era.waitAnyKey();\n  return 0;\n}\n\n/** ivy_monster_play',
+      '    EraChara.get(cid).exp.vagina_exp += y; // 变异：写错经验\n  }\n  await era.waitAnyKey();\n  return 0;\n}\n\n/** ivy_monster_play',
     tests: ['monster-play'],
     must_mention: '史莱姆、昆虫、藤蔓与触手',
   },
   {
     desc: 'M6869 藤蔓恐怖点数写错槽',
     file: 'ere/system/dungeon/monster-play.js',
-    find: '  era.add(`juel:${cid}:10`, y * 10); // JUEL:A:10 = 恐怖点数\n  await era.waitAnyKey();',
+    find: '  EraChara.get(cid).jewel.fear += y * 10; // JUEL:A:10 = 恐怖点数\n  await era.waitAnyKey();',
     replace:
-      '  era.add(`juel:${cid}:8`, y * 10); // 变异：写错点数\n  await era.waitAnyKey();',
+      '  EraChara.get(cid).jewel.shame += y * 10; // 变异：写错点数\n  await era.waitAnyKey();',
     tests: ['monster-play'],
     must_mention: '史莱姆、昆虫、藤蔓与触手',
   },
   {
     desc: 'M6870 触手经验错写兽奸经验',
     file: 'ere/system/dungeon/monster-play.js',
-    find: '  era.add(`exp:${cid}:55`, y); // EXP:A:55 = 触手经验',
-    replace: '  era.add(`exp:${cid}:56`, y); // 变异：写错经验',
+    find: '  EraChara.get(cid).exp.tentacle_exp += y; // EXP:A:55 = 触手经验',
+    replace: '  EraChara.get(cid).exp.bestiality_exp += y; // 变异：写错经验',
     tests: ['monster-play'],
     must_mention: '史莱姆、昆虫、藤蔓与触手',
   },
   {
     desc: 'M6871 巨人扩张经验错写槽',
     file: 'ere/system/dungeon/monster-play.js',
-    find: '  era.add(`exp:${cid}:53`, y); // EXP:A:53 = 阴道扩张经验',
-    replace: '  era.add(`exp:${cid}:52`, y); // 变异：写错经验',
+    find: '  EraChara.get(cid).exp.anal_dilation_exp += y; // EXP:A:53 = 阴道扩张经验',
+    replace:
+      '  EraChara.get(cid).exp.vagina_dilation_exp += y; // 变异：写错经验',
     tests: ['monster-play'],
     must_mention: '妖精、巨人、男女魔族',
   },
@@ -1768,8 +1759,8 @@ export default [
   {
     desc: 'M6873 女魔族百合经验反向扣减',
     file: 'ere/system/dungeon/monster-play.js',
-    find: '    chara(cid).train.百合经验 += y;',
-    replace: '    chara(cid).train.百合经验 -= y;',
+    find: '    EraChara.get(cid).exp.lesbian_exp += y;',
+    replace: '    EraChara.get(cid).exp.lesbian_exp -= y;',
     tests: ['monster-play'],
     must_mention: '妖精、巨人、男女魔族',
   },
@@ -2004,7 +1995,7 @@ export default [
   {
     desc: 'M6901 婚后不清异种妊娠对象记录',
     file: 'ere/system/dungeon/marriage-day.js',
-    find: '  era.set(`cflag:${cid}:112`, 0); // CFLAG[112] = 异种妊娠对象',
+    find: '  EraChara.get(cid).cflag.fetus_monster_index = 0; // CFLAG[112] = 异种妊娠对象',
     replace: '  // 变异：不清异种妊娠对象记录',
     tests: ['marriage-day'],
     must_mention: '主函数：野狗婚姻完成分支后清记录并发出 TURNEND',
@@ -2029,9 +2020,9 @@ export default [
   {
     desc: 'M6904 非主角误入野狗的主角专属分支',
     file: 'ere/system/dungeon/marriage-day.js',
-    find: '    cid === 0 &&\n    chara(cid).event.牝犬 == 0 &&\n    (chara(cid).train.兽奸中毒 <= 1 || chara(cid).chara.结婚爱情 < 50)',
+    find: '    cid === 0 &&\n    EraChara.get(cid).talent.bitch == 0 &&\n    (EraChara.get(cid).abl.bestiality_addiction <= 1 ||',
     replace:
-      '    cid >= 0 && // 变异：所有角色都视为 A == 0\n    chara(cid).event.牝犬 == 0 &&\n    (chara(cid).train.兽奸中毒 <= 1 || chara(cid).chara.结婚爱情 < 50)',
+      '    cid >= 0 && // 变异：所有角色都视为 A == 0\n    EraChara.get(cid).talent.bitch == 0 &&\n    (EraChara.get(cid).abl.bestiality_addiction <= 1 || EraChara.get(cid).cflag.spousal_love < 50)',
     tests: ['marriage-day'],
     must_mention: '身体分流写入不同经验，后者另有显式等待',
   },
@@ -2062,9 +2053,9 @@ export default [
   {
     desc: 'M6908 野狗婚后动态正文拆成多行',
     file: 'ere/system/dungeon/marriage-day.js',
-    find: '  } else if (chara(cid).event.牝犬 == 1) {\n    let description = name_of(cid);',
+    find: '  } else if (EraChara.get(cid).talent.bitch == 1) {\n    let description = name_of(cid);',
     replace:
-      "  } else if (chara(cid).event.牝犬 == 1) {\n    era.print(name_of(cid));\n    let description = ''; // 变异：拆开同一显示行",
+      "  } else if (EraChara.get(cid).talent.bitch == 1) {\n    era.print(name_of(cid));\n    let description = ''; // 变异：拆开同一显示行",
     tests: ['marriage-day'],
     must_mention: '身体分流写入不同经验，后者另有显式等待',
   },
@@ -2079,25 +2070,25 @@ export default [
   {
     desc: 'M6910 魔王未声明状态误阻断共同生活',
     file: 'ere/system/dungeon/marriage-day.js',
-    find: '  if (chara(cid).invasion.状态 != 0 || chara(0).invasion.状态 != 0) {',
+    find: '  if (EraChara.get(cid).cflag.state != 0 || EraChara.get(0).cflag.state != 0) {',
     replace:
-      "  if (chara(cid).invasion.状态 != 0 || era.get('cflag:0:1') != 0) { // 变异：未声明值不兜零",
+      '  if (EraChara.get(cid).cflag.state != 0 || EraChara.get(0).cflag.state != 0) { // 变异：未声明值不兜零',
     tests: ['marriage-day'],
     must_mention: '身体分流写入不同经验，后者另有显式等待',
   },
   {
     desc: 'M6911 兽人低爱情误跳高爱情标签',
     file: 'ere/system/dungeon/marriage-day.js',
-    find: '    } else if (chara(cid).chara.结婚爱情 > 40) {\n      // RAW: GOTO ORC_MARRIAGE_DAY40',
+    find: '    } else if (EraChara.get(cid).cflag.spousal_love > 40) {\n      // RAW: GOTO ORC_MARRIAGE_DAY40',
     replace:
-      '    } else if (chara(cid).chara.结婚爱情 > 30) {\n      // 变异：低爱情误跳高爱情标签',
+      '    } else if (EraChara.get(cid).cflag.spousal_love > 30) {\n      // 变异：低爱情误跳高爱情标签',
     tests: ['marriage-day'],
     must_mention: '低爱情的随机分支不会误跳高爱情标签',
   },
   {
     desc: 'M6912 巨人高爱情展示漏加肛门经验',
     file: 'ere/system/dungeon/marriage-day.js',
-    find: '        era.print(`肛门扩张经验+1`);\n        // EXP[1] + = y（变量语义：EXP 族，(cid)[1] +）\n        era.add(`exp:${cid}:1`, y);\n        // EXP[5] + = y（变量语义：EXP 族，(cid)[5] +）',
+    find: '        era.print(`肛门扩张经验+1`);\n        // EXP[1] + = y（变量语义：EXP 族，(cid)[1] +）\n        EraChara.get(cid).exp.anal_exp += y;\n        // EXP[5] + = y（变量语义：EXP 族，(cid)[5] +）',
     replace:
       '        era.print(`肛门扩张经验+1`);\n        // 变异：漏加肛门经验\n        // EXP[5] + = y（变量语义：EXP 族，(cid)[5] +）',
     tests: ['marriage-day'],
@@ -2106,26 +2097,27 @@ export default [
   {
     desc: 'M6913 男性配偶高爱情分支颠倒私处封印',
     file: 'ere/system/dungeon/marriage-day.js',
-    find: "      description += '和睦地相拥着，';\n    }\n\n    if (\n      chara(cid).chara.私处封印 == 1 ||",
+    find: "      description += '和睦地相拥着，';\n    }\n\n    if (\n      EraChara.get(cid).talent.vagina_seal == 1 ||",
     replace:
-      "      description += '和睦地相拥着，';\n    }\n\n    if (\n      chara(cid).chara.私处封印 == 0 || // 变异：颠倒私处封印",
+      "      description += '和睦地相拥着，';\n    }\n\n    if (\n      EraChara.get(cid).talent.vagina_seal == 0 || // 变异：颠倒私处封印",
     tests: ['marriage-day'],
     must_mention: '高爱情夫妻分支尊重私处封印',
   },
   {
     desc: 'M6914 女性配偶百合气质门槛抬高',
     file: 'ere/system/dungeon/marriage-day.js',
-    find: '  } else if (chara(cid).chara.百合气质 >= 1) {',
-    replace: '  } else if (chara(cid).chara.百合气质 > 1) { // 变异：门槛抬高',
+    find: '  } else if (EraChara.get(cid).abl.lesbian_temper >= 1) {',
+    replace:
+      '  } else if (EraChara.get(cid).abl.lesbian_temper > 1) { // 变异：门槛抬高',
     tests: ['marriage-day'],
     must_mention: '百合气质角色接受妻子且不进入惩罚分支',
   },
   {
     desc: 'M6915 史莱姆低欲望误加自慰经验',
     file: 'ere/system/dungeon/marriage-day.js',
-    find: '  if (chara(cid).system.欲望 >= 3) {\n    // EXP:cid[10] + = y（变量语义：EXP 族，cid[10] +）',
+    find: '  if (EraChara.get(cid).abl.lust >= 3) {\n    // EXP:cid[10] + = y（变量语义：EXP 族，cid[10] +）',
     replace:
-      '  if (chara(cid).system.欲望 >= 2) { // 变异：低欲望也加自慰经验\n    // EXP:cid[10] + = y（变量语义：EXP 族，cid[10] +）',
+      '  if (EraChara.get(cid).abl.lust >= 2) { // 变异：低欲望也加自慰经验\n    // EXP:cid[10] + = y（变量语义：EXP 族，cid[10] +）',
     tests: ['marriage-day'],
     must_mention: '低欲望不会获得自慰经验',
   },
@@ -2141,17 +2133,18 @@ export default [
   {
     desc: 'M6917 藤蔓低欲望误入主动侍奉分支',
     file: 'ere/system/dungeon/marriage-day.js',
-    find: '  if (chara(cid).system.欲望 >= 4) {',
-    replace: '  if (chara(cid).system.欲望 >= 3) { // 变异：降低主动侍奉门槛',
+    find: '  if (EraChara.get(cid).abl.lust >= 4) {',
+    replace:
+      '  if (EraChara.get(cid).abl.lust >= 3) { // 变异：降低主动侍奉门槛',
     tests: ['marriage-day'],
     must_mention: '低欲望不会进入主动侍奉分支',
   },
   {
     desc: 'M6918 触手把未封印女性误判为封印分支',
     file: 'ere/system/dungeon/marriage-day.js',
-    find: '    chara(cid).chara.男人 == 1\n  ) {\n    era.print(\n      `${clitoris_word(cid)},乳房,肛门点数+',
+    find: '    EraChara.get(cid).talent.male == 1\n  ) {\n    era.print(\n      `${clitoris_word(cid)},乳房,肛门点数+',
     replace:
-      '    chara(cid).chara.男人 == 0 // 变异：颠倒身体分流\n  ) {\n    era.print(\n      `${clitoris_word(cid)},乳房,肛门点数+',
+      '    EraChara.get(cid).talent.male == 0 // 变异：颠倒身体分流\n  ) {\n    era.print(\n      `${clitoris_word(cid)},乳房,肛门点数+',
     tests: ['marriage-day'],
     must_mention: '未封印女性获得私处经验',
   },
@@ -2176,18 +2169,18 @@ export default [
   {
     desc: 'M6921 脑寄生扩大漏尿随机命中范围',
     file: 'ere/system/dungeon/marriage-day.js',
-    find: '  if (chara(cid).event.漏尿癖 == 1 || rand(20) == 0) {',
+    find: '  if (EraChara.get(cid).talent.incontinence_fetish == 1 || rand(20) == 0) {',
     replace:
-      '  if (chara(cid).event.漏尿癖 == 1 || rand(20) <= 1) { // 变异：扩大漏尿随机范围',
+      '  if (EraChara.get(cid).talent.incontinence_fetish == 1 || rand(20) <= 1) { // 变异：扩大漏尿随机范围',
     tests: ['marriage-day'],
     must_mention: '漏尿随机未命中时进入脑侵与幻觉分支',
   },
   {
     desc: 'M6922 马匹把饮精随机误判为交合',
     file: 'ere/system/dungeon/marriage-day.js',
-    find: '  if (chara(cid).event.牝犬 == 1 || cid === 0) {\n    if (rand(2) == 0) {\n      if (',
+    find: '  if (EraChara.get(cid).talent.bitch == 1 || cid === 0) {\n    if (rand(2) == 0) {\n      if (',
     replace:
-      '  if (chara(cid).event.牝犬 == 1 || cid === 0) {\n    if (rand(2) <= 1) { // 变异：饮精随机误入交合\n      if (',
+      '  if (EraChara.get(cid).talent.bitch == 1 || cid === 0) {\n    if (rand(2) <= 1) { // 变异：饮精随机误入交合\n      if (',
     tests: ['marriage-day'],
     must_mention: '饮精分支获得五倍口交与兽奸经验',
   },
@@ -2212,21 +2205,9 @@ export default [
   {
     desc: 'M10118 campaign_ending：全员取消派遣判断条件失效（=== 12 改 === 1200，#469）',
     file: 'ere/system/dungeon/dungeon-campaign.js',
-    find: `  for (const cid of era.getAddedCharacters()) {
-    if (chara(cid).invasion.状态 === 12) {
-      party_del(cid);
-      chara(cid).invasion.状态 = 0;
-      chara(cid).invasion.回城标志 = 0;
-    }
-  }`,
-    replace: `  for (const cid of era.getAddedCharacters()) {
-    if (chara(cid).invasion.状态 === 1200) {
-      // 变异：判断条件失效
-      party_del(cid);
-      chara(cid).invasion.状态 = 0;
-      chara(cid).invasion.回城标志 = 0;
-    }
-  }`,
+    find: '  for (const cid of era.getAddedCharacters()) {\n    if (EraChara.get(cid).cflag.state === 12) {\n      party_del(cid);\n      EraChara.get(cid).cflag.state = 0;\n      EraChara.get(cid).cflag.returned_to_town = 0;\n    }\n  }',
+    replace:
+      '  for (const cid of era.getAddedCharacters()) {\n    if (EraChara.get(cid).cflag.state === 1200) {\n      // 变异：判断条件失效\n      party_del(cid);\n      EraChara.get(cid).cflag.state = 0;\n      EraChara.get(cid).cflag.returned_to_town = 0;\n    }\n  }',
     tests: ['dungeon-main'],
     must_mention: '无条件取消全员派遣',
   },
@@ -2323,7 +2304,7 @@ export default [
   {
     desc: 'M10620 再起点分支：CFLAG:520 的门面名退回未登记的「到达阶层」（写不落 era.set，#484）',
     file: 'ere/system/dungeon/dungeon.js',
-    find: '      chara(arg0).dungeon.目标阶层 = 8; // CFLAG:520 = 8',
+    find: '      EraChara.get(arg0).cflag.target_floor = 8; // CFLAG:520 = 8',
     replace:
       '      chara(arg0).dungeon.到达阶层 = 8; // 变异：退回未登记的门面名',
     tests: ['dungeon-main'],
@@ -2332,8 +2313,9 @@ export default [
   {
     desc: 'M10621 再起点分支：CFLAG:520 的目标值改错（8 改 7，#484）',
     file: 'ere/system/dungeon/dungeon.js',
-    find: '      chara(arg0).dungeon.目标阶层 = 8; // CFLAG:520 = 8',
-    replace: '      chara(arg0).dungeon.目标阶层 = 7; // 变异：目标值改错',
+    find: '      EraChara.get(arg0).cflag.target_floor = 8; // CFLAG:520 = 8',
+    replace:
+      '      EraChara.get(arg0).cflag.target_floor = 7; // 变异：目标值改错',
     tests: ['dungeon-main'],
     must_mention: '再起点分支的 CFLAG:520 = 8 真的落进变量',
   },
@@ -2479,16 +2461,16 @@ export default [
   {
     desc: 'M11485 bedroom_battle_male 男人位判断条件取反（TALENT:0:122 非 0 改成取反：男女魔王的 MODE 互换）',
     file: 'ere/system/dungeon/dungeon.js',
-    find: "  if (era.get('talent:0:122')) {",
-    replace: "  if (!era.get('talent:0:122')) { // 变异：判断条件取反",
+    find: '  if (EraChara.get(0).talent.male) {',
+    replace: '  if (!EraChara.get(0).talent.male) { // 变异：判断条件取反',
     tests: ['dungeon-bedroom'],
     must_mention: 'MODE 2',
   },
   {
     desc: 'M11486 bedroom_battle_male 欲望门槛 > 8 改成 > 7（8 档被错升一档）',
     file: 'ere/system/dungeon/dungeon.js',
-    find: "  if ((era.get('abl:0:11') || 0) > 8) {",
-    replace: "  if ((era.get('abl:0:11') || 0) > 7) { // 变异：门槛错",
+    find: '  if (EraChara.get(0).abl.lust > 8) {',
+    replace: '  if (EraChara.get(0).abl.lust > 7) { // 变异：门槛错',
     tests: ['dungeon-bedroom'],
     must_mention: '欲望恰为 8',
   },
@@ -2567,9 +2549,9 @@ export default [
   {
     desc: 'M12104 蜘蛛网段收尾补回空行（收尾 PRINTL 只收那串 PRINTFORM 拼出的一行）',
     file: 'ere/system/dungeon/dungeon-trap.js',
-    find: '    chara(a).dungeon.体力 -= local;\n  }\n\n  // 的 PRINTL 只结束上面那串 `PRINTFORM` 拼起来的一行（PRINTFORM',
+    find: '    EraChara.get(a).base.stamina -= local;\n  }\n\n  // 的 PRINTL 只结束上面那串 `PRINTFORM` 拼起来的一行（PRINTFORM',
     replace:
-      '    chara(a).dungeon.体力 -= local;\n  }\n\n  era.println(); // 变异：照「收尾 PRINTL 再补一条」翻译的旧写法\n  // 的 PRINTL 只结束上面那串 `PRINTFORM` 拼起来的一行（PRINTFORM',
+      '    EraChara.get(a).base.stamina -= local;\n  }\n\n  era.println(); // 变异：照「收尾 PRINTL 再补一条」翻译的旧写法\n  // 的 PRINTL 只结束上面那串 `PRINTFORM` 拼起来的一行（PRINTFORM',
     tests: ['dungeon-trap'],
     must_mention: '蜘蛛网：收尾的 PRINTL 不是空行',
   },
@@ -2689,9 +2671,9 @@ export default [
   {
     desc: 'M13151 victory_get 骄傲低扣减重印段复活（#651 删的重复段不回潮）',
     file: 'ere/system/dungeon/dungeon-battle.js',
-    find: '  if ((era.get(`talent:${arg0}:17`) || 0) !== 0) {\n    will -= 1; // プライド低い\n  }',
+    find: '  if (EraChara.get(arg0).talent.humble !== 0) {\n    will -= 1; // プライド低い\n  }',
     replace:
-      '  if ((era.get(`talent:${arg0}:17`) || 0) !== 0) {\n    will -= 1; // プライド低い\n  }\n  if ((era.get(`talent:${arg0}:17`) || 0) !== 0) {\n    will -= 1; // 变异：重印段复活（骄傲低多扣一次）\n  }',
+      '  if (EraChara.get(arg0).talent.humble !== 0) {\n    will -= 1; // プライド低い\n  }\n  if (EraChara.get(arg0).talent.humble !== 0) {\n    will -= 1; // 变异：重印段复活（骄傲低多扣一次）\n  }',
     tests: ['dungeon-battle'],
     must_mention: 'will 6 > 5，RETURN 0',
   },
@@ -2716,7 +2698,7 @@ export default [
   {
     desc: 'M13154 dungeon_farm_rescue 战役检查删（恒救走，#651 修好的按本人状态判定不回潮）',
     file: 'ere/system/dungeon/dungeon-room.js',
-    find: '  if ((era.get(`cflag:${arg0}:1`) || 0) !== 12) {\n    era_flag.meat_toilet_count -= 1;\n  }',
+    find: '  if (EraChara.get(arg0).cflag.state !== 12) {\n    era_flag.meat_toilet_count -= 1;\n  }',
     replace: '  era_flag.meat_toilet_count -= 1; // 变异：战役检查删（恒救走）',
     tests: ['dungeon-room'],
     must_mention: '战役中的勇者不停留',
@@ -2741,17 +2723,18 @@ export default [
   {
     desc: 'M13157 set_quest 受注计数判断条件回退 bit3（#651 修好的笔误不回潮）',
     file: 'ere/system/dungeon/dungeon-quest.js',
-    find: '    if (getbit(era.get(`cflag:${cid}:536`) || 0, 2) !== 0) {',
+    find: '    if (getbit(EraChara.get(cid).cflag.quest_obstacle_bits, 2) !== 0) {',
     replace:
-      '    if (getbit(era.get(`cflag:${cid}:536`) || 0, 3) !== 0) { // 变异：判断条件回退 bit3',
+      '    if (getbit(EraChara.get(cid).cflag.quest_obstacle_bits, 3) !== 0) { // 变异：判断条件回退 bit3',
     tests: ['dungeon-quest'],
     must_mention: 'bit2（时限）',
   },
   {
     desc: 'M13158 settle_love_exp 前戏珠回退遗留字面量 250（#651 修好的 LOCAL×5 不回潮）',
     file: 'ere/system/dungeon/dungeon-lovers.js',
-    find: '    era.add(`juel:${cid}:0`, love_exp[9] * 5);',
-    replace: '    era.add(`juel:${cid}:0`, 250); // 变异：回退遗留字面量',
+    find: '    EraChara.get(cid).jewel.clitoris += love_exp[9] * 5;',
+    replace:
+      '    EraChara.get(cid).jewel.clitoris += 250; // 变异：回退遗留字面量',
     tests: ['dungeon-lovers'],
     must_mention: '前戏数 2 × 5',
   },
@@ -2905,10 +2888,8 @@ export default [
   {
     desc: 'M16551 撤退分支的休憩加算删（队长不再歇一口气）',
     file: 'ere/system/dungeon/dungeon.js',
-    find: `    // 休憩 +1（队长与同伴）
-    chara(arg0).dungeon.休憩 += 1;`,
-    replace: `    // 休憩 +1（队长与同伴）
-    // 变异：队长的休憩加算删除`,
+    find: '    // 休憩 +1（队长与同伴）\n    EraChara.get(arg0).cflag.rest_flag += 1;',
+    replace: '    // 休憩 +1（队长与同伴）\n    // 变异：队长的休憩加算删除',
     tests: ['dungeon-benki-flow'],
     must_mention: '变量写序列',
   },
@@ -3088,8 +3069,8 @@ export default [
   {
     desc: 'M18502 enemy_attack 的肉便器判定读回 TALENT:178（那一格没有条目、没有写点，演出恒走武器文）（#991）',
     file: 'ere/system/dungeon/dungeon-battle.js',
-    find: '    (era.get(`talent:${arg0}:204`) || 0) !== 0 &&',
-    replace: '    (era.get(`talent:${arg0}:178`) || 0) !== 0 &&',
+    find: '    EraChara.get(arg0).talent.cum_dump !== 0 &&',
+    replace: '    EraChara.get(arg0).talent.get(178) !== 0 &&',
     tests: ['dungeon-battle'],
     must_mention: '应有诱惑文',
   },

@@ -121,9 +121,9 @@ export default [
   {
     desc: 'M6776 命之种子男性检查删除（男性误走私处敏感）',
     file: 'ere/system/dungeon/ex-item.js',
-    find: '  if (era.get(`talent:${cid}:122`)) {\n    cursed = false;\n  }',
+    find: '  if (EraChara.get(cid).talent.male) {\n    cursed = false;\n  }',
     replace:
-      '  if (false && era.get(`talent:${cid}:122`)) {\n    cursed = false;\n  }',
+      '  if (false && EraChara.get(cid).talent.male) {\n    cursed = false;\n  }',
     tests: ['ex-item'],
     must_mention: '男性不走私处敏感',
   },
@@ -211,9 +211,9 @@ export default [
   {
     desc: 'M6787 英雄药 UP_VALUE 等级除数改坏（10 → 20）',
     file: 'ere/system/dungeon/ex-item.js',
-    find: '  const up_value = Math.trunc((era.get(`cflag:${cid}:9`) || 0) / 10) + 10;',
+    find: '  const up_value = Math.trunc(EraChara.get(cid).cflag.level / 10) + 10;',
     replace:
-      '  const up_value = Math.trunc((era.get(`cflag:${cid}:9`) || 0) / 20) + 10;',
+      '  const up_value = Math.trunc(EraChara.get(cid).cflag.level / 20) + 10;',
     tests: ['ex-item'],
     must_mention: '等级 25 → UP_VALUE 12',
   },
@@ -228,17 +228,17 @@ export default [
   {
     desc: 'M6789 use_ex_item 丢失整数除法截断',
     file: 'ere/system/dungeon/ex-item.js',
-    find: 'Math.trunc(((era.get(`maxbase:${cid}:0`) || 0) * 6) / 10);\n    } else if (item_no === 401)',
+    find: 'Math.trunc((EraChara.get(cid).maxbase.stamina * 6) / 10);\n    } else if (item_no === 401)',
     replace:
-      '((era.get(`maxbase:${cid}:0`) || 0) * 6) / 10;\n    } else if (item_no === 401)',
+      '(EraChara.get(cid).maxbase.stamina * 6) / 10;\n    } else if (item_no === 401)',
     tests: ['ex-item'],
     must_mention: '整数除法边界',
   },
   {
     desc: 'M6790 use_ex_item 使用后不清槽',
     file: 'ere/system/dungeon/ex-item.js',
-    find: '      era.set(`cflag:${cid}:${slot}`, 0);',
-    replace: '      era.set(`cflag:${cid}:${slot}`, stored); // 变异：不清槽',
+    find: '      EraChara.get(cid).cflag.set(slot, 0);',
+    replace: '      EraChara.get(cid).cflag.set(slot, stored); // 变异：不清槽',
     tests: ['ex-item'],
     must_mention: '未鉴定杖必毁并清槽',
   },
