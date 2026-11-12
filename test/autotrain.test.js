@@ -26,7 +26,6 @@ const { test } = require('node:test');
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { com_context } = require('./helpers/com-context');
 const { preset_gamebase } = require('./helpers/gamebase');
-const { com_context } = require('./helpers/com-context');
 
 /**
  * 世界底座：预置魔王 0、奴隶 17（+ 可选助手 1），开调教域，指好指针。
