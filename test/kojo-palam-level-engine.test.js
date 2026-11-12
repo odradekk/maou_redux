@@ -4,7 +4,10 @@ const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
-const { register_handlers } = require('./helpers/event-registration');
+const {
+  load_modules,
+  register_handlers,
+} = require('./helpers/event-registration');
 const {
   create_chara_loader,
   create_variable_loader,
@@ -99,7 +102,7 @@ engine_test(
     }
     api.set('talent:0:122', 1); // 调教者为男性。
     api.set('talent:31:160', 1); // 目标使用慈爱口上。
-    register_handlers(fixture, 'kojo/kojo-k0-tender');
+    load_modules(fixture, 'kojo/kojo-k0-tender');
     fixture.load_module('system/train/com-caress');
     register_handlers(fixture, 'event/event-comend');
     const { execute_command_round } = fixture.load_module(

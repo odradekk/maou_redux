@@ -730,7 +730,7 @@ test('批量循环把处分方式编号作为实参传给口上，按输入值�
   fixture.store.set('talent:47:163', 1); // 高贵性格 → K3 处刑口上
   fixture.set_inputs(47, 121, 5, 1999);
   const { batch_execution } = load_batch(fixture);
-  const { exucution_koujo_family } = fixture.load_module('kojo/kojo-system');
+  const { exucution_koujo_family } = require('./helpers/kojo-families');
   let observed;
   exucution_koujo_family.register(3, async (event_no) => {
     observed = event_no;

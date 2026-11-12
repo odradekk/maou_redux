@@ -9,7 +9,10 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
-const { register_handlers } = require('./helpers/event-registration');
+const {
+  load_modules,
+  register_handlers,
+} = require('./helpers/event-registration');
 const { preset_chara_0, join_slave_chara } = require('./helpers/chara');
 
 const CID = 33;
@@ -31,35 +34,24 @@ async function setup_k903(seed, selectcom = 0) {
   fixture.store.set('flag:7', 2);
   if (seed) seed(fixture, era_flag);
   register_handlers(fixture, 'kojo/kojo-system');
-  register_handlers(fixture, 'kojo/kojo-k903-garde');
+  load_modules(fixture, 'kojo/kojo-k903-garde');
   return fixture;
 }
 
-async function speak(fixture) {
-  const { kojo_message_com_family } = fixture.load_module('kojo/kojo-system');
+async function speak() {
+  const { kojo_message_com_family } = require('./helpers/kojo-families');
   return kojo_message_com_family.call(KEY, { args: [] });
 }
 
-async function palam_change(fixture) {
-  const { kojo_message_palamcng_family } =
-    fixture.load_module('kojo/kojo-system');
+async function palam_change() {
+  const { kojo_message_palamcng_family } = require('./helpers/kojo-families');
   return kojo_message_palamcng_family.call(KEY, { args: [] });
 }
 
-async function mark_change(fixture) {
-  const { kojo_message_markcng_family } =
-    fixture.load_module('kojo/kojo-system');
+async function mark_change() {
+  const { kojo_message_markcng_family } = require('./helpers/kojo-families');
   return kojo_message_markcng_family.call(KEY, { args: [] });
 }
-
-test('EX_FLAG:103 生命周期：EVENTTRAIN 置 1，EVENTEND 清 0', async () => {
-  const fixture = await setup_k903((f) => f.store.delete('exflag:103'));
-  const { emit } = fixture.load_module('system/event/registry');
-  await emit('EVENTTRAIN');
-  assert.equal(fixture.store.get('exflag:103'), 1, 'EVENTTRAIN 置 EX_FLAG:103');
-  await emit('EVENTEND');
-  assert.equal(fixture.store.get('exflag:103'), 0, 'EVENTEND 清 EX_FLAG:103');
-});
 
 test('EX_TALENT:103 缺席时不进入嘉德调教口上', async () => {
   const fixture = await setup_k903((f) => {
@@ -165,41 +157,10 @@ test('COM 仅五道检查活动：口塞、失神、DOG、触手、死斗场', a
   );
 });
 
-test('20 个分发族均注册 K903（key 903）', async () => {
+test('工厂里登记了口上编号 903（分发族删除后的同类核对）', async () => {
   const fixture = await setup_k903();
-  const system = fixture.load_module('kojo/kojo-system');
-  const after = fixture.load_module('kojo/kojo-dungeon-after');
-  const ravish = fixture.load_module('kojo/kojo-dungeon-ravish');
-  const families = [
-    system.kojo_message_com_family,
-    system.self_kojo_family,
-    system.kojo_message_palamcng_family,
-    system.kojo_message_markcng_family,
-    system.benki_koujo_family,
-    system.enterenemy_koujo_family,
-    system.dungeon_victory_family,
-    system.dungeon_attack_family,
-    system.ntr_koujo_family,
-    system.exucution_koujo_family,
-    system.museum_koujo_family,
-    system.banishment_koujo_family,
-    system.public_exucution_koujo_family,
-    system.grotesque_koujo_family,
-    system.gobi_koujo_family,
-    after.gohoubi_after_koujo_family,
-    after.osioski_koujo_family,
-    after.gohoubi_request_koujo_family,
-    ravish.ryouzyoku_kojo_family,
-    ravish.ryouzyoku_after_kojo_family,
-  ];
-  assert.equal(families.length, 20, 'K903 应覆盖 20 个分发族');
-  for (const family of families) {
-    assert.equal(
-      family.has(KEY),
-      true,
-      `${family.name || '分发族'} 缺 K903 注册`,
-    );
-  }
+  const { registered_kojo_ids } = fixture.load_module('kojo/kojo-factory');
+  assert.ok(registered_kojo_ids().includes(903), '编号 903 未登记进工厂');
 });
 
 test('公共 EX 分发路径：EX_TALENT:103 映成 LOCAL=1003', async () => {
@@ -268,7 +229,7 @@ test('全部活动 SELECTCOM 初次分支均可命中并推进对应 CFLAG（穿
       if (tequip !== undefined)
         f.store.set(`tequip:${CID}:${tequip}`, equipped);
     }, selectcom);
-    await speak(fixture);
+    await speak();
     assert.equal(
       fixture.store.get(`cflag:${CID}:${cflag}`),
       1,
@@ -282,7 +243,7 @@ test('SELECTCOM 二次状态：爱抚淫乱推进到 6', async () => {
     f.store.set(`cflag:${CID}:301`, 1);
     f.store.set(`talent:${CID}:76`, 1);
   });
-  await speak(fixture);
+  await speak();
   assert.equal(fixture.store.get(`cflag:${CID}:301`), 6);
 });
 
@@ -300,7 +261,7 @@ test('SELECTCOM 5 胸部爱抚二次各档推进 CFLAG:306 自身，不碰自己
       f.store.set(`cflag:${CID}:306`, 1);
       f.store.set(`cflag:${CID}:308`, 9);
     }, 5);
-    await speak(fixture);
+    await speak();
     assert.equal(fixture.store.get(`cflag:${CID}:306`), expected);
     assert.equal(
       fixture.store.get(`cflag:${CID}:308`),
@@ -323,7 +284,7 @@ test('PALAMCNG：221-229 的九个首超条件各自只置一次', async () => {
   ];
   for (const [cflag, address, value] of cases) {
     const fixture = await setup_k903((f) => f.store.set(address, value));
-    await palam_change(fixture);
+    await palam_change();
     assert.equal(
       fixture.store.get(`cflag:${CID}:${cflag}`),
       1,
@@ -363,7 +324,7 @@ test('MARKCNG：297-300 四种刻印 Lv3 均各自推进', async () => {
     const fixture = await setup_k903();
     const { game } = fixture.load_module('facade/game');
     game.system[name] = 3;
-    await mark_change(fixture);
+    await mark_change();
     assert.equal(
       fixture.store.get(`cflag:${CID}:${cflag}`),
       1,
@@ -385,7 +346,7 @@ test('SELF_KOJO 通过 peek_aftertrain_q 读取 Q：野狗妄想分支可达', a
   const after = fixture.load_module('event/event-aftertrain');
   await after.aftertrain_masturbation_check(0, 0, () => 2);
   assert.equal(after.peek_aftertrain_q(), 2, 'AFTERTRAIN 先写入 Q=2');
-  const { self_kojo_family } = fixture.load_module('kojo/kojo-system');
+  const { self_kojo_family } = require('./helpers/kojo-families');
   await self_kojo_family.call(KEY, { args: [] });
   assert.ok(
     fixture.text_lines().some((line) => line.includes('小狗狗')),
@@ -417,7 +378,7 @@ test('SELECTCOM 2/7/13 计数器自洽：303 保底读自身、308 二次写自�
       f.store.set(`cflag:${CID}:308`, 1);
       seed(f);
     }, 7);
-    await speak(fixture);
+    await speak();
     assert.equal(
       fixture.store.get(`cflag:${CID}:308`),
       expected,
@@ -440,7 +401,7 @@ test('SELECTCOM 2/7/13 计数器自洽：303 保底读自身、308 二次写自�
       f.store.set(`abl:${CID}:3`, abl);
       f.store.set(`tequip:${CID}:13`, 1);
     }, 13);
-    await speak(fixture);
+    await speak();
     assert.equal(
       fixture.store.get(`cflag:${CID}:314`),
       expected,
@@ -580,9 +541,7 @@ test('#625 GOHOUBI_REQUEST 保留 Y=0、兽名与前后文同一行（要求奖�
     const fixture = await setup_k903();
     const { chara } = fixture.load_module('facade/chara');
     chara(CID).stronghold.要求奖赏 = req;
-    const { gohoubi_request_koujo_family } = fixture.load_module(
-      'kojo/kojo-dungeon-after',
-    );
+    const { gohoubi_request_koujo_family } = require('./helpers/kojo-families');
     await gohoubi_request_koujo_family.call(KEY, { args: [] });
     assert.deepEqual(
       fixture.text_lines(),
@@ -691,7 +650,7 @@ test('#625 COLOSSEUM_KOJO_903 SC31/21/27：武器名与前后文同一行（三�
           seed(f);
         }
       }, selectcom);
-      await speak(fixture);
+      await speak();
       assert.deepEqual(
         fixture.text_lines(),
         [quote, `${head}${weapon}${tail}`],
@@ -709,7 +668,7 @@ test('SELECTCOM 30 手淫：侍奉精神档回到三档（#688），口上开关
     f.store.set(`cflag:${CID}:331`, 2);
     f.store.set(`abl:${CID}:16`, 3);
   }, 30);
-  await speak(fixture);
+  await speak();
   assert.deepEqual(fixture.text_lines(), [
     '「本宫……知道了啊……稍微弄一下也不是不可以……为什么会要本宫做这种事……切」',
   ]);

@@ -13,7 +13,10 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
-const { register_handlers } = require('./helpers/event-registration');
+const {
+  load_modules,
+  register_handlers,
+} = require('./helpers/event-registration');
 const { preset_chara_0, preset_chara_17 } = require('./helpers/chara');
 
 const LILY = 24; // Chara24.yml「名前」「呼び名」= 莉莉
@@ -41,30 +44,28 @@ function setup_lily(seed, selectcom = 0) {
     seed(fixture, era_flag);
   }
   register_handlers(fixture, 'kojo/kojo-system');
-  register_handlers(fixture, 'kojo/kojo-k11-lily');
+  load_modules(fixture, 'kojo/kojo-k11-lily');
   return fixture;
 }
 
 // 经分发族调用（TRYCALLFORM KOJO_MESSAGE_COM_11 的等价物）
 async function speak_com11(fixture, rand) {
-  const { kojo_message_com_family } = fixture.load_module('kojo/kojo-system');
+  const { kojo_message_com_family } = require('./helpers/kojo-families');
   return kojo_message_com_family.call(11, { args: [rand] });
 }
 
-async function speak_palamcng11(fixture) {
-  const { kojo_message_palamcng_family } =
-    fixture.load_module('kojo/kojo-system');
+async function speak_palamcng11() {
+  const { kojo_message_palamcng_family } = require('./helpers/kojo-families');
   return kojo_message_palamcng_family.call(11, { args: [] });
 }
 
-async function speak_markcng11(fixture) {
-  const { kojo_message_markcng_family } =
-    fixture.load_module('kojo/kojo-system');
+async function speak_markcng11() {
+  const { kojo_message_markcng_family } = require('./helpers/kojo-families');
   return kojo_message_markcng_family.call(11, { args: [] });
 }
 
 async function speak_self11(fixture, rand = seq_rand()) {
-  const { self_kojo_family } = fixture.load_module('kojo/kojo-system');
+  const { self_kojo_family } = require('./helpers/kojo-families');
   return self_kojo_family.call(11, { args: [rand] });
 }
 
@@ -77,16 +78,6 @@ const seq_rand =
   };
 
 // —— 存在标志一对 ——
-
-test('EVENTTRAIN #PRI 档置存在标志、EVENTEND #LATER 档清 0（K11 一对）', async () => {
-  const fixture = setup_lily((f) => f.store.delete('flag:111'));
-  const { emit } = fixture.load_module('system/event/registry');
-  await emit('EVENTTRAIN');
-  assert.equal(fixture.store.get('flag:111'), 1);
-  assert.equal(fixture.store.get('flag:7'), 2); // 总开关随之默认开
-  await emit('EVENTEND');
-  assert.equal(fixture.store.get('flag:111'), 0);
-});
 
 test('EVENTTRAIN 检查：FLAG:7 <= 0（口上总开关关闭）时静默跳过', async () => {
   const fixture = setup_lily((f) => f.store.set('flag:7', -1));
@@ -618,29 +609,6 @@ test('EVENTEND：爱慕按体力 500 分档', async () => {
 });
 
 // —— 主启动图接入（main-loop 是否真的 require 了本模块） ——
-
-test('经主启动图 main-loop 加载（而非直接 load_module），K11 EVENTTRAIN 仍会置存在标志', async () => {
-  const fixture = create_era_fixture();
-  preset_chara_0(fixture);
-  fixture.era.addCharacter(0);
-  fixture.seed_chara(LILY, { id: LILY, name: '莉莉', callname: '莉莉' });
-  fixture.era.addCharacter(LILY);
-  fixture.era.beginTrain(0, LILY);
-  const era_flag = fixture.load_module('era-utils/era-flag');
-  era_flag.target = LILY;
-  era_flag.player = 0;
-  era_flag.assi = -1;
-  fixture.store.set(`talent:${LILY}:171`, 1);
-  fixture.store.set('flag:7', 2);
-  fixture.load_module('system/flow/main-loop'); // 经主启动图，而非直接 load_module('kojo/kojo-k11-lily')
-  const { emit } = fixture.load_module('system/event/registry');
-  await emit('EVENTTRAIN');
-  assert.equal(
-    fixture.store.get('flag:111'),
-    1,
-    'K11 存在标志随主启动图接入置位',
-  );
-});
 
 // —— kojo_message_com_11：SELECTCOM 0（爱抚 CFLAG:301）——
 
@@ -6764,7 +6732,7 @@ for (const [label, assistant] of [
 test('NTR P=1-7：首次置再捕获标志并分别记录场景编号', async () => {
   for (let p = 1; p <= 7; p += 1) {
     const fixture = setup_lily();
-    const { ntr_koujo_family } = fixture.load_module('kojo/kojo-system');
+    const { ntr_koujo_family } = require('./helpers/kojo-families');
     await ntr_koujo_family.call(11, { args: [seq_rand(), p] });
     assert.equal(fixture.store.get(`cflag:${LILY}:650`), 1, `P=${p} 再捕获`);
     assert.equal(
@@ -6780,13 +6748,13 @@ test('NTR P=1：FLAG:500 在肉棒与假阳具称呼间分岔', async () => {
     f.store.set('flag:500', 2);
     f.store.set(`talent:${LILY}:76`, 1);
   });
-  const body_family = body.load_module('kojo/kojo-system').ntr_koujo_family;
+  const body_family = require('./helpers/kojo-families').ntr_koujo_family;
   await body_family.call(11, { args: [seq_rand(), 1] });
   const toy = setup_lily((f) => {
     f.store.set('flag:500', 1);
     f.store.set(`talent:${LILY}:76`, 1);
   });
-  const toy_family = toy.load_module('kojo/kojo-system').ntr_koujo_family;
+  const toy_family = require('./helpers/kojo-families').ntr_koujo_family;
   await toy_family.call(11, { args: [seq_rand(), 1] });
   assert.ok(body.text_lines().join('').includes('双腿之间的巨根'));
   assert.ok(toy.text_lines().join('').includes('粗大的假阳具'));
@@ -6797,14 +6765,14 @@ test('NTR P=20：淫乱档按妊娠相手区分魔王之子', async () => {
     f.store.set(`talent:${LILY}:76`, 1);
     f.store.set(`cflag:${LILY}:102`, 1);
   });
-  const { ntr_koujo_family } = fixture.load_module('kojo/kojo-system');
+  const { ntr_koujo_family } = require('./helpers/kojo-families');
   await ntr_koujo_family.call(11, { args: [seq_rand(), 20] });
   assert.ok(fixture.text_lines().join('').includes('我和魔王大人的孩子'));
 });
 
 test('处刑、博物馆、放逐、公开处刑与猎奇族均注册并保留空台词槽', async () => {
   const fixture = setup_lily();
-  const families = fixture.load_module('kojo/kojo-system');
+  const families = require('./helpers/kojo-families');
   const cases = [
     ['exucution_koujo_family', 4],
     ['museum_koujo_family', 8],
@@ -6829,7 +6797,7 @@ test('ENTERENEMY：淫乱、爱慕与寻妹三档', async () => {
     const fixture = setup_lily((f) => {
       if (talent !== undefined) f.store.set(`talent:${LILY}:${talent}`, 1);
     });
-    const { enterenemy_koujo_family } = fixture.load_module('kojo/kojo-system');
+    const { enterenemy_koujo_family } = require('./helpers/kojo-families');
     await enterenemy_koujo_family.call(11, { args: [] });
     assert.ok(fixture.text_lines()[0].includes(fragment));
   }
@@ -6852,9 +6820,7 @@ test('GOHOUBI_REQUEST：十种要求按 CFLAG:504 输出角色名与内容', asy
     const fixture = setup_lily((f) =>
       f.store.set(`cflag:${LILY}:504`, request),
     );
-    const { gohoubi_request_koujo_family } = fixture.load_module(
-      'kojo/kojo-dungeon-after',
-    );
+    const { gohoubi_request_koujo_family } = require('./helpers/kojo-families');
     await gohoubi_request_koujo_family.call(11, { args: [] });
     const text = fixture.text_lines().join('');
     assert.ok(text.includes('莉莉'), `要求 ${request} 显示角色名`);
@@ -6873,9 +6839,7 @@ test('GOHOUBI_REQUEST：兽交要求（CFLAG:504 = 1..3）同属一行，输出�
     const fixture = setup_lily((f) =>
       f.store.set(`cflag:${LILY}:504`, request),
     );
-    const { gohoubi_request_koujo_family } = fixture.load_module(
-      'kojo/kojo-dungeon-after',
-    );
+    const { gohoubi_request_koujo_family } = require('./helpers/kojo-families');
     await gohoubi_request_koujo_family.call(11, { args: [] });
     assert.deepEqual(
       fixture.text_lines(),
@@ -6887,8 +6851,10 @@ test('GOHOUBI_REQUEST：兽交要求（CFLAG:504 = 1..3）同属一行，输出�
 
 test('GOHOUBI_AFTER 与 OSIOKI：choice 透传并保留空输出', async () => {
   const fixture = setup_lily((f) => f.store.set(`cflag:${LILY}:504`, 5));
-  const { gohoubi_after_koujo_family, osioski_koujo_family } =
-    fixture.load_module('kojo/kojo-dungeon-after');
+  const {
+    gohoubi_after_koujo_family,
+    osioski_koujo_family,
+  } = require('./helpers/kojo-families');
   await gohoubi_after_koujo_family.call(11, { args: [LILY, 2] });
   await osioski_koujo_family.call(11, { args: [LILY, 6] });
   assert.deepEqual(fixture.text_lines().slice(-2), ['', '']);
@@ -7864,7 +7830,7 @@ test('PALAMCNG_11 四类参数首超由 PALAM+UP 严格越过 Lv2，并依次推
       f.store.set(`delta:${LILY}:${index}`, 251);
     }
   });
-  await speak_palamcng11(fixture);
+  await speak_palamcng11();
   for (const flag of [221, 222, 223, 224]) {
     assert.equal(fixture.store.get(`cflag:${LILY}:${flag}`), 1);
   }
@@ -7875,7 +7841,7 @@ test('PALAMCNG_11 PALAM+UP 恰等于 Lv2 时不触发首超', async () => {
     f.store.set(`palam:${LILY}:3`, 250);
     f.store.set(`delta:${LILY}:3`, 250);
   });
-  await speak_palamcng11(fixture);
+  await speak_palamcng11();
   assert.equal(fixture.store.get(`cflag:${LILY}:221`), undefined);
 });
 
@@ -7885,7 +7851,7 @@ test('PALAMCNG_11 四类首次绝顶分别推进 CFLAG:225-228', async () => {
       f.store.set(`nowex:${LILY}:${index}`, 1);
     }
   });
-  await speak_palamcng11(fixture);
+  await speak_palamcng11();
   for (const flag of [225, 226, 227, 228]) {
     assert.equal(fixture.store.get(`cflag:${LILY}:${flag}`), 1);
   }
@@ -7898,7 +7864,7 @@ test('PALAMCNG_11 V 绝顶二回目仅在插着不拔时输出，A 绝顶二回�
     f.store.set(`cflag:${LILY}:226`, 1);
     f.store.set(`cflag:${LILY}:227`, 1);
   });
-  await speak_palamcng11(fixture);
+  await speak_palamcng11();
   assert.match(fixture.text_lines().join('\n'), /肛门已经脱离了意志的控制/);
   assert.doesNotMatch(fixture.text_lines().join('\n'), /蜜穴.*侵犯|蜜穴.*高潮/);
 });
@@ -7911,7 +7877,7 @@ test('PALAMCNG_11 处女丧失累计 UP11+UP12，并按玩家性器插入文案�
     f.store.set(`delta:${LILY}:11`, 200);
     f.store.set(`delta:${LILY}:12`, 200);
   });
-  await speak_palamcng11(fixture);
+  await speak_palamcng11();
   assert.match(fixture.text_lines().join('\n'), /多被阴茎侵犯几次/);
   assert.equal(fixture.store.get(`cflag:${LILY}:229`), 1);
 });
@@ -7922,7 +7888,7 @@ test('PALAMCNG_11 非玛奥助手参与调教时整段静默跳过', async () =>
     era_flag.assiplay = 1;
     f.store.set(`palam:${LILY}:3`, 501);
   });
-  await speak_palamcng11(fixture);
+  await speak_palamcng11();
   assert.deepEqual(fixture.text_lines(), []);
   assert.equal(fixture.store.get(`cflag:${LILY}:221`), undefined);
 });
@@ -7935,7 +7901,7 @@ test('MARKCNG_11 四类 Lv3 刻印可在同轮依次取得并推进 CFLAG:297-30
       f.store.set(`tflag:${flag}`, 3);
     }
   });
-  await speak_markcng11(fixture);
+  await speak_markcng11();
   for (const flag of [297, 298, 299, 300]) {
     assert.equal(fixture.store.get(`cflag:${LILY}:${flag}`), 1);
   }
@@ -7943,7 +7909,7 @@ test('MARKCNG_11 四类 Lv3 刻印可在同轮依次取得并推进 CFLAG:297-30
 
 test('MARKCNG_11 刻印变动未到 Lv3 时不触发', async () => {
   const fixture = setup_lily((f) => f.store.set('tflag:22', 2));
-  await speak_markcng11(fixture);
+  await speak_markcng11();
   assert.deepEqual(fixture.text_lines(), []);
   assert.equal(fixture.store.get(`cflag:${LILY}:297`), undefined);
 });
@@ -7954,7 +7920,7 @@ test('MARKCNG_11 非玛奥助手参与调教时整段静默跳过', async () => 
     era_flag.assiplay = 1;
     f.store.set('tflag:22', 3);
   });
-  await speak_markcng11(fixture);
+  await speak_markcng11();
   assert.deepEqual(fixture.text_lines(), []);
   assert.equal(fixture.store.get(`cflag:${LILY}:297`), undefined);
 });
@@ -8102,8 +8068,10 @@ test('K11 迷宫凌辱前后口上注册进两个分发族', async () => {
     f.store.set(`talent:${LILY}:0`, 1);
     f.store.set(`exp:${LILY}:1`, 21);
   });
-  const { ryouzyoku_after_kojo_family, ryouzyoku_kojo_family } =
-    fixture.load_module('kojo/kojo-dungeon-ravish');
+  const {
+    ryouzyoku_after_kojo_family,
+    ryouzyoku_kojo_family,
+  } = require('./helpers/kojo-families');
   await ryouzyoku_kojo_family.call(11, { args: [] });
   await ryouzyoku_after_kojo_family.call(11, { args: [] });
   assert.match(fixture.text_lines().join('\n'), /怪物的饶恕/);
@@ -8119,8 +8087,11 @@ test('K11 肉便器、胜利与攻击口上注册进各自分发族', async () =
     f.store.set(`maxbase:${LILY}:1`, 1000);
     f.store.set(`cflag:${LILY}:1`, 2);
   });
-  const { benki_koujo_family, dungeon_attack_family, dungeon_victory_family } =
-    fixture.load_module('kojo/kojo-system');
+  const {
+    benki_koujo_family,
+    dungeon_attack_family,
+    dungeon_victory_family,
+  } = require('./helpers/kojo-families');
   await benki_koujo_family.call(11, { args: [seq_rand()] });
   await dungeon_victory_family.call(11, { args: [seq_rand(0)] });
   await dungeon_attack_family.call(11, { args: [seq_rand(0)] });
@@ -8868,7 +8839,7 @@ test('#623 NTR P=1：狂王插入处女一段整行合并', async () => {
       f.store.set('flag:500', item.flag500);
       item.seed(f);
     });
-    const { ntr_koujo_family } = fixture.load_module('kojo/kojo-system');
+    const { ntr_koujo_family } = require('./helpers/kojo-families');
     await ntr_koujo_family.call(11, { args: [seq_rand(), 1] });
     assert.equal(
       line_with(fixture, '拼命挣扎着，但狂王只是哈哈大笑着用'),
@@ -8908,7 +8879,7 @@ test('#623 NTR P=2：肛门插入两段整行合并', async () => {
       f.store.set('flag:500', item.flag500);
       item.seed(f);
     });
-    const { ntr_koujo_family } = fixture.load_module('kojo/kojo-system');
+    const { ntr_koujo_family } = require('./helpers/kojo-families');
     await ntr_koujo_family.call(11, { args: [seq_rand(), 2] });
     assert.equal(
       item.expected.includes('的肛门被')
@@ -8950,7 +8921,7 @@ test('#623 NTR P=4：V プレイ两段整行合并', async () => {
       f.store.set('flag:500', item.flag500);
       item.seed(f);
     });
-    const { ntr_koujo_family } = fixture.load_module('kojo/kojo-system');
+    const { ntr_koujo_family } = require('./helpers/kojo-families');
     await ntr_koujo_family.call(11, { args: [seq_rand(), 4] });
     assert.equal(
       line_with(fixture, '持续地侵犯着莉莉的蜜穴'),

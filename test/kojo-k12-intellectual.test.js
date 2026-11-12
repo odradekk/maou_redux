@@ -11,7 +11,10 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
-const { register_handlers } = require('./helpers/event-registration');
+const {
+  load_modules,
+  register_handlers,
+} = require('./helpers/event-registration');
 const { preset_chara_0, join_slave_chara } = require('./helpers/chara');
 
 // 世界底座：智慧（素质 172 → GET_KOJO_NUM = 112 → 分发 key 12）入列调教
@@ -34,25 +37,11 @@ async function setup_k12(seed, selectcom = 0) {
     seed(fixture, era_flag);
   }
   register_handlers(fixture, 'kojo/kojo-system');
-  register_handlers(fixture, 'kojo/kojo-k12-intellectual');
+  load_modules(fixture, 'kojo/kojo-k12-intellectual');
   return fixture;
 }
 
 // —— EVENTTRAIN：存在标志一对 ——
-
-test('EVENTTRAIN #PRI 档置存在标志、EVENTEND #LATER 档清 0（K12 一对）', async () => {
-  const fixture = await setup_k12((f) => {
-    f.store.delete('flag:112');
-    f.store.set('cflag:20:201', 9); // 越过 EVENTTRAIN 前段状态机
-  });
-
-  const { emit } = fixture.load_module('system/event/registry');
-  await emit('EVENTTRAIN');
-  assert.equal(fixture.store.get('flag:112'), 1); // K12 存在标志
-  assert.equal(fixture.store.get('flag:7'), 2); // 总开关随之默认开
-  await emit('EVENTEND');
-  assert.equal(fixture.store.get('flag:112'), 0);
-});
 
 test('EVENTTRAIN #PRI 档口上开关补 0（FLAG:7 从 0 补到 2）', async () => {
   const fixture = await setup_k12((f) => {

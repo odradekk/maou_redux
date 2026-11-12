@@ -78,9 +78,9 @@ const MONSTER_THRESHOLD = 600;
  *
  * 侵攻度一律读写 FLAG 侧（`flag:${AREA}`）：EX_FLAG:101 没有写点，天神宫
  * 的累加在 FLAG:101（add_region_progress，出兵结算），region_progress()
- * 与之同表。写侧 FLAG:101/102 与 K1/K2 的「口上存在标志」同槽（yml/
- * Flag.yml 保留区外的 1xx 段）——累加会覆盖口上标志、读 FLAG:102 会把
- * 口上的存在当成「已征服」。这个重叠随 #102 登记保留、不另迁槽位。
+ * 与之同表。写侧 FLAG:101/102 曾与 K1/K2 的「口上存在标志」同槽，累加会覆盖
+ * 口上标志、读 FLAG:102 会把口上的存在当成「已征服」；#859 删掉口上存在标志后
+ * 这一侧隐患不再存在，槽位仍随 #102 的决定保留、不另迁。
  */
 const CAMPAIGN_REGIONS = {
   0: {

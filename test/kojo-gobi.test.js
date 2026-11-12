@@ -187,7 +187,7 @@ const GOBI_TABLE = [
 test('GOBI 真身：五档与默认三选一逐字返回（表驱动，18 真身）', async () => {
   const fixture = create_era_fixture();
   load_all_kojo(fixture);
-  const { gobi_koujo_family } = fixture.load_module('kojo/kojo-system');
+  const { gobi_koujo_family } = require('./helpers/kojo-families');
 
   for (const row of GOBI_TABLE) {
     // 五档：ARG:0 1-5 各返回固定文字
@@ -222,7 +222,7 @@ test('GOBI 真身：五档与默认三选一逐字返回（表驱动，18 真身
 test('GOBI 真身不打印：返回文字之外不得有任何输出（行内拼接由调用方做）', async () => {
   const fixture = create_era_fixture();
   load_all_kojo(fixture);
-  const { gobi_koujo_family } = fixture.load_module('kojo/kojo-system');
+  const { gobi_koujo_family } = require('./helpers/kojo-families');
   for (const row of GOBI_TABLE) {
     for (let tier = 0; tier <= 5; tier += 1) {
       await gobi_koujo_family.call(row.key, { args: [tier, seq_rand(0)] });
@@ -274,7 +274,7 @@ test('GOBI 未命中返回空串：K11 就没有语尾函数（两侧同缺，�
 test('GOBI K3 形参序回归：族实参 [arg0, rand] 不再反接（#403 登记的偏差）', async () => {
   const fixture = create_era_fixture();
   load_all_kojo(fixture);
-  const { gobi_koujo_family } = fixture.load_module('kojo/kojo-system');
+  const { gobi_koujo_family } = require('./helpers/kojo-families');
   // 反接写法（rand 收到数字 1）会在默认支把 rand_n(3) 调成 TypeError；
   // 五档文字逐字对上即证明 arg0 落在首位
   for (const [tier, expected] of [

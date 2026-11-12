@@ -26,105 +26,25 @@ const TIER_ORDER = ['PRI', 'NORMAL', 'LATER'];
 /**
  * 期望的装配结果：事件 → 档位 → 按执行顺序的模块路径。
  *
- * 与改动前 main-loop.js 的 require 书写顺序逐条对齐（那是当时唯一的顺序
- * 来源）：口上同档处理器按 kojo 模块的装载顺序执行，EVENTTRAIN 的 #PRI 档在
- * 前、无属性档在后由档位决定。删一行 = 某条链少一个处理器，会在这里当场红。
+ * 与 startup.js 的 require 书写顺序逐条对齐（那是唯一的顺序来源）。#859 起
+ * 口上的 EVENTTRAIN / EVENTEND 各只有 kojo-system 一个处理器（按性格编号分发
+ * 到工厂实例），删一行 = 某条链少一个处理器，会在这里当场红。
  */
 const EXPECTED = {
   EVENTTRAIN: {
-    PRI: [
-      '#/event/event-train',
-      '#/kojo/kojo-k0-tender',
-      '#/kojo/kojo-k2-timid',
-      '#/kojo/kojo-k3-noble',
-      '#/kojo/kojo-k5-mao',
-      '#/kojo/kojo-k1-confident',
-      '#/kojo/kojo-k4-stoic',
-      '#/kojo/kojo-k6-wicked',
-      '#/kojo/kojo-k7-heart',
-      '#/kojo/kojo-k8-spade',
-      '#/kojo/kojo-k9-diamond',
-      '#/kojo/kojo-k10-club',
-      '#/kojo/kojo-k11-lily',
-      '#/kojo/kojo-k13-protector',
-      '#/kojo/kojo-k14-nobleman',
-      '#/kojo/kojo-k15-clever',
-      '#/kojo/kojo-k12-intellectual',
-      '#/kojo/kojo-k903-garde',
-      '#/kojo/kojo-k19-fia',
-      '#/kojo/kojo-k904-fia',
-    ],
-    NORMAL: [
-      '#/event/event-train-normal',
-      '#/kojo/kojo-k0-tender',
-      '#/kojo/kojo-k2-timid',
-      '#/kojo/kojo-k3-noble',
-      '#/kojo/kojo-k5-mao',
-      '#/kojo/kojo-k1-confident',
-      '#/kojo/kojo-k4-stoic',
-      '#/kojo/kojo-k6-wicked',
-      '#/kojo/kojo-k7-heart',
-      '#/kojo/kojo-k8-spade',
-      '#/kojo/kojo-k9-diamond',
-      '#/kojo/kojo-k10-club',
-      '#/kojo/kojo-k11-lily',
-      '#/kojo/kojo-k13-protector',
-      '#/kojo/kojo-k14-nobleman',
-      '#/kojo/kojo-k15-clever',
-      '#/kojo/kojo-k12-intellectual',
-      '#/kojo/kojo-k903-garde',
-      '#/kojo/kojo-k19-fia',
-      '#/kojo/kojo-k904-fia',
-    ],
+    // #859：调教开始时的口上由 kojo-system 一处注册（#PRI 补总开关、NORMAL 分发
+    // 一次），19 个口上模块不再各挂一个处理器
+    PRI: ['#/event/event-train', '#/kojo/kojo-system'],
+    NORMAL: ['#/event/event-train-normal', '#/kojo/kojo-system'],
   },
   EVENTCOMEND: {
     PRI: ['#/event/event-comend'],
     NORMAL: ['#/event/event-comend-normal'],
   },
   EVENTEND: {
-    NORMAL: [
-      '#/kojo/kojo-k0-tender',
-      '#/kojo/kojo-k2-timid',
-      '#/kojo/kojo-k3-noble',
-      '#/kojo/kojo-k5-mao',
-      '#/kojo/kojo-k1-confident',
-      '#/kojo/kojo-k4-stoic',
-      '#/kojo/kojo-k6-wicked',
-      '#/kojo/kojo-k7-heart',
-      '#/kojo/kojo-k8-spade',
-      '#/kojo/kojo-k9-diamond',
-      '#/kojo/kojo-k10-club',
-      '#/kojo/kojo-k11-lily',
-      '#/kojo/kojo-k13-protector',
-      '#/kojo/kojo-k14-nobleman',
-      '#/kojo/kojo-k15-clever',
-      '#/kojo/kojo-k12-intellectual',
-      '#/kojo/kojo-k903-garde',
-      '#/kojo/kojo-k19-fia',
-      '#/kojo/kojo-k904-fia',
-    ],
-    LATER: [
-      '#/event/event-end',
-      '#/kojo/kojo-k0-tender',
-      '#/kojo/kojo-k2-timid',
-      '#/kojo/kojo-k3-noble',
-      '#/kojo/kojo-k5-mao',
-      '#/kojo/kojo-k1-confident',
-      '#/kojo/kojo-k4-stoic',
-      '#/kojo/kojo-k6-wicked',
-      '#/kojo/kojo-k7-heart',
-      '#/kojo/kojo-k8-spade',
-      '#/kojo/kojo-k9-diamond',
-      '#/kojo/kojo-k10-club',
-      '#/kojo/kojo-k11-lily',
-      '#/kojo/kojo-k13-protector',
-      '#/kojo/kojo-k14-nobleman',
-      '#/kojo/kojo-k15-clever',
-      '#/kojo/kojo-k12-intellectual',
-      '#/kojo/kojo-k903-garde',
-      '#/kojo/kojo-k19-fia',
-      '#/kojo/kojo-k904-fia',
-    ],
+    // 原版的 #LATER 档只清「口上存在标志」；标志随 #859 删除，这一档不再注册
+    NORMAL: ['#/kojo/kojo-system'],
+    LATER: ['#/event/event-end'],
   },
   EVENTTURNEND: {
     PRI: ['#/event/event-turnend'],

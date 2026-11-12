@@ -11,7 +11,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
-const { register_handlers } = require('./helpers/event-registration');
+const { load_modules } = require('./helpers/event-registration');
 
 function add_chara(fixture, cid, name = `角色${cid}`) {
   fixture.seed_chara(cid, { id: cid, name, callname: name });
@@ -126,9 +126,9 @@ test('SEARCH_FAMILY：慈爱来袭口上会找到家人并按关系称呼', asyn
   fixture.store.set('cflag:31:604', 1); // 家族所属编号
   fixture.store.set('cflag:31:605', 3); // 弟弟
   fixture.load_module('era-utils/era-flag').target = 31;
-  register_handlers(fixture, 'kojo/kojo-k0-tender');
+  load_modules(fixture, 'kojo/kojo-k0-tender');
 
-  await fixture.load_module('kojo/kojo-system').enterenemy_koujo_family.call(0);
+  await require('./helpers/kojo-families').enterenemy_koujo_family.call(0);
   assert.ok(text_lines(fixture).includes('「家人……等着我！」'));
 });
 
@@ -290,7 +290,7 @@ test('NTR_CHILD_BIRTH：父亲分支输出后以 P=20 调用已有 NTR 口上族
   fixture.store.set('talent:1:165', 1); // 口上 K5
   fixture.store.set('cflag:1:102', 7);
   const seen = [];
-  const { ntr_koujo_family } = fixture.load_module('kojo/kojo-system');
+  const { ntr_koujo_family } = require('./helpers/kojo-families');
   ntr_koujo_family.register(5, async (rand, p) => seen.push([rand, p]));
   const { ntr_child_birth } = fixture.load_module('system/ntr');
   const rand = () => 0;
@@ -331,16 +331,19 @@ test('NTR_KOUJO：K2 与 K4 真身按统一的 rand、P 参数注册', async () 
   }
 });
 
-test('NTR_KOUJO：旧单参数口上适配器优先传 P，并兼容直接调用', async () => {
+test('NTR_KOUJO：钩子收 (rand, p)，本体收 p（收旧引擎全局 P 的换算在各口上类里）', async () => {
   const fixture = create_era_fixture();
-  const { adapt_legacy_ntr_koujo } = fixture.load_module('kojo/kojo-system');
+  const { get_kojo } = fixture.load_module('kojo/kojo-factory');
   const seen = [];
-  const adapted = adapt_legacy_ntr_koujo(async (p) => seen.push(p));
   const rand = () => 0;
+  get_kojo(5).ntr_koujo = async (rand_arg, p) => seen.push(p);
 
-  await adapted(rand, 20);
-  await adapted(7);
-  assert.deepEqual(seen, [20, 7]);
+  const { ntr_koujo } = fixture.load_module('kojo/kojo-system');
+  fixture.store.set('talent:17:165', 1); // K5 → 编号 105 → 键 5
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  era_flag.target = 17;
+  await ntr_koujo(20, rand);
+  assert.deepEqual(seen, [20], 'P 经钩子第二参传到本体');
 });
 
 test('CAMPAIGN_DUNGEON_LV：无战役为 0，战役 1 为 45，缺失编号为 0', () => {

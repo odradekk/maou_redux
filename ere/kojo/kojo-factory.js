@@ -9,12 +9,11 @@
  * EX_TALENT 101-800 算 LOCAL，减 100 得键）。工厂自己不算编号——它只认
  * 分发键，素质扫描留在原处，避免两处各写一份扫描。
  *
- * 未注册的编号返回 `null`（不是基类实例）：过渡期未迁移的性格仍由
- * `run_kojo` 回落原分发族，行为不变。等 #855–#858 迁完、#860 删族之后，
- * 这里才按官方写法退回基类实例（通用地文 / 不输出）。
+ * 未注册的编号退回**基类实例**（官方写法）：基类的钩子一律不输出，等价于
+ * 「这个性格在这个时机没有口上」。编号在窗口内却取不到本体时（素质指向一个
+ * 没装口上文件的性格），玩家侧看到的是沉默，与 TRYCALL 落空同款。
  *
- * 注册发生在各口上模块的顶层（与分发族同款）：模块没装 = 该性格没有口上，
- * 与「装了口上文件」的存在标志语义一致。
+ * 注册发生在各口上模块的顶层：模块没装 = 该性格没有口上。
  */
 
 const { KojoBase } = require('#/kojo/kojo-base');
@@ -48,20 +47,26 @@ function register_kojo(id, Ctor) {
 /**
  * 取编号对应的口上对象（实例缓存）。
  * @param {number} id 口上编号（= LOCAL - 100）
- * @returns {KojoBase|null} 未注册的编号返回 null（过渡期回落原分发族）
+ * @returns {KojoBase} 未注册的编号返回基类实例（钩子全部不输出）
  */
 function get_kojo(id) {
   const cached = obj_dict.get(id);
   if (cached !== undefined) {
     return cached;
   }
-  const Ctor = cons_dict.get(id);
-  if (Ctor === undefined) {
-    return null;
-  }
+  const Ctor = cons_dict.get(id) ?? KojoBase;
   const instance = new Ctor(id);
   obj_dict.set(id, instance);
   return instance;
 }
 
-module.exports = { get_kojo, register_kojo };
+/**
+ * 已注册的编号（升序）。启动装配的核对用它：模块漏被 require 时该号不会出现，
+ * 整性格的口上会静默失声。
+ * @returns {number[]} 编号数组
+ */
+function registered_kojo_ids() {
+  return [...cons_dict.keys()].sort((a, b) => a - b);
+}
+
+module.exports = { get_kojo, register_kojo, registered_kojo_ids };

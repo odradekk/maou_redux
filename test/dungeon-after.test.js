@@ -402,11 +402,13 @@ test('口上族：命中已注册 → 实现收 (cid, choice)、TARGET 暂存还
   fixture.store.set('talent:1:163', 1); // 高貴 → get_kojo_num = 103
   fixture.set_inputs(1); // 选 [1] 勋章 → choice = 1
   // 往族里挂一个哨兵实现（DispatchFamily 是模块单例，测试内注册后须清）
-  const kojo = fixture.load_module('kojo/kojo-dungeon-after');
   const calls = [];
-  kojo.gohoubi_after_koujo_family.register(3, (cid, choice) => {
-    calls.push([cid, choice]);
-  });
+  require('./helpers/kojo-families').gohoubi_after_koujo_family.register(
+    3,
+    (cid, choice) => {
+      calls.push([cid, choice]);
+    },
+  );
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.target = 7; // 预置一个 target 看还原
   const { gohoubi } = load(fixture);

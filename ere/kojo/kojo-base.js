@@ -43,6 +43,8 @@
  *   gohoubi_after_koujo(cid, choice)        奖赏结算后
  *   osioski_koujo(cid, choice)              惩罚结算后
  *   gobi_koujo(arg_0, rand)                 语尾（返回字符串，其余钩子返回 0）
+ *   event_train(rand)                       EVENTTRAIN：调教开始时的口上
+ *   event_end(rand)                         EVENTEND：调教结束时的口上
  *
  * 实参只写在这张表里：基类的默认实现不读实参，方法上不写形参（写了就是
  * ESLint 的死参数）；子类覆盖时按这张表写形参。
@@ -194,6 +196,23 @@ class KojoBase {
   /** 语尾：调用方把返回值拼进行内；默认空串（那一行照常结束） */
   async gobi_koujo() {
     return '';
+  }
+
+  /**
+   * EVENTTRAIN：调教开始时的口上（一次调教只响一次）。
+   *
+   * 迁移前这是每个口上文件各注册一份的处理器，各自查「目标身上有我的素质吗」；
+   * 现在由工厂按编号选中实例，素质判断已由 `get_kojo_num` 做完。
+   * @param {(n: number) => number} [rand] RAND:N 的随机源
+   * @returns {Promise<number>} 0（调用方不读返回值）
+   */
+  async event_train() {
+    return 0;
+  }
+
+  /** EVENTEND：调教结束时的口上；默认不输出 */
+  async event_end() {
+    return 0;
   }
 }
 

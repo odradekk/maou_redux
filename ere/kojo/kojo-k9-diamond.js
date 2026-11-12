@@ -1,6 +1,7 @@
 /**
- * @file 黑方片口上 K9：EVENTTRAIN 存在标志 + 主体 + 兽奸/死斗场/NTR/处刑/
- *   博物馆/流放/肉便器/迎击奖惩等非调教入口（issue #240）。
+ * @file 黑方片口上 K9：EVENTTRAIN 主体 + 兽奸/死斗场/NTR/处刑/
+ *   博物馆/流放/肉便器/迎击奖惩等非调教入口（issue #240；
+ *   「口上存在标志」一档随 #859 删除——分发按 `get_kojo_num` 的编号查工厂）。
  *
  * == DOG_KOJO_9 全篇为未填写的模板骨架 ==
  *
@@ -46,39 +47,11 @@
 
 const era = require('#/era-electron');
 const { sell_maturo_k0 } = require('#/system/stronghold/sell-maturo-k0');
-const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
 const { KojoBase } = require('#/kojo/kojo-base');
-const { get_kojo, register_kojo } = require('#/kojo/kojo-factory');
-const {
-  kojo_message_com_family,
-  self_kojo_family,
-  kojo_message_palamcng_family,
-  kojo_message_markcng_family,
-  benki_koujo_family,
-  dungeon_victory_family,
-  dungeon_attack_family,
-  ntr_koujo_family,
-  exucution_koujo_family,
-  museum_koujo_family,
-  banishment_koujo_family,
-  public_exucution_koujo_family,
-  grotesque_koujo_family,
-  enterenemy_koujo_family,
-  gobi_koujo_family,
-} = require('#/kojo/kojo-system');
-const {
-  gohoubi_after_koujo_family,
-  osioski_koujo_family,
-  gohoubi_request_koujo_family,
-} = require('#/kojo/kojo-dungeon-after');
-const {
-  ryouzyoku_kojo_family,
-  ryouzyoku_after_kojo_family,
-} = require('#/kojo/kojo-dungeon-ravish');
+const { register_kojo } = require('#/kojo/kojo-factory');
 const { heart } = require('#/kojo/kojo-text');
 const { gobi_text } = require('#/data/gobi-koujo-const');
-const { EVENT } = require('#/data/event-name-const');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
@@ -89,19 +62,6 @@ const {
 } = require('#/event/event-aftertrain');
 const { PALAMLV } = require('#/data/palam-level-const');
 
-// EVENTTRAIN #PRI 档：存在标志 + 总开关补 0
-function handle_train_pri() {
-  game.kojo.口上存在_9 = 1; // FLAG:109 = 1（K9 口上存在标志）
-  if (game.kojo.口上开关 == 0) {
-    game.kojo.口上开关 = 2;
-  }
-}
-
-// EVENTEND #LATER 档：调教结束清存在标志
-function handle_end_later() {
-  game.kojo.口上存在_9 = 0;
-}
-
 // EVENTTRAIN NORMAL 档：调教开始时的口上。
 // 头部检查：FLAG:7 <= 0 跳过、TALENT:169 != 1 跳过；此后按
 // CFLAG:201 状态机推进：初调教（0）→ 魔族化仅一次（<5 且未魔族化）→
@@ -109,9 +69,6 @@ function handle_end_later() {
 // （TALENT:MASTER:122==0 或无名助手 → k9_kojo2）。
 async function handle_train() {
   if (game.kojo.口上开关 <= 0) {
-    return 0;
-  }
-  if (era.get(`talent:${era_flag.target}:169`) != 1) {
     return 0;
   }
 
@@ -1462,9 +1419,6 @@ async function handle_end() {
     return 0;
   }
   const target = era_flag.target;
-  if (era.get(`talent:${target}:169`) != 1) {
-    return 0;
-  }
   const target_name = chara_callname(target); // %SAVESTR:TARGET%
 
   if (era.get(`base:${target}:0`) <= 0) {
@@ -12280,75 +12234,28 @@ class KojoK9 extends KojoBase {
   async gobi_koujo(...args) {
     return gobi_koujo_k9(...args);
   }
+
+  /**
+   * EVENTTRAIN：调教开始时的口上（#859 起由工厂按性格编号分发一次，
+   * 不再每个性格各注册一份处理器）。
+   * @param {(n: number) => number} [rand] RAND:N 的随机源
+   * @returns {Promise<number>} 0（调用方不读）
+   */
+  async event_train(rand) {
+    return handle_train(rand);
+  }
+
+  /** EVENTEND：调教结束时的口上（分发同 event_train） */
+  async event_end(rand) {
+    return handle_end(rand);
+  }
 }
 
-// 注册进分发族（TRYCALLFORM KOJO_MESSAGE_COM_9 的等价物；重复注册抛错）
-//
-// #856 起 K9 进工厂：`run_kojo` 走工厂实例的钩子，下面这些族注册是过渡期的旧
-// 入口（存量测试与「有本体必有注册」契约锁直调），一律转发到同一个实例
-// ——两处都经 KojoK9。#855–#858 迁完后随族一起删。
+// 模块装载即登记口上类（#859 起这是本模块唯一的启动副作用：分发按键查工厂，
+// 事件接线在 kojo-system.js 一处完成）。
 register_kojo(9, KojoK9);
-const kojo_k9 = get_kojo(9);
-kojo_message_com_family.register(9, (...args) =>
-  kojo_k9.kojo_message_com(...args),
-);
-self_kojo_family.register(9, (...args) => kojo_k9.self_kojo(...args));
-kojo_message_palamcng_family.register(9, (...args) =>
-  kojo_k9.kojo_message_palamcng(...args),
-);
-kojo_message_markcng_family.register(9, (...args) =>
-  kojo_k9.kojo_message_markcng(...args),
-);
-gohoubi_after_koujo_family.register(9, (...args) =>
-  kojo_k9.gohoubi_after_koujo(...args),
-);
-osioski_koujo_family.register(9, (...args) => kojo_k9.osioski_koujo(...args));
-gohoubi_request_koujo_family.register(9, (...args) =>
-  kojo_k9.gohoubi_request_koujo(...args),
-);
-ryouzyoku_kojo_family.register(9, (...args) =>
-  kojo_k9.dungeon_ryouzyoku(...args),
-);
-ryouzyoku_after_kojo_family.register(9, (...args) =>
-  kojo_k9.dungeon_ryouzyoku_after(...args),
-);
-gobi_koujo_family.register(9, (...args) => kojo_k9.gobi_koujo(...args));
-benki_koujo_family.register(9, (...args) => kojo_k9.benki_koujo(...args));
-enterenemy_koujo_family.register(9, (...args) =>
-  kojo_k9.enterenemy_koujo(...args),
-);
-dungeon_victory_family.register(9, (...args) =>
-  kojo_k9.dungeon_victory(...args),
-);
-dungeon_attack_family.register(9, (...args) => kojo_k9.dungeon_attack(...args));
-ntr_koujo_family.register(9, (...args) => kojo_k9.ntr_koujo(...args));
-exucution_koujo_family.register(9, (...args) =>
-  kojo_k9.exucution_koujo(...args),
-);
-museum_koujo_family.register(9, (...args) => kojo_k9.museum_koujo(...args));
-banishment_koujo_family.register(9, (...args) =>
-  kojo_k9.banishment_koujo(...args),
-);
-public_exucution_koujo_family.register(9, (...args) =>
-  kojo_k9.public_exucution_koujo(...args),
-);
-grotesque_koujo_family.register(9, (...args) =>
-  kojo_k9.grotesque_koujo(...args),
-);
-
-/**
- * 本模块的事件处理器：由 system/flow/startup.js 的装配表按顺序调用 register()
- * 注册（模块装载本身不注册，装配顺序见该文件）。
- */
-function register() {
-  on(EVENT.TRAIN, handle_train_pri, TIER.PRI);
-  on(EVENT.END, handle_end_later, TIER.LATER);
-  on(EVENT.TRAIN, handle_train);
-  on(EVENT.END, handle_end);
-}
 
 module.exports = {
-  register,
   KojoK9,
   kojo_message_com_9,
   dog_kojo_9,

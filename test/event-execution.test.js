@@ -21,7 +21,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
-const { register_handlers } = require('./helpers/event-registration');
+const { load_modules } = require('./helpers/event-registration');
 const {
   assert_one_blank_after,
   assert_one_blank_before,
@@ -218,7 +218,7 @@ test('GROTESQUE：口上收到处分方式编号，结局按所选末路归档',
   fixture.store.set('talent:31:163', 1); // 高贵性格 → K3
   fixture.set_inputs(5);
   const { grotesque } = fixture.load_module('event/event-grotesque');
-  const { grotesque_koujo_family } = fixture.load_module('kojo/kojo-system');
+  const { grotesque_koujo_family } = require('./helpers/kojo-families');
   let observed;
   grotesque_koujo_family.register(3, async (event_no) => {
     observed = event_no;
@@ -297,8 +297,7 @@ test('处分函数直调：口上观察到传入角色，而不是调用前残�
   const { public_execution } = fixture.load_module(
     'event/event-public-execution',
   );
-  const { public_exucution_koujo_family } =
-    fixture.load_module('kojo/kojo-system');
+  const { public_exucution_koujo_family } = require('./helpers/kojo-families');
   let observed_target;
   let observed_event_no;
   public_exucution_koujo_family.register(3, async (event_no) => {
@@ -974,7 +973,7 @@ test('BANISHMENT：K0 口上处理器接收处分编号', async () => {
   fixture.store.set('talent:31:160', 1); // 慈爱性格 → K0
   fixture.set_inputs(2);
   const { banishment } = fixture.load_module('event/event-banishment');
-  const { banishment_koujo_family } = fixture.load_module('kojo/kojo-system');
+  const { banishment_koujo_family } = require('./helpers/kojo-families');
   let observed;
   banishment_koujo_family.register(0, async (result) => {
     observed = result;
@@ -991,7 +990,7 @@ test('BANISHMENT：K1 以上口上处理器接收处分编号', async () => {
   fixture.store.set('talent:31:163', 1); // 高贵性格 → K3
   fixture.set_inputs(2);
   const { banishment } = fixture.load_module('event/event-banishment');
-  const { banishment_koujo_family } = fixture.load_module('kojo/kojo-system');
+  const { banishment_koujo_family } = require('./helpers/kojo-families');
   let observed;
   banishment_koujo_family.register(3, async (event_no) => {
     observed = event_no;
@@ -1103,7 +1102,7 @@ test('EXECUTION：处刑口上处理器收到处刑方式编号（入口实参�
   fixture.store.set('talent:31:163', 1); // 高贵 → K3
   fixture.set_inputs(0, 6); // 第 1 候选、方式 6 = 固定示众
   const { execution } = fixture.load_module('event/event-execution');
-  const { exucution_koujo_family } = fixture.load_module('kojo/kojo-system');
+  const { exucution_koujo_family } = require('./helpers/kojo-families');
   const seen = register_probe(exucution_koujo_family, 3);
 
   await execution(seq([0]));
@@ -1125,7 +1124,7 @@ test('EXECUTION：K0 处刑口上处理器收到处刑方式编号（入口实�
   fixture.store.set('talent:31:160', 1); // 慈爱 → K0（旧签名收事件编号）
   fixture.set_inputs(0, 6);
   const { execution } = fixture.load_module('event/event-execution');
-  const { exucution_koujo_family } = fixture.load_module('kojo/kojo-system');
+  const { exucution_koujo_family } = require('./helpers/kojo-families');
   const rand_n = seq([0]);
   let observed;
   exucution_koujo_family.register(0, async (arg) => {
@@ -1149,8 +1148,7 @@ test('PUBLIC_EXECUTION：公开处刑口上处理器收到处分方式编号（�
   const { public_execution } = fixture.load_module(
     'event/event-public-execution',
   );
-  const { public_exucution_koujo_family } =
-    fixture.load_module('kojo/kojo-system');
+  const { public_exucution_koujo_family } = require('./helpers/kojo-families');
   const seen = register_probe(public_exucution_koujo_family, 3);
 
   await public_execution(31, seq([0]));
@@ -1174,8 +1172,7 @@ test('PUBLIC_EXECUTION：K0 公开处刑口上处理器收到处分方式编号�
   const { public_execution } = fixture.load_module(
     'event/event-public-execution',
   );
-  const { public_exucution_koujo_family } =
-    fixture.load_module('kojo/kojo-system');
+  const { public_exucution_koujo_family } = require('./helpers/kojo-families');
   const rand_n = seq([0]);
   let observed;
   public_exucution_koujo_family.register(0, async (arg) => {
@@ -1193,7 +1190,7 @@ test('GROTESQUE：K0 猎奇处刑口上处理器收到处刑方式编号（入�
   fixture.store.set('talent:31:160', 1); // 慈爱 → K0
   fixture.set_inputs(3); // 火烧刑
   const { grotesque } = fixture.load_module('event/event-grotesque');
-  const { grotesque_koujo_family } = fixture.load_module('kojo/kojo-system');
+  const { grotesque_koujo_family } = require('./helpers/kojo-families');
   const rand_n = seq([0]);
   let observed;
   grotesque_koujo_family.register(0, async (arg) => {
@@ -1397,9 +1394,9 @@ test('处刑口上：K2 与 K4 注册四种处刑处理器', () => {
     exucution_koujo_family,
     grotesque_koujo_family,
     public_exucution_koujo_family,
-  } = fixture.load_module('kojo/kojo-system');
-  register_handlers(fixture, 'kojo/kojo-k2-timid');
-  register_handlers(fixture, 'kojo/kojo-k4-stoic');
+  } = require('./helpers/kojo-families');
+  load_modules(fixture, 'kojo/kojo-k2-timid');
+  load_modules(fixture, 'kojo/kojo-k4-stoic');
 
   for (const family of [
     banishment_koujo_family,

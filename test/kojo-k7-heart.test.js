@@ -11,7 +11,10 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
-const { register_handlers } = require('./helpers/event-registration');
+const {
+  load_modules,
+  register_handlers,
+} = require('./helpers/event-registration');
 const { preset_chara_0, join_slave_chara } = require('./helpers/chara');
 
 // 世界底座：金红桃（素质 167 → GET_KOJO_NUM = 107 → 分发 key 7）入列调教
@@ -35,21 +38,11 @@ async function setup_k7(seed, selectcom = 0) {
     seed(fixture, era_flag);
   }
   register_handlers(fixture, 'kojo/kojo-system');
-  register_handlers(fixture, 'kojo/kojo-k7-heart');
+  load_modules(fixture, 'kojo/kojo-k7-heart');
   return fixture;
 }
 
 // —— EVENTTRAIN：存在标志一对 ——
-
-test('EVENTTRAIN #PRI 置存在标志、EVENTEND #LATER 清 0（K7 一对）', async () => {
-  const fixture = await setup_k7((f) => f.store.delete('flag:107'));
-  const { emit } = fixture.load_module('system/event/registry');
-  await emit('EVENTTRAIN');
-  assert.equal(fixture.store.get('flag:107'), 1); // K7 存在标志
-  assert.equal(fixture.store.get('flag:7'), 2); // 总开关随之默认开
-  await emit('EVENTEND');
-  assert.equal(fixture.store.get('flag:107'), 0);
-});
 
 // —— EVENTTRAIN：初調教 CFLAG:201 状态机 ——
 
@@ -317,64 +310,19 @@ test('EVENTEND 淫乱体力分档：BASE:0 >= 500 与 <= 500 两分支不同台�
 
 // —— 家族注册接入（issue #238 自检 ④ top-level-wiring）——
 
-test('20 个分发族全部注册了 K7（key 7）', async () => {
+test('工厂里登记了口上编号 7（分发族删除后的同类核对）', async () => {
   const fixture = await setup_k7();
-  const {
-    kojo_message_com_family,
-    self_kojo_family,
-    kojo_message_palamcng_family,
-    kojo_message_markcng_family,
-    benki_koujo_family,
-    enterenemy_koujo_family,
-    dungeon_victory_family,
-    dungeon_attack_family,
-    ntr_koujo_family,
-    exucution_koujo_family,
-    museum_koujo_family,
-    banishment_koujo_family,
-    public_exucution_koujo_family,
-    grotesque_koujo_family,
-    gobi_koujo_family,
-  } = fixture.load_module('kojo/kojo-system');
-  const {
-    gohoubi_after_koujo_family,
-    osioski_koujo_family,
-    gohoubi_request_koujo_family,
-  } = fixture.load_module('kojo/kojo-dungeon-after');
-  const { ryouzyoku_kojo_family, ryouzyoku_after_kojo_family } =
-    fixture.load_module('kojo/kojo-dungeon-ravish');
-  const families = [
-    kojo_message_com_family,
-    self_kojo_family,
-    kojo_message_palamcng_family,
-    kojo_message_markcng_family,
-    benki_koujo_family,
-    enterenemy_koujo_family,
-    dungeon_victory_family,
-    dungeon_attack_family,
-    ntr_koujo_family,
-    exucution_koujo_family,
-    museum_koujo_family,
-    banishment_koujo_family,
-    public_exucution_koujo_family,
-    grotesque_koujo_family,
-    gobi_koujo_family,
-    gohoubi_after_koujo_family,
-    osioski_koujo_family,
-    gohoubi_request_koujo_family,
-    ryouzyoku_kojo_family,
-    ryouzyoku_after_kojo_family,
-  ];
-  assert.equal(families.length, 20);
-  for (const family of families) {
-    assert.equal(family.has(7), true, `${family.name || '(族)'} 缺 K7 注册`);
-  }
+  const { registered_kojo_ids } = fixture.load_module('kojo/kojo-factory');
+  assert.ok(
+    registered_kojo_ids().includes(7),
+    '编号 7 未登记进工厂：模块漏被装配 require，整性格口上会静默失声',
+  );
 });
 
 // —— kojo_message_com_7：指令口上族 ——
 
 async function speak_k7(fixture, rand) {
-  const { kojo_message_com_family } = fixture.load_module('kojo/kojo-system');
+  const { kojo_message_com_family } = require('./helpers/kojo-families');
   return kojo_message_com_family.call(7, { args: [rand] });
 }
 
@@ -499,8 +447,7 @@ test('KOJO_MESSAGE_PALAMCNG_7：P = PALAM:3 + UP:3 首次超过 PALAMLV:2 触发
   const fixture = await setup_k7();
   fixture.store.set('palam:20:3', 600);
   fixture.store.set('talent:20:85', 1);
-  const { kojo_message_palamcng_family } =
-    fixture.load_module('kojo/kojo-system');
+  const { kojo_message_palamcng_family } = require('./helpers/kojo-families');
   await kojo_message_palamcng_family.call(7, { args: [] });
   assert.equal(fixture.store.get('cflag:20:221'), 1);
 });
@@ -508,8 +455,7 @@ test('KOJO_MESSAGE_PALAMCNG_7：P = PALAM:3 + UP:3 首次超过 PALAMLV:2 触发
 test('KOJO_MESSAGE_MARKCNG_7：TFLAG:22==3 且 CFLAG:297==0 触发苦痛刻印Lv3首次口上', async () => {
   const fixture = await setup_k7();
   fixture.store.set('tflag:22', 3);
-  const { kojo_message_markcng_family } =
-    fixture.load_module('kojo/kojo-system');
+  const { kojo_message_markcng_family } = require('./helpers/kojo-families');
   await kojo_message_markcng_family.call(7, { args: [] });
   assert.deepEqual(fixture.text_lines(), [
     '「呜咕…我、我为什么会遇到这种…咕…呜呜………」',
@@ -549,7 +495,7 @@ test('DUNGEON_VICTORY_K7：随机三选一 + 体力低于五成追加台词', as
     f.store.set('base:20:1', 100);
     f.store.set('maxbase:20:1', 100);
   });
-  const { dungeon_victory_family } = fixture.load_module('kojo/kojo-system');
+  const { dungeon_victory_family } = require('./helpers/kojo-families');
   await dungeon_victory_family.call(7, { args: [() => 0] });
   assert.deepEqual(fixture.text_lines(), [
     '「成为了不错的消遣呢」',
@@ -562,8 +508,10 @@ test('DUNGEON_RYOUZYOKU_K7 / AFTER_K7：迷宫败北与凌辱结束口上', asyn
   const fixture = await setup_k7((f) => {
     f.store.set('talent:20:0', 1); // 处女
   });
-  const { ryouzyoku_kojo_family, ryouzyoku_after_kojo_family } =
-    fixture.load_module('kojo/kojo-dungeon-ravish');
+  const {
+    ryouzyoku_kojo_family,
+    ryouzyoku_after_kojo_family,
+  } = require('./helpers/kojo-families');
   await ryouzyoku_kojo_family.call(7, { args: [] });
   assert.deepEqual(fixture.text_lines(), [
     '「能夺走我处女的幸运儿会是谁呢？」',
@@ -584,17 +532,17 @@ test('DUNGEON_RYOUZYOKU_K7 / AFTER_K7：迷宫败北与凌辱结束口上', asyn
 
 test('GOHOUBI_REQUEST_KOUJO_K7：CFLAG:A:504==0 请求金钱', async () => {
   const fixture = await setup_k7();
-  const { gohoubi_request_koujo_family } = fixture.load_module(
-    'kojo/kojo-dungeon-after',
-  );
+  const { gohoubi_request_koujo_family } = require('./helpers/kojo-families');
   await gohoubi_request_koujo_family.call(7, { args: [20, undefined] });
   assert.deepEqual(fixture.text_lines(), ['「说道奖励当然想要钱了」']);
 });
 
 test('GOHOUBI_AFTER_KOUJO_K7 / OSIOKI_KOUJO_K7：TFLAG:18 改经 choice 参数传递', async () => {
   const fixture = await setup_k7();
-  const { gohoubi_after_koujo_family, osioski_koujo_family } =
-    fixture.load_module('kojo/kojo-dungeon-after');
+  const {
+    gohoubi_after_koujo_family,
+    osioski_koujo_family,
+  } = require('./helpers/kojo-families');
   await gohoubi_after_koujo_family.call(7, { args: [20, 0] });
   assert.deepEqual(fixture.text_lines(), ['「如此也要继续努力…！」']);
   const before = fixture.text_lines().length;
@@ -604,7 +552,7 @@ test('GOHOUBI_AFTER_KOUJO_K7 / OSIOKI_KOUJO_K7：TFLAG:18 改经 choice 参数�
 
 test('GOBI_KOUJO_K7：ARG:0 取语尾编号（返回文字，#570）', async () => {
   const fixture = await setup_k7();
-  const { gobi_koujo_family } = fixture.load_module('kojo/kojo-system');
+  const { gobi_koujo_family } = require('./helpers/kojo-families');
   const text = await gobi_koujo_family.call(7, { args: [3, () => 0] });
   assert.equal(text, '哦……。');
   assert.deepEqual(fixture.text_lines(), [], '语尾真身不得自行打印');
@@ -616,7 +564,7 @@ test('BENKI_KOUJO_K7：角色即 A（TARGET=A 后 era_flag.target 承接），�
   });
   const { game } = fixture.load_module('facade/game');
   game.train.肉便器行动 = 0;
-  const { benki_koujo_family } = fixture.load_module('kojo/kojo-system');
+  const { benki_koujo_family } = require('./helpers/kojo-families');
   await benki_koujo_family.call(7, { args: [] });
   assert.deepEqual(fixture.text_lines(), [
     '「啊啊…被这种污秽的肉棒侵犯让人根本停不下来啊…♡」',
@@ -627,7 +575,7 @@ test('ENTERENEMY_KOUJO_K7：来袭口上按角色素质分岔', async () => {
   const fixture = await setup_k7((f) => {
     f.store.set('talent:20:85', 1);
   });
-  const { enterenemy_koujo_family } = fixture.load_module('kojo/kojo-system');
+  const { enterenemy_koujo_family } = require('./helpers/kojo-families');
   await enterenemy_koujo_family.call(7, { args: [] });
   assert.deepEqual(fixture.text_lines(), [
     '「啊啊…魔王大人。现、现在就去见你了.....♡」',
@@ -641,7 +589,7 @@ test('NTR_KOUJO_K7：P 分派编号 1（首次经 CFLAG:650 标记）', async ()
     f.store.set('talent:20:85', 1);
     f.store.set('flag:500', 0);
   });
-  const { ntr_koujo_family } = fixture.load_module('kojo/kojo-system');
+  const { ntr_koujo_family } = require('./helpers/kojo-families');
   await ntr_koujo_family.call(7, { args: [undefined, 1] });
   assert.equal(fixture.store.get('cflag:20:650'), 1);
   assert.equal(fixture.store.get('cflag:20:651'), 1);
@@ -649,7 +597,7 @@ test('NTR_KOUJO_K7：P 分派编号 1（首次经 CFLAG:650 标记）', async ()
 
 test('MUSEUM_KOUJO_K7：展品编号 2（蝋人形化）无台词槽，链上无分支不输出', async () => {
   const fixture = await setup_k7();
-  const { museum_koujo_family } = fixture.load_module('kojo/kojo-system');
+  const { museum_koujo_family } = require('./helpers/kojo-families');
   await museum_koujo_family.call(7, { args: [0] });
   assert.deepEqual(fixture.text_lines(), [
     '「啊…奇、奇怪，身体…身体动不了了…咕…啊…啊啊啊啊啊啊…啊………」',
@@ -669,7 +617,7 @@ test('EXUCUTION / BANISHMENT / PUBLIC_EXUCUTION / GROTESQUE_KOUJO_K7：注册且
     banishment_koujo_family,
     public_exucution_koujo_family,
     grotesque_koujo_family,
-  } = fixture.load_module('kojo/kojo-system');
+  } = require('./helpers/kojo-families');
   await exucution_koujo_family.call(7, { args: [5] });
   assert.deepEqual(fixture.text_lines(), ['「下达命令…主人………」']);
 
@@ -1030,9 +978,7 @@ test('#621 迷宫凌辱「作为代替」：前缀与收行段合成一条输出
       f.store.set('talent:20:0', 1); // 处女支
       f.store.set('exp:20:1', exp1);
     });
-    const { ryouzyoku_after_kojo_family } = fixture.load_module(
-      'kojo/kojo-dungeon-ravish',
-    );
+    const { ryouzyoku_after_kojo_family } = require('./helpers/kojo-families');
     await ryouzyoku_after_kojo_family.call(7, { args: [] });
     assert.ok(
       fixture.text_lines().includes(line),

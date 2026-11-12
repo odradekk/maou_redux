@@ -17,7 +17,10 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
-const { register_handlers } = require('./helpers/event-registration');
+const {
+  load_modules,
+  register_handlers,
+} = require('./helpers/event-registration');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
 
 // 世界底座：玛奥入列调教 + K5 触发面（素质 165 / 存在标志 / 总开关默认 2）
@@ -40,13 +43,13 @@ async function setup_k5(seed) {
     seed(fixture);
   }
   register_handlers(fixture, 'kojo/kojo-system');
-  register_handlers(fixture, 'kojo/kojo-k5-mao');
+  load_modules(fixture, 'kojo/kojo-k5-mao');
   return fixture;
 }
 
 // 经分发族调用（TRYCALLFORM 的等价物——注册与分发都在路径上）
 async function speak_k5(fixture, rand) {
-  const { kojo_message_com_family } = fixture.load_module('kojo/kojo-system');
+  const { kojo_message_com_family } = require('./helpers/kojo-families');
   return kojo_message_com_family.call(5, { args: [rand] });
 }
 
@@ -222,15 +225,6 @@ test('死斗场（TEQUIP:55）：SELECTCOM==0 静默、==55 走真身', async ()
   });
   await speak_k5(fixture);
   assert.deepEqual(fixture.text_lines(), ['玛奥连站起来的力气都没有了……']);
-});
-
-test('EVENTTRAIN #PRI 置 FLAG:105、EVENTEND #LATER 清 0', async () => {
-  const fixture = await setup_k5((f) => f.store.set('flag:105', 0));
-  const { emit } = fixture.load_module('system/event/registry');
-  await emit('EVENTTRAIN');
-  assert.equal(fixture.store.get('flag:105'), 1);
-  await emit('EVENTEND');
-  assert.equal(fixture.store.get('flag:105'), 0);
 });
 
 test('EVENTTRAIN NORMAL 档：人类初调教台词 + 推进 CFLAG:201', async () => {
@@ -724,9 +718,7 @@ test('#625 GOHOUBI_REQUEST_KOUJO_K5：兽名与前后文同一行（CFLAG:504 �
     const fixture = await setup_k5((f) => {
       f.load_module('facade/chara').chara(17).stronghold.要求奖赏 = req;
     });
-    const { gohoubi_request_koujo_family } = fixture.load_module(
-      'kojo/kojo-dungeon-after',
-    );
+    const { gohoubi_request_koujo_family } = require('./helpers/kojo-families');
     await gohoubi_request_koujo_family.call(5, { args: [] });
     assert.ok(
       fixture

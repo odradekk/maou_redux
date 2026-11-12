@@ -140,18 +140,20 @@ export default [
   {
     desc: 'M7277 K2 处刑口上：漏注册公开处刑处理器',
     file: 'ere/kojo/kojo-k2-timid.js',
-    find: 'public_exucution_koujo_family.register(2, (...args) =>\n  kojo_k2.public_exucution_koujo(...args),\n);',
-    replace: '// 变异：K2 公开处刑口上未注册',
-    tests: ['event-execution'],
-    must_mention: 'K2 与 K4 注册四种处刑处理器',
+    find: '  async public_exucution_koujo(...args) {\n    return public_exucution_koujo_k2(...args);\n  }',
+    replace:
+      '  async public_exucution_koujo() {\n    return 0; // 变异：公开处刑处理器未接本体\n  }',
+    tests: ['kojo-wiring'],
+    must_mention: '定义了却没人转交',
   },
   {
     desc: 'M7278 K4 处刑口上：漏注册猎奇处刑处理器',
     file: 'ere/kojo/kojo-k4-stoic.js',
-    find: 'grotesque_koujo_family.register(4, (...args) =>\n  kojo_k4.grotesque_koujo(...args),\n);',
-    replace: '// 变异：K4 猎奇处刑口上未注册',
-    tests: ['event-execution'],
-    must_mention: 'K2 与 K4 注册四种处刑处理器',
+    find: '  async grotesque_koujo(event_no) {\n    return grotesque_koujo_k4(event_no);\n  }',
+    replace:
+      '  async grotesque_koujo() {\n    return 0; // 变异：猎奇处刑处理器未接本体\n  }',
+    tests: ['kojo-wiring'],
+    must_mention: '定义了却没人转交',
   },
   {
     desc: 'M7279 据点分发：设施入口退回存根',

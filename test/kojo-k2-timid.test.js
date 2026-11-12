@@ -13,7 +13,10 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
-const { register_handlers } = require('./helpers/event-registration');
+const {
+  load_modules,
+  register_handlers,
+} = require('./helpers/event-registration');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
 
 async function setup_k2(seed) {
@@ -35,12 +38,12 @@ async function setup_k2(seed) {
     seed(fixture);
   }
   register_handlers(fixture, 'kojo/kojo-system');
-  register_handlers(fixture, 'kojo/kojo-k2-timid');
+  load_modules(fixture, 'kojo/kojo-k2-timid');
   return fixture;
 }
 
 async function speak_k2(fixture, rand) {
-  const { kojo_message_com_family } = fixture.load_module('kojo/kojo-system');
+  const { kojo_message_com_family } = require('./helpers/kojo-families');
   return kojo_message_com_family.call(2, { args: [rand] });
 }
 
@@ -249,15 +252,6 @@ test('触手（TEQUIP:90）：静默跳过', async () => {
   const fixture = await setup_k2((f) => f.store.set('tequip:31:90', 1));
   await speak_k2(fixture, seq_rand(0, 0));
   assert.deepEqual(fixture.text_lines(), []);
-});
-
-test('EVENTTRAIN #PRI 档置 FLAG:102、EVENTEND #LATER 档清 0', async () => {
-  const fixture = await setup_k2((f) => f.store.set('flag:102', 0));
-  const { emit } = fixture.load_module('system/event/registry');
-  await emit('EVENTTRAIN');
-  assert.equal(fixture.store.get('flag:102'), 1);
-  await emit('EVENTEND');
-  assert.equal(fixture.store.get('flag:102'), 0);
 });
 
 test('EVENTTRAIN NORMAL 档：默认种族初调教台词 + 推进 CFLAG:201', async () => {

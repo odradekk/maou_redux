@@ -15,7 +15,10 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
-const { register_handlers } = require('./helpers/event-registration');
+const {
+  load_modules,
+  register_handlers,
+} = require('./helpers/event-registration');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
 
 const seq_rand =
@@ -44,12 +47,12 @@ async function setup_k13(seed, selectcom = 0) {
     seed(fixture, era_flag);
   }
   register_handlers(fixture, 'kojo/kojo-system');
-  register_handlers(fixture, 'kojo/kojo-k13-protector');
+  load_modules(fixture, 'kojo/kojo-k13-protector');
   return fixture;
 }
 
 async function speak_k13(fixture, rand) {
-  const { kojo_message_com_family } = fixture.load_module('kojo/kojo-system');
+  const { kojo_message_com_family } = require('./helpers/kojo-families');
   return kojo_message_com_family.call(13, { args: [rand] });
 }
 
@@ -64,17 +67,6 @@ async function emit_end(fixture, rand) {
 }
 
 // —— EVENTTRAIN：存在标志一对 ——
-
-test('EVENTTRAIN #PRI 档置存在标志、EVENTEND #LATER 档清 0（K13 一对）', async () => {
-  const fixture = await setup_k13((f) => {
-    f.store.delete('flag:113');
-  });
-  await emit_train(fixture, seq_rand(1));
-  assert.equal(fixture.store.get('flag:113'), 1, 'K13 一对');
-  assert.equal(fixture.store.get('flag:7'), 2, 'K13 一对');
-  await emit_end(fixture, seq_rand(1));
-  assert.equal(fixture.store.get('flag:113'), 0, 'K13 一对');
-});
 
 test('EVENTTRAIN #PRI 档口上开关补 0（FLAG:7 从 0 补到 2）', async () => {
   const fixture = await setup_k13((f) => {
@@ -513,58 +505,13 @@ test('阈值闸：FLAG:7==1 时淫乱阶段耗尽不出声、==2 时旁路重出
 
 // —— 家族注册接入 ——
 
-test('20 个分发族全部注册了 K13（key 13）', async () => {
+test('工厂里登记了口上编号 13（分发族删除后的同类核对）', async () => {
   const fixture = await setup_k13();
-  const {
-    kojo_message_com_family,
-    self_kojo_family,
-    kojo_message_palamcng_family,
-    kojo_message_markcng_family,
-    benki_koujo_family,
-    enterenemy_koujo_family,
-    dungeon_victory_family,
-    dungeon_attack_family,
-    ntr_koujo_family,
-    exucution_koujo_family,
-    museum_koujo_family,
-    banishment_koujo_family,
-    public_exucution_koujo_family,
-    grotesque_koujo_family,
-    gobi_koujo_family,
-  } = fixture.load_module('kojo/kojo-system');
-  const {
-    gohoubi_after_koujo_family,
-    osioski_koujo_family,
-    gohoubi_request_koujo_family,
-  } = fixture.load_module('kojo/kojo-dungeon-after');
-  const { ryouzyoku_kojo_family, ryouzyoku_after_kojo_family } =
-    fixture.load_module('kojo/kojo-dungeon-ravish');
-  const families = [
-    kojo_message_com_family,
-    self_kojo_family,
-    kojo_message_palamcng_family,
-    kojo_message_markcng_family,
-    benki_koujo_family,
-    enterenemy_koujo_family,
-    dungeon_victory_family,
-    dungeon_attack_family,
-    ntr_koujo_family,
-    exucution_koujo_family,
-    museum_koujo_family,
-    banishment_koujo_family,
-    public_exucution_koujo_family,
-    grotesque_koujo_family,
-    gobi_koujo_family,
-    gohoubi_after_koujo_family,
-    osioski_koujo_family,
-    gohoubi_request_koujo_family,
-    ryouzyoku_kojo_family,
-    ryouzyoku_after_kojo_family,
-  ];
-  assert.equal(families.length, 20, 'K13 二十族清单长度');
-  for (const family of families) {
-    assert.equal(family.has(13), true, `${family.name || '(族)'} 缺 K13 注册`);
-  }
+  const { registered_kojo_ids } = fixture.load_module('kojo/kojo-factory');
+  assert.ok(
+    registered_kojo_ids().includes(13),
+    '编号 13 未登记进工厂：模块漏被装配 require，整性格口上会静默失声',
+  );
 });
 
 // —— PALAMCNG / MARKCNG ——
@@ -574,8 +521,7 @@ test('KOJO_MESSAGE_PALAMCNG_13 口塞检查静默跳过', async () => {
     f.store.set('tequip:31:45', 1);
     f.store.set('palam:31:3', 600);
   });
-  const { kojo_message_palamcng_family } =
-    fixture.load_module('kojo/kojo-system');
+  const { kojo_message_palamcng_family } = require('./helpers/kojo-families');
   await kojo_message_palamcng_family.call(13, { args: [] });
   assert.deepEqual(fixture.text_lines(), [], 'PALAMCNG 口塞检查');
   assert.equal(
@@ -590,8 +536,7 @@ test('KOJO_MESSAGE_PALAMCNG_13：首次润滑 Lv2 爱慕分支推进 CFLAG:221',
     f.store.set('talent:31:85', 1);
     f.store.set('palam:31:3', 600);
   });
-  const { kojo_message_palamcng_family } =
-    fixture.load_module('kojo/kojo-system');
+  const { kojo_message_palamcng_family } = require('./helpers/kojo-families');
   await kojo_message_palamcng_family.call(13, { args: [] });
   assert.deepEqual(
     fixture.text_lines(),
@@ -609,8 +554,7 @@ test('KOJO_MESSAGE_PALAMCNG_13：首次 C 绝顶推进 CFLAG:225', async () => {
   const fixture = await setup_k13((f) => {
     f.store.set('nowex:31:0', 1);
   });
-  const { kojo_message_palamcng_family } =
-    fixture.load_module('kojo/kojo-system');
+  const { kojo_message_palamcng_family } = require('./helpers/kojo-families');
   await kojo_message_palamcng_family.call(13, { args: [] });
   assert.deepEqual(
     fixture.text_lines(),
@@ -628,8 +572,7 @@ test('KOJO_MESSAGE_MARKCNG_13：苦痛刻印变动==3 推进 CFLAG:297', async (
   const fixture = await setup_k13();
   const { game } = fixture.load_module('facade/game');
   game.system.苦痛刻印变动 = 3;
-  const { kojo_message_markcng_family } =
-    fixture.load_module('kojo/kojo-system');
+  const { kojo_message_markcng_family } = require('./helpers/kojo-families');
   await kojo_message_markcng_family.call(13, { args: [] });
   assert.deepEqual(
     fixture.text_lines(),
@@ -665,7 +608,7 @@ test('SELF_KOJO_K13 TFLAG:13==6（卖却）：进入 SELL_MATURO_K0 真身', asy
   fixture.set_inputs(999);
   const { game } = fixture.load_module('facade/game');
   game.train.初吻与自我口上 = 6;
-  const { self_kojo_family } = fixture.load_module('kojo/kojo-system');
+  const { self_kojo_family } = require('./helpers/kojo-families');
   await self_kojo_family.call(13, { args: [] });
   assert.ok(fixture.text_lines().includes('要卖到哪个市场？'));
 });
@@ -679,7 +622,7 @@ test('DUNGEON_VICTORY_K13：默认档 rand 0 + 体力低于五成追加', async 
     f.store.set('base:31:1', 100);
     f.store.set('maxbase:31:1', 100);
   });
-  const { dungeon_victory_family } = fixture.load_module('kojo/kojo-system');
+  const { dungeon_victory_family } = require('./helpers/kojo-families');
   await dungeon_victory_family.call(13, { args: [seq_rand(0)] });
   assert.deepEqual(
     fixture.text_lines(),
@@ -699,7 +642,7 @@ test('DUNGEON_VICTORY_K13：体力过半不追加低体力旁白', async () => {
     f.store.set('base:31:1', 100);
     f.store.set('maxbase:31:1', 100);
   });
-  const { dungeon_victory_family } = fixture.load_module('kojo/kojo-system');
+  const { dungeon_victory_family } = require('./helpers/kojo-families');
   await dungeon_victory_family.call(13, { args: [seq_rand(0)] });
   assert.deepEqual(
     fixture.text_lines(),
@@ -716,7 +659,7 @@ test('DUNGEON_ATTACK_K13：侵略状态==2 默认档 rand 0', async () => {
   const fixture = await setup_k13();
   const { chara } = fixture.load_module('facade/chara');
   chara(31).invasion.状态 = 2;
-  const { dungeon_attack_family } = fixture.load_module('kojo/kojo-system');
+  const { dungeon_attack_family } = require('./helpers/kojo-families');
   await dungeon_attack_family.call(13, { args: [seq_rand(0)] });
   assert.deepEqual(
     fixture.text_lines(),
@@ -729,8 +672,10 @@ test('DUNGEON_RYOUZYOKU_K13 / AFTER_K13：处女默认档', async () => {
   const fixture = await setup_k13((f) => {
     f.store.set('talent:31:0', 1);
   });
-  const { ryouzyoku_kojo_family, ryouzyoku_after_kojo_family } =
-    fixture.load_module('kojo/kojo-dungeon-ravish');
+  const {
+    ryouzyoku_kojo_family,
+    ryouzyoku_after_kojo_family,
+  } = require('./helpers/kojo-families');
   await ryouzyoku_kojo_family.call(13, { args: [] });
   assert.deepEqual(
     fixture.text_lines(),
@@ -753,9 +698,7 @@ test('DUNGEON_RYOUZYOKU_K13 / AFTER_K13：处女默认档', async () => {
 
 test('GOHOUBI_REQUEST_KOUJO_K13：CFLAG:504==0 请求金钱', async () => {
   const fixture = await setup_k13();
-  const { gohoubi_request_koujo_family } = fixture.load_module(
-    'kojo/kojo-dungeon-after',
-  );
+  const { gohoubi_request_koujo_family } = require('./helpers/kojo-families');
   await gohoubi_request_koujo_family.call(13, { args: [] });
   assert.deepEqual(
     fixture.text_lines(),
@@ -766,9 +709,7 @@ test('GOHOUBI_REQUEST_KOUJO_K13：CFLAG:504==0 请求金钱', async () => {
 
 test('GOHOUBI_AFTER_KOUJO_K13：choice 参数传递（0 失望 / 1 保存）', async () => {
   const fixture = await setup_k13();
-  const { gohoubi_after_koujo_family } = fixture.load_module(
-    'kojo/kojo-dungeon-after',
-  );
+  const { gohoubi_after_koujo_family } = require('./helpers/kojo-families');
   await gohoubi_after_koujo_family.call(13, { args: [31, 0] });
   assert.deepEqual(
     fixture.text_lines(),
@@ -786,7 +727,7 @@ test('GOHOUBI_AFTER_KOUJO_K13：choice 参数传递（0 失望 / 1 保存）', a
 
 test('GOBI_KOUJO_K13：ARG:0==1 取语尾（返回文字，#570）', async () => {
   const fixture = await setup_k13();
-  const { gobi_koujo_family } = fixture.load_module('kojo/kojo-system');
+  const { gobi_koujo_family } = require('./helpers/kojo-families');
   const text = await gobi_koujo_family.call(13, { args: [1, seq_rand(0)] });
   assert.equal(text, '嗯♪', 'GOBI ARG:0==1');
   assert.deepEqual(fixture.text_lines(), [], '语尾真身不得自行打印');
@@ -796,7 +737,7 @@ test('BENKI_KOUJO_K13：肉便器行动==0 默认档', async () => {
   const fixture = await setup_k13();
   const { game } = fixture.load_module('facade/game');
   game.train.肉便器行动 = 0;
-  const { benki_koujo_family } = fixture.load_module('kojo/kojo-system');
+  const { benki_koujo_family } = require('./helpers/kojo-families');
   await benki_koujo_family.call(13, { args: [] });
   assert.deepEqual(
     fixture.text_lines(),
@@ -807,7 +748,7 @@ test('BENKI_KOUJO_K13：肉便器行动==0 默认档', async () => {
 
 test('ENTERENEMY_KOUJO_K13：默认档来袭口上', async () => {
   const fixture = await setup_k13();
-  const { enterenemy_koujo_family } = fixture.load_module('kojo/kojo-system');
+  const { enterenemy_koujo_family } = require('./helpers/kojo-families');
   await enterenemy_koujo_family.call(13, { args: [] });
   assert.deepEqual(
     fixture.text_lines(),
@@ -824,7 +765,7 @@ test('NTR_KOUJO_K13：P==1 爱慕分支首次经 CFLAG:650/651 标记', async ()
   });
   const { game } = fixture.load_module('facade/game');
   game.system.狂王性别 = 0;
-  const { ntr_koujo_family } = fixture.load_module('kojo/kojo-system');
+  const { ntr_koujo_family } = require('./helpers/kojo-families');
   await ntr_koujo_family.call(13, { args: [seq_rand(0), 1] });
   assert.ok(
     fixture.text_lines().some((l) => l.includes('全都是魔王大人的东西')),
@@ -856,7 +797,7 @@ test('NTR_KOUJO_K13：连续无后缀 PRINT 是一行，输出一条（#600/#625
     });
     const { game } = fixture.load_module('facade/game');
     game.system.狂王性别 = king_sex;
-    const { ntr_koujo_family } = fixture.load_module('kojo/kojo-system');
+    const { ntr_koujo_family } = require('./helpers/kojo-families');
     await ntr_koujo_family.call(13, { args: [seq_rand(0), 1] });
     const lines = fixture.text_lines();
     const at = lines.findIndex((l) => l.startsWith('狂王毫不介意'));
@@ -875,7 +816,7 @@ test('EXUCUTION / BANISHMENT / PUBLIC_EXUCUTION_KOUJO_K13：有台词档', async
     exucution_koujo_family,
     banishment_koujo_family,
     public_exucution_koujo_family,
-  } = fixture.load_module('kojo/kojo-system');
+  } = require('./helpers/kojo-families');
 
   await exucution_koujo_family.call(13, { args: [4] });
   assert.deepEqual(
@@ -903,7 +844,7 @@ test('EXUCUTION / BANISHMENT / PUBLIC_EXUCUTION_KOUJO_K13：有台词档', async
 
 test('MUSEUM_KOUJO_K13：展品编号 3 有台词', async () => {
   const fixture = await setup_k13();
-  const { museum_koujo_family } = fixture.load_module('kojo/kojo-system');
+  const { museum_koujo_family } = require('./helpers/kojo-families');
   await museum_koujo_family.call(13, { args: [3] });
   assert.deepEqual(
     fixture.text_lines(),
@@ -931,7 +872,7 @@ test('#625 正常位二回目·恳求三档：尾段与前后文同一行', asyn
       f.store.set('talent:31:157', 1);
       f.load_module('facade/chara').chara(31).kojo.正常位 = 2;
     }, 20);
-    const { kojo_message_com_family } = fixture.load_module('kojo/kojo-system');
+    const { kojo_message_com_family } = require('./helpers/kojo-families');
     await kojo_message_com_family.call(13, {
       args: [seq_rand(...seq)],
     });
@@ -957,7 +898,7 @@ test('#625 背后位二回目·恳求三档：尾段与前后文同一行', asyn
       f.store.set('talent:31:157', 1);
       f.load_module('facade/chara').chara(31).kojo.背后位 = 2;
     }, 21);
-    const { kojo_message_com_family } = fixture.load_module('kojo/kojo-system');
+    const { kojo_message_com_family } = require('./helpers/kojo-families');
     await kojo_message_com_family.call(13, {
       args: [seq_rand(...seq)],
     });
@@ -980,7 +921,7 @@ test('#625 背后位二回目·把…弄乱：尾段与前后文同一行', asyn
       f.store.set('talent:31:157', 1);
       f.load_module('facade/chara').chara(31).kojo.背后位 = 2;
     }, 21);
-    const { kojo_message_com_family } = fixture.load_module('kojo/kojo-system');
+    const { kojo_message_com_family } = require('./helpers/kojo-families');
     // 抽签序：rand_n(2)=0 → rand_n(2) → rand_n(3)≠0 → rand_n(2)≠0
     // → rand_n(2)
     await kojo_message_com_family.call(13, {
@@ -1013,7 +954,7 @@ test('#625 NTR_KOUJO_K13 それ以外支：三处整行（武器名/处女膜/�
     });
     const { game } = fixture.load_module('facade/game');
     game.system.狂王性别 = king_sex;
-    const { ntr_koujo_family } = fixture.load_module('kojo/kojo-system');
+    const { ntr_koujo_family } = require('./helpers/kojo-families');
     await ntr_koujo_family.call(13, { args: [seq_rand(0), 1] });
     const lines = fixture.text_lines();
     assert.ok(
@@ -1058,7 +999,7 @@ test('#625 NTR_KOUJO_K13 P==4：三段是一行（TALENT:157 两档）', async (
         f.store.set('talent:31:157', 1);
       }
     });
-    const { ntr_koujo_family } = fixture.load_module('kojo/kojo-system');
+    const { ntr_koujo_family } = require('./helpers/kojo-families');
     await ntr_koujo_family.call(13, { args: [seq_rand(0), 4] });
     assert.ok(
       fixture.text_lines().includes(line),
@@ -1092,7 +1033,7 @@ test('#625 背后位·哈啊…请您：前缀行并入各支（整段与另两�
       f.store.set('talent:31:157', 1);
       f.load_module('facade/chara').chara(31).kojo.背后位 = 2;
     }, 21);
-    const { kojo_message_com_family } = fixture.load_module('kojo/kojo-system');
+    const { kojo_message_com_family } = require('./helpers/kojo-families');
     await kojo_message_com_family.call(13, { args: [seq_rand(...draws)] });
     assert.ok(
       fixture.text_lines().includes(expect),
@@ -1113,7 +1054,7 @@ test('#625 背后位·有感觉了什么的：前缀行并入三条互斥终点'
       f.store.set('mark:31:2', 3);
       f.load_module('facade/chara').chara(31).kojo.背后位 = 2;
     }, 21);
-    const { kojo_message_com_family } = fixture.load_module('kojo/kojo-system');
+    const { kojo_message_com_family } = require('./helpers/kojo-families');
     await kojo_message_com_family.call(13, { args: [seq_rand(...draws)] });
     assert.ok(
       fixture.text_lines().includes(expect),
@@ -1135,7 +1076,7 @@ test('#625 背后位·这副模样／好羞耻：两处抽签的行拼成一条'
       f.store.set('mark:31:2', 3);
       f.load_module('facade/chara').chara(31).kojo.背后位 = 2;
     }, 21);
-    const { kojo_message_com_family } = fixture.load_module('kojo/kojo-system');
+    const { kojo_message_com_family } = require('./helpers/kojo-families');
     await kojo_message_com_family.call(13, { args: [seq_rand(...draws)] });
     assert.ok(
       fixture.text_lines().includes(expect),
@@ -1154,9 +1095,7 @@ test('#625 GOHOUBI_REQUEST_KOUJO_K13：兽名与前后文同一行（CFLAG:504 �
     const fixture = await setup_k13((f) => {
       f.load_module('facade/chara').chara(31).stronghold.要求奖赏 = req;
     });
-    const { gohoubi_request_koujo_family } = fixture.load_module(
-      'kojo/kojo-dungeon-after',
-    );
+    const { gohoubi_request_koujo_family } = require('./helpers/kojo-families');
     await gohoubi_request_koujo_family.call(13, { args: [] });
     assert.ok(
       fixture.text_lines().includes(`庇护者要求奖励与${beast}交尾`),

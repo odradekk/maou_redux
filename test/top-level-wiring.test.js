@@ -173,7 +173,11 @@ function protected_modules() {
     const full = path.join(ERE_DIR, `${rel}.js`);
     if (!fs.existsSync(full)) continue;
     const src = fs.readFileSync(full, 'utf8');
-    const has_reg = FAMILIES.some((f) => extract_register_ids(src, f).size > 0);
+    // 口上模块的装载期副作用是 register_kojo(N, Ctor)（#859 起分发族已删），
+    // 与 com-* 的族注册同属「必须被主启动图装载」的清单
+    const has_reg =
+      FAMILIES.some((f) => extract_register_ids(src, f).size > 0) ||
+      /register_kojo\(/.test(src);
     if (has_reg) out.set(target, rel);
   }
   return out;

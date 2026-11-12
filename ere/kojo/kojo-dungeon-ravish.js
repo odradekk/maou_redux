@@ -78,12 +78,11 @@
  *     `talent:${cid}:种族` 可用（#183 引擎实测 setVar 通过中文名翻译）。
  *   - **`CALL DUNGEON_RYOUZYOKU` / `CALL DUNGEON_RYOUZYOKU_AFTER`**：口上前置/后置
  *     分派（TRYCALLFORM DUNGEON_RYOUZYOKU_K{LOCAL-100} /
- *     DUNGEON_RYOUZYOKU_AFTER_K{LOCAL-100}）。20 个角色口上文件定义了
- *     这些钩子（K0-K15/K19/K902-K904），随各自口上票实现；本文件用
- *     DispatchFamily 声明同款编号空间（普通口上 0-39 + EX 口上 901-1600），
- *     当前零注册 → 族调用返回 whenMissing（TRYCALL 落空语义），角色口上
- *     实现后在模块里 register。TARGET = ARG（分派前置 TARGET）经
- *     era_flag.target 设置——GET_KOJO_NUM 缺省读它。
+ *     DUNGEON_RYOUZYOKU_AFTER_K{LOCAL-100}）。各角色口上文件把这些钩子
+ *     写成口上类的方法（K0-K15/K19/K902-K904），随各自口上票实现；本文件
+ *     只管分发（#854 起走工厂：按 `get_kojo_num` 的编号取实例，未注册的
+ *     性格是基类实例，钩子不输出 = TRYCALL 落空语义）。TARGET = ARG
+ *     （分派前置 TARGET）经 era_flag.target 设置——GET_KOJO_NUM 缺省读它。
  *   - **`CALL CHA_IMG2(ARG)` / `IF 立绘`**：立绘显示
  *     未移植（HTML_PRINT 无通道，dungeon-battle.js 同款）；
  *     `立绘` 是 SAVEDATA 开关（未入 yml），
@@ -132,7 +131,6 @@ const era_flag = require('#/era-utils/era-flag');
 const { chara_callname } = require('#/utils/callname-utils');
 const { chara } = require('#/facade/chara');
 const { show_data } = require('#/system/chara/chara-data-screen'); // #390 起真身
-const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
 const { gobi_koujo, run_kojo } = require('#/kojo/kojo-system');
 const ravish_man_mod = require('#/kojo/kojo-dungeon-ravish-man');
 const { karma } = require('#/system/chara/chara-stats');
@@ -145,7 +143,6 @@ const { battle_column } = require('#/system/dungeon/battle-state');
 function pick(list, rand_n) {
   return list[rand_n(list.length)];
 }
-
 /** 通用：取被凌辱者名字（%SAVESTR:ARG% 的等价物） */
 function arg_name_of(arg) {
   return chara_callname(arg);
@@ -162,44 +159,17 @@ function she(cid) {
 }
 
 /**
- * 声明的编号空间：分发检查能拼出的全部
- * DUNGEON_RYOUZYOKU_K{N} / DUNGEON_RYOUZYOKU_AFTER_K{N} 名（与
- * kojo-system 的 KOJO_MESSAGE_COM 同款）。普通口上 0-39 + EX 口上
- * 901-1600；空间内缺失 = TRYCALL 落空（合法）。
- */
-const DECLARED_KOJO_IDS = [
-  ...Array.from({ length: 40 }, (_, i) => i),
-  ...Array.from({ length: 700 }, (_, i) => i + 901),
-];
-
-/** DUNGEON_RYOUZYOKU_K{N} 族：凌辱前的角色口上钩子（口上票实现后注册） */
-const ryouzyoku_kojo_family = new DispatchFamily(
-  'DUNGEON_RYOUZYOKU_K',
-  DECLARED_KOJO_IDS,
-);
-
-/** DUNGEON_RYOUZYOKU_AFTER_K{N} 族：凌辱后的角色口上钩子（口上票实现后注册） */
-const ryouzyoku_after_kojo_family = new DispatchFamily(
-  'DUNGEON_RYOUZYOKU_AFTER_K',
-  DECLARED_KOJO_IDS,
-);
-
-/**
- * 迷宫凌辱两钩子的共同分发体：交给 run_kojo（迁移过的性格走工厂实例的
- * 钩子，未迁移的按原分发族调用）。
+ * 迷宫凌辱两钩子的共同分发体：交给 run_kojo（按 `get_kojo_num` 取到的编号
+ * 走工厂实例的钩子）。
  *
- * 不做存在判定，实参为空——两族都是零参钩子（TARGET 由调用方在分派前置好，
+ * 不做存在判定，实参为空——两钩子都是零参（TARGET 由调用方在分派前置好，
  * `LOCAL = GET_KOJO_NUM()` 缺省读它）。缺席语义 = 静默（TRYCALL 落空）。
  *
  * @param {string} hook 钩子名（= 入口名）
- * @param {import('#/system/dispatch/dispatch-family').DispatchFamily} family
- *   目标族（前 = ryouzyoku_kojo_family / 后 = ryouzyoku_after_kojo_family）
  * @returns {Promise<number>} 0（调用方不读）
  */
-async function dispatch_ryouzyoku_kojo(hook, family) {
-  await run_kojo(hook, family, {
-    legacy: (id) => family.call(id, { whenMissing: 0, args: [] }),
-  });
+async function dispatch_ryouzyoku_kojo(hook) {
+  await run_kojo(hook);
   return 0;
 }
 
@@ -212,7 +182,7 @@ async function dispatch_ryouzyoku_kojo(hook, family) {
  * @returns {Promise<number>} 0（调用方不读）
  */
 async function dungeon_ryouzyoku() {
-  return dispatch_ryouzyoku_kojo('dungeon_ryouzyoku', ryouzyoku_kojo_family);
+  return dispatch_ryouzyoku_kojo('dungeon_ryouzyoku');
 }
 
 /**
@@ -222,10 +192,7 @@ async function dungeon_ryouzyoku() {
  * @returns {Promise<number>} 0（调用方不读）
  */
 async function dungeon_ryouzyoku_after() {
-  return dispatch_ryouzyoku_kojo(
-    'dungeon_ryouzyoku_after',
-    ryouzyoku_after_kojo_family,
-  );
+  return dispatch_ryouzyoku_kojo('dungeon_ryouzyoku_after');
 }
 
 /**
@@ -4095,8 +4062,6 @@ async function dungeon_ryouzyoku_escape(arg, rand) {
 }
 
 module.exports = {
-  ryouzyoku_kojo_family,
-  ryouzyoku_after_kojo_family,
   dungeon_ryouzyoku,
   dungeon_ryouzyoku_after,
   ryouzyoku,

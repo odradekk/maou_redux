@@ -701,8 +701,10 @@ test('GOHOUBI_REQUEST：魔王同时是男与扶她时 6 也降级（判断条�
 
 test('GOHOUBI_REQUEST_KOUJO：调用面（签名）由 #397 冻结，函数体随 #403 换成真分发', async () => {
   const fixture = create_era_fixture();
-  const { gohoubi_request_koujo, gohoubi_request_koujo_family } =
-    fixture.load_module('kojo/kojo-dungeon-after');
+  const { gohoubi_request_koujo } = fixture.load_module(
+    'kojo/kojo-dungeon-after',
+  );
+  const { gohoubi_request_koujo_family } = require('./helpers/kojo-families');
   assert.equal(typeof gohoubi_request_koujo, 'function');
   assert.equal(gohoubi_request_koujo.length, 1, '只有一个形参 cid');
 

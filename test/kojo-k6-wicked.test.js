@@ -19,7 +19,10 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
-const { register_handlers } = require('./helpers/event-registration');
+const {
+  load_modules,
+  register_handlers,
+} = require('./helpers/event-registration');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
 
 const seq_rand =
@@ -48,26 +51,16 @@ async function setup_k6(seed, selectcom = 0) {
     seed(fixture, era_flag);
   }
   register_handlers(fixture, 'kojo/kojo-system');
-  register_handlers(fixture, 'kojo/kojo-k6-wicked');
+  load_modules(fixture, 'kojo/kojo-k6-wicked');
   return fixture;
 }
 
 async function speak_k6(fixture, rand) {
-  const { kojo_message_com_family } = fixture.load_module('kojo/kojo-system');
+  const { kojo_message_com_family } = require('./helpers/kojo-families');
   return kojo_message_com_family.call(6, { args: [rand] });
 }
 
 // —— EVENTTRAIN / EVENTEND 存在标志 ——
-
-test('EVENTTRAIN #PRI 置存在标志、EVENTEND #LATER 清 0（K6 一对）', async () => {
-  const fixture = await setup_k6((f) => f.store.delete('flag:106'));
-  const { emit } = fixture.load_module('system/event/registry');
-  await emit('EVENTTRAIN');
-  assert.equal(fixture.store.get('flag:106'), 1, 'K6 存在标志 FLAG:106 = 1');
-  assert.equal(fixture.store.get('flag:7'), 2, '总开关随之默认开');
-  await emit('EVENTEND');
-  assert.equal(fixture.store.get('flag:106'), 0, 'EVENTEND #LATER 清 FLAG:106');
-});
 
 test('初調教（CFLAG:201 == 0，人类）：RAND 非 0 支 + 推进到 1', async () => {
   const fixture = await setup_k6();
