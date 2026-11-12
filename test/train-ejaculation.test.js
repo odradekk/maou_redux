@@ -7,7 +7,6 @@ const { com_context } = require('./helpers/com-context');
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { register_handlers } = require('./helpers/event-registration');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
-const { com_context } = require('./helpers/com-context');
 
 function seed_world() {
   const fixture = create_era_fixture();
