@@ -61,6 +61,9 @@ test('campaign_menu()：[0] 选战役 1 → campaign_set_1 真身跑完 → 菜�
   const { campaign_menu } = load(fixture);
   // 第一轮 [0] 进 select_campaign → 选 [1]（唯一注册的槽位）；
   // select_campaign 返回后菜单重画，第二轮 [999] 退出
+  // 深度重置从非零起跑才观察得到：FLAG:401 本来就是 0 时，删掉那次写与
+  // 不删结果一样（M10108 因此存活过）。
+  fixture.store.set('flag:401', 5);
   fixture.set_inputs(0, 1, 999);
   const ret = await campaign_menu();
   assert.equal(ret, 0);
