@@ -15,7 +15,6 @@ const {
   dungeon_town_lover,
   dungeon_town_lover_chara_enter,
 } = require('#/system/dungeon/dungeon-lovers');
-const { game } = require('#/facade/game');
 const { chara_callname } = require('#/utils/callname-utils');
 const { default_rand } = require('#/utils/numeric');
 const era_flag = require('#/era-utils/era-flag');

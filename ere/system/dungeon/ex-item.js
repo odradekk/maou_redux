@@ -14,7 +14,6 @@
 const era = require('#/era-electron');
 const EraChara = require('#/era-utils/era-chara');
 const era_flag = require('#/era-utils/era-flag');
-const { chara } = require('#/facade/chara');
 const { get_equip_num } = require('#/system/equip/equip-lookup');
 const { equip_weapon_spans } = require('#/system/equip/equip-print');
 const { usable_equipment } = require('#/system/equip/equip-usable');

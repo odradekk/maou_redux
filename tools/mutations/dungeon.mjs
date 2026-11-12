@@ -47,8 +47,8 @@ export default [
   {
     desc: 'M378 ending_2 接入条件取反（TALENT:122 == 0 → != 0：真勇者反而不进结局）',
     file: 'ere/system/dungeon/dungeon.js',
-    find: `  if ((era.get(\`talent:\${arg0}:122\`) || 0) === 0) {`,
-    replace: `  if ((era.get(\`talent:\${arg0}:122\`) || 0) !== 0) {`,
+    find: '  if (EraChara.get(arg0).talent.male === 0) {',
+    replace: '  if (EraChara.get(arg0).talent.male !== 0) {',
     tests: ['dungeon-main'],
     // must_mention 随用例翻修同步：贯通用例断言从「接入存根」改为「quit
     // 炸穿」（#173 ENDING_2 真身），#852 起又改为「回标题的转场目标」——
@@ -58,12 +58,9 @@ export default [
   {
     desc: 'M379 冒险者回头分支的挫折记忆改坏（507 = 1 删——撤退标志不立）',
     file: 'ere/system/dungeon/dungeon.js',
-    find: `      era.print(\`\${leader_name}放弃了成为英雄的念头，开始回头了。\`);
-      era.print('再次鼓起勇气来到这里可能会花些时间了。');
-      chara(arg0).invasion.回城标志 = 1; // CFLAG:507 = 1`,
-    replace: `      era.print(\`\${leader_name}放弃了成为英雄的念头，开始回头了。\`);
-      era.print('再次鼓起勇气来到这里可能会花些时间了。');
-      // 变异：CFLAG:507 = 1 删除`,
+    find: "      era.print(`${leader_name}放弃了成为英雄的念头，开始回头了。`);\n      era.print('再次鼓起勇气来到这里可能会花些时间了。');\n      EraChara.get(arg0).cflag.returned_to_town = 1; // CFLAG:507 = 1",
+    replace:
+      "      era.print(`${leader_name}放弃了成为英雄的念头，开始回头了。`);\n      era.print('再次鼓起勇气来到这里可能会花些时间了。');\n      // 变异：CFLAG:507 = 1 删除",
     tests: ['dungeon-main'],
     must_mention: 'CFLAG:507 = 1 撤退中',
   },
@@ -86,12 +83,9 @@ export default [
   {
     desc: 'M382 迎击魔王的房间终点改坏（507 = 0 删）',
     file: 'ere/system/dungeon/dungeon.js',
-    find: `    era.print(\`\${leader_name}返回了魔王的房间。\`);
-    ctx.walk20 = 100;
-    chara(arg0).invasion.回城标志 = 0; // CFLAG:507 = 0`,
-    replace: `    era.print(\`\${leader_name}返回了魔王的房间。\`);
-    ctx.walk20 = 100;
-    // 变异：CFLAG:507 = 0 删除`,
+    find: '    era.print(`${leader_name}返回了魔王的房间。`);\n    ctx.walk20 = 100;\n    EraChara.get(arg0).cflag.returned_to_town = 0; // CFLAG:507 = 0',
+    replace:
+      '    era.print(`${leader_name}返回了魔王的房间。`);\n    ctx.walk20 = 100;\n    // 变异：CFLAG:507 = 0 删除',
     tests: ['dungeon-main'],
     must_mention: 'CFLAG:507 = 0',
   },
@@ -115,47 +109,26 @@ export default [
   {
     desc: 'M385 party_unite 队长核对删坏（同伴不再置行动完了）',
     file: 'ere/system/dungeon/dungeon-party.js',
-    find: `        if (leader === charid) {
-          // 合っていたら行動終了になる（同伴以行动完了追随队长）
-          era.set(\`cflag:\${rest}:530\`, 1);`,
-    replace: `        if (leader === charid) {
-          // 合っていたら行動終了になる（同伴以行动完了追随队长）
-          // 变异：era.set(\`cflag:\${rest}:530\`, 1) 删除`,
+    find: '        if (leader === charid) {\r\n          // 合っていたら行動終了になる（同伴以行动完了追随队长）\r\n          EraChara.get(rest).cflag.action_done = 1;\r',
+    replace:
+      '        if (leader === charid) {\n          // 合っていたら行動終了になる（同伴以行动完了追随队长）\n          // 变异：EraChara.get(rest).cflag.action_done = 1 删除',
     tests: ['dungeon-party'],
     must_mention: '引用正确的同伴置行动完了',
   },
   {
     desc: 'M386 search_free 同层判定改坏（阶层过滤删——异层勇者被吸收）',
     file: 'ere/system/dungeon/dungeon-party.js',
-    find: `    // 同階層以外を除く（CFLAG:501 侵攻阶层）
-    if (floor !== (era.get(\`cflag:\${charid}:501\`) || 0)) {
-      continue;
-    }`,
-    replace: `    // 同階層以外を除く（CFLAG:501 侵攻阶层）——变异：过滤删除`,
+    find: '    // 同階層以外を除く（CFLAG:501 侵攻阶层）\r\n    if (floor !== EraChara.get(charid).cflag.invasion_floor) {\r\n      continue;\r\n    }\r',
+    replace: '    // 同階層以外を除く（CFLAG:501 侵攻阶层）——变异：过滤删除',
     tests: ['dungeon-party'],
     must_mention: '不同层的布莱克被跳过',
   },
   {
     desc: 'M387 party_del 队长解散复位删坏（533 不清）',
     file: 'ere/system/dungeon/dungeon-party.js',
-    find: `    era.set(\`cflag:\${leader}:530\`, 0);
-    era.set(\`cflag:\${leader}:531\`, 0);
-    era.set(\`cflag:\${leader}:532\`, 0);
-    era.set(\`cflag:\${leader}:533\`, 0);
-    era.set(\`cflag:\${rest_a}:530\`, 0);
-    era.set(\`cflag:\${rest_a}:533\`, 0);
-    era.set(\`cflag:\${rest_b}:530\`, 0);
-    era.set(\`cflag:\${rest_b}:533\`, 0);
-  } else if (cid === rest_a) {`,
-    replace: `    era.set(\`cflag:\${leader}:530\`, 0);
-    era.set(\`cflag:\${leader}:531\`, 0);
-    era.set(\`cflag:\${leader}:532\`, 0);
-    // 变异：era.set(\`cflag:\${leader}:533\`, 0) 删除
-    era.set(\`cflag:\${rest_a}:530\`, 0);
-    era.set(\`cflag:\${rest_a}:533\`, 0);
-    era.set(\`cflag:\${rest_b}:530\`, 0);
-    era.set(\`cflag:\${rest_b}:533\`, 0);
-  } else if (cid === rest_a) {`,
+    find: '\r\n    EraChara.get(leader).cflag.action_done = 0;\r\n    EraChara.get(leader).cflag.companion_a = 0;\r\n    EraChara.get(leader).cflag.companion_b = 0;\r\n    EraChara.get(leader).cflag.leader_memory = 0;\r\n    EraChara.get(rest_a).cflag.action_done = 0;\r\n    EraChara.get(rest_a).cflag.leader_memory = 0;\r\n    EraChara.get(rest_b).cflag.action_done = 0;\r\n    EraChara.get(rest_b).cflag.leader_memory = 0;\r\n  } else if (cid === rest_a) {',
+    replace:
+      '    EraChara.get(leader).cflag.action_done = 0;\n    EraChara.get(leader).cflag.companion_a = 0;\n    EraChara.get(leader).cflag.companion_b = 0;\n    // 变异：EraChara.get(leader).cflag.leader_memory = 0 删除\n    EraChara.get(rest_a).cflag.action_done = 0;\n    EraChara.get(rest_a).cflag.leader_memory = 0;\n    EraChara.get(rest_b).cflag.action_done = 0;\n    EraChara.get(rest_b).cflag.leader_memory = 0;\n  } else if (cid === rest_a) {',
     tests: ['dungeon-party'],
     must_mention: '队长 1:533 清零',
   },
@@ -192,24 +165,18 @@ export default [
   {
     desc: 'M481 death_check 投降分支的陷落写入删（CFLAG:1 = 0 不写）',
     file: 'ere/system/dungeon/dungeon-battle.js',
-    find: `    era.print(\`\${name_of(arg0)}感觉到生命垂危，投降求饶了。\`);
-    chara(arg0).invasion.状态 = 0;
-    return 2;`,
-    replace: `    era.print(\`\${name_of(arg0)}感觉到生命垂危，投降求饶了。\`);
-    // 变异：投降的陷落写入删（CFLAG:1 = 0 不写）
-    return 2;`,
+    find: '    era.print(`${name_of(arg0)}感觉到生命垂危，投降求饶了。`);\n    EraChara.get(arg0).cflag.state = 0;\n    return 2;',
+    replace:
+      '    era.print(`${name_of(arg0)}感觉到生命垂危，投降求饶了。`);\n    // 变异：投降的陷落写入删（CFLAG:1 = 0 不写）\n    return 2;',
     tests: ['dungeon-battle'],
     must_mention: '投降（CFLAG:1 = 0）',
   },
   {
     desc: 'M482 death_check2 勇者侧退场的陷落写入删',
     file: 'ere/system/dungeon/dungeon-battle2.js',
-    find: `    era.print(\`\${name_of(arg1)}最终在潮湿的地下城中用尽了最后的气力。\`);
-    chara(arg1).invasion.状态 = 0;
-    return 2;`,
-    replace: `    era.print(\`\${name_of(arg1)}最终在潮湿的地下城中用尽了最后的气力。\`);
-    // 变异：勇者退场的陷落写入删
-    return 2;`,
+    find: '    era.print(`${name_of(arg1)}最终在潮湿的地下城中用尽了最后的气力。`);\n    EraChara.get(arg1).cflag.state = 0;\n    return 2;',
+    replace:
+      '    era.print(`${name_of(arg1)}最终在潮湿的地下城中用尽了最后的气力。`);\n    // 变异：勇者退场的陷落写入删\n    return 2;',
     tests: ['dungeon-battle'],
     must_mention: '勇者 CFLAG:1 = 0',
   },
@@ -741,10 +708,9 @@ export default [
   {
     desc: 'M634 滞留分支的階層滞在カウント +1 删（event-turnend 新观测点自证）',
     file: 'ere/system/dungeon/dungeon.js',
-    find: `  // 階層滞在カウントを+1（CFLAG:514）
-  era.set(\`cflag:\${arg0}:514\`, (era.get(\`cflag:\${arg0}:514\`) || 0) + 1);`,
-    replace: `  // 階層滞在カウントを+1——变异：+1 删
-  // era.set(\`cflag:\${arg0}:514\`, (era.get(\`cflag:\${arg0}:514\`) || 0) + 1);`,
+    find: '  // 階層滞在カウントを+1（CFLAG:514）\n  EraChara.get(arg0).cflag.floor_stay_count += 1;',
+    replace:
+      '  // 階層滞在カウントを+1——变异：+1 删\n  // EraChara.get(arg0).cflag.floor_stay_count += 1;',
     tests: ['event-turnend', 'enter-enemy'],
     must_mention: '状态 12 恰好一次 DUNGEON',
   },
@@ -881,9 +847,9 @@ export default [
   {
     desc: 'M6725 怪物魔法减益的自然衰减删坏',
     file: 'ere/system/dungeon/magic.js',
-    find: '    era.set(`cflag:${cid}:682`, debuff);\n  }\n  if (chara(cid).dungeon.凌辱畏怖记忆_怪物 === battle_column(monster_head).id) {',
+    find: "}\n  if (talent(cid, 257)) {\n    damage -= idiv_trunc(damage, 3);\n    if (show_log()) {\n      era.print('魔法耐性！　');\n    }\n  }\n  if (talent(cid, 253)) {\n    damage -",
     replace:
-      '    // 变异：低段魔法减益不写回衰减\n  }\n  if (chara(cid).dungeon.凌辱畏怖记忆_怪物 === battle_column(monster_head).id) {',
+      '    // 变异：低段魔法减益不写回衰减\n  }\n  if (EraChara.get(cid).cflag.ravish_fear_monster === battle_column(monster_head).id) {',
     tests: ['dungeon-magic'],
     must_mention: '魔法减益',
   },
@@ -955,9 +921,9 @@ export default [
   {
     desc: 'M6734 诅咒术的防御力削减方向改坏',
     file: 'ere/system/dungeon/magic.js',
-    find: '  const value = chara(defender).dungeon.防御力 - idiv_trunc(rand(damage), 2);',
+    find: '\n  const value =\n    EraChara.get(defender).cflag.defense - idiv_trunc(rand(damage), 2);',
     replace:
-      '  const value = chara(defender).dungeon.防御力 + idiv_trunc(rand(damage), 2); // 变异',
+      '  const value = EraChara.get(defender).cflag.defense + idiv_trunc(rand(damage), 2); // 变异',
     tests: ['dungeon-magic'],
     must_mention: '削攻击与防御',
   },
@@ -1791,9 +1757,9 @@ export default [
   {
     desc: 'M6877 monster_play 处女丧失门槛错误抬高',
     file: 'ere/system/dungeon/monster-play.js',
-    find: 'chara(cid).chara.处女 === 1 && (era.get(`exp:${cid}:0`) || 0) > 0',
+    find: 'EraChara.get(cid).talent.virgin === 1 &&\n    EraChara.get(cid).exp.vagina_exp > 0',
     replace:
-      'chara(cid).chara.处女 === 1 && (era.get(`exp:${cid}:0`) || 0) > 5',
+      'EraChara.get(cid).talent.virgin === 1 && EraChara.get(cid).exp.vagina_exp > 5',
     tests: ['monster-play'],
     must_mention: 'MONSTER_PLAY 取消返回 0',
   },
@@ -2124,9 +2090,9 @@ export default [
   {
     desc: 'M6916 虫族男性误入母乳进化分支',
     file: 'ere/system/dungeon/marriage-day.js',
-    find: '  if (chara(cid).chara.处女 == 0 && chara(cid).chara.男人 == 0) {',
+    find: 'id).cflag.spousal_love * y + 10;\r\n    // JUEL:cid[14] + = (CFLAG:cid[602] * y ',
     replace:
-      '  if (chara(cid).chara.处女 == 0 && chara(cid).chara.男人 == 1) { // 变异：男性误入',
+      '  if (EraChara.get(cid).talent.virgin == 0 && EraChara.get(cid).talent.male == 1) { // 变异：男性误入',
     tests: ['marriage-day'],
     must_mention: '男性不会进入母乳进化分支',
   },
@@ -2160,9 +2126,9 @@ export default [
   {
     desc: 'M6920 兽类高爱情错误要求同时具备兽奸中毒',
     file: 'ere/system/dungeon/marriage-day.js',
-    find: '  } else if (chara(cid).train.兽奸中毒 >= 1 || chara(cid).chara.结婚爱情 > 40) {\n    if (\n      chara(cid).chara.私处封印 == 1 ||\n      (chara(cid).chara.特别服装类型 == 79 &&\n        chara(cid).train.着衣状态 & 64 &&\n        game.system.着衣系统) ||\n      chara(cid).chara.男人 == 1\n    ) {\n      await era.printAndWait(\n        `${name_of(cid)}如牝犬一般吐着舌头兴奋地扭动腰肢迎接着${marriage_name(cid)}。`,',
+    find: '.get(cid).talent.male || EraChara.get(cid).talent.futanari) {\r\n    if (EraChara.get(cid).talent.penis_state == 2) {\r\n      if (\r\n        marriage_partner_status(cid) == 0 &&\r\n        rand(10) == 0 &&\r\n        era_flag.game_settings & 128\r\n      ) {\r\n        // CFLAG[603]  = 1（变量语义：CFLAG 族，(cid)[603]）\r\n        EraChara.get(cid).cflag.spouse_status = 1;\r\n      } else if (marriage_partner_status(cid) == 1 && rand(10) == 0) {\r\n        // CFLAG[603]  = 2（变量语义',
     replace:
-      '  } else if (chara(cid).train.兽奸中毒 >= 1 && chara(cid).chara.结婚爱情 > 40) { // 变异：错用且\n    if (\n      chara(cid).chara.私处封印 == 1 ||\n      (chara(cid).chara.特别服装类型 == 79 &&\n        chara(cid).train.着衣状态 & 64 &&\n        game.system.着衣系统) ||\n      chara(cid).chara.男人 == 1\n    ) {\n      await era.printAndWait(\n        `${name_of(cid)}如牝犬一般吐着舌头兴奋地扭动腰肢迎接着${marriage_name(cid)}。`,',
+      '  } else if (EraChara.get(cid).abl.bestiality_addiction >= 1 && EraChara.get(cid).cflag.spousal_love > 40) { // 变异：错用且\n    if (\n      EraChara.get(cid).talent.vagina_seal == 1 ||\n      (EraChara.get(cid).cflag.special_costume_type == 79 &&\n        EraChara.get(cid).cflag.clothing_state & 64 &&\n        era_flag.clothing_system) ||\n      EraChara.get(cid).talent.male == 1\n    ) {\n      await era.printAndWait(\n        `${name_of(cid)}如牝犬一般吐着舌头兴奋地扭动腰肢迎接着${marriage_name(cid)}。`,',
     tests: ['marriage-day'],
     must_mention: '高爱情角色进入高收益兽奸分支',
   },
@@ -2187,8 +2153,9 @@ export default [
   {
     desc: 'M10116 campaign_quest：剧情推进门槛 off-by-one（> 改 >=，重复推进，#469）',
     file: 'ere/system/dungeon/dungeon-campaign.js',
-    find: `  if (chara(cid).dungeon.侵攻阶层 > era_flag.campaign_story_progress) {`,
-    replace: `  if (chara(cid).dungeon.侵攻阶层 >= era_flag.campaign_story_progress) {`,
+    find: 'ber} cid 队长（ARG:0）\n * @returns {Promise<number>} RESULT（FLAG:400 < 1 时恒 0）\n */',
+    replace:
+      '  if (EraChara.get(cid).cflag.invasion_floor >= era_flag.campaign_story_progress) {',
     tests: ['dungeon-main'],
     must_mention: '楼层未超过剧情进度时不重复推进剧情',
   },
@@ -2322,8 +2289,9 @@ export default [
   {
     desc: 'M10622 体力富余分支：CFLAG:520 的写值改错（FLOOR 改 FLOOR + 1，#484 抽查补位）',
     file: 'ere/system/dungeon/dungeon.js',
-    find: `      era.set(\`cflag:\${arg0}:520\`, ctx.floor); // CFLAG:520 = FLOOR`,
-    replace: `      era.set(\`cflag:\${arg0}:520\`, ctx.floor + 1); // 变异：写值改错`,
+    find: '      EraChara.get(arg0).cflag.target_floor = ctx.floor; // CFLAG:520 = FLOOR',
+    replace:
+      '      EraChara.get(arg0).cflag.target_floor = ctx.floor + 1; // 变异：写值改错',
     tests: ['dungeon-main'],
     must_mention: '体力富余分支：状态良好时 CFLAG:520 记下当前阶层并下潜一层',
   },
@@ -2680,9 +2648,9 @@ export default [
   {
     desc: 'M13152 defence_chara_extra_dmg 的低位判断条件回退 CFLAG:681（#651 修好的笔误不回潮）',
     file: 'ere/system/dungeon/dungeon-battle.js',
-    find: '  } else if (debuff > 0) {\n    dmg = Math.floor((dmg * (100 + debuff)) / 100);\n    era.set(`cflag:${arg0}:680`, debuff - (Math.floor(debuff / 10) + 1));',
+    find: '\n  } else if (debuff > 0) {\n    dmg = Math.floor((dmg * (100 + debuff)) / 100);\n    EraChara.get(arg0).cflag.defense_down_rate =\n      debuff - (Math.floor(debuff / 10) + 1);',
     replace:
-      '  } else if ((era.get(`cflag:${arg0}:681`) || 0) > 0) { // 变异：判断条件回退 681\n    dmg = Math.floor((dmg * (100 + debuff)) / 100);\n    era.set(`cflag:${arg0}:680`, debuff - (Math.floor(debuff / 10) + 1));',
+      '  } else if (EraChara.get(arg0).cflag.attack_down_rate > 0) { // 变异：判断条件回退 681\n    dmg = Math.floor((dmg * (100 + debuff)) / 100);\n    EraChara.get(arg0).cflag.defense_down_rate = debuff - (Math.floor(debuff / 10) + 1);',
     tests: ['dungeon-battle'],
     must_mention: 'DMG 100 × 110%',
   },

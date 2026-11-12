@@ -16,7 +16,6 @@ const era_flag = require('#/era-utils/era-flag');
 const { karma, chara_lv_check } = require('#/system/chara/chara-stats');
 const { battle_column } = require('#/system/dungeon/battle-state');
 const { monstername } = require('#/system/dungeon/monster-data');
-const { game } = require('#/facade/game');
 const { chara_callname } = require('#/utils/callname-utils');
 const { default_rand } = require('#/utils/numeric');
 

@@ -36,7 +36,6 @@ const EraChara = require('#/era-utils/era-chara');
 const MAP_BACK_KEY = 100;
 const { is_state } = require('#/system/flow/game-state');
 const era_flag = require('#/era-utils/era-flag');
-const { game } = require('#/facade/game');
 const { equip_check } = require('#/system/equip/equip-check');
 const { equip_select } = require('#/system/equip/equip-select');
 const { use_ex_item } = require('#/system/dungeon/dungeon');

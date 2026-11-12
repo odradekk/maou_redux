@@ -32,7 +32,6 @@
 const era = require('#/era-electron');
 const EraChara = require('#/era-utils/era-chara');
 const { search_family } = require('#/system/chara/chara-family');
-const { chara } = require('#/facade/chara');
 
 /** CHARANUM 的等价物（在场角色数） */
 function charanum() {
