@@ -109,7 +109,7 @@ export default [
   {
     desc: 'M385 party_unite 队长核对删坏（同伴不再置行动完了）',
     file: 'ere/system/dungeon/dungeon-party.js',
-    find: '        if (leader === charid) {\r\n          // 合っていたら行動終了になる（同伴以行动完了追随队长）\r\n          EraChara.get(rest).cflag.action_done = 1;\r',
+    find: '        if (leader === charid) {\n          // 合っていたら行動終了になる（同伴以行动完了追随队长）\n          EraChara.get(rest).cflag.action_done = 1;',
     replace:
       '        if (leader === charid) {\n          // 合っていたら行動終了になる（同伴以行动完了追随队长）\n          // 变异：EraChara.get(rest).cflag.action_done = 1 删除',
     tests: ['dungeon-party'],
@@ -118,7 +118,7 @@ export default [
   {
     desc: 'M386 search_free 同层判定改坏（阶层过滤删——异层勇者被吸收）',
     file: 'ere/system/dungeon/dungeon-party.js',
-    find: '    // 同階層以外を除く（CFLAG:501 侵攻阶层）\r\n    if (floor !== EraChara.get(charid).cflag.invasion_floor) {\r\n      continue;\r\n    }\r',
+    find: '    // 同階層以外を除く（CFLAG:501 侵攻阶层）\n    if (floor !== EraChara.get(charid).cflag.invasion_floor) {\n      continue;\n    }',
     replace: '    // 同階層以外を除く（CFLAG:501 侵攻阶层）——变异：过滤删除',
     tests: ['dungeon-party'],
     must_mention: '不同层的布莱克被跳过',
@@ -126,9 +126,9 @@ export default [
   {
     desc: 'M387 party_del 队长解散复位删坏（533 不清）',
     file: 'ere/system/dungeon/dungeon-party.js',
-    find: '\r\n    EraChara.get(leader).cflag.action_done = 0;\r\n    EraChara.get(leader).cflag.companion_a = 0;\r\n    EraChara.get(leader).cflag.companion_b = 0;\r\n    EraChara.get(leader).cflag.leader_memory = 0;\r\n    EraChara.get(rest_a).cflag.action_done = 0;\r\n    EraChara.get(rest_a).cflag.leader_memory = 0;\r\n    EraChara.get(rest_b).cflag.action_done = 0;\r\n    EraChara.get(rest_b).cflag.leader_memory = 0;\r\n  } else if (cid === rest_a) {',
+    find: '\n    EraChara.get(leader).cflag.action_done = 0;\n    EraChara.get(leader).cflag.companion_a = 0;\n    EraChara.get(leader).cflag.companion_b = 0;\n    EraChara.get(leader).cflag.leader_memory = 0;\n    EraChara.get(rest_a).cflag.action_done = 0;\n    EraChara.get(rest_a).cflag.leader_memory = 0;\n    EraChara.get(rest_b).cflag.action_done = 0;\n    EraChara.get(rest_b).cflag.leader_memory = 0;\n  } else if (cid === rest_a) {',
     replace:
-      '    EraChara.get(leader).cflag.action_done = 0;\n    EraChara.get(leader).cflag.companion_a = 0;\n    EraChara.get(leader).cflag.companion_b = 0;\n    // 变异：EraChara.get(leader).cflag.leader_memory = 0 删除\n    EraChara.get(rest_a).cflag.action_done = 0;\n    EraChara.get(rest_a).cflag.leader_memory = 0;\n    EraChara.get(rest_b).cflag.action_done = 0;\n    EraChara.get(rest_b).cflag.leader_memory = 0;\n  } else if (cid === rest_a) {',
+      '\n    EraChara.get(leader).cflag.action_done = 0;\n    EraChara.get(leader).cflag.companion_a = 0;\n    EraChara.get(leader).cflag.companion_b = 0;\n    // 变异：EraChara.get(leader).cflag.leader_memory = 0 删除\n    EraChara.get(rest_a).cflag.action_done = 0;\n    EraChara.get(rest_a).cflag.leader_memory = 0;\n    EraChara.get(rest_b).cflag.action_done = 0;\n    EraChara.get(rest_b).cflag.leader_memory = 0;\n  } else if (cid === rest_a) {',
     tests: ['dungeon-party'],
     must_mention: '队长 1:533 清零',
   },
@@ -983,7 +983,7 @@ export default [
   {
     desc: 'M6741 经验吸取的手动降级删坏',
     file: 'ere/system/dungeon/magic.js',
-    find: '    view.chara.等级 -= 1;',
+    find: '    EraChara.get(cid).cflag.level -= 1;',
     replace: '    // 变异：等级递减删除',
     tests: ['dungeon-magic'],
     must_mention: '同步等级四维',
@@ -1189,15 +1189,16 @@ export default [
   {
     desc: 'M6687 接吻初吻对象误记成口交编号 101',
     file: 'ere/system/dungeon/dungeon-lovers.js',
-    find: '    view.train.初吻对象 = 1; // CFLAG:16（跨域写，属主 train）',
-    replace: '    view.train.初吻对象 = 101; // 变异：接吻对象编号错误',
+    find: '    EraChara.get(cid).cflag.first_kiss_partner = 1; // CFLAG:16（跨域写，属主 train）',
+    replace:
+      '    EraChara.get(cid).cflag.first_kiss_partner = 101; // 变异：接吻对象编号错误',
     tests: ['dungeon-lovers'],
     must_mention: '普通恋人按阶段演出、结算并降低善恶',
   },
   {
     desc: 'M6688 处女丧失不再清除处女素质',
     file: 'ere/system/dungeon/dungeon-lovers.js',
-    find: '    view.chara.处女 = 0; // TALENT:0（跨域写，属主 chara）',
+    find: '    EraChara.get(cid).talent.virgin = 0; // TALENT:0（跨域写，属主 chara）',
     replace: '    // 变异：TALENT:0 不清除',
     tests: ['dungeon-lovers'],
     must_mention: '普通恋人按阶段演出、结算并降低善恶',
@@ -1205,9 +1206,9 @@ export default [
   {
     desc: 'M6689 成人恋人的妊娠相手从客人改成犬',
     file: 'ere/system/dungeon/dungeon-lovers.js',
-    find: '      race = 4;\n      view.dungeon.客膣内射精 = love_exp[4]; // CFLAG:105',
+    find: '      race = 4;\n      EraChara.get(cid).cflag.customer_vaginal_ejaculation = love_exp[4]; // CFLAG:105',
     replace:
-      '      race = 5; // 变异：成人男性误作犬\n      view.dungeon.客膣内射精 = love_exp[4]; // CFLAG:105',
+      '      race = 5; // 变异：成人男性误作犬\n      EraChara.get(cid).cflag.customer_vaginal_ejaculation = love_exp[4]; // CFLAG:105',
     tests: ['dungeon-lovers'],
     must_mention: '两次 V 行为写客人射精槽并调用妊娠检查',
   },
@@ -1239,18 +1240,18 @@ export default [
   {
     desc: 'M6693 候选的恋人 ID 错写成候选自己的识别号',
     file: 'ere/system/dungeon/dungeon-lovers.js',
-    find: '  target.dungeon.恋人ID = chara_id_output(cid); // CFLAG:LOCAL:610',
+    find: '  EraChara.get(candidate).cflag.lover_id = chara_id_output(cid); // CFLAG:LOCAL:610',
     replace:
-      '  target.dungeon.恋人ID = chara_id_output(candidate); // 变异：方向错误',
+      '  EraChara.get(candidate).cflag.lover_id = chara_id_output(candidate); // 变异：方向错误',
     tests: ['dungeon-lovers'],
     must_mention: '条件满足时双向记录恋人',
   },
   {
     desc: 'M6694 撮合成功只给候选写恋人标志',
     file: 'ere/system/dungeon/dungeon-lovers.js',
-    find: '  target.dungeon.恋人 = 200;\n  source.dungeon.恋人 = 200;',
+    find: '  EraChara.get(candidate).cflag.lover = 200;\n  EraChara.get(cid).cflag.lover = 200;',
     replace:
-      '  target.dungeon.恋人 = 200;\n  // 变异：source 的 CFLAG:606 不写',
+      '  EraChara.get(candidate).cflag.lover = 200;\n  // 变异：source 的 CFLAG:606 不写',
     tests: ['dungeon-lovers'],
     must_mention: '条件满足时双向记录恋人',
   },
@@ -1273,7 +1274,7 @@ export default [
   {
     desc: 'M6697 角色撮合删除侵攻队伍一致性限制',
     file: 'ere/system/dungeon/dungeon-lovers.js',
-    find: '  if (\n    source.invasion.状态 === 2 &&\n    (era.get(`cflag:${cid}:533`) || 0) !==\n      (era.get(`cflag:${candidate}:533`) || 0) // CFLAG:533 = 队伍编号\n  ) {',
+    find: '  if (\n    EraChara.get(cid).cflag.state === 2 &&\n    EraChara.get(cid).cflag.leader_memory !==\n      EraChara.get(candidate).cflag.leader_memory // CFLAG:533 = 队伍编号\n  ) {',
     replace: '  if (false) { // 变异：侵攻中不同队伍也能撮合',
     tests: ['dungeon-lovers'],
     must_mention: '侵攻中必须处于同一队伍',
@@ -2038,7 +2039,7 @@ export default [
     file: 'ere/system/dungeon/marriage-day.js',
     find: '  if (EraChara.get(cid).cflag.state != 0 || EraChara.get(0).cflag.state != 0) {',
     replace:
-      '  if (EraChara.get(cid).cflag.state != 0 || EraChara.get(0).cflag.state != 0) { // 变异：未声明值不兜零',
+      "  if (EraChara.get(cid).cflag.state != 0 || era.get('cflag:0:9998') != 0) { // 变异：未声明值不兜零",
     tests: ['marriage-day'],
     must_mention: '身体分流写入不同经验，后者另有显式等待',
   },
@@ -2090,9 +2091,9 @@ export default [
   {
     desc: 'M6916 虫族男性误入母乳进化分支',
     file: 'ere/system/dungeon/marriage-day.js',
-    find: 'id).cflag.spousal_love * y + 10;\r\n    // JUEL:cid[14] + = (CFLAG:cid[602] * y ',
+    find: 'id).cflag.spousal_love * y + 10;\n    // JUEL:cid[14] + = (CFLAG:cid[602] * y ',
     replace:
-      '  if (EraChara.get(cid).talent.virgin == 0 && EraChara.get(cid).talent.male == 1) { // 变异：男性误入',
+      'if (EraChara.get(cid).talent.virgin == 0 && EraChara.get(cid).talent.male == 1) { // 变异：男性误入',
     tests: ['marriage-day'],
     must_mention: '男性不会进入母乳进化分支',
   },
@@ -2126,9 +2127,9 @@ export default [
   {
     desc: 'M6920 兽类高爱情错误要求同时具备兽奸中毒',
     file: 'ere/system/dungeon/marriage-day.js',
-    find: '.get(cid).talent.male || EraChara.get(cid).talent.futanari) {\r\n    if (EraChara.get(cid).talent.penis_state == 2) {\r\n      if (\r\n        marriage_partner_status(cid) == 0 &&\r\n        rand(10) == 0 &&\r\n        era_flag.game_settings & 128\r\n      ) {\r\n        // CFLAG[603]  = 1（变量语义：CFLAG 族，(cid)[603]）\r\n        EraChara.get(cid).cflag.spouse_status = 1;\r\n      } else if (marriage_partner_status(cid) == 1 && rand(10) == 0) {\r\n        // CFLAG[603]  = 2（变量语义',
+    find: '.get(cid).talent.male || EraChara.get(cid).talent.futanari) {\n    if (EraChara.get(cid).talent.penis_state == 2) {\n      if (\n        marriage_partner_status(cid) == 0 &&\n        rand(10) == 0 &&\n        era_flag.game_settings & 128\n      ) {\n        // CFLAG[603]  = 1（变量语义：CFLAG 族，(cid)[603]）\n        EraChara.get(cid).cflag.spouse_status = 1;\n      } else if (marriage_partner_status(cid) == 1 && rand(10) == 0) {\n        // CFLAG[603]  = 2（变量语义',
     replace:
-      '  } else if (EraChara.get(cid).abl.bestiality_addiction >= 1 && EraChara.get(cid).cflag.spousal_love > 40) { // 变异：错用且\n    if (\n      EraChara.get(cid).talent.vagina_seal == 1 ||\n      (EraChara.get(cid).cflag.special_costume_type == 79 &&\n        EraChara.get(cid).cflag.clothing_state & 64 &&\n        era_flag.clothing_system) ||\n      EraChara.get(cid).talent.male == 1\n    ) {\n      await era.printAndWait(\n        `${name_of(cid)}如牝犬一般吐着舌头兴奋地扭动腰肢迎接着${marriage_name(cid)}。`,',
+      '} else if (EraChara.get(cid).abl.bestiality_addiction >= 1 && EraChara.get(cid).cflag.spousal_love > 40) { // 变异：错用且\n    if (\n      EraChara.get(cid).talent.vagina_seal == 1 ||\n      (EraChara.get(cid).cflag.special_costume_type == 79 &&\n        EraChara.get(cid).cflag.clothing_state & 64 &&\n        era_flag.clothing_system) ||\n      EraChara.get(cid).talent.male == 1\n    ) {\n      await era.printAndWait(\n        `${name_of(cid)}如牝犬一般吐着舌头兴奋地扭动腰肢迎接着${marriage_name(cid)}。`,',
     tests: ['marriage-day'],
     must_mention: '高爱情角色进入高收益兽奸分支',
   },

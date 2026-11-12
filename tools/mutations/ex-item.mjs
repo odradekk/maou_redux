@@ -14,8 +14,8 @@ export default [
   {
     desc: 'M6763 草药回复量改坏（500 → 400）',
     file: 'ere/system/dungeon/ex-item.js',
-    find: ') + 500, max_hp),',
-    replace: ') + 400, max_hp), // 变异：草药回复量',
+    find: '      EraChara.get(cid).base.stamina + 500,',
+    replace: '      EraChara.get(cid).base.stamina + 400, // 变异：草药回复量',
     tests: ['ex-item'],
     must_mention: 'HP +500 后钳最大值',
   },
@@ -38,8 +38,9 @@ export default [
   {
     desc: 'M6766 回复之杖回复量改坏（200 → 100）',
     file: 'ere/system/dungeon/ex-item.js',
-    find: ') + 200, max_hp),',
-    replace: ') + 100, max_hp), // 变异：回复之杖回复量',
+    find: '      EraChara.get(cid).base.stamina + 200,',
+    replace:
+      '      EraChara.get(cid).base.stamina + 100, // 变异：回复之杖回复量',
     tests: ['ex-item'],
     must_mention: '两种杖：正常品可能保留',
   },
@@ -63,42 +64,45 @@ export default [
   {
     desc: 'M6769 力量种子基础攻击增量改坏（+1 → +2）',
     file: 'ere/system/dungeon/ex-item.js',
-    find: '    view.chara.基础攻击 += 1;\n  }\n  const male',
+    find: '    EraChara.get(cid).cflag.base_attack += 1;\n  }\n  const male =',
     replace:
-      '    view.chara.基础攻击 += 2; // 变异：基础攻击增量\n  }\n  const male',
+      '    EraChara.get(cid).cflag.base_attack += 2; // 变异：基础攻击增量\n  }\n  const male =',
     tests: ['ex-item'],
     must_mention: '力量与守护种子',
   },
   {
     desc: 'M6770 力量种子不再消除阴蒂钝感',
     file: 'ere/system/dungeon/ex-item.js',
-    find: '      view.chara.阴蒂钝感 = 0;',
-    replace: '      view.chara.阴蒂钝感 = 1; // 变异：钝感不消除',
+    find: '      EraChara.get(cid).talent.dull_clitoris = 0;',
+    replace:
+      '      EraChara.get(cid).talent.dull_clitoris = 1; // 变异：钝感不消除',
     tests: ['ex-item'],
     must_mention: '先消除阴蒂钝感',
   },
   {
     desc: 'M6771 力量种子阴蒂敏感写值改坏（1 → 2）',
     file: 'ere/system/dungeon/ex-item.js',
-    find: '      view.chara.阴蒂敏感 = 1;',
-    replace: '      view.chara.阴蒂敏感 = 2; // 变异：敏感值',
+    find: '      EraChara.get(cid).talent.sensitive_clitoris = 1;',
+    replace:
+      '      EraChara.get(cid).talent.sensitive_clitoris = 2; // 变异：敏感值',
     tests: ['ex-item'],
     must_mention: '再取得阴蒂敏感',
   },
   {
     desc: 'M6772 守护种子基础防御增量改坏（+1 → +2）',
     file: 'ere/system/dungeon/ex-item.js',
-    find: '  } else {\n    view.chara.基础防御 += 1;\n  }\n  item_line(',
+    find: '    EraChara.get(cid).cflag.base_defense += 1;\n  }\n  item_line(',
     replace:
-      '  } else {\n    view.chara.基础防御 += 2; // 变异：基础防御增量\n  }\n  item_line(',
+      '    EraChara.get(cid).cflag.base_defense += 2; // 变异：基础防御增量\n  }\n  item_line(',
     tests: ['ex-item'],
     must_mention: '力量与守护种子',
   },
   {
     desc: 'M6773 守护种子乳房敏感写值改坏（1 → 2）',
     file: 'ere/system/dungeon/ex-item.js',
-    find: '      view.chara.乳房敏感 = 1;',
-    replace: '      view.chara.乳房敏感 = 2; // 变异：乳房敏感值',
+    find: '      EraChara.get(cid).talent.sensitive_breast = 1;',
+    replace:
+      '      EraChara.get(cid).talent.sensitive_breast = 2; // 变异：乳房敏感值',
     tests: ['ex-item'],
     must_mention: '再取得乳房敏感',
   },
@@ -130,8 +134,9 @@ export default [
   {
     desc: 'M6777 命之种子私处敏感写值改坏（1 → 2）',
     file: 'ere/system/dungeon/ex-item.js',
-    find: '      view.chara.私处敏感 = 1;',
-    replace: '      view.chara.私处敏感 = 2; // 变异：私处敏感值',
+    find: '      EraChara.get(cid).talent.sensitive_vagina = 1;',
+    replace:
+      '      EraChara.get(cid).talent.sensitive_vagina = 2; // 变异：私处敏感值',
     tests: ['ex-item'],
     must_mention: '命与心之种子',
   },
@@ -146,8 +151,9 @@ export default [
   {
     desc: 'M6779 心之种子不再消除肛门钝感',
     file: 'ere/system/dungeon/ex-item.js',
-    find: '      view.chara.肛门钝感 = 0;',
-    replace: '      view.chara.肛门钝感 = 1; // 变异：钝感不消除',
+    find: '      EraChara.get(cid).talent.dull_anus = 0;',
+    replace:
+      '      EraChara.get(cid).talent.dull_anus = 1; // 变异：钝感不消除',
     tests: ['ex-item'],
     must_mention: '命与心之种子',
   },
@@ -178,17 +184,17 @@ export default [
   {
     desc: 'M6783 圣水原圣女基础防御加成改坏（+1 → +2）',
     file: 'ere/system/dungeon/ex-item.js',
-    find: '    view.chara.基础防御 += 1;\n  }\n  item_detox(cid);',
+    find: '    EraChara.get(cid).cflag.base_defense += 1;\n  }\n  item_detox(cid);',
     replace:
-      '    view.chara.基础防御 += 2; // 变异：圣女防御加成\n  }\n  item_detox(cid);',
+      '    EraChara.get(cid).cflag.base_defense += 2; // 变异：圣女防御加成\n  }\n  item_detox(cid);',
     tests: ['ex-item'],
     must_mention: '圣水：正常品除虫',
   },
   {
     desc: 'M6784 宝石箱迎击消耗状态改坏（3 → 2）',
     file: 'ere/system/dungeon/ex-item.js',
-    find: '  return (era.get(`cflag:${cid}:1`) || 0) === 3 ? 1 : 0;',
-    replace: '  return (era.get(`cflag:${cid}:1`) || 0) === 2 ? 1 : 0;',
+    find: '  return EraChara.get(cid).cflag.state === 3 ? 1 : 0;',
+    replace: '  return EraChara.get(cid).cflag.state === 2 ? 1 : 0;',
     tests: ['ex-item'],
     must_mention: '迎击中消耗，其他状态保留',
   },

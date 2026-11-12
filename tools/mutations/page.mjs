@@ -273,18 +273,18 @@ export default [
   {
     desc: 'M2101 出兵公式：气力 /25 改 /30',
     file: 'ere/system/invasion/invasion-campaign.js',
-    find: '      sinkou = Math.floor(chara(0).dungeon.气力 / 25);\n      chara(0).dungeon.气力 = Math.floor(chara(0).dungeon.气力 / 2);\n      // 威望修正（失败档早退：PRINTW 侵攻失败 → RETURN 1）',
+    find: '      sinkou = Math.floor(EraChara.get(0).base.willpower / 25);\n      EraChara.get(0).base.willpower = Math.floor(\n        EraChara.get(0).base.willpower / 2,\n      );\n      // 威望修正（失败档早退：PRINTW 侵攻失败 → RETURN 1）',
     replace:
-      '      sinkou = Math.floor(chara(0).dungeon.气力 / 30); // 变异：公式改坏\n      chara(0).dungeon.气力 = Math.floor(chara(0).dungeon.气力 / 2);\n      // 威望修正（失败档早退：PRINTW 侵攻失败 → RETURN 1）',
+      '      sinkou = Math.floor(EraChara.get(0).base.willpower / 30); // 变异：公式改坏\n      EraChara.get(0).base.willpower = Math.floor(\n        EraChara.get(0).base.willpower / 2,\n      );\n      // 威望修正（失败档早退：PRINTW 侵攻失败 → RETURN 1）',
     tests: ['page-invasion', 'event-ending-e2e'],
     must_mention: 'FLAG:81 += 10000/25',
   },
   {
     desc: 'M2102 气力减半删除（失败也照减）',
     file: 'ere/system/invasion/invasion-campaign.js',
-    find: '      sinkou = Math.floor(chara(0).dungeon.气力 / 25);\n      chara(0).dungeon.气力 = Math.floor(chara(0).dungeon.气力 / 2);\n      // 威望修正（失败档早退：PRINTW 侵攻失败 → RETURN 1）',
+    find: '      sinkou = Math.floor(EraChara.get(0).base.willpower / 25);\n      EraChara.get(0).base.willpower = Math.floor(\n        EraChara.get(0).base.willpower / 2,\n      );\n      // 威望修正（失败档早退：PRINTW 侵攻失败 → RETURN 1）',
     replace:
-      '      sinkou = Math.floor(chara(0).dungeon.气力 / 25);\n      // 变异：不减半\n      // 威望修正（失败档早退：PRINTW 侵攻失败 → RETURN 1）',
+      '      sinkou = Math.floor(EraChara.get(0).base.willpower / 25);\n      // 变异：不减半\n      // 威望修正（失败档早退：PRINTW 侵攻失败 → RETURN 1）',
     tests: ['page-invasion'],
     must_mention: 'BASE:0:1 减半',
   },
@@ -2558,18 +2558,18 @@ export default [
   {
     desc: 'M10766 [3] 掠夺战力来源改坏（气力 /25 改 /20）',
     file: 'ere/system/invasion/invasion-campaign.js',
-    find: "      sinkou = Math.floor(chara(0).dungeon.气力 / 25);\n      chara(0).dungeon.气力 = Math.floor(chara(0).dungeon.气力 / 2);\n      era.print('魔王的力量　' + sinkou + '点'); // PRINTFORMW",
+    find: "      sinkou = Math.floor(EraChara.get(0).base.willpower / 25);\n      EraChara.get(0).base.willpower = Math.floor(\n        EraChara.get(0).base.willpower / 2,\n      );\n      era.print('魔王的力量　' + sinkou + '点'); // PRINTFORMW",
     replace:
-      "      sinkou = Math.floor(chara(0).dungeon.气力 / 20);\n      chara(0).dungeon.气力 = Math.floor(chara(0).dungeon.气力 / 2);\n      era.print('魔王的力量　' + sinkou + '点'); // PRINTFORMW",
+      "      sinkou = Math.floor(EraChara.get(0).base.willpower / 20);\n      EraChara.get(0).base.willpower = Math.floor(\n        EraChara.get(0).base.willpower / 2,\n      );\n      era.print('魔王的力量　' + sinkou + '点'); // PRINTFORMW",
     tests: ['page-invasion'],
     must_mention: '掠夺路线 SINKOU/20',
   },
   {
     desc: 'M10767 [3] 掠夺路线不扣气力（BASE:0:1 /= 2 整行删除）',
     file: 'ere/system/invasion/invasion-campaign.js',
-    find: "      sinkou = Math.floor(chara(0).dungeon.气力 / 25);\n      chara(0).dungeon.气力 = Math.floor(chara(0).dungeon.气力 / 2);\n      era.print('魔王的力量　' + sinkou + '点'); // PRINTFORMW",
+    find: "      sinkou = Math.floor(EraChara.get(0).base.willpower / 25);\n      EraChara.get(0).base.willpower = Math.floor(\n        EraChara.get(0).base.willpower / 2,\n      );\n      era.print('魔王的力量　' + sinkou + '点'); // PRINTFORMW",
     replace:
-      "      sinkou = Math.floor(chara(0).dungeon.气力 / 25);\n      // 变异：不扣气力\n      era.print('魔王的力量　' + sinkou + '点'); // PRINTFORMW",
+      "      sinkou = Math.floor(EraChara.get(0).base.willpower / 25);\n      // 变异：不扣气力\n      era.print('魔王的力量　' + sinkou + '点'); // PRINTFORMW",
     tests: ['page-invasion'],
     must_mention: 'BASE:0:1 /= 2',
   },
@@ -2610,8 +2610,9 @@ export default [
   {
     desc: 'M10772 [3] 掠夺经验不入角色账（EXP:YUSYA_I:80 += 整行删除）',
     file: 'ere/system/invasion/invasion-campaign.js',
-    find: '  chara(yusya_i).dungeon.战斗经验 += exp_gain; // EXP:YUSYA_I:80',
-    replace: '  // 变异：经验不入账',
+    find: '  const exp_gain = Math.floor(sinkou / 20); // SINKOU / 20\n  EraChara.get(yusya_i).exp.battle_exp += exp_gain;',
+    replace:
+      '  const exp_gain = Math.floor(sinkou / 20); // SINKOU / 20\n  // 变异：经验不入账',
     tests: ['page-invasion'],
     must_mention: 'EXP:YUSYA_I:80',
   },
@@ -3215,9 +3216,9 @@ export default [
   {
     desc: 'M10843 CHALLENGE 不分胜负档的体力比例改坏（/ 10 改 / 5）',
     file: 'ere/system/invasion/invasion-event.js',
-    find: '      chara(yusya).dungeon.体力 = Math.trunc(chara(yusya).dungeon.体力 / 10);',
+    find: '      EraChara.get(yusya).base.stamina = Math.trunc(\n        EraChara.get(yusya).base.stamina / 10,\n      );',
     replace:
-      '      chara(yusya).dungeon.体力 = Math.trunc(chara(yusya).dungeon.体力 / 5); // 变异：比例改坏',
+      '      EraChara.get(yusya).base.stamina = Math.trunc(\n        EraChara.get(yusya).base.stamina / 5, // 变异：比例改坏\n      );',
     tests: ['page-invasion'],
     must_mention: '20/40/40',
   },
@@ -3250,8 +3251,8 @@ export default [
   {
     desc: 'M10847 CHALLENGE 人数上限的第一支阈值改坏（> 60 改 > 59）',
     file: 'ere/system/invasion/invasion-event.js',
-    find: '  if (f(82) === 0 && charanum > 60) {',
-    replace: '  if (f(82) === 0 && charanum > 59) {',
+    find: '  if (era_flag.human_realm_fallen === 0 && charanum > 60) {',
+    replace: '  if (era_flag.human_realm_fallen === 0 && charanum > 59) {',
     tests: ['page-invasion'],
     must_mention: '人数上限七分支',
   },

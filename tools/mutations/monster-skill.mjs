@@ -56,17 +56,17 @@ export default [
   {
     desc: 'M7146 落穴捕获 HP 扣减删除',
     file: 'ere/system/dungeon/monster-skill.js',
-    find: '    target_view.dungeon.体力 -= level;\n  } else if (skill === 3)',
-    replace: '    // 变异：落穴 HP 扣减删除\n  } else if (skill === 3)',
+    find: '    EraChara.get(target).base.stamina -= level;\n  } else if (skill === 3) {',
+    replace: '    // 变异：落穴 HP 扣减删除\n  } else if (skill === 3) {',
     tests: ['monster-skill'],
     must_mention: '十八种技能逐项',
   },
   {
     desc: 'M7147 藤蔓捕获误用强化伤害',
     file: 'ere/system/dungeon/monster-skill.js',
-    find: '      `${monster_name}的藤蔓夺取了对手身体的自由！（攻击-${palam_down}）`,\n    );\n    target_view.dungeon.攻击力 -= palam_down;\n  } else if (skill === 4)',
+    find: '      `${monster_name}的藤蔓夺取了对手身体的自由！（攻击-${palam_down}）`,\n    );\n    EraChara.get(target).cflag.attack -= palam_down;',
     replace:
-      '      `${monster_name}的藤蔓夺取了对手身体的自由！（攻击-${palam_down}）`,\n    );\n    target_view.dungeon.攻击力 -= dmg; // 变异\n  } else if (skill === 4)',
+      '      `${monster_name}的藤蔓夺取了对手身体的自由！（攻击-${palam_down}）`,\n    );\n    EraChara.get(target).cflag.attack -= dmg; // 变异',
     tests: ['monster-skill'],
     must_mention: '十八种技能逐项',
   },
@@ -108,34 +108,34 @@ export default [
   {
     desc: 'M7152 monster_skill 诱惑善恶值改坏',
     file: 'ere/system/dungeon/monster-skill.js',
-    find: '      `${monster_name}诱惑着对手……（善恶值:-2 好感度+4）`,\n    );\n    target_view.chara.好感度 += 4; // CFLAG:2 = 好感度（跨 chara 域）\n    karma(target, -2);',
+    find: '      `${monster_name}诱惑着对手……（善恶值:-2 好感度+4）`,\n    );\n    EraChara.get(target).cflag.affection += 4; // CFLAG:2 = 好感度（跨 chara 域）\n    karma(target, -2);',
     replace:
-      '      `${monster_name}诱惑着对手……（善恶值:-2 好感度+4）`,\n    );\n    target_view.chara.好感度 += 4; // CFLAG:2 = 好感度（跨 chara 域）\n    karma(target, -1); // 变异',
+      '      `${monster_name}诱惑着对手……（善恶值:-2 好感度+4）`,\n    );\n    EraChara.get(target).cflag.affection += 4; // CFLAG:2 = 好感度（跨 chara 域）\n    karma(target, -1); // 变异',
     tests: ['monster-skill'],
     must_mention: '好感度与善恶值',
   },
   {
     desc: 'M7153 monster_skill 经验吸取等级检查删除',
     file: 'ere/system/dungeon/monster-skill.js',
-    find: '    await print_battle_line(`${monster_name}发动经验吸取！！（经验值-${dmg}）`);\n    target_view.dungeon.战斗经验 -= dmg;\n    await chara_lv_check(target);\n  } else if (skill === 14)',
+    find: '    await print_battle_line(`${monster_name}发动经验吸取！！（经验值-${dmg}）`);\n    EraChara.get(target).exp.battle_exp -= dmg;\n    await chara_lv_check(target);\n  } else if (skill === 14) {',
     replace:
-      '    await print_battle_line(`${monster_name}发动经验吸取！！（经验值-${dmg}）`);\n    target_view.dungeon.战斗经验 -= dmg;\n    // 变异：等级检查删除\n  } else if (skill === 14)',
+      '    await print_battle_line(`${monster_name}发动经验吸取！！（经验值-${dmg}）`);\n    EraChara.get(target).exp.battle_exp -= dmg;\n    // 变异：等级检查删除\n  } else if (skill === 14) {',
     tests: ['monster-skill'],
     must_mention: '调用等级检查并同步四维',
   },
   {
     desc: 'M7155 魔力吸取防御增量改坏',
     file: 'ere/system/dungeon/monster-skill.js',
-    find: '    target_view.dungeon.气力 -= drain;\n    self.add_defense(4);',
+    find: '    EraChara.get(target).base.willpower -= drain;\n    self.add_defense(4);',
     replace:
-      '    target_view.dungeon.气力 -= drain;\n    self.add_defense(3); // 变异',
+      '    EraChara.get(target).base.willpower -= drain;\n    self.add_defense(3); // 变异',
     tests: ['monster-skill'],
     must_mention: '十八种技能逐项',
   },
   {
     desc: 'M7156 射击 HP 扣减删除',
     file: 'ere/system/dungeon/monster-skill.js',
-    find: '    target_view.dungeon.体力 -= dmg;\n  } else if (skill === 17) {\n    await monster_room_skill(target, user, 1);',
+    find: '    EraChara.get(target).base.stamina -= dmg;\n  } else if (skill === 17) {\n    await monster_room_skill(target, user, 1);',
     replace:
       '    // 变异：射击 HP 扣减删除\n  } else if (skill === 17) {\n    await monster_room_skill(target, user, 1);',
     tests: ['monster-skill'],
@@ -153,18 +153,18 @@ export default [
   {
     desc: 'M7158 商店街地形 HP 倍率改坏',
     file: 'ere/system/dungeon/monster-skill.js',
-    find: '    target_view.dungeon.体力 -= level * 2;\n    self.add_attack(1);',
+    find: '    EraChara.get(target).base.stamina -= level * 2;\n    self.add_attack(1);',
     replace:
-      '    target_view.dungeon.体力 -= level; // 变异\n    self.add_attack(1);',
+      '    EraChara.get(target).base.stamina -= level; // 变异\n    self.add_attack(1);',
     tests: ['monster-skill'],
     must_mention: '七种房间逐项',
   },
   {
     desc: 'M7159 沼地地形攻击增量改坏',
     file: 'ere/system/dungeon/monster-skill.js',
-    find: '    target_view.dungeon.气力 -= level * 2;\n    self.add_attack(2);',
+    find: '    EraChara.get(target).base.willpower -= level * 2;\n    self.add_attack(2);',
     replace:
-      '    target_view.dungeon.气力 -= level * 2;\n    self.add_attack(1); // 变异',
+      '    EraChara.get(target).base.willpower -= level * 2;\n    self.add_attack(1); // 变异',
     tests: ['monster-skill'],
     must_mention: '沼地攻击 +2',
   },
@@ -263,18 +263,18 @@ export default [
   {
     desc: 'M7171 精英防御增益写到自己的攻击力上（取错字段）',
     file: 'ere/system/dungeon/monster-skill.js',
-    find: '      add_defense: (value) => {\n        view.dungeon.防御力 += value;\n      },',
+    find: '      add_defense: (value) => {\n        EraChara.get(user).cflag.defense += value;\n      },',
     replace:
-      '      add_defense: (value) => {\n        view.dungeon.攻击力 += value; // 变异：取错字段\n      },',
+      '      add_defense: (value) => {\n        EraChara.get(user).cflag.attack += value; // 变异：取错字段\n      },',
     tests: ['monster-skill'],
     must_mention: '精英的攻防增益落在自己身上',
   },
   {
     desc: 'M7172 精英麻痹误用参数下降值',
     file: 'ere/system/dungeon/monster-skill.js',
-    find: '  } else if (skill === 10) {\n    await print_battle_line(`${user_name}喷出了麻痹气体！！（攻击-${dmg}）`);\n    target_view.dungeon.攻击力 -= dmg;',
+    find: '  } else if (skill === 10) {\n    await print_battle_line(`${user_name}喷出了麻痹气体！！（攻击-${dmg}）`);\n    EraChara.get(target).cflag.attack -= dmg;',
     replace:
-      '  } else if (skill === 10) {\n    await print_battle_line(`${user_name}喷出了麻痹气体！！（攻击-${dmg}）`);\n    target_view.dungeon.攻击力 -= palam_down; // 变异',
+      '  } else if (skill === 10) {\n    await print_battle_line(`${user_name}喷出了麻痹气体！！（攻击-${dmg}）`);\n    EraChara.get(target).cflag.attack -= palam_down; // 变异',
     tests: ['monster-skill'],
     must_mention: '按精英自身的等级与攻防结算',
   },
@@ -335,7 +335,7 @@ export default [
   {
     desc: 'M18428 精英等级改读战斗列（角色号又当列号用）',
     file: 'ere/system/dungeon/monster-skill.js',
-    find: '      level: view.chara.等级,',
+    find: '      level: EraChara.get(user).cflag.level,',
     replace: '      level: battle_column(user).level, // 变异：等级取错表',
     tests: ['monster-skill'],
     must_mention: '按精英自身的等级与攻防结算',
@@ -352,9 +352,9 @@ export default [
   {
     desc: 'M18430 精英的地形攻击增益写到防御力上（取错字段）',
     file: 'ere/system/dungeon/monster-skill.js',
-    find: '      add_attack: (value) => {\n        view.dungeon.攻击力 += value;\n      },',
+    find: '      add_attack: (value) => {\n        EraChara.get(user).cflag.attack += value;\n      },',
     replace:
-      '      add_attack: (value) => {\n        view.dungeon.防御力 += value; // 变异：取错字段\n      },',
+      '      add_attack: (value) => {\n        EraChara.get(user).cflag.defense += value; // 变异：取错字段\n      },',
     tests: ['monster-skill'],
     must_mention: '精英路径的地形增益加到角色自己身上',
   },
